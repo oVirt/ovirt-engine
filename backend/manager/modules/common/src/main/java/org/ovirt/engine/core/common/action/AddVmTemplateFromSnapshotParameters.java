@@ -11,7 +11,7 @@ public class AddVmTemplateFromSnapshotParameters extends AddVmTemplateParameters
     private static final long serialVersionUID = -486319959050997796L;
 
     //Unique Identifier of Source Snapshot
-    @NotNull(message="VALIDATION_SOURCE_SNAPSHOT_ID_NOT_NULL")
+    @NotNull(message = "VALIDATION_SOURCE_SNAPSHOT_ID_NOT_NULL")
     private Guid sourceSnapshotId;
 
     public AddVmTemplateFromSnapshotParameters() {

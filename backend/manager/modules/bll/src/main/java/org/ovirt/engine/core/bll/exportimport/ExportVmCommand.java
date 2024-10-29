@@ -558,7 +558,7 @@ public class ExportVmCommand<T extends MoveOrCopyParameters> extends MoveOrCopyT
             updateCopyVmInSpm(getVm().getStoragePoolId(),
                     vm, getParameters()
                             .getStorageDomainId());
-        } catch(EngineException e) {
+        } catch (EngineException e) {
             log.error("Updating VM OVF in export domain failed.", e);
             auditLogDirector.log(this, AuditLogType.IMPORTEXPORT_IMPORT_VM_FAILED_UPDATING_OVF);
         }

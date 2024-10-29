@@ -137,7 +137,7 @@ public class DeactivateStorageDomainWithOvfUpdateCommand<T extends DeactivateSto
     }
 
     private StoragePoolIsoMap loadStoragePoolIsoMap() {
-        return  storagePoolIsoMapDao.get
+        return storagePoolIsoMapDao.get
                         (new StoragePoolIsoMapId(getParameters().getStorageDomainId(),
                                 getParameters().getStoragePoolId()));
     }

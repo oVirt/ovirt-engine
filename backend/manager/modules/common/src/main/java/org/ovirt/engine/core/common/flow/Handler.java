@@ -52,7 +52,7 @@ public interface Handler<C extends Context> {
      * @return an outcome which is used by the process() method to determine
      * which handler to execute next.
      */
-    HandlerOutcome handle(C ctx)  throws Exception;
+    HandlerOutcome handle(C ctx) throws Exception;
 
     /**
      * Process the flow:

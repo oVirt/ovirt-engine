@@ -12,7 +12,7 @@ public class LinksTreeNode {
     String element;
     LinksTreeNode parent;
     List<LinksTreeNode> children;
-    boolean followed=false;
+    boolean followed = false;
 
     public LinksTreeNode(String element) {
         super();
@@ -48,7 +48,7 @@ public class LinksTreeNode {
     }
 
     public boolean isRoot() {
-        return parent==null;
+        return parent == null;
     }
 
     public boolean isFollowed() {
@@ -78,7 +78,7 @@ public class LinksTreeNode {
                 path.push(this.element);
                 node = node.parent;
             }
-        } while (node!=null);
+        } while (node != null);
         return path.iterator();
     }
 
@@ -119,7 +119,7 @@ public class LinksTreeNode {
     }
 
     private boolean pathExists(LinksTreeNode node, Iterator<String> iterator) {
-        while(iterator.hasNext()) {
+        while (iterator.hasNext()) {
             Optional<LinksTreeNode> child = getChild(iterator.next());
             if (!child.isPresent()) {
                 return false;
@@ -138,14 +138,14 @@ public class LinksTreeNode {
     private String toString(int depth) {
         StringBuilder builder = new StringBuilder(element);
         for (LinksTreeNode node : children) {
-            builder.append("\n").append(getTabs(depth)).append(node.toString(depth+1));
+            builder.append("\n").append(getTabs(depth)).append(node.toString(depth + 1));
         }
         return builder.toString();
     }
 
     private String getTabs(int tabs) {
         StringBuilder builder = new StringBuilder();
-        for (int i=0; i<tabs; i++) {
+        for (int i = 0; i < tabs; i++) {
             builder.append("\t");
         }
         return builder.toString();

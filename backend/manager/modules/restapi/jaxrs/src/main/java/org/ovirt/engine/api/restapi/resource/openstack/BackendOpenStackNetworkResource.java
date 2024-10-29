@@ -132,18 +132,18 @@ public class BackendOpenStackNetworkResource
         checkResultAndThrowExceptionIfFailed(result);
 
         List<StoragePool> dataCenters = result.getReturnValue();
-        if (dataCenters.isEmpty()){
+        if (dataCenters.isEmpty()) {
             // This will always throw a WebApplicationException
             notFound();
         }
         return dataCenters.get(0).getId();
     }
 
-    private void checkResultAndThrowExceptionIfFailed(QueryReturnValue result){
+    private void checkResultAndThrowExceptionIfFailed(QueryReturnValue result) {
         if (!result.getSucceeded()) {
             try {
                 backendFailure(result.getExceptionString());
-            } catch (BackendFailureException e){
+            } catch (BackendFailureException e) {
                 handleError(e, false);
             }
         }

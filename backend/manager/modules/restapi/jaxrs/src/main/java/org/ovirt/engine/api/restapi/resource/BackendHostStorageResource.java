@@ -34,7 +34,7 @@ public class BackendHostStorageResource
         for (LUNs lun : getLogicalUnits()) {
             HostStorage storage = map(lun);
             List<StorageServerConnections> lunConnections = lun.getLunConnections();
-            if (lunConnections!=null && !lunConnections.isEmpty()) {
+            if (lunConnections != null && !lunConnections.isEmpty()) {
                 getMapper(StorageServerConnections.class, LogicalUnit.class).map(lunConnections.get(0),
                         storage.getLogicalUnits().getLogicalUnits().get(0));
             }

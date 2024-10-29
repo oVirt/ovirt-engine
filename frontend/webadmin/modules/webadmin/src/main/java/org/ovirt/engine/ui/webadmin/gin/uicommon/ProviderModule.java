@@ -152,7 +152,7 @@ public class ProviderModule extends AbstractGinModule {
         bind(ProviderMainSelectedItems.class).asEagerSingleton();
 
         // Form Detail Models
-        bind(new TypeLiteral<DetailModelProvider<ProviderListModel, ProviderGeneralModel>>() {})
+        bind(new TypeLiteral<DetailModelProvider<ProviderListModel, ProviderGeneralModel>>() { })
                 .to(new TypeLiteral<DetailTabModelProvider<ProviderListModel, ProviderGeneralModel>>() {
                 }).in(Singleton.class);
     }

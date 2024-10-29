@@ -10,7 +10,7 @@ public class ExtendImageSizeVDSCommandParameters extends IrsBaseVDSCommandParame
     private Guid imageId;
     private long newSize;
 
-    public ExtendImageSizeVDSCommandParameters() {}
+    public ExtendImageSizeVDSCommandParameters() { }
 
     public ExtendImageSizeVDSCommandParameters(Guid storagePoolId,
                                                Guid storageDomainId,

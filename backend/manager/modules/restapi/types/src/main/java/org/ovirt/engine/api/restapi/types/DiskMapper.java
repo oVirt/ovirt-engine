@@ -190,7 +190,7 @@ public class DiskMapper {
         model.setProvisionedSize(entity.getSize());
         if (entity.hasActualSize()) {
             model.setActualSize(entity.getActualSizeInBytes());
-            if (entity.isAllowSnapshot()){
+            if (entity.isAllowSnapshot()) {
                 model.setTotalSize((long) entity.getActualDiskWithSnapshotsSizeInBytes());
             }
         }
@@ -214,13 +214,13 @@ public class DiskMapper {
             if (!model.isSetStorageDomains()) {
                 model.setStorageDomains(new StorageDomains());
             }
-            for (Guid id : entity.getStorageIds()){
+            for (Guid id : entity.getStorageIds()) {
                 StorageDomain storageDomain = new StorageDomain();
                 storageDomain.setId(id.toString());
                 model.getStorageDomains().getStorageDomains().add(storageDomain);
             }
         }
-        if (entity.getQuotaId()!=null) {
+        if (entity.getQuotaId() != null) {
             Quota quota = new Quota();
             quota.setId(entity.getQuotaId().toString());
 

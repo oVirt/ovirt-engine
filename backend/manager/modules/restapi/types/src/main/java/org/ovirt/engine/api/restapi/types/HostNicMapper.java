@@ -172,7 +172,7 @@ public class HostNicMapper {
         StringBuilder builder = new StringBuilder();
         appendBondingOption(builder, bondingOptions.get(0));
 
-        for(int i = 1; i < bondingOptions.size(); i++) {
+        for (int i = 1; i < bondingOptions.size(); i++) {
             builder.append(" ");
             appendBondingOption(builder, bondingOptions.get(i));
         }
@@ -214,23 +214,23 @@ public class HostNicMapper {
             model.setMac(new Mac());
             model.getMac().setAddress(entity.getMacAddress());
         }
-        if (entity.getStatistics().getStatus()!=InterfaceStatus.NONE) {
+        if (entity.getStatistics().getStatus() != InterfaceStatus.NONE) {
             NicStatus nicStatus = mapNicStatus(entity.getStatistics().getStatus());
             if (nicStatus != null) {
                 model.setStatus(nicStatus);
             }
         }
-        if(entity.getSpeed()!=null && entity.getSpeed()>0){
+        if (entity.getSpeed() != null && entity.getSpeed() > 0) {
             model.setSpeed(entity.getSpeed() * 1000L * 1000);
         }
         if (!StringUtils.isEmpty(entity.getBondOptions())) {
-            if(model.getBonding() == null) {
+            if (model.getBonding() == null) {
                 model.setBonding(new Bonding());
             }
             model.getBonding().setOptions(new Options());
-            for(String opt : entity.getBondOptions().split(OPTIONS_DELIMITER)){
+            for (String opt : entity.getBondOptions().split(OPTIONS_DELIMITER)) {
                 String[] option_pair = opt.split(OPTIONS_EQ);
-                if(option_pair.length == 2){
+                if (option_pair.length == 2) {
                     Option option = new Option();
                     option.setName(option_pair[0]);
                     option.setValue(option_pair[1]);
@@ -263,7 +263,7 @@ public class HostNicMapper {
 
     private static void mapIpv4ToModel(VdsNetworkInterface entity, HostNic model) {
         BootProtocol ipv4BootProtocol = Ipv4BootProtocolMapper.map(entity.getIpv4BootProtocol());
-        if(ipv4BootProtocol!=null){
+        if (ipv4BootProtocol != null) {
             model.setBootProtocol(ipv4BootProtocol);
         }
 
@@ -285,7 +285,7 @@ public class HostNicMapper {
 
     private static void mapIpv6ToModel(VdsNetworkInterface entity, HostNic model) {
         BootProtocol ipv6BootProtocol = Ipv6BootProtocolMapper.map(entity.getIpv6BootProtocol());
-        if(ipv6BootProtocol!=null){
+        if (ipv6BootProtocol != null) {
             model.setIpv6BootProtocol(ipv6BootProtocol);
         }
 
@@ -308,7 +308,7 @@ public class HostNicMapper {
     private static String getType(final String[] optionPair) {
         if (!StringUtils.isEmpty(optionPair[0]) && optionPair[0].equals("mode") && !StringUtils.isEmpty(optionPair[1])) {
             Integer mode = tryParse(optionPair[1]);
-            if(mode != null){
+            if (mode != null) {
                 /*
                  *  Return the description of this bond-mode, as it appears in BondMode enum
                  *  in the Engine (truncating the unnecessary "(Mode x") prefix from it).

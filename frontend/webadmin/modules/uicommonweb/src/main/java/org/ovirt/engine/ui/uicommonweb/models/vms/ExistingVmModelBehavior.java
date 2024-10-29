@@ -261,7 +261,7 @@ public class ExistingVmModelBehavior extends VmModelBehaviorBase<UnitVmModel> {
     }
 
     private int calculateHostCpus() {
-        return  getModel().getSelectedCluster().getCountThreadsAsCores() ? runningOnHost.getCpuThreads() : runningOnHost.getCpuCores();
+        return getModel().getSelectedCluster().getCountThreadsAsCores() ? runningOnHost.getCpuThreads() : runningOnHost.getCpuCores();
     }
 
     @Override
@@ -392,7 +392,7 @@ public class ExistingVmModelBehavior extends VmModelBehaviorBase<UnitVmModel> {
         getModel().getNumOfSockets().getSelectedItemChangedEvent().addListener(getModel());
     }
 
-    private void removeCpuListeners() {// remove if exists
+    private void removeCpuListeners() { // remove if exists
         getModel().getTotalCPUCores().getEntityChangedEvent().removeListener(getModel());
         getModel().getNumOfSockets().getSelectedItemChangedEvent().removeListener(getModel());
     }

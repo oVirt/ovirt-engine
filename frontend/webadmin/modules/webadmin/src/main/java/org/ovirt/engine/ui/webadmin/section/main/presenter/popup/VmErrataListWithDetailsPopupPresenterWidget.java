@@ -12,7 +12,7 @@ public class VmErrataListWithDetailsPopupPresenterWidget
     extends ErrataListWithDetailsPopupPresenterWidget<SearchableDetailModelProvider<Erratum,
         VmListModel<Void>, VmErrataListModel>> {
 
-    public interface ViewDef extends ErrataListWithDetailsPopupPresenterWidget.ViewDef {};
+    public interface ViewDef extends ErrataListWithDetailsPopupPresenterWidget.ViewDef { };
 
     @Inject
     public VmErrataListWithDetailsPopupPresenterWidget(EventBus eventBus,

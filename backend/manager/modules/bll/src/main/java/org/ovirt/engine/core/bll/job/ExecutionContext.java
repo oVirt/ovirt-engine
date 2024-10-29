@@ -19,7 +19,7 @@ import org.ovirt.engine.core.common.utils.ExecutionMethod;
  * <li>stepsList will contain a selective list of Steps to be printed. Should be used with isMonitored = null.</li>
  * </ul>
  */
-public class ExecutionContext implements Serializable{
+public class ExecutionContext implements Serializable {
 
     /**
      * Automatic generated serial version ID

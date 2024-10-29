@@ -24,7 +24,7 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.inject.Inject;
 
-public class GlusterVolumeGeoRepCreateSessionPopupView extends AbstractModelBoundPopupView<GlusterVolumeGeoRepCreateModel> implements GlusterVolumeGeoRepCreateSessionPopupPresenterWidget.ViewDef{
+public class GlusterVolumeGeoRepCreateSessionPopupView extends AbstractModelBoundPopupView<GlusterVolumeGeoRepCreateModel> implements GlusterVolumeGeoRepCreateSessionPopupPresenterWidget.ViewDef {
 
     interface Driver extends UiCommonEditorDriver<GlusterVolumeGeoRepCreateModel, GlusterVolumeGeoRepCreateSessionPopupView> {
     }
@@ -158,7 +158,7 @@ public class GlusterVolumeGeoRepCreateSessionPopupView extends AbstractModelBoun
     @Override
     public void setFailureMessage(String failureMessage) {
         boolean failureMessageVisible = failureMessage != null;
-        if(failureMessageVisible) {
+        if (failureMessageVisible) {
             message.setText(failureMessage);
         }
         message.setVisible(failureMessageVisible);
@@ -167,7 +167,7 @@ public class GlusterVolumeGeoRepCreateSessionPopupView extends AbstractModelBoun
     @Override
     public void setSuggestedConfigViolations(String recommendationViolations) {
         boolean recommendationViolationsVisible = recommendationViolations != null;
-        if(recommendationViolationsVisible) {
+        if (recommendationViolationsVisible) {
             suggestedConfigViolations.setText(recommendationViolations);
         }
         suggestedConfigViolations.setVisible(recommendationViolationsVisible);

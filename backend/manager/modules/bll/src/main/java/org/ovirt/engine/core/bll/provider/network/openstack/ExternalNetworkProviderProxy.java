@@ -50,12 +50,12 @@ public class ExternalNetworkProviderProxy extends BaseNetworkProviderProxy<Opens
         super.removeSubnet(id);
     }
 
-    private boolean isReadOnly(){
+    private boolean isReadOnly() {
         return getProvider().getAdditionalProperties().getReadOnly();
     }
 
     private void testProviderIsNotReadOnly() {
-        if (isReadOnly()){
+        if (isReadOnly()) {
             throw new EngineException(EngineError.NO_IMPLEMENTATION);
         }
     }

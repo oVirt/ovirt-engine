@@ -68,7 +68,7 @@ public class RemoveManagedBlockStorageSnapshotCommand<T extends ImagesContainter
                             getCorrelationId());
             returnValue =
                     cinderlibExecutor.runCommand(CinderlibExecutor.CinderlibCommand.REMOVE_SNAPSHOT, params);
-        } catch(Exception e) {
+        } catch (Exception e) {
             log.error("Failed executing snapshot deletion", e);
             return;
         }

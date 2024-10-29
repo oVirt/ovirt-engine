@@ -140,7 +140,7 @@ public class DiskListModel extends ListWithSimpleDetailsModel<Void, Disk> {
     }
 
     private void setUploadCommand(UICommand value) {
-        privateUploadCommand= value;
+        privateUploadCommand = value;
     }
 
     private UICommand privateCancelUploadCommand;

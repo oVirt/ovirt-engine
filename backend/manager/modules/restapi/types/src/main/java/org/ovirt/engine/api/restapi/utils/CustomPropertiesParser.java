@@ -45,7 +45,7 @@ public class CustomPropertiesParser {
         int index = str.indexOf("=");
         if (index != -1) {
             String key = str.substring(0, index);
-            String value = str.substring(index+1);
+            String value = str.substring(index + 1);
             keyValue.add(key);
             keyValue.add(value);
         }

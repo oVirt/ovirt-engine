@@ -9,7 +9,7 @@ public class ErrataCount implements Serializable {
     private Map<Erratum.ErrataSeverity, Integer> countBySeverity;
     private int totalCount;
 
-    public ErrataCount(){
+    public ErrataCount() {
         countBySeverity = new HashMap<>();
     }
 

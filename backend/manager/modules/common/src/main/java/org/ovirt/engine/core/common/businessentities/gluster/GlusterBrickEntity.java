@@ -212,7 +212,7 @@ public class GlusterBrickEntity implements Queryable, BusinessEntityWithStatus<G
     }
 
     public Guid getId(boolean generateIfNull) {
-        if(id == null && generateIfNull) {
+        if (id == null && generateIfNull) {
             id = Guid.newGuid();
         }
         return id;

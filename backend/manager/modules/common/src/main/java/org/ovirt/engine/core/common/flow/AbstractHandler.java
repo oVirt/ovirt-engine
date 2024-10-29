@@ -79,7 +79,7 @@ public abstract class AbstractHandler<C extends Context> implements Handler<C> {
         return true;
     }
 
-    public abstract HandlerOutcome handle(C ctx)  throws Exception;
+    public abstract HandlerOutcome handle(C ctx) throws Exception;
 
     @Override
     public Handler<C> setOnSuccess(Handler<C> successHandler) {

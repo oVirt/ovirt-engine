@@ -26,7 +26,7 @@ public class OpenStackNetworkProviderMapper {
     public static Provider<OpenstackNetworkProviderProperties> map(OpenStackNetworkProvider model,
             Provider<OpenstackNetworkProviderProperties> template) {
         Provider<OpenstackNetworkProviderProperties> entity =
-             template != null? template: new Provider<>();
+             template != null ? template : new Provider<>();
         if (model.isSetType()) {
             entity.setType(mapProviderType(model.getType()));
         }
@@ -72,7 +72,7 @@ public class OpenStackNetworkProviderMapper {
     public static OpenstackNetworkProviderProperties map(OpenStackNetworkProvider model,
             OpenstackNetworkProviderProperties template) {
         OpenstackNetworkProviderProperties entity =
-                template != null? template: new OpenstackNetworkProviderProperties();
+                template != null ? template : new OpenstackNetworkProviderProperties();
         if (model.isSetTenantName()) {
             entity.setTenantName(model.getTenantName());
         }
@@ -109,7 +109,7 @@ public class OpenStackNetworkProviderMapper {
     @Mapping(from = Provider.class, to = OpenStackNetworkProvider.class)
     public static OpenStackNetworkProvider map(Provider<OpenstackNetworkProviderProperties> entity,
             OpenStackNetworkProvider template) {
-        OpenStackNetworkProvider model = template != null? template: new OpenStackNetworkProvider();
+        OpenStackNetworkProvider model = template != null ? template : new OpenStackNetworkProvider();
         model.setType(mapProviderType(entity.getType()));
         if (entity.getId() != null) {
             model.setId(entity.getId().toString());

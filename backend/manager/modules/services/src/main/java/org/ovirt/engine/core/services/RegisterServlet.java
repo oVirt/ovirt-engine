@@ -92,7 +92,7 @@ public class RegisterServlet extends HttpServlet {
             throw new RuntimeException("Unique id was not provided");
         }
 
-        QueryReturnValue queryReturnValue  =  backend.runInternalQuery(
+        QueryReturnValue queryReturnValue = backend.runInternalQuery(
             QueryType.RegisterVds,
             new RegisterVdsParameters(
                 Guid.Empty,
@@ -192,7 +192,7 @@ public class RegisterServlet extends HttpServlet {
             } else {
                 throw new RuntimeException("Invalid command");
             }
-        } catch(Exception e) {
+        } catch (Exception e) {
             log.error("Registration failed: {}", e.getMessage());
             log.debug("Exception", e);
             response.sendError(response.SC_BAD_REQUEST, e.getMessage());
@@ -206,10 +206,10 @@ public class RegisterServlet extends HttpServlet {
         if (versionString != null) {
             try {
                 version = Integer.parseInt(versionString);
-            } catch(NumberFormatException ignore) {}
+            } catch (NumberFormatException ignore) { }
         }
 
-        switch(version) {
+        switch (version) {
             default:
                 String m = String.format("Invalid registration protocol version %s", version);
                 log.error(m);

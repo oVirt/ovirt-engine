@@ -57,7 +57,7 @@ public class DnsResolverConfigurationDaoImpl extends DefaultGenericDao<DnsResolv
     }
 
     private void saveNameServersByDnsResolverConfigurationId(Guid dnsResolverConfigurationId, List<NameServer> nameServers) {
-        for(int i = 0; i < nameServers.size(); i++) {
+        for (int i = 0; i < nameServers.size(); i++) {
             MapSqlParameterSource mapper = getCustomMapSqlParameterSource()
                     .addValue("dns_resolver_configuration_id", dnsResolverConfigurationId)
                     .addValue("address", nameServers.get(i).getAddress())

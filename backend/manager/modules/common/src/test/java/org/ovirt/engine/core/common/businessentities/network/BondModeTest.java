@@ -10,7 +10,7 @@ public class BondModeTest {
     @Test
     public void testParseBondMode() {
 
-        for (BondMode bondMode : BondMode.values()){
+        for (BondMode bondMode : BondMode.values()) {
             assertEquals(bondMode, BondMode.parseBondMode("mode=" + bondMode.getValue()));
             assertEquals(bondMode, BondMode.parseBondMode("mode=" + bondMode.getStringValue()));
             assertEquals(bondMode, BondMode.parseBondMode("  mode=" + bondMode.getValue() + "   "));
@@ -32,7 +32,7 @@ public class BondModeTest {
 
     @Test
     public void testGetBondMode() {
-        for (BondMode bondMode : BondMode.values()){
+        for (BondMode bondMode : BondMode.values()) {
             assertEquals(bondMode, BondMode.getBondMode(bondMode.getValue()));
             assertEquals(bondMode, BondMode.getBondMode(bondMode.getStringValue()));
             assertNull(BondMode.getBondMode("mode=" + bondMode.getValue()));

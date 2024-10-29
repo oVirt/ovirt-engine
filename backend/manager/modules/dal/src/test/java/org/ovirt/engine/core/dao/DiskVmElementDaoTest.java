@@ -16,7 +16,7 @@ import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
 import org.ovirt.engine.core.compat.Guid;
 
-public class DiskVmElementDaoTest extends BaseReadDaoTestCase<VmDeviceId, DiskVmElement, DiskVmElementDao>{
+public class DiskVmElementDaoTest extends BaseReadDaoTestCase<VmDeviceId, DiskVmElement, DiskVmElementDao> {
 
     private static final int NUM_OF_DISKS_ATTACHED_TO_VM = 4;
     private static final int NUM_OF_DISKS_PLUGGED_TO_VM = 3;

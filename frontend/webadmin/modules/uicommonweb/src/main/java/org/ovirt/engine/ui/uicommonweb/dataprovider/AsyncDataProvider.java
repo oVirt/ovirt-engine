@@ -1886,7 +1886,7 @@ public class AsyncDataProvider {
                 aQuery);
     }
 
-    public void getAllEntitiesWithLeaseOnStorageDomain(AsyncQuery<List<VmBase>> aQuery, Guid sdId){
+    public void getAllEntitiesWithLeaseOnStorageDomain(AsyncQuery<List<VmBase>> aQuery, Guid sdId) {
         aQuery.converterCallback = new ListConverter<>();
 
         Frontend.getInstance().runQuery(QueryType.GetEntitiesWithLeaseByStorageId,
@@ -2368,10 +2368,10 @@ public class AsyncDataProvider {
 
     public String getIgnitionVersion(Integer osId) {
         if (isIgnition(osId)) {
-            return vmInitMap.get(osId).replace("ignition_", "");//$NON-NLS-1$
+            return vmInitMap.get(osId).replace("ignition_", ""); //$NON-NLS-1$
         }
 
-        return "";//$NON-NLS-1$
+        return ""; //$NON-NLS-1$
     }
 
     public void initWindowsOsTypes() {

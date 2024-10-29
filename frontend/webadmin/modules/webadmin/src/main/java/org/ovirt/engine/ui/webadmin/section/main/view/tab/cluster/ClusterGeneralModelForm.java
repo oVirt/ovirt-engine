@@ -168,7 +168,7 @@ public class ClusterGeneralModelForm extends AbstractModelBoundFormWidget<Cluste
     private void updateCpuTypeInfo(WidgetWithInfo widgetWithInfo) {
         if (getModel().getCpuVerb() != null) {
             widgetWithInfo.setIconVisible(true);
-            String cpuVerb = getModel().getCpuVerb().replace(",", ", ");//$NON-NLS-1$ //$NON-NLS-2$
+            String cpuVerb = getModel().getCpuVerb().replace(",", ", "); //$NON-NLS-1$ //$NON-NLS-2$
             widgetWithInfo.setIconTooltipText(messages.clusterCpuTypeInfo(cpuVerb));
         } else {
             widgetWithInfo.setIconVisible(false);

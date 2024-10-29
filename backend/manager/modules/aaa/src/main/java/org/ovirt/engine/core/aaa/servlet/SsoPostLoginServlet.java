@@ -68,11 +68,11 @@ public class SsoPostLoginServlet extends HttpServlet {
         try {
             String error_description = request.getParameter("error_description");
             String error = request.getParameter("error");
-            if (StringUtils.isNotEmpty(error_description) && StringUtils.isNotEmpty(error)){
+            if (StringUtils.isNotEmpty(error_description) && StringUtils.isNotEmpty(error)) {
                 throw new RuntimeException(String.format("%s: %s", error, error_description));
             }
             String code = request.getParameter("code");
-            if (StringUtils.isEmpty(code)){
+            if (StringUtils.isEmpty(code)) {
                 throw new RuntimeException("No authorization code found in request");
             }
             //appUrl not encoded

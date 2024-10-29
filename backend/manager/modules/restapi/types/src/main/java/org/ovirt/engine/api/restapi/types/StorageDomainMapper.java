@@ -29,7 +29,7 @@ public class StorageDomainMapper {
         if (model.isSetDescription()) {
             entity.setDescription(model.getDescription());
         }
-        if(model.isSetComment()) {
+        if (model.isSetComment()) {
             entity.setComment(model.getComment());
         }
         if (model.isSetType()) {
@@ -78,16 +78,16 @@ public class StorageDomainMapper {
                 case GLANCE:
                     break;
                 case NFS:
-                    if(storage.isSetAddress() && storage.isSetPath()) {
+                    if (storage.isSetAddress() && storage.isSetPath()) {
                         entity.setConnection(storage.getAddress() + ":" + storage.getPath());
                     }
-                    if(storage.getNfsRetrans() != null) {
+                    if (storage.getNfsRetrans() != null) {
                         entity.setNfsRetrans(storage.getNfsRetrans().shortValue());
                     }
-                    if(storage.getNfsTimeo() != null) {
+                    if (storage.getNfsTimeo() != null) {
                         entity.setNfsTimeo(storage.getNfsTimeo().shortValue());
                     }
-                    if(storage.getNfsVersion() != null) {
+                    if (storage.getNfsVersion() != null) {
                         entity.setNfsVersion(map(storage.getNfsVersion(), null));
                     }
                     if (storage.isSetMountOptions()) {
@@ -146,17 +146,17 @@ public class StorageDomainMapper {
             model.getStorage().setVolumeGroup(new VolumeGroup());
             model.getStorage().getVolumeGroup().setId(entity.getStorage());
         }
-        if (entity.getAvailableDiskSize()!= null) {
+        if (entity.getAvailableDiskSize() != null) {
             model.setAvailable(SizeConverter.convert(entity.getAvailableDiskSize().longValue(),
                     SizeConverter.SizeUnit.GiB, SizeConverter.SizeUnit.BYTES).longValue());
         }
-        if (entity.getUsedDiskSize()!= null) {
+        if (entity.getUsedDiskSize() != null) {
             model.setUsed(SizeConverter.convert(entity.getUsedDiskSize().longValue(),
                     SizeConverter.SizeUnit.GiB, SizeConverter.SizeUnit.BYTES).longValue());
         }
         model.setCommitted(SizeConverter.convert(entity.getCommittedDiskSize(),
                 SizeConverter.SizeUnit.GiB, SizeConverter.SizeUnit.BYTES).longValue());
-        if (entity.getStorageFormat()!= null) {
+        if (entity.getStorageFormat() != null) {
             model.setStorageFormat(StorageFormatMapper.map(entity.getStorageFormat(), null));
         }
         model.setWipeAfterDelete(entity.getWipeAfterDelete());
@@ -466,7 +466,7 @@ public class StorageDomainMapper {
 
     @Mapping(from = org.ovirt.engine.core.common.businessentities.NfsVersion.class, to = NfsVersion.class)
     public static NfsVersion map(org.ovirt.engine.core.common.businessentities.NfsVersion version, NfsVersion outgoing) {
-        switch(version) {
+        switch (version) {
         case V3:
             return NfsVersion.V3;
         case V4:

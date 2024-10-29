@@ -8,7 +8,7 @@ public class InvalidQuotaParametersException extends RuntimeException {
     public InvalidQuotaParametersException() {
     }
 
-    public InvalidQuotaParametersException(String errorStr){
+    public InvalidQuotaParametersException(String errorStr) {
         super(errorStr);
     }
 

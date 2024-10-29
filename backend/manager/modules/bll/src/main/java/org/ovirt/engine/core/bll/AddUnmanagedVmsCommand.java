@@ -187,7 +187,7 @@ public class AddUnmanagedVmsCommand<T extends AddUnmanagedVmsParameters> extends
             }
             graphicsDevices.forEach(device -> vm.getManagedVmDeviceMap().put(device.getDeviceId(), device));
             VmDevice consoleDevice = vdsBrokerObjectsBuilder.buildConsoleDevice(vmStruct, vm.getId());
-            if(consoleDevice != null){
+            if (consoleDevice != null) {
                 vm.getManagedVmDeviceMap().put(consoleDevice.getDeviceId(), consoleDevice);
             }
             importHostedEngineVm(vm);

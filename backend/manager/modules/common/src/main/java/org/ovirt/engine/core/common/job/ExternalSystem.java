@@ -8,7 +8,7 @@ import org.ovirt.engine.core.compat.Guid;
 /**
  * Represents an external system task associated with a Step.
  */
-public class ExternalSystem implements Serializable{
+public class ExternalSystem implements Serializable {
 
     /**
      * Automatic generated serial version ID

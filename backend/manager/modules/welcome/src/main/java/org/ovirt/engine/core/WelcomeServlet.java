@@ -190,7 +190,7 @@ public class WelcomeServlet extends HttpServlet {
     }
 
     public String getCurrentSsoSessionUser(HttpServletRequest request, Map<String, Object> userInfoMap) {
-        String username  = null;
+        String username = null;
         if (userInfoMap.containsKey(WelcomeUtils.ERROR_DESCRIPTION)) {
             request.getSession(true).setAttribute(WelcomeUtils.ERROR_DESCRIPTION,
                     userInfoMap.get(WelcomeUtils.ERROR_DESCRIPTION));

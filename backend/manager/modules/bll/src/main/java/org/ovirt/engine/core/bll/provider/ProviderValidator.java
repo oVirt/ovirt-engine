@@ -127,7 +127,7 @@ public class ProviderValidator<P extends Provider.AdditionalProperties> {
      * Validate that this action can be performed for read only providers
      */
     public ValidationResult validateReadOnlyActions() {
-        if (provider.getType() != ProviderType.EXTERNAL_NETWORK){
+        if (provider.getType() != ProviderType.EXTERNAL_NETWORK) {
             return ValidationResult.VALID;
         }
         boolean isReadOnly = ((OpenstackNetworkProviderProperties) provider.getAdditionalProperties()).getReadOnly();

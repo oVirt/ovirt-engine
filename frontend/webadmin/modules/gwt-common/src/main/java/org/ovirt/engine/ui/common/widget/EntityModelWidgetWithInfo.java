@@ -103,7 +103,7 @@ public class EntityModelWidgetWithInfo extends Composite implements HasValidatio
     public void onAttach() {
         super.onAttach();
         if (contentWidget instanceof PatternFlyCompatible) {
-            ((PatternFlyCompatible)contentWidget).setUsePatternFly(usePatternfly);
+            ((PatternFlyCompatible) contentWidget).setUsePatternFly(usePatternfly);
         }
         if (alignment == Align.LEFT) {
             labelPanel.insert(contentWidgetContainer, 0);

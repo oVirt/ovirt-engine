@@ -84,7 +84,7 @@ public class QuotaManagerTest {
         command = new CommandBase<ActionParametersBase>(
                 param, CommandContext.createContext(param.getSessionId())) {
             @Override
-            protected void executeCommand() {}
+            protected void executeCommand() { }
 
             @Override
             public List<PermissionSubject> getPermissionCheckSubjects() {

@@ -16,9 +16,9 @@ import org.ovirt.engine.ui.uicompat.Translator;
 
 public class TemplateGeneralModel extends AbstractGeneralModel<VmTemplate> {
 
-    public static final String ARCHITECTURE = "VmTemplateArchitecture";//$NON-NLS-1$
+    public static final String ARCHITECTURE = "VmTemplateArchitecture"; //$NON-NLS-1$
 
-    public static final String BIOS_TYPE = "VmTemplateBiosType";//$NON-NLS-1$
+    public static final String BIOS_TYPE = "VmTemplateBiosType"; //$NON-NLS-1$
 
     private String name;
 

@@ -5,7 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.ovirt.engine.api.model.FencingPolicy;
 
-public class FencingPolicyMapperTest extends AbstractInvertibleMappingTest<FencingPolicy, org.ovirt.engine.core.common.businessentities.FencingPolicy, org.ovirt.engine.core.common.businessentities.FencingPolicy>{
+public class FencingPolicyMapperTest extends AbstractInvertibleMappingTest<FencingPolicy, org.ovirt.engine.core.common.businessentities.FencingPolicy, org.ovirt.engine.core.common.businessentities.FencingPolicy> {
 
     public FencingPolicyMapperTest() {
         super(FencingPolicy.class, org.ovirt.engine.core.common.businessentities.FencingPolicy.class, org.ovirt.engine.core.common.businessentities.FencingPolicy.class);

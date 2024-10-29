@@ -2,7 +2,7 @@ package org.ovirt.engine.core.vdsbroker.vdsbroker;
 
 import org.ovirt.engine.core.common.vdscommands.AttachManagedBlockStorageVolumeVDSCommandParameters;
 
-public class AttachManagedBlockStorageVolumeVDSCommand<P extends AttachManagedBlockStorageVolumeVDSCommandParameters> extends VdsBrokerCommand<P>{
+public class AttachManagedBlockStorageVolumeVDSCommand<P extends AttachManagedBlockStorageVolumeVDSCommandParameters> extends VdsBrokerCommand<P> {
 
     private DeviceInfoReturn deviceInfoReturn;
 

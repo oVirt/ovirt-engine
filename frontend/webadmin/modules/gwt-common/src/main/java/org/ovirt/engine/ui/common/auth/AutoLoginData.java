@@ -59,7 +59,7 @@ public final class AutoLoginData extends JavaScriptObject {
     }
 
     public UserProfileProperty getWebAdminUserOption() {
-        if(getUserOptions() == null || getUserOptionsId() == null) {
+        if (getUserOptions() == null || getUserOptionsId() == null) {
             return WebAdminSettings.defaultSettings().getOriginalUserOptions();
         }
         return UserProfileProperty.builder()

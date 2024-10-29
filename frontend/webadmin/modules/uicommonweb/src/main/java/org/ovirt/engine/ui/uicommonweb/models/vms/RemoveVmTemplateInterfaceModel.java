@@ -10,7 +10,7 @@ import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
-public class RemoveVmTemplateInterfaceModel extends RemoveVmInterfaceModel{
+public class RemoveVmTemplateInterfaceModel extends RemoveVmInterfaceModel {
 
     public RemoveVmTemplateInterfaceModel(ListModel sourceListModel, List<VmNetworkInterface> vnics, boolean isFullMsg) {
         super(sourceListModel, vnics, isFullMsg);
@@ -19,7 +19,7 @@ public class RemoveVmTemplateInterfaceModel extends RemoveVmInterfaceModel{
     }
 
     @Override
-    protected String getRemoveVnicFullMsg(VmNetworkInterface vnic){
+    protected String getRemoveVnicFullMsg(VmNetworkInterface vnic) {
         return ConstantsManager.getInstance().getMessages().vnicFromTemplate(vnic.getName(), vnic.getVmName());
     }
 

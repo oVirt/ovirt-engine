@@ -38,7 +38,7 @@ public class ExternalSchedulerDiscovery {
     @Inject
     private AuditLogDirector auditLogDirector;
 
-    protected ExternalSchedulerDiscovery() {}
+    protected ExternalSchedulerDiscovery() { }
 
     /**
      * Discover external schedulers and process its policy units. This operation may take time and is recommended to run
@@ -99,7 +99,7 @@ public class ExternalSchedulerDiscovery {
         }
     }
 
-    public void markAllExternalPoliciesAsDisabled(){
+    public void markAllExternalPoliciesAsDisabled() {
         markExternalPoliciesAsDisabled(policyUnitDao.getAll());
     }
 

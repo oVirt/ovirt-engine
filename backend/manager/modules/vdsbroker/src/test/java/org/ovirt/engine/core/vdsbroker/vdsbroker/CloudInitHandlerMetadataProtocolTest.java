@@ -78,8 +78,8 @@ public class CloudInitHandlerMetadataProtocolTest {
                 assertEquals(0, underTest.validate(vmInit).size());
             }
         } catch (Exception e) {
-            assertEquals(((Exception)expected).getMessage(), e.getMessage());
-            assertEquals(((Exception)expected).getCause().getMessage(), e.getCause().getMessage());
+            assertEquals(((Exception) expected).getMessage(), e.getMessage());
+            assertEquals(((Exception) expected).getCause().getMessage(), e.getCause().getMessage());
             assertNotEquals(0, underTest.validate(vmInit).size());
         }
     }

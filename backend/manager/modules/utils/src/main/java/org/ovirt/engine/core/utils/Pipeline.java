@@ -37,13 +37,13 @@ public class Pipeline<T> {
 
     @SuppressWarnings("unchecked")
     public Pipeline<T> filter(Predicate<T> predicate) {
-        iterator = IteratorUtils.filteredIterator(iterator, item -> predicate.test((T)item));
+        iterator = IteratorUtils.filteredIterator(iterator, item -> predicate.test((T) item));
         return this;
     }
 
     @SuppressWarnings("unchecked")
     public <U> Pipeline<U> map(Function<T, U> function) {
-        Iterator<U> result = IteratorUtils.transformedIterator(iterator, item -> function.apply((T)item));
+        Iterator<U> result = IteratorUtils.transformedIterator(iterator, item -> function.apply((T) item));
         return new Pipeline<>(result);
     }
 

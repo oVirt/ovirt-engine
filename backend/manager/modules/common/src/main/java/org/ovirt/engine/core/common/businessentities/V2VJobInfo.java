@@ -65,7 +65,7 @@ public class V2VJobInfo implements BusinessEntity<Guid> {
         if (!(obj instanceof V2VJobInfo)) {
             return false;
         }
-        V2VJobInfo other = (V2VJobInfo)obj;
+        V2VJobInfo other = (V2VJobInfo) obj;
         return Objects.equals(vmId, other.vmId);
     }
 

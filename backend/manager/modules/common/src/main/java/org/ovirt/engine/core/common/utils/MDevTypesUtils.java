@@ -68,7 +68,7 @@ public class MDevTypesUtils {
                 }
             }
             return devices;
-        } catch(Exception e) {
+        } catch (Exception e) {
             log.info("failed to parse deprecated custom property mdev_type: {}", property);
             return Collections.emptyList();
         }

@@ -164,7 +164,7 @@ public class VolumeRebalanceStatusPopupView extends AbstractModelBoundPopupView<
             }
         }, constants.rebalanceFailedFileCount());
 
-        if (isSkippedFileCountNeeded()){
+        if (isSkippedFileCountNeeded()) {
             rebalanceHostsTable.addColumn(new AbstractEntityModelTextColumn<GlusterVolumeTaskStatusForHost>() {
                 @Override
                 protected String getText(GlusterVolumeTaskStatusForHost entity) {
@@ -189,7 +189,7 @@ public class VolumeRebalanceStatusPopupView extends AbstractModelBoundPopupView<
         }, constants.rebalanceRunTime());
     }
 
-    public boolean isSkippedFileCountNeeded(){
+    public boolean isSkippedFileCountNeeded() {
         return true;
     }
 
@@ -204,9 +204,9 @@ public class VolumeRebalanceStatusPopupView extends AbstractModelBoundPopupView<
         rebalanceHostsTable.asEditor().edit(object.getRebalanceSessions());
 
         object.getPropertyChangedEvent().addListener((ev, sender, args) -> {
-            if (args.propertyName.equals("STATUS_UPDATED")) {//$NON-NLS-1$
+            if (args.propertyName.equals("STATUS_UPDATED")) { //$NON-NLS-1$
                 status.setVisible(object.isStatusAvailable());
-            } else if (args.propertyName.equals("STOP_TIME_UPDATED")) {//$NON-NLS-1$
+            } else if (args.propertyName.equals("STOP_TIME_UPDATED")) { //$NON-NLS-1$
                 stopTimeColumn.setVisible(object.isStopTimeVisible());
             }
         });
@@ -216,7 +216,7 @@ public class VolumeRebalanceStatusPopupView extends AbstractModelBoundPopupView<
         return new EntityModelLabelEditor<>(new AbstractRenderer<Date>() {
             @Override
             public String render(Date entity) {
-                if(entity == null) {
+                if (entity == null) {
                     return constants.unAvailablePropertyLabel();
                 }
                 return renderer.render(entity);

@@ -89,7 +89,7 @@ public class EntityLocationMap extends HashMap<Class<?>, LocationByParentMap> {
                 Class<?> collectionResource = node.getParent().getResourceClass();
                 @SuppressWarnings("unchecked")
                 Class<? extends BaseResource> parentType = node.getParent().getParent().getResourceClass().equals(SystemResource.class) ? LinkHelper.NO_PARENT
-                        : (Class<? extends BaseResource>)(node.getParent().getParent().getType());
+                        : (Class<? extends BaseResource>) (node.getParent().getParent().getType());
                 innerMap.add(singleEntityResource, collectionResource, parentType);
             }
         }

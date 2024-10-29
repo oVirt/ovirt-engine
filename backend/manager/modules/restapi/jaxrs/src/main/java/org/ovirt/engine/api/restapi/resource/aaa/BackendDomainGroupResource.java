@@ -42,7 +42,7 @@ public class BackendDomainGroupResource
         String directoryId;
         try {
             directoryId = DirectoryEntryIdUtils.decode(id);
-        } catch(IllegalArgumentException exception) {
+        } catch (IllegalArgumentException exception) {
             throw new WebApplicationException(Response.Status.NOT_FOUND);
         }
         String directory = parent.getDirectory().getName();

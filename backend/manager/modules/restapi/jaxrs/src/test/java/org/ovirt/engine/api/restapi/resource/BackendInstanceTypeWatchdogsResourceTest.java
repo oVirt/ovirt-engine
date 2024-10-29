@@ -105,7 +105,7 @@ public class BackendInstanceTypeWatchdogsResourceTest
     protected void verifyCollection(List<Watchdog> collection) {
         assertNotNull(collection);
         assertEquals(1, collection.size());
-        if(!collection.isEmpty()) {
+        if (!collection.isEmpty()) {
             verifyModel(collection.get(0));
         }
     }

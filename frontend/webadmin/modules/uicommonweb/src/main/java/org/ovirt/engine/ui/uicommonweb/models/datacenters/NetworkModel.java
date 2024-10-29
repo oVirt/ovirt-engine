@@ -270,8 +270,8 @@ public abstract class NetworkModel extends Model implements HasValidatedTabs {
 
     private List<Provider<?>> getNonReadOnlyExternalNetworkProviders(List<Provider<?>> result) {
         List<Provider<?>> providers = new LinkedList<>();
-        for (Provider<?> provider : result){
-            if (isExternalNetworkProviderReadOnly(provider)){
+        for (Provider<?> provider : result) {
+            if (isExternalNetworkProviderReadOnly(provider)) {
                 continue;
             }
             providers.add(provider);
@@ -282,7 +282,7 @@ public abstract class NetworkModel extends Model implements HasValidatedTabs {
     private boolean isExternalNetworkProviderReadOnly(Provider<?> provider) {
         OpenstackNetworkProviderProperties properties =
                 (OpenstackNetworkProviderProperties) provider.getAdditionalProperties();
-        if (properties.getReadOnly()){
+        if (properties.getReadOnly()) {
             return true;
         }
 

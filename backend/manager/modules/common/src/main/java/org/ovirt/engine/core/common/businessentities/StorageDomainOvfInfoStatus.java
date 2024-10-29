@@ -3,7 +3,7 @@ package org.ovirt.engine.core.common.businessentities;
 import java.util.HashMap;
 import java.util.Map;
 
-public enum StorageDomainOvfInfoStatus implements Identifiable{
+public enum StorageDomainOvfInfoStatus implements Identifiable {
     UPDATED(0), OUTDATED(1), DISABLED(2);
 
     private int value;

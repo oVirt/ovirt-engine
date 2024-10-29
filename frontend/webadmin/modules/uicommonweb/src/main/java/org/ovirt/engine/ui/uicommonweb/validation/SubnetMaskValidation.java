@@ -39,7 +39,7 @@ public class SubnetMaskValidation implements IValidation {
 
     @Override
     public ValidationResult validate(Object value) {
-        assert value == null || value instanceof String : "This validation must be run on a String!";//$NON-NLS-1$
+        assert value == null || value instanceof String : "This validation must be run on a String!"; //$NON-NLS-1$
         String mask = (String) value;
 
         if (getMaskValidator().isValidNetmaskFormat(mask)) {

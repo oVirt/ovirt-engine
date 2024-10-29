@@ -22,7 +22,7 @@ public class UtilizationHelper {
             throws DashboardDataException {
         HostDwhDao dao = new HostDwhDao(dwhDataSource);
         List<TrendResources> resourceUsage = dao.getCpuUtilizationHosts();
-        for(TrendResources usage : resourceUsage) {
+        for (TrendResources usage : resourceUsage) {
             UtilizedEntity entity = new UtilizedEntity();
             entity.setName(usage.getName());
             entity.setUsed(usage.getUsed() * usage.getTotal() / 100);
@@ -94,7 +94,7 @@ public class UtilizationHelper {
             throws DashboardDataException {
         StorageDomainDwhDao dao = new StorageDomainDwhDao(dwhDataSource);
         List<TrendResources> usageList = dao.getStorageDomainUtilization();
-        for(TrendResources usage: usageList) {
+        for (TrendResources usage: usageList) {
             UtilizedEntity entity = new UtilizedEntity();
             entity.setName(usage.getName());
             //Dividing by 1024 to report TB instead of GB

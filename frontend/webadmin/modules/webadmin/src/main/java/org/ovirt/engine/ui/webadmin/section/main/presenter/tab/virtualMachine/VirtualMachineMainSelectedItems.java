@@ -8,7 +8,7 @@ import com.google.inject.Inject;
 import com.google.web.bindery.event.shared.EventBus;
 
 public class VirtualMachineMainSelectedItems extends AbstractMainSelectedItems<VM>
-        implements VirtualMachineSelectionChangeEvent.VirtualMachineSelectionChangeHandler{
+        implements VirtualMachineSelectionChangeEvent.VirtualMachineSelectionChangeHandler {
 
     @Inject
     VirtualMachineMainSelectedItems(EventBus eventBus) {

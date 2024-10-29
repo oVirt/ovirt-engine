@@ -105,7 +105,7 @@ public class SystemPermissionListModel extends SearchableListModel {
             return;
         }
 
-        if (model.getSelectedItems() == null){
+        if (model.getSelectedItems() == null) {
             model.setIsValid(false);
             model.setMessage(ConstantsManager.getInstance().getConstants().selectUserOrGroup());
             return;
@@ -144,7 +144,7 @@ public class SystemPermissionListModel extends SearchableListModel {
             }
         }
 
-        if(!list.isEmpty()){
+        if (!list.isEmpty()) {
             model.startProgress();
             Frontend.getInstance().runMultipleAction(ActionType.AddSystemPermission, list,
                     result -> {

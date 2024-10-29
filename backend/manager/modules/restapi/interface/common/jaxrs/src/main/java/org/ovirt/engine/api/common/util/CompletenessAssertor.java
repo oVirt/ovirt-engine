@@ -161,9 +161,9 @@ public class CompletenessAssertor {
                         missing.add(r);
                     }
                 }
-            } else if(!isLeaf(r)){
+            } else if (!isLeaf(r)) {
                 Object superType = get(model, superField(r));
-                if(superType != null) {
+                if (superType != null) {
                     missing.addAll(joinSuperType(doAssertRequired(reason, detail, superType, frameOffset, subField(r)), superType));
                 } else {
                     missing.add(r);
@@ -190,7 +190,7 @@ public class CompletenessAssertor {
      */
     private static Collection<? extends String> joinSuperType(List<String> missing, Object superType) {
         String superTypeName = superType.getClass().getSimpleName().toLowerCase();
-        for(int i = 0; i < missing.size(); i++){
+        for (int i = 0; i < missing.size(); i++) {
             missing.set(i, superTypeName + "." + missing.get(i));
         }
         return missing;

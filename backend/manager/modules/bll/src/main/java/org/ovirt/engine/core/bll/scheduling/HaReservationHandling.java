@@ -91,7 +91,7 @@ public class HaReservationHandling {
 
         for (VM vm : vmList) {
             int curVmMemSize = 0;
-            if(vm.getUsageMemPercent() != null) {
+            if (vm.getUsageMemPercent() != null) {
                 curVmMemSize = (int) Math.round(vm.getMemSizeMb() * (vm.getUsageMemPercent() / 100.0));
             }
 

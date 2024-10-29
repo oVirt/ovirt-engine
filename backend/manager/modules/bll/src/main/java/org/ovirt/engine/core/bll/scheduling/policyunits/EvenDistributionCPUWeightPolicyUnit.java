@@ -98,7 +98,7 @@ public class EvenDistributionCPUWeightPolicyUnit extends PolicyUnitImpl {
                 .filter(vm -> !vds.getId().equals(vm.getRunOnVds()))
                 .filter(vm -> !vm.getCpuPinningPolicy().isExclusive())
                 // If the VM is running, use its current CPU load, otherwise use the config value
-                .mapToInt(vm -> vm.getRunOnVds() != null && vm.getStatisticsData() != null  && vm.getUsageCpuPercent() != null ?
+                .mapToInt(vm -> vm.getRunOnVds() != null && vm.getStatisticsData() != null && vm.getUsageCpuPercent() != null ?
                         vm.getUsageCpuPercent() * VmCpuCountHelper.getRuntimeNumOfCpu(vm, vds) :
                         vcpuLoadPerCore * VmCpuCountHelper.getRuntimeNumOfCpu(vm, vds))
                 .sum();

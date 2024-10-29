@@ -6,7 +6,7 @@ import org.ovirt.engine.ui.uicommonweb.models.vms.ImportVmFromExternalProviderMo
 import com.google.gwt.event.shared.EventBus;
 import com.google.inject.Inject;
 
-public class ImportVmFromExternalProviderPopupPresenterWidget extends AbstractModelBoundPopupPresenterWidget<ImportVmFromExternalProviderModel, ImportVmFromExternalProviderPopupPresenterWidget.ViewDef>{
+public class ImportVmFromExternalProviderPopupPresenterWidget extends AbstractModelBoundPopupPresenterWidget<ImportVmFromExternalProviderModel, ImportVmFromExternalProviderPopupPresenterWidget.ViewDef> {
 
     public interface ViewDef extends AbstractModelBoundPopupPresenterWidget.ViewDef<ImportVmFromExternalProviderModel> {
     }

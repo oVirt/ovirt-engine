@@ -50,7 +50,7 @@ public class RemoveStorageServerConnectionCommand<T extends StorageServerConnect
            return failValidation(EngineMessage.ACTION_TYPE_FAILED_STORAGE_CONNECTION_ID_EMPTY);
         }
         StorageServerConnections connection = storageServerConnectionDao.get(connectionId);
-        if(connection == null) {
+        if (connection == null) {
             return failValidation(EngineMessage.ACTION_TYPE_FAILED_STORAGE_CONNECTION_NOT_EXIST);
         }
         // if user passed only the connection id for removal, vdsm still needs few more details in order to disconnect, so
@@ -60,7 +60,7 @@ public class RemoveStorageServerConnectionCommand<T extends StorageServerConnect
         if (storageType.isFileDomain()) {
             // go to storage domain static, get all storage domains where storage field  = storage connection id
            domains = getStorageDomainsByConnId(connectionId);
-           if(domains.size() > 0) {
+           if (domains.size() > 0) {
                String domainNames = createDomainNamesListFromStorageDomains(domains);
                return prepareFailureMessageForDomains(domainNames);
            }
@@ -71,7 +71,7 @@ public class RemoveStorageServerConnectionCommand<T extends StorageServerConnect
            List<LUNs> luns = lunDao.getAllForStorageServerConnection(connectionId);
            if (!luns.isEmpty()) {
                 String volumeGroupId = null;
-                for(LUNs lun : luns) {
+                for (LUNs lun : luns) {
                     volumeGroupId = lun.getVolumeGroupId();
                     if (StringUtils.isNotEmpty(volumeGroupId)) {
                         // non empty vg id indicates there's a storage domain using the lun
@@ -124,23 +124,23 @@ public class RemoveStorageServerConnectionCommand<T extends StorageServerConnect
 
     protected void populateMissingFields(StorageServerConnections connectionFromDb) {
         StorageServerConnections connectionFromParams = getConnection();
-        if(connectionFromParams.getStorageType() == null || connectionFromParams.getStorageType().equals(StorageType.UNKNOWN)) {
+        if (connectionFromParams.getStorageType() == null || connectionFromParams.getStorageType().equals(StorageType.UNKNOWN)) {
             connectionFromParams.setStorageType(connectionFromDb.getStorageType());
         }
-        if(StringUtils.isEmpty(connectionFromParams.getConnection())) {
+        if (StringUtils.isEmpty(connectionFromParams.getConnection())) {
             connectionFromParams.setConnection(connectionFromDb.getConnection());
         }
-        if(connectionFromParams.getStorageType().equals(StorageType.ISCSI)){
-            if(StringUtils.isEmpty(connectionFromParams.getIqn())) {
+        if (connectionFromParams.getStorageType().equals(StorageType.ISCSI)) {
+            if (StringUtils.isEmpty(connectionFromParams.getIqn())) {
                 connectionFromParams.setIqn(connectionFromDb.getIqn());
             }
-            if(StringUtils.isEmpty(connectionFromParams.getUserName())) {
+            if (StringUtils.isEmpty(connectionFromParams.getUserName())) {
                 connectionFromParams.setUserName(connectionFromDb.getUserName());
             }
-            if(StringUtils.isEmpty(connectionFromParams.getPassword())) {
+            if (StringUtils.isEmpty(connectionFromParams.getPassword())) {
                 connectionFromParams.setPassword(connectionFromDb.getPassword());
             }
-            if(StringUtils.isEmpty(connectionFromParams.getPort())) {
+            if (StringUtils.isEmpty(connectionFromParams.getPort())) {
                 connectionFromParams.setPort(connectionFromDb.getPort());
             }
         }

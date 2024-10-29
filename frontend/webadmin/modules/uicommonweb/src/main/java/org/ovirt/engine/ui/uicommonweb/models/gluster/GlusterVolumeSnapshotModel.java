@@ -119,11 +119,11 @@ public class GlusterVolumeSnapshotModel extends EntityModel<GlusterVolumeEntity>
 
     private void validateDaysOfMonth() {
         if (getRecurrence().getSelectedItem() == GlusterVolumeSnapshotScheduleRecurrence.MONTHLY) {
-            if (getDaysOfMonth().getSelectedItem() == null || getDaysOfMonth().getSelectedItem().equals("")) {//$NON-NLS-1$
+            if (getDaysOfMonth().getSelectedItem() == null || getDaysOfMonth().getSelectedItem().equals("")) { //$NON-NLS-1$
                 String message = ConstantsManager.getInstance().getConstants().noMonthDaysSelectedMessage();
                 getDaysOfMonth().setInvalidityReasons(Collections.singletonList(message));
                 getDaysOfMonth().setIsValid(false);
-            } else if (getDaysOfMonth().getSelectedItem().contains(",L") || getDaysOfMonth().getSelectedItem().contains("L,")) {//$NON-NLS-1$//$NON-NLS-2$
+            } else if (getDaysOfMonth().getSelectedItem().contains(",L") || getDaysOfMonth().getSelectedItem().contains("L,")) { //$NON-NLS-1$//$NON-NLS-2$
                 String message = ConstantsManager.getInstance().getConstants().lastDayMonthCanBeSelectedAlone();
                 getDaysOfMonth().setInvalidityReasons(Collections.singletonList(message));
                 getDaysOfMonth().setIsValid(false);
@@ -316,10 +316,10 @@ public class GlusterVolumeSnapshotModel extends EntityModel<GlusterVolumeEntity>
             listenersRegistered = true;
         }
 
-        if(inplaceValidate) {
-            propName = "modelPropertiesChanged";//$NON-NLS-1$
+        if (inplaceValidate) {
+            propName = "modelPropertiesChanged"; //$NON-NLS-1$
         } else {
-            propName = "validateAndSwitchAppropriateTab";//$NON-NLS-1$
+            propName = "validateAndSwitchAppropriateTab"; //$NON-NLS-1$
         }
         onPropertyChanged(new PropertyChangedEventArgs(propName));
 

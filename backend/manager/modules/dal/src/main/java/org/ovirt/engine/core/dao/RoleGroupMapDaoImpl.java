@@ -17,7 +17,7 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 @Named
 @Singleton
 public class RoleGroupMapDaoImpl extends BaseDao implements RoleGroupMapDao {
-    private static final RowMapper<RoleGroupMap> roleGroupMapRowMapper =(rs, rowNum) ->
+    private static final RowMapper<RoleGroupMap> roleGroupMapRowMapper = (rs, rowNum) ->
         new RoleGroupMap(ActionGroup.forValue(rs.getInt("action_group_id")), getGuidDefaultEmpty(rs, "role_id"));
 
     @Override

@@ -50,7 +50,7 @@ public class PreferredHostsWeightPolicyUnitTest {
             results.put(r.getFirst(), r.getSecond());
         }
 
-        assertEquals(0, (long)results.get(host2.getId()));
+        assertEquals(0, (long) results.get(host2.getId()));
         assertNotEquals(0, (long) results.get(host1.getId()));
         assertNotEquals(0, (long) results.get(host3.getId()));
     }

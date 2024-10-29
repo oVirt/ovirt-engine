@@ -402,7 +402,7 @@ public class BackendVmResource
         }
 
         ActionType actionType = !action.isSetDiscardSnapshots() || action.isDiscardSnapshots() ?
-                ActionType.CloneVm:
+                ActionType.CloneVm :
                 ActionType.CloneVmNoCollapse;
 
         Response response = doAction(actionType,

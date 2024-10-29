@@ -409,7 +409,7 @@ public class SearchQuery<P extends SearchParameters> extends QueriesCommandBase<
                             retVal.get().compareTo(cluster.getCompatibilityVersion()) > 0)
                     );
         }
-        for(Cluster cluster: clusters) {
+        for (Cluster cluster: clusters) {
             if (cluster.isManaged()) {
                 List<VDS> hostsWithMissingFlags = backend.runInternalQuery(QueryType.GetHostsWithMissingFlagsForCluster,
                         new IdQueryParameters(cluster.getId())).getReturnValue();
@@ -540,7 +540,7 @@ public class SearchQuery<P extends SearchParameters> extends QueriesCommandBase<
             // search text.
             if (!isExistsValue || IsFromYesterday) {
                 log.debug("ResourceManager::searchBusinessObjects(''{}'') - entered", searchText);
-                final char AT='@';
+                final char AT = '@';
                 String queryAuthz = null;
                 String queryNamespace = null;
                 ISyntaxChecker curSyntaxChecker;
@@ -549,7 +549,7 @@ public class SearchQuery<P extends SearchParameters> extends QueriesCommandBase<
                 if (m.matches()) {
                     final String COLON = ":";
                     String prefix = m.group("prefix");
-                    searchText =  m.group("content");
+                    searchText = m.group("content");
                     // get profile
                     List<String> profiles = backend.runInternalQuery(QueryType.GetDomainList,
                             new QueryParametersBase(getParameters().getSessionId())).getReturnValue();

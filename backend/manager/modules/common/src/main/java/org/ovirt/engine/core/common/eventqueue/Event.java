@@ -69,7 +69,7 @@ public class Event {
     @Override
     public String toString() {
         return ToStringBuilder.forInstance(this)
-                .append("eventType",  eventType)
+                .append("eventType", eventType)
                 .append("storagePoolId", storagePoolId)
                 .append("domainId", domainId)
                 .append("vdsId", vdsId)

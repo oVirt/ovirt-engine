@@ -122,7 +122,7 @@ public class VmJobDaoTest extends BaseDaoTestCase<VmJobDao> {
         dao.update(job);
 
         // Get the job again
-        VmBlockJob updatedJob =  (VmBlockJob) dao.getAll().stream()
+        VmBlockJob updatedJob = (VmBlockJob) dao.getAll().stream()
                 .filter(j -> j.getId().equals(FixturesTool.EXISTING_VM_BLOCK_JOB))
                 .findFirst().orElse(null);
 

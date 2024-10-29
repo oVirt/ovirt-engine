@@ -64,7 +64,7 @@ public class NetworkAttachmentValidator {
          */
 
         // User did not specify neither id nor name.
-        if (networkId ==null && networkName == null) {
+        if (networkId == null && networkName == null) {
             return new ValidationResult(EngineMessage.NETWORK_ATTACHMENT_NETWORK_ID_OR_NAME_IS_NOT_SET);
         }
 

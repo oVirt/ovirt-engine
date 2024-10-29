@@ -40,7 +40,7 @@ public class DetachStorageConnectionFromStorageDomainCommand<T extends AttachDet
                 || !validate(storageConnectionValidator.isISCSIConnectionAndDomain(getStorageDomain()))) {
             return false;
         }
-        if(!storageConnectionValidator.isConnectionForISCSIDomainAttached(getStorageDomain())) {
+        if (!storageConnectionValidator.isConnectionForISCSIDomainAttached(getStorageDomain())) {
             return failValidation(EngineMessage.ACTION_TYPE_FAILED_STORAGE_CONNECTION_FOR_DOMAIN_NOT_EXIST);
         }
         return true;

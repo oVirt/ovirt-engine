@@ -8,5 +8,5 @@ public interface EntityPollingCommand {
     /**
      * Method to perform job fencing using the command entity (if supported).
      */
-    default void attemptToFenceJob() {}
+    default void attemptToFenceJob() { }
 }

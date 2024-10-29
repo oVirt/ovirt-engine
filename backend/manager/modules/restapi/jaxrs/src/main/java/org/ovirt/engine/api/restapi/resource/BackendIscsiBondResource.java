@@ -16,7 +16,7 @@ public class BackendIscsiBondResource
     extends AbstractBackendActionableResource<IscsiBond, org.ovirt.engine.core.common.businessentities.IscsiBond>
     implements IscsiBondResource {
 
-    public  BackendIscsiBondResource(String id) {
+    public BackendIscsiBondResource(String id) {
         super(id, IscsiBond.class, org.ovirt.engine.core.common.businessentities.IscsiBond.class);
     }
 

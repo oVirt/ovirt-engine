@@ -78,7 +78,7 @@ public class GlusterVolumeGeoRepStatus extends StatusReturn {
         String[] sessSplit = sessionKey.split("([://]+)");
         // Older gluster versions doesn't have slave volume ID in the sessionKey, it is added in Glusterfs 3.7.12
         String slaveNode = sessSplit[2];
-        if(slaveNode.contains("@")) {
+        if (slaveNode.contains("@")) {
             String[] hostComponents = slaveNode.split("@");
             slaveNode = hostComponents[hostComponents.length - 1];
             geoRepSession.setUserName(hostComponents[0]);

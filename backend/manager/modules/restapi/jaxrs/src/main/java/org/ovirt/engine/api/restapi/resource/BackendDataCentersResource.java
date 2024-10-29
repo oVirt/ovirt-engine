@@ -43,7 +43,7 @@ public class BackendDataCentersResource extends
     @Override
     public Response add(DataCenter dataCenter) {
         validateParameters(dataCenter, "name");
-        if(!dataCenter.isSetLocal()) {
+        if (!dataCenter.isSetLocal()) {
             validateParameters(dataCenter, "local");
         }
         StoragePool entity = map(dataCenter);

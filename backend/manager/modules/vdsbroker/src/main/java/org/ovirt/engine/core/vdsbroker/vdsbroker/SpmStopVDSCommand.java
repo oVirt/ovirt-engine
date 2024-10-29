@@ -54,7 +54,7 @@ public class SpmStopVDSCommand<P extends SpmStopVDSCommandParameters> extends Vd
             Map<String, Pair<String, String>> exsluciveLock = Collections.singletonMap(getParameters().getVdsId().toString(), new Pair<>(LockingGroup.VDS_EXECUTION.toString(), EngineMessage.ACTION_TYPE_FAILED_OBJECT_LOCKED.toString()));
             lock = new EngineLock(exsluciveLock, null);
         }
-        return  lock;
+        return lock;
     }
 
     @Override

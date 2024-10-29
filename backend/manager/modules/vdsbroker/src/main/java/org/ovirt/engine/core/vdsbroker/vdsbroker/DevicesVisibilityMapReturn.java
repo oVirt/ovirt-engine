@@ -14,7 +14,7 @@ public class DevicesVisibilityMapReturn extends StatusReturn {
     @SuppressWarnings("unchecked")
     public DevicesVisibilityMapReturn(Map<String, Object> innerMap) {
         super(innerMap);
-        devicesVisibilityResult = (Map<String, String>)innerMap.get(DEVICES_VISIBILITY);
+        devicesVisibilityResult = (Map<String, String>) innerMap.get(DEVICES_VISIBILITY);
     }
 
     public Map<String, String> getDevicesVisibilityResult() {

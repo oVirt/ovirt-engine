@@ -12,7 +12,7 @@ import org.ovirt.engine.ui.frontend.server.dashboard.models.VmStorage;
 
 public class VmDwhDao extends BaseDao {
 
-    private static final String NAME="name"; //$NON-NLS-1$
+    private static final String NAME = "name"; //$NON-NLS-1$
     private static final String TOTAL_VMS = "total_vms"; //$NON-NLS-1$
     private static final String USED_VMS = "used_vms"; //$NON-NLS-1$
     private static final String CPU = "cpu_"; //$NON-NLS-1$

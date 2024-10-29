@@ -242,7 +242,7 @@ public class VdsDaoImpl extends BaseDao implements VdsDao {
                 getCustomMapSqlParameterSource()
                         .addValue("storage_pool_id", storagePool)
                         .addValue("statuses",
-                                statuses == null?
+                                statuses == null ?
                                         null :
                                         statuses.stream()
                                                 .map(VDSStatus::getValue)

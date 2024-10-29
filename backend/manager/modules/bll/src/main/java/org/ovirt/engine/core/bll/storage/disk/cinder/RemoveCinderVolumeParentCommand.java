@@ -149,7 +149,7 @@ public abstract class RemoveCinderVolumeParentCommand<T extends RemoveCinderDisk
                 getParameters().getChildCommandsParameters().get(completedChildCount - 1).getRemovedVolume();
         removeDiskFromDbCallBack(cinderVolume);
 
-        if(getParameters().getChildCommandsParameters().size() == completedChildCount){
+        if (getParameters().getChildCommandsParameters().size() == completedChildCount) {
             return false;
         }
         getParameters().setRemovedVolumeIndex(completedChildCount);

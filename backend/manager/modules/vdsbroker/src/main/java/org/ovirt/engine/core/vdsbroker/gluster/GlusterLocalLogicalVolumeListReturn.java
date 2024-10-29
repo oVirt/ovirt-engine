@@ -21,7 +21,7 @@ public class GlusterLocalLogicalVolumeListReturn extends StatusReturn {
         super(innerMap);
 
         Object[] volumeInfo = (Object[]) innerMap.get(LOGICAL_VOLUME_LIST);
-        for(Object volumeObject : volumeInfo) {
+        for (Object volumeObject : volumeInfo) {
             Map<String, Object> volumeData = (Map<String, Object>) volumeObject;
 
             GlusterLocalLogicalVolume volume = new GlusterLocalLogicalVolume();

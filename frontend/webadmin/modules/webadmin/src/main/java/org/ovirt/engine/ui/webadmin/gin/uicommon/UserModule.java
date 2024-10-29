@@ -202,14 +202,14 @@ public class UserModule extends AbstractGinModule {
         bind(UserMainSelectedItems.class).asEagerSingleton();
 
         // Form Detail Models
-        bind(new TypeLiteral<DetailModelProvider<UserListModel, UserGeneralModel>>(){})
-            .to(new TypeLiteral<DetailTabModelProvider<UserListModel, UserGeneralModel>>(){}).in(Singleton.class);
+        bind(new TypeLiteral<DetailModelProvider<UserListModel, UserGeneralModel>>() { })
+            .to(new TypeLiteral<DetailTabModelProvider<UserListModel, UserGeneralModel>>() { }).in(Singleton.class);
         // Search-able Detail Models
-        bind(new TypeLiteral<SearchableDetailModelProvider<Quota, UserListModel, UserQuotaListModel>>(){})
-           .to(new TypeLiteral<SearchableDetailTabModelProvider<Quota, UserListModel, UserQuotaListModel>>(){})
+        bind(new TypeLiteral<SearchableDetailModelProvider<Quota, UserListModel, UserQuotaListModel>>() { })
+           .to(new TypeLiteral<SearchableDetailTabModelProvider<Quota, UserListModel, UserQuotaListModel>>() { })
            .in(Singleton.class);
-        bind(new TypeLiteral<SearchableDetailModelProvider<UserGroup, UserListModel, UserGroupListModel>>(){})
-           .to(new TypeLiteral<SearchableDetailTabModelProvider<UserGroup, UserListModel, UserGroupListModel>>(){})
+        bind(new TypeLiteral<SearchableDetailModelProvider<UserGroup, UserListModel, UserGroupListModel>>() { })
+           .to(new TypeLiteral<SearchableDetailTabModelProvider<UserGroup, UserListModel, UserGroupListModel>>() { })
            .in(Singleton.class);
     }
 

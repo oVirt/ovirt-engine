@@ -78,15 +78,15 @@ public class ExtensionsToolExecutor {
 
             log.debug("Version: {}-{} ({})", PACKAGE_NAME, PACKAGE_VERSION, PACKAGE_DISPLAY_NAME);
 
-            if((Boolean)argMap.get("help")) {
+            if ((Boolean) argMap.get("help")) {
                 System.out.format("Usage: %s", parser.getUsage());
                 throw new ExitException("Help", 0);
-            } else if((Boolean)argMap.get("version")) {
+            } else if ((Boolean) argMap.get("version")) {
                 System.out.format("%s-%s (%s)%n", PACKAGE_NAME, PACKAGE_VERSION, PACKAGE_DISPLAY_NAME);
                 throw new ExitException("Version", 0);
             }
-            if(!parser.getErrors().isEmpty()) {
-                for(Throwable t : parser.getErrors()) {
+            if (!parser.getErrors().isEmpty()) {
+                for (Throwable t : parser.getErrors()) {
                     log.error(t.getMessage());
                     log.debug(t.getMessage(), t);
                 }
@@ -120,7 +120,7 @@ public class ExtensionsToolExecutor {
             log.info("========================================================================");
             moduleService.run();
             exitStatus = 0;
-        } catch(ExitException e) {
+        } catch (ExitException e) {
             log.debug(e.getMessage(), e);
             exitStatus = e.getExitCode();
         } catch (Throwable t) {
@@ -168,7 +168,7 @@ public class ExtensionsToolExecutor {
                 principalName = String.format("principal=\"%s\"", AAA_JAAS_PRINCIPAL_NAME);
             }
 
-            String debug= "";
+            String debug = "";
             if (StringUtils.isNotEmpty(AAA_JAAS_ENABLE_DEBUG)) {
                 debug = String.format("debug=\"%s\"", AAA_JAAS_ENABLE_DEBUG);
             }
@@ -207,8 +207,8 @@ public class ExtensionsToolExecutor {
         ModuleService moduleService,
         Map<String, Object> argMap
     ) {
-        List<File> files = (List<File>)argMap.get("extension-file");
-        if(files == null) {
+        List<File> files = (List<File>) argMap.get("extension-file");
+        if (files == null) {
             files = listFiles(
                 (String) argMap.get("extensions-dir"),
                 "properties"
@@ -216,7 +216,7 @@ public class ExtensionsToolExecutor {
         }
 
         List<String> loadedExtensions = new LinkedList<>();
-        for(File f : files) {
+        for (File f : files) {
             log.debug("Loading extension file '{}'", f.getName());
             try {
                 String name = extensionsManager.load(f);
@@ -231,7 +231,7 @@ public class ExtensionsToolExecutor {
             }
         }
 
-        for(String extension : loadedExtensions) {
+        for (String extension : loadedExtensions) {
             try {
                 extensionsManager.initialize(extension);
                 log.debug("Extension '{}' initialized", extension);
@@ -245,7 +245,7 @@ public class ExtensionsToolExecutor {
 
     private static Map<String, ModuleService> loadModules(Class cls) {
         Map<String, ModuleService> modules = new HashMap<>();
-        if(cls != null) {
+        if (cls != null) {
             ServiceLoader<ModuleService> loader = ServiceLoader.load(cls);
             for (ModuleService module : loader) {
                 modules.put(module.getName(), module);
@@ -266,14 +266,14 @@ public class ExtensionsToolExecutor {
 
     private static void setupLogger(Map<String, Object> args) throws IOException {
         Logger log = Logger.getLogger("");
-        String logfile = (String)args.get("log-file");
-        if(logfile != null) {
+        String logfile = (String) args.get("log-file");
+        if (logfile != null) {
             FileHandler fh = new FileHandler(logfile, true);
             fh.setFormatter(new SimpleFormatter());
             log.addHandler(fh);
         }
 
-        OVIRT_LOGGER.setLevel((Level)args.get("log-level"));
+        OVIRT_LOGGER.setLevel((Level) args.get("log-level"));
     }
 
     private static List<File> listFiles(String directory, String suffix) {
@@ -293,7 +293,7 @@ public class ExtensionsToolExecutor {
 
     private static String getModules(Map<String, ModuleService> modules) {
         StringBuilder sb = new StringBuilder();
-        for(Map.Entry<String, ModuleService> entry : new TreeMap<>(modules).entrySet()) {
+        for (Map.Entry<String, ModuleService> entry : new TreeMap<>(modules).entrySet()) {
             sb.append(
                 String.format("  %-10s - %s%n", entry.getKey(), entry.getValue().getDescription())
             );

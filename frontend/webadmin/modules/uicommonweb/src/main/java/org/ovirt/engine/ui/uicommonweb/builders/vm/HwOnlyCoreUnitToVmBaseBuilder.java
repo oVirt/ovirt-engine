@@ -32,7 +32,7 @@ public class HwOnlyCoreUnitToVmBaseBuilder<T extends VmBase> extends CompositeSy
         vm.setCustomEmulatedMachine(model.getEmulatedMachine().getSelectedItem());
         vm.setCustomCpuName(model.getCustomCpu().getSelectedItem());
         // Console
-        if(model.getIsHeadlessModeEnabled().getEntity()) {
+        if (model.getIsHeadlessModeEnabled().getEntity()) {
             vm.setDefaultDisplayType(DisplayType.none);
         } else {
             vm.setDefaultDisplayType(model.getDisplayType().getSelectedItem());

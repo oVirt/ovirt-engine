@@ -16,7 +16,7 @@ import org.ovirt.engine.core.compat.Guid;
  * This resource corresponds to the permissions assigned to the system object.
  */
 public class BackendSystemPermissionsResource extends BackendAssignedPermissionsResource
-    implements SystemPermissionsResource{
+    implements SystemPermissionsResource {
 
     public BackendSystemPermissionsResource() {
         super(

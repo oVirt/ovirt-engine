@@ -114,7 +114,7 @@ public class CreateBrickModel extends Model {
     }
 
     private String getSizeString(Pair<SizeUnit, Double> size) {
-        return formatSize(size.getSecond()) + " " + size.getFirst().toString();//$NON-NLS-1$
+        return formatSize(size.getSecond()) + " " + size.getFirst().toString(); //$NON-NLS-1$
     }
 
     public ListModel<StorageDevice> getStorageDevices() {
@@ -196,7 +196,7 @@ public class CreateBrickModel extends Model {
     }
 
     public String formatSize(double size) {
-        return NumberFormat.getFormat("#.##").format(size);//$NON-NLS-1$
+        return NumberFormat.getFormat("#.##").format(size); //$NON-NLS-1$
     }
 
     public EntityModel<Integer> getStripeSize() {

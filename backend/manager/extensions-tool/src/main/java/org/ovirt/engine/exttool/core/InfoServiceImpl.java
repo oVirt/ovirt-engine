@@ -39,19 +39,19 @@ public class InfoServiceImpl implements ModuleService {
     private enum Action {
         CONFIGURATION(
             module -> {
-                ExtensionProxy extension = module.getExtensionsManager().getExtensionByName((String)module.argMap.get("extension-name"));
+                ExtensionProxy extension = module.getExtensionsManager().getExtensionByName((String) module.argMap.get("extension-name"));
                 Collection<?> sensitive = extension.getContext().get(Base.ContextKeys.CONFIGURATION_SENSITIVE_KEYS);
 
 
                 Map<Object, Object> config = extension.getContext().<Properties>get(Base.ContextKeys.CONFIGURATION);
                 Collection<Object> keys = new HashSet<>(config.keySet());
                 if (module.argMap.get("key") != null) {
-                    keys.retainAll((List<String>)module.argMap.get("key"));
+                    keys.retainAll((List<String>) module.argMap.get("key"));
                 }
 
                 for (Object key : keys) {
                     module.output(
-                        ((String)module.argMap.get("format")).replace(
+                        ((String) module.argMap.get("format")).replace(
                             "{key}",
                             String.format("%s", key)
                         ).replace(
@@ -65,11 +65,11 @@ public class InfoServiceImpl implements ModuleService {
         ),
         CONTEXT(
             module -> {
-                ExtensionProxy extension = module.getExtensionsManager().getExtensionByName((String)module.argMap.get("extension-name"));
+                ExtensionProxy extension = module.getExtensionsManager().getExtensionByName((String) module.argMap.get("extension-name"));
                 Collection<ExtKey> keys = new HashSet<>(extension.getContext().keySet());
                 if (module.argMap.get("key") != null) {
                     Collection<ExtKey> k = new HashSet<>();
-                    for (String uuid : (List<String>)module.argMap.get("key")) {
+                    for (String uuid : (List<String>) module.argMap.get("key")) {
                         k.add(new ExtKey("Unknown", Object.class, uuid));
                     }
                     keys.retainAll(k);
@@ -83,7 +83,7 @@ public class InfoServiceImpl implements ModuleService {
                     }
 
                     module.output(
-                        ((String)module.argMap.get("format")).replace(
+                        ((String) module.argMap.get("format")).replace(
                             "{key}",
                             key.getUuid().getUuid().toString()
                         ).replace(
@@ -103,7 +103,7 @@ public class InfoServiceImpl implements ModuleService {
                 for (ExtensionProxy extension : module.getExtensionsManager().getExtensions()) {
                     ExtMap extContext = extension.getContext();
                     module.output(
-                        ((String)module.argMap.get("format")).replace(
+                        ((String) module.argMap.get("format")).replace(
                             "{instance}",
                             extContext.<String>get(Base.ContextKeys.INSTANCE_NAME, "")
                         ).replace(
@@ -137,12 +137,12 @@ public class InfoServiceImpl implements ModuleService {
             parser.parse(actionArgs);
             Map<String, Object> argMap = parser.getParsedArgs();
 
-            if((Boolean)argMap.get("help")) {
+            if ((Boolean) argMap.get("help")) {
                 System.out.format("Usage: %s", parser.getUsage());
                 throw new ExitException("Help", 0);
             }
-            if(!parser.getErrors().isEmpty()) {
-                for(Throwable t : parser.getErrors()) {
+            if (!parser.getErrors().isEmpty()) {
+                for (Throwable t : parser.getErrors()) {
                     log.error(t.getMessage());
                 }
                 throw new ExitException("Parsing error", 1);
@@ -166,7 +166,7 @@ public class InfoServiceImpl implements ModuleService {
     private Map<String, Object> argMap;
 
     private ExtensionsManager getExtensionsManager() {
-        return (ExtensionsManager)context.get(ContextKeys.EXTENSION_MANAGER);
+        return (ExtensionsManager) context.get(ContextKeys.EXTENSION_MANAGER);
     }
 
     private void output(String s, String logIndent) {
@@ -214,12 +214,12 @@ public class InfoServiceImpl implements ModuleService {
         parser.parse(args);
         argModuleMap = parser.getParsedArgs();
 
-        if((Boolean)argModuleMap.get("help")) {
+        if ((Boolean) argModuleMap.get("help")) {
             System.out.format("Usage: %s", parser.getUsage());
             throw new ExitException("Help", 0);
         }
-        if(!parser.getErrors().isEmpty()) {
-            for(Throwable t : parser.getErrors()) {
+        if (!parser.getErrors().isEmpty()) {
+            for (Throwable t : parser.getErrors()) {
                 log.error(t.getMessage());
             }
             throw new ExitException("Parsing error", 1);
@@ -232,7 +232,7 @@ public class InfoServiceImpl implements ModuleService {
 
         try {
             action = Action.valueOf(args.get(0).toUpperCase().replace("-", "_"));
-        } catch(IllegalArgumentException e) {
+        } catch (IllegalArgumentException e) {
             log.error("Invalid action '{}'", args.get(0));
             throw new ExitException("Invalid action", 1);
         }

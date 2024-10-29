@@ -155,7 +155,7 @@ public class VolumeGeneralModel extends EntityModel<GlusterVolumeEntity> {
         setNumOfBricks(entity.getBricks() != null ? Integer.toString(entity.getBricks().size()) : null);
         setTransportTypes(entity.getTransportTypes());
         setSnapMaxLimit(entity.getSnapMaxLimit() != null ? entity.getSnapMaxLimit().toString() : null);
-        if(entity.getAdvancedDetails() != null && entity.getAdvancedDetails().getCapacityInfo() != null) {
+        if (entity.getAdvancedDetails() != null && entity.getAdvancedDetails().getCapacityInfo() != null) {
             setVolumeFreeCapacity(entity.getAdvancedDetails().getCapacityInfo().getFreeSize());
             setVolumeTotalCapacity(entity.getAdvancedDetails().getCapacityInfo().getTotalSize());
             setVolumeUsedCapacity(entity.getAdvancedDetails().getCapacityInfo().getUsedSize());

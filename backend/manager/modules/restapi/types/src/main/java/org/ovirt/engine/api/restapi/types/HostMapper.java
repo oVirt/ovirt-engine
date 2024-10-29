@@ -259,16 +259,16 @@ public class HostMapper {
             model.getIscsi().setInitiator(entity.getIScsiInitiatorName());
         }
         model.setPowerManagement(map(entity, (PowerManagement) null));
-        model.setHardwareInformation(map(entity, (HardwareInformation)null));
+        model.setHardwareInformation(map(entity, (HardwareInformation) null));
         model.setSsh(map(entity.getStaticData(), null));
         Cpu cpu = new Cpu();
         CpuTopology cpuTopology = new CpuTopology();
         if (entity.getCpuSockets() != null) {
             cpuTopology.setSockets(entity.getCpuSockets());
-            if (entity.getCpuCores()!=null) {
-                cpuTopology.setCores(entity.getCpuCores()/entity.getCpuSockets());
+            if (entity.getCpuCores() != null) {
+                cpuTopology.setCores(entity.getCpuCores() / entity.getCpuSockets());
                 if (entity.getCpuThreads() != null) {
-                    cpuTopology.setThreads(entity.getCpuThreads()/entity.getCpuCores());
+                    cpuTopology.setThreads(entity.getCpuThreads() / entity.getCpuCores());
                 }
             }
         }
@@ -277,7 +277,7 @@ public class HostMapper {
         if (entity.getCpuName() != null) {
             cpu.setType(entity.getCpuName().getCpuName());
         }
-        if (entity.getCpuSpeedMh()!=null) {
+        if (entity.getCpuSpeedMh() != null) {
             cpu.setSpeed(new BigDecimal(entity.getCpuSpeedMh()));
         }
         model.setCpu(cpu);
@@ -333,7 +333,7 @@ public class HostMapper {
         }
         devicePassthrough.setEnabled(entity.isHostDevicePassthroughEnabled());
 
-        if(entity.getHostName() != null) {
+        if (entity.getHostName() != null) {
             String subject = CertificateSubjectHelper.getCertificateSubject(entity.getHostName());
             model.setCertificate(new Certificate());
             model.getCertificate().setSubject(subject);
@@ -549,7 +549,7 @@ public class HostMapper {
             if (action.getSsh().isSetFingerprint()) {
                 params.getvds().setSshKeyFingerprint(action.getSsh().getFingerprint());
             }
-            if (action.getSsh().isSetPublicKey()){
+            if (action.getSsh().isSetPublicKey()) {
                 params.getvds().setSshPublicKey(action.getSsh().getPublicKey());
             }
             if (action.getSsh().isSetAuthenticationMethod()) {
@@ -585,7 +585,7 @@ public class HostMapper {
             if (host.getSsh().isSetFingerprint()) {
                 params.getvds().setSshKeyFingerprint(host.getSsh().getFingerprint());
             }
-            if (host.getSsh().isSetPublicKey()){
+            if (host.getSsh().isSetPublicKey()) {
                 params.getvds().setSshPublicKey(host.getSsh().getPublicKey());
             }
 

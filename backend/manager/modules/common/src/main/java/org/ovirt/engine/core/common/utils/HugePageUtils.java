@@ -33,7 +33,7 @@ public class HugePageUtils {
         }
 
         // Make sure we do not overflow when big memory VM is used
-        int fullPages = (int)((KIB_IN_MIB * vm.getMemSizeMb() + hugePageSize.get() - 1) / hugePageSize.get());
+        int fullPages = (int) ((KIB_IN_MIB * vm.getMemSizeMb() + hugePageSize.get() - 1) / hugePageSize.get());
         return Collections.singletonMap(hugePageSize.get(), fullPages);
     }
 
@@ -89,7 +89,7 @@ public class HugePageUtils {
                 .mapToLong(entry -> entry.getKey() * entry.getValue())
                 .sum();
 
-        return (int)((hugePageMemKb + KIB_IN_MIB - 1) / KIB_IN_MIB);
+        return (int) ((hugePageMemKb + KIB_IN_MIB - 1) / KIB_IN_MIB);
     }
 
     public static int totalHugePageMemMb(VDS vds) {
@@ -101,7 +101,7 @@ public class HugePageUtils {
                 .mapToLong(hugePage -> hugePage.getTotal() * hugePage.getSizeKB())
                 .sum();
 
-        return (int)((hugePageMemKb + KIB_IN_MIB - 1) / KIB_IN_MIB);
+        return (int) ((hugePageMemKb + KIB_IN_MIB - 1) / KIB_IN_MIB);
     }
 
     public static int totalHugePageFreeMemMb(VDS vds) {
@@ -113,7 +113,7 @@ public class HugePageUtils {
                 .mapToLong(hugePage -> hugePage.getFree() * hugePage.getSizeKB())
                 .sum();
 
-        return (int)((hugePageMemKb + KIB_IN_MIB - 1) / KIB_IN_MIB);
+        return (int) ((hugePageMemKb + KIB_IN_MIB - 1) / KIB_IN_MIB);
     }
 
     public static void updateHugePages(List<HugePage> hugePages, Integer sizeKb, Integer amount) {

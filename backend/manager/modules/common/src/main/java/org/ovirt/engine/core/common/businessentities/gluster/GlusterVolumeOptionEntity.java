@@ -18,7 +18,7 @@ import org.ovirt.engine.core.compat.Guid;
  *
  * @see GlusterVolumeEntity
  */
-public class GlusterVolumeOptionEntity implements Queryable, BusinessEntity<Guid>, Comparable<GlusterVolumeOptionEntity>{
+public class GlusterVolumeOptionEntity implements Queryable, BusinessEntity<Guid>, Comparable<GlusterVolumeOptionEntity> {
     private static final long serialVersionUID = 5770623263518245638L;
 
     @NotNull(message = "VALIDATION_GLUSTER_OPTION_ID_NOT_NULL", groups = RemoveEntity.class)
@@ -104,7 +104,7 @@ public class GlusterVolumeOptionEntity implements Queryable, BusinessEntity<Guid
      */
     @Override
     public Guid getId() {
-        if(id == null) {
+        if (id == null) {
             id = Guid.newGuid();
         }
         return id;

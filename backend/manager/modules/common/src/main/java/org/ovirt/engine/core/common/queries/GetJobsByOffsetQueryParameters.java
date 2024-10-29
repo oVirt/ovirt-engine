@@ -1,7 +1,7 @@
 package org.ovirt.engine.core.common.queries;
 
 
-public class GetJobsByOffsetQueryParameters  extends QueryParametersBase {
+public class GetJobsByOffsetQueryParameters extends QueryParametersBase {
 
     private static final long serialVersionUID = -536423247558047939L;
 

@@ -16,7 +16,7 @@ public @interface ThreadPools {
         CoCo,
         HostUpdatesChecker,
         EngineScheduledThreadPool,
-        EngineThreadMonitoringThreadPool}
+        EngineThreadMonitoringThreadPool }
 
     ThreadPoolType value();
 }

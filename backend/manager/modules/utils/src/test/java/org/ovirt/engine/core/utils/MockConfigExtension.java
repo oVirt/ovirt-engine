@@ -41,7 +41,7 @@ public class MockConfigExtension implements BeforeEachCallback, AfterEachCallbac
         origConfUtils = Config.getConfigUtils();
         Config.setConfigUtils(mockConfigUtils);
 
-        String configDescriptorMethodName =  findAnnotation(extensionContext.getElement(), MockedConfig.class)
+        String configDescriptorMethodName = findAnnotation(extensionContext.getElement(), MockedConfig.class)
                 .map(MockedConfig::value)
                 .orElse(MockedConfig.DEFAULT_METHOD_NAME);
 

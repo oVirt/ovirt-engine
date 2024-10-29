@@ -55,7 +55,7 @@ public class BackendOpenStackNetworkProvidersResource
             );
         } else {
             List<Provider> openstackCollection = getBackendCollection(SearchType.Provider, getConstraint(ProviderType.OPENSTACK_NETWORK.name()));
-            List<Provider> externalCollection =  getBackendCollection(SearchType.Provider, getConstraint(ProviderType.EXTERNAL_NETWORK.name()));
+            List<Provider> externalCollection = getBackendCollection(SearchType.Provider, getConstraint(ProviderType.EXTERNAL_NETWORK.name()));
             openstackCollection.addAll(externalCollection);
             return openstackCollection;
         }

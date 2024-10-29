@@ -187,7 +187,7 @@ public class RsdlBuilder {
             return this;
         }
         public LinkBuilder httpMethod(HttpMethod httpMethod) {
-            if(!link.isSetRequest()) {
+            if (!link.isSetRequest()) {
                 link.setRequest(new Request());
             }
             link.getRequest().setHttpMethod(httpMethod);
@@ -222,13 +222,13 @@ public class RsdlBuilder {
 
     private String getPath(Method method) {
         Path pathAnnotation = method.getAnnotation(Path.class);
-        return pathAnnotation==null ? null : pathAnnotation.value();
+        return pathAnnotation == null ? null : pathAnnotation.value();
     }
 
     public List<DetailedLink> describe(Class<?> resource, String prefix, Map<String, Type> parametersMap) throws ClassNotFoundException {
         //SortedSet<Link> results = new TreeSet<Link>();
         List<DetailedLink> results = new ArrayList<>();
-        if (resource!=null) {
+        if (resource != null) {
             for (Method m : resource.getMethods()) {
                 if (isConcreteReturnType(m, resource)) {
                     handleMethod(prefix, results, m, resource, parametersMap);
@@ -251,10 +251,10 @@ public class RsdlBuilder {
     }
 
     private boolean parameterTypesEqual(Class<?>[] types1, Class<?>[] types2) {
-        if (types1.length!=types2.length) {
+        if (types1.length != types2.length) {
             return false;
         } else {
-            for (int i=0; i<types1.length; i++) {
+            for (int i = 0; i < types1.length; i++) {
                 if (!(types1[i].isAssignableFrom(types2[i]) || types2[i].isAssignableFrom(types1[i]))) {
                     return false;
                 }
@@ -264,7 +264,7 @@ public class RsdlBuilder {
     }
 
     private void addToGenericParamsMap (Class<?> resource, Type[] paramTypes, Type[] genericParamTypes, Map<String, Type> parametersMap) {
-        for (int i=0; i<genericParamTypes.length; i++) {
+        for (int i = 0; i < genericParamTypes.length; i++) {
             if (paramTypes[i].toString().length() == 1) {
                 //if the parameter type is generic - don't add to map, as it might override a more meaningful value:
                 //for example, without this check we could replace <"R", "Template"> with <"R", "R">, and lose information.
@@ -308,7 +308,7 @@ public class RsdlBuilder {
                         path = "{" + getSingleForm(prefix) + ":id}";
                     }
                     if (m.getGenericReturnType() instanceof ParameterizedType) {
-                        ParameterizedType parameterizedType = (ParameterizedType)m.getGenericReturnType();
+                        ParameterizedType parameterizedType = (ParameterizedType) m.getGenericReturnType();
                         addToGenericParamsMap(resource, parameterizedType.getActualTypeArguments(), m.getReturnType().getTypeParameters(), parametersMap);
                     }
                     results.addAll(describe(concreteReturnType, prefix + "/" + path, new HashMap<>(parametersMap)));
@@ -527,7 +527,7 @@ public class RsdlBuilder {
     private void handleCollection(Entry<Object, Object> mandatoryKeyValuePair, boolean required, Parameter param) {
         param.setType(COLLECTION_PARAMETER_RSDL);
         @SuppressWarnings("unchecked")
-        Map<Object, Object> listParams = (Map<Object, Object>)mandatoryKeyValuePair.getValue();
+        Map<Object, Object> listParams = (Map<Object, Object>) mandatoryKeyValuePair.getValue();
         param.setParametersSet(new ParametersSet());
         for (Entry<Object, Object> listParamData : listParams.entrySet()) {
             Parameter listParam = createBodyParam(listParamData, required);
@@ -547,7 +547,7 @@ public class RsdlBuilder {
         // Add the parameters that are specified in the metadata:
         if (action.getRequest().getHeaders() != null && !action.getRequest().getHeaders().isEmpty()) {
             link.getRequest().setHeaders(new Headers());
-            for (Object key :  action.getRequest().getHeaders().keySet()) {
+            for (Object key : action.getRequest().getHeaders().keySet()) {
                 Header header = new Header();
                 header.setName(key.toString());
                 Object value = action.getRequest().getHeaders().get(key);
@@ -649,16 +649,16 @@ public class RsdlBuilder {
         if (action.getRequest().getUrlparams() != null && !action.getRequest().getUrlparams().isEmpty()) {
             link.getRequest().setUrl(new Url());
             ParametersSet ps = new ParametersSet();
-        for (Object key :  action.getRequest().getUrlparams().keySet()) {
+        for (Object key : action.getRequest().getUrlparams().keySet()) {
                 Parameter param = new Parameter();
                 param.setName(key.toString());
                 Object value = action.getRequest().getUrlparams().get(key);
                 if (value != null) {
-                    ParamData urlParamData = (ParamData)value;
+                    ParamData urlParamData = (ParamData) value;
                     param.setType(urlParamData.getType());
                     param.setContext(urlParamData.getContext());
                     param.setValue(urlParamData.getValue());
-                    param.setRequired(urlParamData.getRequired()==null ? Boolean.FALSE : urlParamData.getRequired());
+                    param.setRequired(urlParamData.getRequired() == null ? Boolean.FALSE : urlParamData.getRequired());
                     param.setDeprecated(urlParamData.getDeprecated());
                 }
                 ps.getParameters().add(param);
@@ -698,17 +698,17 @@ public class RsdlBuilder {
      */
     private String getReturnTypeStr(Class<?> returnValue) {
         int lastIndexOf = returnValue.getSimpleName().lastIndexOf(".");
-        String entityType = lastIndexOf==-1 ? returnValue.getSimpleName() : returnValue.getSimpleName().substring(lastIndexOf);
+        String entityType = lastIndexOf == -1 ? returnValue.getSimpleName() : returnValue.getSimpleName().substring(lastIndexOf);
         return entityType;
     }
 
     private Class<?> findConcreteType(Type generic, Class<?> resource, Map<String, Type> parametersMap) throws ClassNotFoundException {
         for (Type superInterface : resource.getGenericInterfaces()) {
             if (superInterface instanceof ParameterizedType) {
-                ParameterizedType p = (ParameterizedType)superInterface;
-                Class<?> clazz = Class.forName(p.getRawType().toString().substring(p.getRawType().toString().lastIndexOf(' ')+1));
+                ParameterizedType p = (ParameterizedType) superInterface;
+                Class<?> clazz = Class.forName(p.getRawType().toString().substring(p.getRawType().toString().lastIndexOf(' ') + 1));
                 Map<String, Type> map = new HashMap<>();
-                for (int i=0; i<p.getActualTypeArguments().length; i++) {
+                for (int i = 0; i < p.getActualTypeArguments().length; i++) {
                     if (!map.containsKey(clazz.getTypeParameters()[i].toString())) {
                         map.put(clazz.getTypeParameters()[i].toString(), p.getActualTypeArguments()[i]);
                     }
@@ -716,7 +716,7 @@ public class RsdlBuilder {
                 if (map.containsKey(generic.toString())) {
                     String type = map.get(generic.toString()).toString();
                     try {
-                        Class<?> returnClass = Class.forName(type.substring(type.lastIndexOf(' ')+1));
+                        Class<?> returnClass = Class.forName(type.substring(type.lastIndexOf(' ') + 1));
                         return returnClass;
                     } catch (ClassNotFoundException e) {
                         break;
@@ -727,7 +727,7 @@ public class RsdlBuilder {
         if (parametersMap.containsKey(generic.toString())) {
             try {
                 Type type = parametersMap.get(generic.toString());
-                Class<?> returnClass = Class.forName(type.toString().substring(type.toString().indexOf(' ') +1));
+                Class<?> returnClass = Class.forName(type.toString().substring(type.toString().indexOf(' ') + 1));
                 return returnClass;
             } catch (ClassNotFoundException e) {
                 return null;
@@ -739,8 +739,8 @@ public class RsdlBuilder {
 
     private boolean isSingleEntityResource(Method m) {
         Annotation[][] parameterAnnotations = m.getParameterAnnotations();
-        for (int i=0; i<parameterAnnotations.length; i++) {
-            for (int j=0; j<parameterAnnotations[j].length; j++) {
+        for (int i = 0; i < parameterAnnotations.length; i++) {
+            for (int j = 0; j < parameterAnnotations[j].length; j++) {
                 if (parameterAnnotations[i][j].annotationType().equals(PathParam.class)) {
                     return true;
                 }
@@ -764,7 +764,7 @@ public class RsdlBuilder {
     //for "{api}/hosts/{host:id}/nics" return "nic"
     //but for "{api}/hosts/{host:id}/storage" return "storage" (don't truncate last character)
     private String getSingleForm(String prefix) {
-        int startIndex = prefix.lastIndexOf('/')+1;
+        int startIndex = prefix.lastIndexOf('/') + 1;
         prefix = prefix.substring(startIndex);
         if (prefix.endsWith("ies")) {
             return prefix.replaceAll("ies$", "y");
@@ -794,7 +794,7 @@ public class RsdlBuilder {
             if (linksMap.containsKey(linkId)) {
               //duplicate found, determine which of the two should be deleted
                 DetailedLink linkToDelete = decideWhichToDelete(linksMap.get(linkId), link);
-                if (linkToDelete!=null) {
+                if (linkToDelete != null) {
                     linksToDelete.add(linkToDelete);
                 }
             } else {
@@ -815,10 +815,10 @@ public class RsdlBuilder {
                 && Boolean.FALSE.equals(link1.getRequest().getBody().isRequired())
                 && Boolean.FALSE.equals(link2.getRequest().getBody().isRequired())
            ) {
-            if (link1ParamType!=null && link2ParamType==null) {
+            if (link1ParamType != null && link2ParamType == null) {
                 return link2;
             }
-            if (link1ParamType==null && link2ParamType!=null) {
+            if (link1ParamType == null && link2ParamType != null) {
                 return link1;
             }
         }

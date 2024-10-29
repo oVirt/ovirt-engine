@@ -44,7 +44,7 @@ public class SystemPermissionView extends Composite {
     private static final ApplicationConstants constants = AssetProvider.getConstants();
 
     @Inject
-    public SystemPermissionView(EventBus eventBus,  ClientStorage clientStorage,
+    public SystemPermissionView(EventBus eventBus, ClientStorage clientStorage,
             SystemPermissionModelProvider modelProvider,
             SystemPermissionActionPanelPresenterWidget actionPanel) {
         super();

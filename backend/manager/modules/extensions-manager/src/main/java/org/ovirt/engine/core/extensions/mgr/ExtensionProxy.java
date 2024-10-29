@@ -73,7 +73,7 @@ public class ExtensionProxy implements Extension {
         invoke(input, output);
 
         String message = output.get(Base.InvokeKeys.MESSAGE);
-        switch(output.<Integer>get(Base.InvokeKeys.RESULT, Base.InvokeResult.FAILED)) {
+        switch (output.<Integer>get(Base.InvokeKeys.RESULT, Base.InvokeResult.FAILED)) {
         case Base.InvokeResult.SUCCESS:
             break;
         case Base.InvokeResult.UNSUPPORTED:

@@ -28,7 +28,7 @@ public class BackendStorageDomainVmsResourceTest
                                                   BackendStorageDomainVmsResource> {
 
     private static final Guid DATA_CENTER_ID = GUIDS[0];
-    private static final Guid STORAGE_DOMAIN_ID = GUIDS[GUIDS.length-1];
+    private static final Guid STORAGE_DOMAIN_ID = GUIDS[GUIDS.length - 1];
 
     public BackendStorageDomainVmsResourceTest() {
         super(new BackendStorageDomainVmsResource(STORAGE_DOMAIN_ID), null, null);
@@ -136,7 +136,7 @@ public class BackendStorageDomainVmsResourceTest
     }
 
     private void setUpGetDataCenterByStorageDomainExpectations(Guid id, int times) {
-        while (times-->0) {
+        while (times-- > 0) {
             setUpEntityQueryExpectations(QueryType.GetStoragePoolsByStorageDomainId,
                     IdQueryParameters.class,
                     new String[] { "Id" },

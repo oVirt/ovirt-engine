@@ -398,7 +398,7 @@ public class UserListModel extends ListWithSimpleDetailsModel<Void, DbUser> impl
             }
         }
 
-        if(selectedItems.isEmpty()){
+        if (selectedItems.isEmpty()) {
             model.setIsValid(false);
             model.setMessage(ConstantsManager.getInstance().getConstants().selectUserOrGroup());
             return;

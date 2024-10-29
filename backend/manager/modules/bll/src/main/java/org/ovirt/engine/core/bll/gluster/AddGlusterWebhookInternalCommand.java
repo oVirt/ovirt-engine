@@ -61,7 +61,7 @@ public class AddGlusterWebhookInternalCommand<T extends VdsActionParameters> ext
         VDSReturnValue returnValue = runVdsCommand(VDSCommandType.AddGlusterWebhook,
                                         new GlusterWebhookVDSParameters(upServer.getId(), webhookUrl, null));
         setSucceeded(returnValue.getSucceeded());
-        if(!getSucceeded()) {
+        if (!getSucceeded()) {
             handleVdsError(AuditLogType.GLUSTER_WEBHOOK_ADD_FAILED, returnValue.getVdsError().getMessage());
             return;
         }
@@ -77,7 +77,7 @@ public class AddGlusterWebhookInternalCommand<T extends VdsActionParameters> ext
                 servletUrl = config.getExternalHttpUrl(WEBHOOK_SERVLET_PATH);
             }
             return servletUrl.toExternalForm();
-        } catch(MalformedURLException exception) {
+        } catch (MalformedURLException exception) {
             log.debug("Failed to get engine webhook url", exception);
             return null;
         }

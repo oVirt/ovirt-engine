@@ -55,7 +55,7 @@ public class UnassignedVNumaNodesPanelPresenterWidget extends
         getView().clear();
         Collection<VNodeModel> unassignedNodeList = model.getUnassignedNumaNodes();
         Map<VM, List<VNodeModel>> vmToNodeMap = new HashMap<>();
-        for(VM currentVM: this.model.getVmsWithvNumaNodeList()) {
+        for (VM currentVM: this.model.getVmsWithvNumaNodeList()) {
             List<VNodeModel> nodeModelList = new ArrayList<>();
             vmToNodeMap.put(currentVM, nodeModelList);
         }
@@ -64,7 +64,7 @@ public class UnassignedVNumaNodesPanelPresenterWidget extends
             List<VNodeModel> nodeModels = vmToNodeMap.get(currentVM);
             nodeModels.add(vNodeModel);
         }
-        for(Map.Entry<VM, List<VNodeModel>> entry: vmToNodeMap.entrySet()) {
+        for (Map.Entry<VM, List<VNodeModel>> entry: vmToNodeMap.entrySet()) {
             CollapsiblePanelPresenterWidget nodePanelPresenter = collapisblePanelProvider.get();
             addToSlot(TYPE_RevealUnassignedPanels, nodePanelPresenter);
             nodePanelPresenter.getView().setTitleWidget(getView().getNodePanelTitle(entry.getKey(), entry.getValue()));

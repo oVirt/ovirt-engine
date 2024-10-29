@@ -154,8 +154,8 @@ public class InstallVdsInternalCommand<T extends InstallVdsParameters> extends V
 
             runAnsibleHostDeployPlaybook();
             List<VDS> hostlist = vdsDao.getAllForCluster(getClusterId());
-            hostlist =  getOnlyActiveHosts(hostlist);
-            if(getVds().getClusterSupportsGlusterService() && getParameters().getReplaceHostConfiguration()!=null && getParameters().
+            hostlist = getOnlyActiveHosts(hostlist);
+            if (getVds().getClusterSupportsGlusterService() && getParameters().getReplaceHostConfiguration() != null && getParameters().
                     getReplaceHostConfiguration().getDeployAction() != ReplaceHostConfiguration.Action.NONE && hostlist.size() >= 2) {
 
                 String firstGlusterClusterNode = hostlist.get(0).getName();
@@ -167,14 +167,14 @@ public class InstallVdsInternalCommand<T extends InstallVdsParameters> extends V
                 Map<VDS, String> map = glusterUtil.getGlusterIpaddressAsMap(stringNetworkMap,
                         getVds(), hostlist);
 
-                if(map != null){
+                if (map != null) {
 
                     oldGlusterClusterNode = map.get(getVds());
                     firstGlusterClusterNode = map.get(hostlist.get(0));
                     secondGlusterClusterNode = map.get(hostlist.get(1));
                 }
 
-                if(getParameters().getReplaceHostConfiguration().getDeployAction() == ReplaceHostConfiguration.Action.DIFFERENTFQDN) {
+                if (getParameters().getReplaceHostConfiguration().getDeployAction() == ReplaceHostConfiguration.Action.DIFFERENTFQDN) {
 
                     newGlusterClusterNode = getParameters().getFqdnBox(); //put the editor value here
 
@@ -186,12 +186,12 @@ public class InstallVdsInternalCommand<T extends InstallVdsParameters> extends V
                 runAnsibleReconfigureGluster(oldGlusterClusterNode, firstGlusterClusterNode,
                     secondGlusterClusterNode, newGlusterClusterNode, maintenanceVds);
             } else {
-                if(getParameters().getReplaceHostConfiguration()!=null && getParameters().getReplaceHostConfiguration().getDeployAction() ==
-                        ReplaceHostConfiguration.Action.NONE){
+                if (getParameters().getReplaceHostConfiguration() != null && getParameters().getReplaceHostConfiguration().getDeployAction() ==
+                        ReplaceHostConfiguration.Action.NONE) {
                     log.info("Replace host is disabled");
-                } else if(!getVds().getClusterSupportsGlusterService()) {
+                } else if (!getVds().getClusterSupportsGlusterService()) {
                     log.info("Skipping Replace host since cluster does not support gluster");
-                } else if(vdsDao.getAllForCluster(getClusterId()).size()<3) {
+                } else if (vdsDao.getAllForCluster(getClusterId()).size() < 3) {
                     log.info("Skipping Replace host  since minimum of three hosts are required in the same cluster");
                 }
             }

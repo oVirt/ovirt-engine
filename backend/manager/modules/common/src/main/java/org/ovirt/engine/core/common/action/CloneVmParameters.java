@@ -88,7 +88,7 @@ public class CloneVmParameters extends AddVmParameters {
         return srcToDstChainMap;
     }
 
-    public void setSrcToDstChainMap(Map<Guid, Map<Guid, DiskImage>>  srcToDstChainMap) {
+    public void setSrcToDstChainMap(Map<Guid, Map<Guid, DiskImage>> srcToDstChainMap) {
         this.srcToDstChainMap = srcToDstChainMap;
     }
 

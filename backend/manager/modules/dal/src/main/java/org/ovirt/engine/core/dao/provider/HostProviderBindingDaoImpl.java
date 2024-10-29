@@ -19,16 +19,16 @@ public class HostProviderBindingDaoImpl extends BaseDao implements HostProviderB
             .addValue("plugin_type", pluginType);
 
         return getCallsHandler().executeRead("GetHostProviderBinding",
-            (rs, nowNum) ->  rs.getString(1),
+            (rs, nowNum) -> rs.getString(1),
             parameterSource);
     }
 
     public void update(Guid vdsId, Map<String, Object> values) {
-        int entryCount = values!=null ? values.size() : 0;
+        int entryCount = values != null ? values.size() : 0;
         String[] pluginTypes = new String[entryCount];
         String[] bindingIds = new String[entryCount];
-        if (values!=null) {
-            int i=0;
+        if (values != null) {
+            int i = 0;
             for (Map.Entry<String, Object> pair: values.entrySet()) {
                 pluginTypes[i] = pair.getKey();
                 bindingIds[i] = (String) pair.getValue();

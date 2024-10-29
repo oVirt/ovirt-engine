@@ -9,7 +9,7 @@ public class NameForVmInPoolGeneratorTest {
     @Test
     public void validateGenerateVmNameStartsWithMask() {
         NameForVmInPoolGenerator generator = createNameForVmInPoolGenerator("???mypool");
-        for (int i=1; i<17; ++i) {
+        for (int i = 1; i < 17; ++i) {
             generator.generateVmName();
         }
         assertEquals("017mypool", generator.generateVmName());
@@ -24,7 +24,7 @@ public class NameForVmInPoolGeneratorTest {
     @Test
     public void validateGenerateVmNameEndsWithMask() {
         NameForVmInPoolGenerator generator = createNameForVmInPoolGenerator("mypool???");
-        for (int i=1; i<101; ++i) {
+        for (int i = 1; i < 101; ++i) {
             generator.generateVmName();
         }
         assertEquals("mypool101", generator.generateVmName());
@@ -39,7 +39,7 @@ public class NameForVmInPoolGeneratorTest {
     @Test
     public void validateGenerateVmNameWithoutMask2() {
         NameForVmInPoolGenerator generator = createNameForVmInPoolGenerator("mypool");
-        for (int i=1; i<17; ++i) {
+        for (int i = 1; i < 17; ++i) {
             generator.generateVmName();
         }
         assertEquals("mypool-17", generator.generateVmName());
@@ -48,7 +48,7 @@ public class NameForVmInPoolGeneratorTest {
     @Test
     public void validateGenerateVmNameWithoutMask3() {
         NameForVmInPoolGenerator generator = createNameForVmInPoolGenerator("mypool");
-        for (int i=1; i<101; ++i) {
+        for (int i = 1; i < 101; ++i) {
             generator.generateVmName();
         }
         assertEquals("mypool-101", generator.generateVmName());

@@ -14,7 +14,7 @@ public class ToStringBuilder {
     static final char CLASS_NAME_SUFFIX = ':';
     static final char ATTRIBUTES_LIST_PREFIX = '{';
     static final char ATTRIBUTES_LIST_SUFFIX = '}';
-    static final String ATTRIBUTES_SEPARATOR =  ", ";
+    static final String ATTRIBUTES_SEPARATOR = ", ";
     static final String NAME_VALUE_SEPARATOR = "='";
     static final char VALUE_SUFFIX = '\'';
     static final String FILTERED_CONTENT = "***";

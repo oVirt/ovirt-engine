@@ -39,7 +39,7 @@ public class RsdlLoader {
     public static <RSDL> RSDL loadRsdl(Class<RSDL> clazz) throws IOException {
         // Decide what version of the RSDL document to load:
         Current current = CurrentManager.get();
-        String fileName = current.getApplicationMode() == ApplicationMode.GlusterOnly? "rsdl_gluster.xml": "rsdl.xml";
+        String fileName = current.getApplicationMode() == ApplicationMode.GlusterOnly ? "rsdl_gluster.xml" : "rsdl.xml";
         String resourcePath = String.format("/v%s/%s", current.getVersion(), fileName);
 
         // Calculate the prefix that will be used in the "href" attributes:
@@ -65,7 +65,7 @@ public class RsdlLoader {
                 }
                 node.setNodeValue(href);
             }
-        } catch(Exception exception) {
+        } catch (Exception exception) {
             throw new IOException(exception);
         }
 

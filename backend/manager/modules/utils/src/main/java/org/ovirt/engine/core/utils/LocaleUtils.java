@@ -6,7 +6,7 @@ import org.ovirt.engine.core.utils.servlet.LocaleFilter;
 
 public class LocaleUtils {
     //Do not allow instantiation of this class.
-    private LocaleUtils() {}
+    private LocaleUtils() { }
 
     /**
      * Returns the {@code Locale} based on the passed in string.
@@ -36,7 +36,7 @@ public class LocaleUtils {
             } else {
                 result = null;
             }
-            if(result == null && returnDefaultLocale) {
+            if (result == null && returnDefaultLocale) {
                 result = LocaleFilter.DEFAULT_LOCALE;
             }
         } catch (IllegalArgumentException e) {

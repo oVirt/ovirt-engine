@@ -23,7 +23,7 @@ public class ValidationUtils {
     public static final String NO_SPECIAL_CHARACTERS_EXTRA_I18N = "^[\\p{L}0-9._\\+-]*$";
     public static final String CUSTOM_CPU_NAME = "^[\\p{L}0-9._\\+\\-,]*$";
     public static final String NO_SPECIAL_CHARACTER_CLASS_I18N = "\\p{L}0-9._-";
-    public static final String NO_SPECIAL_CHARACTERS_I18N = "^["+ NO_SPECIAL_CHARACTER_CLASS_I18N + "]*$";
+    public static final String NO_SPECIAL_CHARACTERS_I18N = "^[" + NO_SPECIAL_CHARACTER_CLASS_I18N + "]*$";
     public static final String NO_SPECIAL_CHARACTERS = "[0-9a-zA-Z_-]+";
     public static final String ONLY_I18N_ASCII_OR_NONE = "[\\p{ASCII}\\p{L}]*";
     public static final String ONLY_ASCII_OR_NONE = "[\\p{ASCII}]*";
@@ -41,7 +41,7 @@ public class ValidationUtils {
     public static final String IPV6_PATTERN = "(?:" + IPV6_STD_PATTERN + "|" + IPV6_HEX_COMPRESSED_PATTERN + ")";
     public static final String IPV4_OR_IPV6_PATTERN = IPV4_PATTERN + "|" + IPV6_PATTERN;
     public static final String IPV6_FOR_URI = "\\[" + IPV6_PATTERN + "\\]";
-    public static final String ANY_IP_PATTERN = "^(" + IPV4_PATTERN_NON_EMPTY + "|" + IPV6_PATTERN +")$";
+    public static final String ANY_IP_PATTERN = "^(" + IPV4_PATTERN_NON_EMPTY + "|" + IPV6_PATTERN + ")$";
     public static final String FQDN_PATTERN =
             "([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\\-]{0,61}[a-zA-Z0-9])(\\.([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\\-]{0,61}[a-zA-Z0-9]))*";
     public static final String HOSTNAME_FOR_URI =
@@ -131,7 +131,7 @@ public class ValidationUtils {
                 //this will extract all violation attributes and will create messages of the type:
                 //${violationkey} violationValue
                 //these values can later be used for formatting the returned messages.
-                if(constraintDescriptor != null) {
+                if (constraintDescriptor != null) {
                     Map<String, Object> violationAttributes = constraintDescriptor.getAttributes();
                     for (Map.Entry violationAttribute : violationAttributes.entrySet()) {
                         String propertyName = violationAttribute.getKey().toString();

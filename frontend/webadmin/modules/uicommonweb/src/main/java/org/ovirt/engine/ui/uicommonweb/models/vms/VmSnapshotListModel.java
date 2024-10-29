@@ -651,7 +651,7 @@ public class VmSnapshotListModel extends SearchableListModel<VM, Snapshot> {
 
         if (!model.validate(false)) {
             model.setIsValid(false);
-        } else  if (model.getIsSubTemplate().getEntity()) {
+        } else if (model.getIsSubTemplate().getEntity()) {
             postNameUniqueCheck(vm);
         } else {
             String name = model.getName().getEntity();

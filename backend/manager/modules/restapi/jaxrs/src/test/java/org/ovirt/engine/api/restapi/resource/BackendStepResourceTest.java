@@ -89,7 +89,7 @@ public class BackendStepResourceTest
     }
 
     private void verifyActionResponse(Response r) {
-        verifyActionResponse(r, "jobs/" + GUIDS[1] + "/steps/" + GUIDS[0]  , false);
+        verifyActionResponse(r, "jobs/" + GUIDS[1] + "/steps/" + GUIDS[0] , false);
     }
 }
 

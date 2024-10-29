@@ -114,7 +114,7 @@ public class SubTabVolumeGeneralView extends AbstractSubTabFormView<GlusterVolum
         redundancyCountFormItem = new FormItem(constants.redundancyCount(), redundancyCount, 9, 0);
         formBuilder.addFormItem(redundancyCountFormItem);
 
-        volumeCapacityDetailsLabel.setWidth("275px");//$NON-NLS-1$
+        volumeCapacityDetailsLabel.setWidth("275px"); //$NON-NLS-1$
         formBuilder.addFormItem(new FormItem(constants.volumeCapacityStatistics(), volumeCapacityDetailsLabel, 10, 0));
 
         getDetailModel().getPropertyChangedEvent().addListener((ev, sender, args) -> {

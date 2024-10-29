@@ -92,7 +92,7 @@ public class GlusterHooksDaoTest extends BaseDaoTestCase<GlusterHooksDao> {
                 GlusterHookStatus.ENABLED, GlusterHookContentType.TEXT, CHECKSUM_HOOK1_SERVER1);
         GlusterServerHook serverHook2 = getGlusterServerHook(FixturesTool.GLUSTER_BRICK_SERVER1,
                 GlusterHookStatus.MISSING, null, null);
-        List<GlusterServerHook> serverHooks  = dao.getGlusterServerHooks(FixturesTool.HOOK_ID);
+        List<GlusterServerHook> serverHooks = dao.getGlusterServerHooks(FixturesTool.HOOK_ID);
         assertNotNull(serverHooks);
         assertEquals(2, serverHooks.size());
         assertTrue(serverHooks.contains(serverHook1));

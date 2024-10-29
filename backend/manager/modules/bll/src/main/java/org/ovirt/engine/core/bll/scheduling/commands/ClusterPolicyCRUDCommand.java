@@ -52,7 +52,7 @@ public abstract class ClusterPolicyCRUDCommand extends CommandBase<ClusterPolicy
         // check filter policy units
         if (getClusterPolicy().getFilters() != null) {
             for (Guid filterId : getClusterPolicy().getFilters()) {
-                if(isPolicyUnitExists(filterId, existingPolicyUnits)) {
+                if (isPolicyUnitExists(filterId, existingPolicyUnits)) {
                     return failValidation(EngineMessage.ACTION_TYPE_FAILED_CLUSTER_POLICY_DUPLICATE_POLICY_UNIT);
                 }
                 PolicyUnitImpl policyUnitImpl = map.get(filterId);

@@ -74,7 +74,7 @@ public class BooleanParserTest {
             for (int bitIndex = 0; bitIndex < length; bitIndex++) {
                 int bitValue = combinationIndex & (1 << bitIndex);
                 char character = characters[bitIndex];
-                character = bitValue == 0? Character.toLowerCase(character): Character.toUpperCase(character);
+                character = bitValue == 0 ? Character.toLowerCase(character) : Character.toUpperCase(character);
                 characters[bitIndex] = character;
             }
             result.add(new String(characters));

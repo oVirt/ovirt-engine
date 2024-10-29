@@ -4,7 +4,7 @@ import java.util.Comparator;
 
 import org.ovirt.engine.ui.common.widget.table.AbstractActionTable;
 
-public abstract class ColumnResizeTableLineChartProgressBar<E, T> extends AbstractLineChartProgressBarColumn<T>{
+public abstract class ColumnResizeTableLineChartProgressBar<E, T> extends AbstractLineChartProgressBarColumn<T> {
 
     private AbstractActionTable<E, T> table;
 

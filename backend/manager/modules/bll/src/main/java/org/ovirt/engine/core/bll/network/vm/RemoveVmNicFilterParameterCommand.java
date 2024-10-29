@@ -11,7 +11,7 @@ import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.dao.network.VmNicFilterParameterDao;
 
 public class RemoveVmNicFilterParameterCommand<T extends RemoveVmNicFilterParameterParameters>
-        extends AbstractVmNicFilterParameterCommand<T>  {
+        extends AbstractVmNicFilterParameterCommand<T> {
 
     @Inject
     private VmNicFilterParameterDao vmNicFilterParameterDao;

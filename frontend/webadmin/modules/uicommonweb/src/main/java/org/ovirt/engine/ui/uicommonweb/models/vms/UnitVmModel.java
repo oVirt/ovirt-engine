@@ -2171,7 +2171,7 @@ public class UnitVmModel extends Model implements HasValidatedTabs, ModelWithMig
     public boolean isHostedEngine() {
         boolean isExistingVmBehavior = getBehavior() instanceof ExistingVmModelBehavior;
         if (isExistingVmBehavior) {
-            ExistingVmModelBehavior behavior = (ExistingVmModelBehavior)getBehavior();
+            ExistingVmModelBehavior behavior = (ExistingVmModelBehavior) getBehavior();
             return behavior.getVm() != null && behavior.getVm().isHostedEngine();
         }
         return false;
@@ -2301,7 +2301,7 @@ public class UnitVmModel extends Model implements HasValidatedTabs, ModelWithMig
             } else if (sender == getCpuPinningPolicy()) {
                 cpuPinningPolicyChanged();
                 behavior.updateNumaFields();
-            } else if (sender == getConsoleDisconnectAction()){
+            } else if (sender == getConsoleDisconnectAction()) {
                 consoleDisconnectActionSelectedItemChanged();
             }
         } else if (ev.matchesDefinition(ListModel.selectedItemsChangedEventDefinition)) {
@@ -2415,13 +2415,13 @@ public class UnitVmModel extends Model implements HasValidatedTabs, ModelWithMig
     }
 
     private void vmInitEnabledChanged() {
-        if(!getVmInitEnabled().getEntity()) {
+        if (!getVmInitEnabled().getEntity()) {
             getSysprepEnabled().setEntity(false);
             getCloudInitEnabled().setEntity(false);
             getIgnitionEnabled().setEntity(false);
         } else {
             getSysprepEnabled().setEntity(getIsWindowsOS());
-            if(getIsIgnition()) {
+            if (getIsIgnition()) {
                 // because the usage of the same flow panel order matters
                 getCloudInitEnabled().setEntity(!getIsWindowsOS() && !getIsIgnition());
                 getIgnitionEnabled().setEntity(getIsIgnition());
@@ -2439,7 +2439,7 @@ public class UnitVmModel extends Model implements HasValidatedTabs, ModelWithMig
     }
 
     private void autoSetHostname() {
-        if(getVmInitEnabled().getEntity()) {
+        if (getVmInitEnabled().getEntity()) {
             getVmInitModel().autoSetHostname(getName().getEntity());
         }
     }
@@ -3576,7 +3576,7 @@ public class UnitVmModel extends Model implements HasValidatedTabs, ModelWithMig
 
     public class ListModelWithClusterDefault<T> extends NotChangableForVmInPoolListModel<T> {
 
-        public static final String CLUSTER_VALUE_EVENT = "ClusterValue";//$NON-NLS-1$
+        public static final String CLUSTER_VALUE_EVENT = "ClusterValue"; //$NON-NLS-1$
 
         // item that should be added to the items list to represent the cluster value,
         // it is usually null but e.g. for BiosType it is a special enum value
@@ -3868,7 +3868,7 @@ public class UnitVmModel extends Model implements HasValidatedTabs, ModelWithMig
                 // explicitly selected the empty
                 hasMigrationPolicy = false;
             }
-        } else if (NoMigrationPolicy.ID.equals(getMigrationPolicies().getSelectedItem().getId())){
+        } else if (NoMigrationPolicy.ID.equals(getMigrationPolicies().getSelectedItem().getId())) {
             hasMigrationPolicy = false;
         }
 
@@ -4031,12 +4031,12 @@ public class UnitVmModel extends Model implements HasValidatedTabs, ModelWithMig
     }
 
     protected void updateCpuPinningPolicy() {
-        boolean defaultHostSelected =  Boolean.FALSE.equals(getIsAutoAssign().getEntity()) &&
+        boolean defaultHostSelected = Boolean.FALSE.equals(getIsAutoAssign().getEntity()) &&
                 getDefaultHost().getSelectedItems() != null &&
                 getDefaultHost().getSelectedItems().size() > 0;
 
         boolean isDedicatedCpusSupported = false;
-        if(getSelectedCluster() != null && getSelectedCluster().getCompatibilityVersion() != null) {
+        if (getSelectedCluster() != null && getSelectedCluster().getCompatibilityVersion() != null) {
             isDedicatedCpusSupported = AsyncDataProvider.getInstance()
                     .isDedicatedPolicySupportedByVersion(getCompatibilityVersion());
         }

@@ -23,11 +23,11 @@ public abstract class JsonActionParametersBaseMixIn extends ActionParametersBase
     @Override
     public abstract ArrayList<ActionParametersBase> getImagesParameters();
 
-    @JsonDeserialize(using=ActionTypeDeserializer.class)
+    @JsonDeserialize(using = ActionTypeDeserializer.class)
     @Override
     public abstract void setParentCommand(ActionType value);
 
-    @JsonDeserialize (using=ActionTypeDeserializer.class)
+    @JsonDeserialize (using = ActionTypeDeserializer.class)
     @Override
     public abstract void setCommandType(ActionType commandType);
 }

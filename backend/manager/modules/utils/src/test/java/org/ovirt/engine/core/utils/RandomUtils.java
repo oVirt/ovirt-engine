@@ -459,7 +459,7 @@ public final class RandomUtils extends Random {
     /* -- Utility methods -- */
 
     private static String fillRange(char first, char last) {
-        StringBuilder sb = new StringBuilder((int)last - (int)first + 1);
+        StringBuilder sb = new StringBuilder((int) last - (int) first + 1);
         for (char c = first; c <= last; ++ c) {
             sb.append(c);
         }

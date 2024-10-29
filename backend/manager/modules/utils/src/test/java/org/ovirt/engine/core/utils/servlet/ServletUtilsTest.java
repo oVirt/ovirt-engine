@@ -69,7 +69,7 @@ public class ServletUtilsTest {
         assertTrue(ServletUtils.canReadFile(file), "We should be able to read this file.");
         ByteArrayOutputStream out = new ByteArrayOutputStream(4096);
         ServletUtils.writeFileToStream(out, file);
-        assertEquals((int)hostSize, out.size(), "The bytes in the buffer have to match the length of the file");
+        assertEquals((int) hostSize, out.size(), "The bytes in the buffer have to match the length of the file");
     }
 
     /**
@@ -83,7 +83,7 @@ public class ServletUtilsTest {
         assertEquals(0L, zeroSize, "The file size should be 0");
         ByteArrayOutputStream out = new ByteArrayOutputStream(4096);
         ServletUtils.writeFileToStream(out, file);
-        assertEquals((int)zeroSize, out.size(), "The bytes in the buffer have to match the length of the file");
+        assertEquals((int) zeroSize, out.size(), "The bytes in the buffer have to match the length of the file");
     }
 
     /**
@@ -104,7 +104,7 @@ public class ServletUtilsTest {
     public void testIsSane() {
         assertTrue(ServletUtils.isSane("/etc"), "/etc should be sane");
         StringBuilder builder = new StringBuilder();
-        for(int i = 0; i < 100; i++) {
+        for (int i = 0; i < 100; i++) {
             builder.append("/abcdefghijkl");
         }
         assertFalse(ServletUtils.isSane(builder.toString()), "longPath is not sane");

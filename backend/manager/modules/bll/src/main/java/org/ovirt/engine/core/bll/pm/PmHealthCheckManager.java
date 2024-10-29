@@ -72,7 +72,7 @@ public class PmHealthCheckManager implements BackendService {
      */
     @PostConstruct
     private void initialize() {
-        if(Config.<Boolean>getValue(ConfigValues.PMHealthCheckEnabled)) {
+        if (Config.<Boolean>getValue(ConfigValues.PMHealthCheckEnabled)) {
             log.info("Start initializing {}", getClass().getSimpleName());
             long pmHealthCheckInterval = Config.<Long> getValue(ConfigValues.PMHealthCheckIntervalInSec);
             executor.scheduleWithFixedDelay(this::pmHealthCheck,
@@ -279,7 +279,7 @@ public class PmHealthCheckManager implements BackendService {
                 }
                 ActionReturnValue
                         retValue = backend.get().runInternalAction(ActionType.RestartVds, restartVdsCommand.getParameters());
-                if (retValue!= null && retValue.getSucceeded()) {
+                if (retValue != null && retValue.getSucceeded()) {
                     log.info("Host '{}' was started successfully by PM Health Check Manager",
                             host.getName());
                 } else {

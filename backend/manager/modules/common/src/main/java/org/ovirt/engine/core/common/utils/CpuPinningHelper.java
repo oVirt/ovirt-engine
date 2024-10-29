@@ -120,7 +120,7 @@ public class CpuPinningHelper {
      * @return a map of CPU pinning
      */
     public static Map<Integer, Integer> createExclusiveCpuPinningMap(List<VdsCpuUnit> vdsCpuUnits, CpuPinningPolicy cpuPinningPolicy) {
-        switch(cpuPinningPolicy) {
+        switch (cpuPinningPolicy) {
             case DEDICATED:
                 return createDedicatedCpuPinningMap(vdsCpuUnits);
             case ISOLATE_THREADS:

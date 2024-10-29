@@ -711,7 +711,7 @@ public class TemplateListModel extends VmBaseListModel<Void, VmTemplate> {
                         }
 
                         String selectedCpu = model.getCustomCpu().getSelectedItem();
-                        if (selectedCpu != null && !selectedCpu.isEmpty()  && !model.getCustomCpu().getItems().contains(selectedCpu)) {
+                        if (selectedCpu != null && !selectedCpu.isEmpty() && !model.getCustomCpu().getItems().contains(selectedCpu)) {
                             ConfirmationModel confirmModel = new ConfirmationModel();
                             confirmModel.setTitle(ConstantsManager.getInstance().getConstants().vmUnsupportedCpuTitle());
                             confirmModel.setMessage(ConstantsManager.getInstance().getConstants().vmUnsupportedCpuMessage());
@@ -817,7 +817,7 @@ public class TemplateListModel extends VmBaseListModel<Void, VmTemplate> {
     private void setVmWatchdogToParams(final UnitVmModel model, UpdateVmTemplateParameters updateVmParams) {
         VmWatchdogType wdModel = model.getWatchdogModel().getSelectedItem();
         updateVmParams.setUpdateWatchdog(true);
-        if(wdModel != null) {
+        if (wdModel != null) {
             VmWatchdog vmWatchdog = new VmWatchdog();
             vmWatchdog.setAction(model.getWatchdogAction().getSelectedItem());
             vmWatchdog.setModel(wdModel);
@@ -978,7 +978,7 @@ public class TemplateListModel extends VmBaseListModel<Void, VmTemplate> {
             cancelConfirmation();
         } else if (CMD_CONFIGURE_TEMPLATES_TO_IMPORT.equals(command.getName())) { // $NON-NLS-1$
             onConfigureTemplatesToImport();
-        } else if ("onClone".equals(command.getName())){ //$NON-NLS-1$
+        } else if ("onClone".equals(command.getName())) { //$NON-NLS-1$
             onClone();
         } else if ("closeClone".equals(command.getName())) { //$NON-NLS-1$
             closeClone();

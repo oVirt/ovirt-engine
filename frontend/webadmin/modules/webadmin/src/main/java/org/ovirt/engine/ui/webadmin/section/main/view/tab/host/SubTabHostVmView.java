@@ -117,14 +117,14 @@ public class SubTabHostVmView extends AbstractSubTabTableView<VDS, VM, HostListM
         attachmentToCurHostColumn = new AbstractTextColumn<VM>() {
             @Override
             public String getValue(VM object) {
-                Guid vdsId = getDetailModel().getEntity() != null? getDetailModel().getEntity().getId() : null;
+                Guid vdsId = getDetailModel().getEntity() != null ? getDetailModel().getEntity().getId() : null;
                 // if no hosts is set for the model yet, return an empty status.
                 if (vdsId == null) {
                     return constants.empty();
                 }
                 boolean pinned = object.getDedicatedVmForVdsList() != null ? object.getDedicatedVmForVdsList().contains(vdsId) : false;
-                boolean running = object.getRunOnVds() != null? object.getRunOnVds().equals(vdsId) : false;
-                return pinned ? (running? constants.runningAndPinnedOnCurHost() : constants.pinnedToCurHost()) : constants.runningOnCurHost();
+                boolean running = object.getRunOnVds() != null ? object.getRunOnVds().equals(vdsId) : false;
+                return pinned ? (running ? constants.runningAndPinnedOnCurHost() : constants.pinnedToCurHost()) : constants.runningOnCurHost();
             }
         };
         attachmentToCurHostColumn.makeSortable();
@@ -200,7 +200,7 @@ public class SubTabHostVmView extends AbstractSubTabTableView<VDS, VM, HostListM
             }
         }, constants.networkVm(), "120px"); //$NON-NLS-1$
 
-        VmStatusColumn statusColumn = new VmStatusColumn(() ->  {
+        VmStatusColumn statusColumn = new VmStatusColumn(() -> {
             VDS host = getDetailModel().getEntity();
             return host != null ? host.getId() : null;
         });

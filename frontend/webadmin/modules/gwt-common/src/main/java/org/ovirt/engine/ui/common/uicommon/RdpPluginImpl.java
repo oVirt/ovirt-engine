@@ -39,7 +39,7 @@ public class RdpPluginImpl extends AbstractRdp implements IRdpPlugin, IEventList
     }
 
     public String getRDPCabURL() {
-        return GWT.getModuleBaseURL() + "msrdp.cab";//$NON-NLS-1$
+        return GWT.getModuleBaseURL() + "msrdp.cab"; //$NON-NLS-1$
     }
 
     @Override
@@ -127,7 +127,7 @@ public class RdpPluginImpl extends AbstractRdp implements IRdpPlugin, IEventList
 
     @Override
     public boolean getEnableCredSspSupport() {
-        return false;// Disable 'Credential Security Support Provider (CredSSP)' to enable SSO
+        return false; // Disable 'Credential Security Support Provider (CredSSP)' to enable SSO
     }
 
 }

@@ -70,7 +70,7 @@ public class CloudInitHandler {
         files = null;
     }
 
-    public CloudInitHandler (VmInit vmInit){
+    public CloudInitHandler (VmInit vmInit) {
         this.vmInit = vmInit;
         metaData = new HashMap<>();
         userData = new HashMap<>();

@@ -546,7 +546,7 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
     }
 
     protected VmDevice addManagedDeviceForDisk(Guid diskId) {
-        return  getVmDeviceUtils().addDiskDevice(
+        return getVmDeviceUtils().addDiskDevice(
                 getVmId(),
                 diskId,
                 shouldDiskBePlugged(),
@@ -569,7 +569,7 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
     }
 
     private void createDiskBasedOnImage() {
-        if(!getParameters().getDiskInfo().isWipeAfterDeleteSet()) {
+        if (!getParameters().getDiskInfo().isWipeAfterDeleteSet()) {
             getParameters().getDiskInfo().setWipeAfterDelete(getStorageDomain().getWipeAfterDelete());
         }
         // create from blank template, create new vm snapshot id
@@ -635,7 +635,7 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
 
     @Override
     public CommandCallback getCallback() {
-        return useCallback() ? callbackProvider.get() :  null;
+        return useCallback() ? callbackProvider.get() : null;
     }
 
     private void createDiskBasedOnCinder() {

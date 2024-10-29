@@ -61,7 +61,7 @@ public class ErrataTableView extends ResizeComposite {
 
     private static final ApplicationConstants constants = AssetProvider.getConstants();
 
-    @UiField(provided=true)
+    @UiField(provided = true)
     EntityModelCellTable<AbstractErrataListModel> errataTable;
 
     @UiField

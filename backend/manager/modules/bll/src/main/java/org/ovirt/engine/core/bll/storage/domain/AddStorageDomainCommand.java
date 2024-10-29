@@ -82,7 +82,7 @@ public abstract class AddStorageDomainCommand<T extends StorageDomainManagementP
     }
 
     private void updateStorageDomainWipeAfterDelete() {
-        if(getStorageDomain().getStorageStaticData().getWipeAfterDelete() == null) {
+        if (getStorageDomain().getStorageStaticData().getWipeAfterDelete() == null) {
             getStorageDomain().getStorageStaticData().setWipeAfterDelete(
                     WipeAfterDeleteUtils.getDefaultWipeAfterDeleteFlag(
                             getStorageDomain().getStorageStaticData().getStorageType()));
@@ -90,14 +90,14 @@ public abstract class AddStorageDomainCommand<T extends StorageDomainManagementP
     }
 
     private void updateSpaceThresholds() {
-        if(getStorageDomain().getWarningLowSpaceIndicator() == null) {
+        if (getStorageDomain().getWarningLowSpaceIndicator() == null) {
             getStorageDomain().setWarningLowSpaceIndicator(Config.<Integer>getValue(ConfigValues.WarningLowSpaceIndicator));
         }
-        if(getStorageDomain().getWarningLowConfirmedSpaceIndicator() == null) {
+        if (getStorageDomain().getWarningLowConfirmedSpaceIndicator() == null) {
             getStorageDomain().getStorageStaticData().setWarningLowConfirmedSpaceIndicator(
                     Config.<Integer>getValue(ConfigValues.WarningLowSpaceIndicator));
         }
-        if(getStorageDomain().getCriticalSpaceActionBlocker() == null) {
+        if (getStorageDomain().getCriticalSpaceActionBlocker() == null) {
             getStorageDomain().setCriticalSpaceActionBlocker(Config.<Integer>getValue(ConfigValues.CriticalSpaceActionBlocker));
         }
     }

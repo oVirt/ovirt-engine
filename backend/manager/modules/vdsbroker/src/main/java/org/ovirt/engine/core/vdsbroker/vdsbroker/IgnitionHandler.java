@@ -239,7 +239,7 @@ public class IgnitionHandler {
         JsonObject reader = Json.createReader(new StringReader(customScript)).readObject();
         if (reader.containsKey("passwd")) {
             if (reader.getJsonObject("passwd").containsKey("users")) {
-                for(JsonValue user: reader.getJsonObject("passwd").getJsonArray("users")){
+                for (JsonValue user: reader.getJsonObject("passwd").getJsonArray("users")) {
                     return user.toString().replace("\"", "").contains(vmInit.getUserName());
                 }
             }
@@ -258,7 +258,7 @@ public class IgnitionHandler {
         if (vmInit.getAuthorizedKeys() != null && !vmInit.getAuthorizedKeys().isEmpty()) {
             JsonArrayBuilder keys = Json.createArrayBuilder();
             // adding ssh keys
-            for(String key: vmInit.getAuthorizedKeys().split("(\\r?\\n|\\r)+")){
+            for (String key: vmInit.getAuthorizedKeys().split("(\\r?\\n|\\r)+")) {
                 if (!StringUtils.isEmpty(key)) {
                     keys.add(key);
                 }

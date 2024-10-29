@@ -10,7 +10,7 @@ public class TimeSpan implements Comparable<TimeSpan>, Serializable {
     public static final int MS_PER_SECOND = 1000;
     public static final int MS_PER_MINUTE = 60 * 1000;
     public static final int MS_PER_HOUR = 60 * 60 * 1000;
-    public static final  int MS_PER_DAY = 24 * 60 * 60 * 1000;
+    public static final int MS_PER_DAY = 24 * 60 * 60 * 1000;
 
     public int Days;
     public int Hours;
@@ -42,9 +42,9 @@ public class TimeSpan implements Comparable<TimeSpan>, Serializable {
     public TimeSpan(int days, int hours, int minutes, int seconds, int milliseconds) {
         TotalMilliseconds = milliseconds;
         TotalMilliseconds += seconds * MS_PER_SECOND;
-        TotalMilliseconds += (long)minutes * (long)MS_PER_MINUTE;
-        TotalMilliseconds += (long)hours * (long)MS_PER_HOUR;
-        TotalMilliseconds += (long)days * (long)MS_PER_DAY;
+        TotalMilliseconds += (long) minutes * (long) MS_PER_MINUTE;
+        TotalMilliseconds += (long) hours * (long) MS_PER_HOUR;
+        TotalMilliseconds += (long) days * (long) MS_PER_DAY;
         computeProperties();
     }
 

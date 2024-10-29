@@ -26,7 +26,7 @@ public class RemoveExternalPolicyUnitCommand extends CommandBase<RemoveExternalP
 
     @Override
     protected boolean validate() {
-        if(!schedulingManager.getPolicyUnitsMap().containsKey(getPolicyUnitId())){
+        if (!schedulingManager.getPolicyUnitsMap().containsKey(getPolicyUnitId())) {
             return failValidation(EngineMessage.ACTION_TYPE_FAILED_CLUSTER_POLICY_UNKNOWN_POLICY_UNIT);
         }
         List<String> clusterPoliciesNames =

@@ -113,7 +113,7 @@ public abstract class OvfWriter implements IOvfBuilder {
         // do nothing
     }
 
-    private String escapeNewLines(String value){
+    private String escapeNewLines(String value) {
         return value.replaceAll("\n", "&#10;");
     }
 
@@ -247,7 +247,7 @@ public abstract class OvfWriter implements IOvfBuilder {
             _writer.writeElement(CUSTOM_COMPATIBILITY_VERSION, String.valueOf(vmBase.getCustomCompatibilityVersion()));
         }
 
-        _writer.writeElement(CLUSTER_COMPATIBILITY_VERSION, String.valueOf(version));// cluster version the VM/Snapshot
+        _writer.writeElement(CLUSTER_COMPATIBILITY_VERSION, String.valueOf(version)); // cluster version the VM/Snapshot
                                                                                      // originates from
         _writer.writeElement(VM_TYPE, String.valueOf(vmBase.getVmType().getValue()));
         if (vmBase.getResumeBehavior() != null) {

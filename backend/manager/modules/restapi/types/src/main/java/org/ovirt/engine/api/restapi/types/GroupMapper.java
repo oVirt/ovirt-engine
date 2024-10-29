@@ -44,7 +44,7 @@ public class GroupMapper {
 
     @Mapping(from = Group.class, to = DbGroup.class)
     public static DbGroup map(Group model, DbGroup template) {
-        DbGroup entity = template != null? template: new DbGroup();
+        DbGroup entity = template != null ? template : new DbGroup();
         if (model.isSetName()) {
             entity.setName(model.getName());
         }

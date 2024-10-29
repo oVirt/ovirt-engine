@@ -163,7 +163,7 @@ public class AddStoragePoolWithStoragesCommand<T extends StoragePoolWithStorages
     }
 
     private boolean updateStorageDomainsInDb() {
-        boolean result  = TransactionSupport.executeInNewTransaction(() -> {
+        boolean result = TransactionSupport.executeInNewTransaction(() -> {
             for (Guid storageDomainId : getParameters().getStorages()) {
                 StorageDomain storageDomain = storageDomainDao.get(storageDomainId);
                 if (storageDomain != null) {

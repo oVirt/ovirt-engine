@@ -128,7 +128,7 @@ public class ExternalOIDCService {
 
         // We should request this scope by RFC (https://openid.net/specs/openid-connect-core-1_0.html#AuthRequest)
         // to have possibility for working with other oidc endpoints.
-        if( ! scope.contains(OPENID_SCOPE)) {
+        if ( ! scope.contains(OPENID_SCOPE)) {
             scope = scope + " " + OPENID_SCOPE;
         }
 

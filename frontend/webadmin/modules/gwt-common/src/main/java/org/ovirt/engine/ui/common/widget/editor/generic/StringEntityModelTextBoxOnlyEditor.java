@@ -25,7 +25,7 @@ public class StringEntityModelTextBoxOnlyEditor extends EntityModelTextBoxOnlyEd
     }
 
     public static StringEntityModelTextBoxOnlyEditor newTrimmingEditor() {
-        return  newTrimmingEditor(new VisibilityRenderer.SimpleVisibilityRenderer());
+        return newTrimmingEditor(new VisibilityRenderer.SimpleVisibilityRenderer());
     }
 
     public static StringEntityModelTextBoxOnlyEditor newTrimmingEditor(VisibilityRenderer visibilityRenderer) {

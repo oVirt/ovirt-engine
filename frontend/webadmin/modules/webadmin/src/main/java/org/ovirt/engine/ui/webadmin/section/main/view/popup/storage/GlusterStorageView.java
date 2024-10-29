@@ -85,7 +85,7 @@ public class GlusterStorageView extends AbstractStorageView<GlusterStorageModel>
     }
 
     void initEditors() {
-        linkGlusterVolumeEditor =  new EntityModelCheckBoxEditor(Align.RIGHT);
+        linkGlusterVolumeEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
         glusterVolumesEditor = new ListModelListBoxEditor<>(new NullSafeRenderer<GlusterVolumeEntity>() {
             @Override
             protected String renderNullSafe(GlusterVolumeEntity glusterVolume) {

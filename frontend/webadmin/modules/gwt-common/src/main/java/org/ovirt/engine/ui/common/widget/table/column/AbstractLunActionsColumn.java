@@ -47,7 +47,7 @@ public abstract class AbstractLunActionsColumn extends AbstractColumn<LunModel, 
                     input = templates.toggledDown(inputId, constants.addSanStorage());
                 } else if (!value.getIsIncluded()) {
                     input = templates.noButton(uiConstants.notAvailableLabel(), SafeStylesUtils.forTrustedColor("gray"), inputId); //$NON-NLS-1$
-                } else if (availableSizeToAdd == 0){
+                } else if (availableSizeToAdd == 0) {
                     input = templates.noButton(constants.cannotExtendSanStorage(), SafeStylesUtils.forTrustedColor("gray"), inputId); //$NON-NLS-1$
                 } else if (value.isAdditionalAvailableSizeSelected()) {
                     input = templates.toggledDown(inputId, availableSizeToAddString);

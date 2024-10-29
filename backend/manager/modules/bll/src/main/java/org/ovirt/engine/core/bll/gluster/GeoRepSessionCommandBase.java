@@ -49,7 +49,7 @@ public abstract class GeoRepSessionCommandBase<T extends GlusterVolumeGeoRepSess
 
     protected GlusterGeoRepSession getGeoRepSession() {
         if (geoRepSession == null) {
-            if(getParameters().getGeoRepSessionId() != null) {
+            if (getParameters().getGeoRepSessionId() != null) {
                 geoRepSession = glusterGeoRepDao.getById(getParameters().getGeoRepSessionId());
             } else {
                 geoRepSession =

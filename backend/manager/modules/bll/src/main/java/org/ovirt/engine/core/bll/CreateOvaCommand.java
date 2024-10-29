@@ -98,7 +98,7 @@ public class CreateOvaCommand<T extends CreateOvaParameters> extends CommandBase
     }
 
     private Pair<String, Version> createOvf(Collection<DiskImage> disks) {
-        switch(getParameters().getEntityType()) {
+        switch (getParameters().getEntityType()) {
         case TEMPLATE:
             VmTemplate template = vmTemplateDao.get(getParameters().getEntityId());
             vmHandler.updateVmInitFromDB(template, true);
@@ -299,7 +299,7 @@ public class CreateOvaCommand<T extends CreateOvaParameters> extends CommandBase
 
     @Override
     public boolean performNextOperation(int completedChildCount) {
-        switch(getParameters().getPhase()) {
+        switch (getParameters().getPhase()) {
         case MEASURE:
             getParameters().setPhase(CreateOvaParameters.Phase.PACK_OVA);
             break;

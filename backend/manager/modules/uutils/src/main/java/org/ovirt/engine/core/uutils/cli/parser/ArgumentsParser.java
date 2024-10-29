@@ -227,13 +227,13 @@ public class ArgumentsParser {
         parsedArgs = new HashMap<>();
         errors = new ArrayList<>();
 
-        while(!args.isEmpty()) {
+        while (!args.isEmpty()) {
             String arg = args.get(0);
-            if(!arg.startsWith(LONG_PREFIX)) {
+            if (!arg.startsWith(LONG_PREFIX)) {
                 break;
             }
             arg = args.remove(0);
-            if(arg.equals(LONG_PREFIX)) {
+            if (arg.equals(LONG_PREFIX)) {
                 break;
             }
 
@@ -242,7 +242,7 @@ public class ArgumentsParser {
             String value = argVal[1];
 
             Argument argument = arguments.get(key);
-            if(argument == null) {
+            if (argument == null) {
                 errors.add(
                     new IllegalArgumentException(String.format("Invalid argument '%1$s'", arg))
                 );
@@ -254,7 +254,7 @@ public class ArgumentsParser {
                         argument.getType() == Argument.Type.REQUIRED_ARGUMENT
                     )
                 ) {
-                    if(args.size() > 0) {
+                    if (args.size() > 0) {
                         value = args.get(0);
                         if (value.startsWith(LONG_PREFIX)) {
                             value = null;
@@ -294,7 +294,7 @@ public class ArgumentsParser {
 
         List<String> mandatoryCopy = new ArrayList<>(mandatory);
         mandatoryCopy.removeAll(parsedArgs.keySet());
-        if(!mandatoryCopy.isEmpty()) {
+        if (!mandatoryCopy.isEmpty()) {
             errors.add(
                 new IllegalArgumentException(
                     String.format("Argument(s) '%1$s' required", StringUtils.join(mandatoryCopy, ", "))
@@ -325,7 +325,7 @@ public class ArgumentsParser {
     public String getUsage() {
         StringBuilder help = new StringBuilder(String.format("Options:%n"));
 
-        for(String arg : getPrefixArguments()) {
+        for (String arg : getPrefixArguments()) {
             Argument argument = this.arguments.get(arg);
             help.append(
                     String.format(
@@ -379,7 +379,7 @@ public class ArgumentsParser {
      * @param argMap map of converted command line arguments
      */
     private void fillDefaults(Map<String, Object> argMap) {
-        for(Argument arg : arguments.values()) {
+        for (Argument arg : arguments.values()) {
             if (!argMap.containsKey(arg.getName()) && arg.getDefaultValue() != null) {
                 putValue(
                     argMap,
@@ -404,7 +404,7 @@ public class ArgumentsParser {
         if (!arg.isMultivalue()) {
             argMap.put(arg.getName(), value);
         } else {
-            List<? super Object> c = (List)argMap.get(arg.getName());
+            List<? super Object> c = (List) argMap.get(arg.getName());
             if (c == null) {
                 c = new ArrayList<>();
                 argMap.put(arg.getName(), c);
@@ -431,7 +431,7 @@ public class ArgumentsParser {
      * in set {@link #mandatory}, so later we can check if all mandatory arguments where specified by user.
      */
     private void parseProperties() {
-        for(String arg : getPrefixArguments()) {
+        for (String arg : getPrefixArguments()) {
             Argument argument = new Argument();
             argument.setName(
                 getArgAttrValue(arg, "name")
@@ -505,7 +505,7 @@ public class ArgumentsParser {
 
         for (String argName : this.properties.stringPropertyNames()) {
             String[] param = argName.split("\\.");
-            if(param.length > 1 && !param[1].equals("arg") || !param[0].equals(this.prefix)) {
+            if (param.length > 1 && !param[1].equals("arg") || !param[0].equals(this.prefix)) {
                 continue;
             }
             if (param.length < 4) {
@@ -521,8 +521,8 @@ public class ArgumentsParser {
 
     private String[] parseArgument(String arg) {
         String [] splitArg = arg.split("=", 2);
-        if(splitArg.length < 2) {
-            return new String[] {splitArg[0],  null};
+        if (splitArg.length < 2) {
+            return new String[] {splitArg[0], null};
         }
 
         return splitArg;

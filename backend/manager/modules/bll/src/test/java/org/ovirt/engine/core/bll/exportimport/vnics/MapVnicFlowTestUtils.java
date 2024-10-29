@@ -32,7 +32,7 @@ class MapVnicFlowTestUtils {
         StringBuilder sb = new StringBuilder();
         sb.append(mapping.getSourceNetworkName()).append(", ")
                 .append(mapping.getSourceProfileName()).append(", ")
-                .append(mapping.getTargetProfileId() != null ? mapping.getTargetProfileId().toString(): "null").append(", ")
+                .append(mapping.getTargetProfileId() != null ? mapping.getTargetProfileId().toString() : "null").append(", ")
                 .append(mapping.getTargetNetworkName()).append(", ")
                 .append(mapping.getTargetProfileName());
         return sb.toString();
@@ -74,11 +74,11 @@ class MapVnicFlowTestUtils {
         }
     }
 
-    static MapVnicContext makeCtx(Guid clusterId, ExternalVnicProfileMapping mapping, VmNetworkInterface vnic){
+    static MapVnicContext makeCtx(Guid clusterId, ExternalVnicProfileMapping mapping, VmNetworkInterface vnic) {
         return new MapVnicContext().setClusterId(clusterId).setProfileMapping(mapping).setOvfVnic(vnic);
     }
 
-    static MapVnicContext makeCtx(Guid clusterId, VmNetworkInterface vnic){
+    static MapVnicContext makeCtx(Guid clusterId, VmNetworkInterface vnic) {
         return new MapVnicContext().setClusterId(clusterId).setOvfVnic(vnic);
     }
 

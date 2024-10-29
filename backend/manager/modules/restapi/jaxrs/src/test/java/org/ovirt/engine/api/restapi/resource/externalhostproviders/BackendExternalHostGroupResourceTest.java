@@ -93,7 +93,7 @@ public class BackendExternalHostGroupResourceTest
             ProviderQueryParameters.class,
             new String[] { "Provider.Id" },
             new Object[] { GUIDS[0] },
-            notFound? null: getGroups()
+            notFound ? null : getGroups()
         );
     }
 

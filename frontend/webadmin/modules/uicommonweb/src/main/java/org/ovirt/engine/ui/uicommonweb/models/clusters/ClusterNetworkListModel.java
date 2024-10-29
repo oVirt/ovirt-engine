@@ -234,7 +234,7 @@ public class ClusterNetworkListModel extends SearchableListModel<Cluster, Networ
         model.getCommands().add(tempVar2);
     }
 
-    private void onSyncAllClusterNetworksConfirm(){
+    private void onSyncAllClusterNetworksConfirm() {
         ConfirmationModel model = (ConfirmationModel) getWindow();
         if (model.getProgress() != null) {
             return;

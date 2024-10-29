@@ -40,6 +40,6 @@ public class Directory
     }
 
     public boolean isSetDomain() {
-        return this.domain!= null;
+        return this.domain != null;
     }
 }

@@ -28,7 +28,7 @@ public class BackendHostExternalNetworkProviderConfigurationResourceTest
 
     private static final int PROVIDER_INDEX = 0;
     private static final Guid PROVIDER_ID = GUIDS[PROVIDER_INDEX];
-    private static final Guid HOST_ID = GUIDS[PROVIDER_INDEX +1];
+    private static final Guid HOST_ID = GUIDS[PROVIDER_INDEX + 1];
 
     public BackendHostExternalNetworkProviderConfigurationResourceTest() {
         super(new BackendHostExternalNetworkProviderConfigurationResource(PROVIDER_ID.toString(), HOST_ID));
@@ -85,7 +85,7 @@ public class BackendHostExternalNetworkProviderConfigurationResourceTest
     @Override
     protected void verifyModel(ExternalNetworkProviderConfiguration model, int index) {
         assertEquals(HexUtils.string2hex(GUIDS[index].toString()), model.getId());
-        assertEquals(GUIDS[index+1].toString(), model.getHost().getId());
+        assertEquals(GUIDS[index + 1].toString(), model.getHost().getId());
         assertEquals(GUIDS[index].toString(), model.getExternalNetworkProvider().getId());
         verifyLinks(model);
     }

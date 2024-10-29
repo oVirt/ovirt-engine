@@ -61,7 +61,7 @@ import org.ovirt.engine.core.dao.network.VmNicDao;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.CloudInitHandler;
 
 public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> extends VmTemplateManagementCommand<T>
-        implements QuotaVdsDependent, RenamedEntityInfoProvider{
+        implements QuotaVdsDependent, RenamedEntityInfoProvider {
 
     @Inject
     private AuditLogDirector auditLogDirector;
@@ -100,7 +100,7 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
         setVmTemplate(getParameters().getVmTemplateData());
         setVmTemplateId(getVmTemplate().getId());
         setClusterId(getVmTemplate().getClusterId());
-        oldTemplate =  vmTemplateDao.get(getVmTemplate().getId());
+        oldTemplate = vmTemplateDao.get(getVmTemplate().getId());
 
         if (getCluster() != null) {
             setStoragePoolId(getCluster().getStoragePoolId() != null ? getCluster().getStoragePoolId()
@@ -180,7 +180,7 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
             return false;
         }
 
-        if(!setAndValidateCpuProfile()) {
+        if (!setAndValidateCpuProfile()) {
             return false;
         }
 
@@ -644,6 +644,6 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
         if (newEffectiveBiosType == null || oldEffectiveBiosType == null) {
             return false;
         }
-        return  newEffectiveBiosType.getChipsetType() != oldEffectiveBiosType.getChipsetType();
+        return newEffectiveBiosType.getChipsetType() != oldEffectiveBiosType.getChipsetType();
     }
 }

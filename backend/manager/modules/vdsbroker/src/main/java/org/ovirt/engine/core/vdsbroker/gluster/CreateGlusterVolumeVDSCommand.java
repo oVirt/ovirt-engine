@@ -40,7 +40,7 @@ public class CreateGlusterVolumeVDSCommand<P extends CreateGlusterVolumeVDSParam
         // Handle errors if any
         proceedProxyReturnValue();
 
-        if(getVDSReturnValue().getSucceeded()) {
+        if (getVDSReturnValue().getSucceeded()) {
             // set the volume updated with id as the return value
             volume.setId(Guid.createGuidFromStringDefaultEmpty(uuidReturn.uuid));
             setReturnValue(volume);
@@ -49,13 +49,13 @@ public class CreateGlusterVolumeVDSCommand<P extends CreateGlusterVolumeVDSParam
 
     private String[] getTransportTypeArr(GlusterVolumeEntity volume) {
         Set<TransportType> transportTypes = volume.getTransportTypes();
-        if(transportTypes == null) {
+        if (transportTypes == null) {
             return null;
         }
 
         String[] transportTypeArr = new String[transportTypes.size()];
         int index = 0;
-        for(TransportType transportType : transportTypes) {
+        for (TransportType transportType : transportTypes) {
             transportTypeArr[index++] = transportType.name();
         }
 

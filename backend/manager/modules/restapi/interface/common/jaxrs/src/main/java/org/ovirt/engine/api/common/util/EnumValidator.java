@@ -44,7 +44,7 @@ public class EnumValidator {
      * @param name the actual value to be looked up. could be the enum member or part of extended list of values
      */
     public static <E extends Enum<E>> String validateEnum(Class<E> clz, Set<String> externalValues, String name, boolean toUppercase) {
-        return validateEnum(INVALID_ENUM_REASON, INVALID_ENUM_DETAIL, clz, externalValues,  name, toUppercase);
+        return validateEnum(INVALID_ENUM_REASON, INVALID_ENUM_DETAIL, clz, externalValues, name, toUppercase);
     }
 
 
@@ -70,7 +70,7 @@ public class EnumValidator {
     public static <E extends Enum<E>> E validateEnum(String reason, String detail, Class<E> clz, String name, boolean toUppercase) {
         try {
             return Enum.valueOf(clz, toUppercase ? name.toUpperCase() : name);
-        } catch (IllegalArgumentException|NullPointerException e) {
+        } catch (IllegalArgumentException | NullPointerException e) {
             detail = detail + getPossibleValues(clz);
             throw new WebApplicationException(response(reason, MessageFormat.format(detail, name, clz.getSimpleName())));
         }
@@ -85,7 +85,7 @@ public class EnumValidator {
 
         try {
             return Enum.valueOf(clz, toUppercase ? name.toUpperCase() : name).name();
-        } catch (IllegalArgumentException|NullPointerException e) {
+        } catch (IllegalArgumentException | NullPointerException e) {
             detail = detail + getPossibleValues(clz, OsTypeUtils.getAllValues());
             throw new WebApplicationException(response(reason, MessageFormat.format(detail, name, clz.getSimpleName())));
         }

@@ -177,8 +177,8 @@ public class AddStorageServerConnectionCommandTest extends
 
     @Test
     public void isConnWithSameDetailsExist() {
-       StorageServerConnections  newISCSIConnection = createISCSIConnection("1.2.3.4", StorageType.ISCSI, "iqn.2013-04.myhat.com:aaa-target1", "3650", "user1", "mypassword123");
-       StorageServerConnections  existingConn = createISCSIConnection("1.2.3.4", StorageType.ISCSI, "iqn.2013-04.myhat.com:aaa-target1", "3650", "user1", "mypassword123");
+       StorageServerConnections newISCSIConnection = createISCSIConnection("1.2.3.4", StorageType.ISCSI, "iqn.2013-04.myhat.com:aaa-target1", "3650", "user1", "mypassword123");
+       StorageServerConnections existingConn = createISCSIConnection("1.2.3.4", StorageType.ISCSI, "iqn.2013-04.myhat.com:aaa-target1", "3650", "user1", "mypassword123");
        existingConn.setId(Guid.newGuid().toString());
 
        when(iscsiStorageHelper.findConnectionsByAddressPortAndIqn(newISCSIConnection)).thenReturn(Collections.singletonList(existingConn));

@@ -12,7 +12,7 @@ import org.ovirt.engine.core.common.businessentities.storage.RepoImage;
 public class OpenStackImageMapper {
     @Mapping(from = RepoImage.class, to = OpenStackImage.class)
     public static OpenStackImage map(RepoImage entity, OpenStackImage template) {
-        OpenStackImage model = template != null? template: new OpenStackImage();
+        OpenStackImage model = template != null ? template : new OpenStackImage();
         if (entity.getRepoImageId() != null) {
             model.setId(entity.getRepoImageId());
         }
@@ -24,7 +24,7 @@ public class OpenStackImageMapper {
 
     @Mapping(from = OpenStackImage.class, to = RepoImage.class)
     public static RepoImage map(OpenStackImage model, RepoImage template) {
-        RepoImage entity = template != null? template: new RepoImage();
+        RepoImage entity = template != null ? template : new RepoImage();
         if (model.isSetId()) {
             entity.setRepoImageId(model.getId());
         }

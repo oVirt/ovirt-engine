@@ -539,7 +539,7 @@ public class UpdateClusterCommandTest {
 
     @Test
     @MockedConfig("configForClusterWithVirtGlusterServicesNotAllowed")
-    public void memoryOptimizationWithoutKsmOrBallooning(){
+    public void memoryOptimizationWithoutKsmOrBallooning() {
         final Cluster cluster = createDefaultCluster();
         cluster.setMaxVdsMemoryOverCommit(150);
         cluster.setEnableKsm(false);
@@ -551,7 +551,7 @@ public class UpdateClusterCommandTest {
 
     @Test
     @MockedConfig("configForClusterWithVirtGlusterServicesNotAllowed")
-    public void memoryOptimizationLowerThenZeroWithoutKsmOrBallooning(){
+    public void memoryOptimizationLowerThenZeroWithoutKsmOrBallooning() {
         final Cluster cluster = createDefaultCluster();
         cluster.setMaxVdsMemoryOverCommit(-52);
         cluster.setEnableKsm(false);
@@ -563,7 +563,7 @@ public class UpdateClusterCommandTest {
 
     @Test
     @MockedConfig("configForClusterWithVirtGlusterServicesNotAllowed")
-    public void memoryOptimizationWithoutBallooning(){
+    public void memoryOptimizationWithoutBallooning() {
         final Cluster cluster = createDefaultCluster();
         cluster.setMaxVdsMemoryOverCommit(0);
         cluster.setEnableKsm(true);
@@ -575,7 +575,7 @@ public class UpdateClusterCommandTest {
 
     @Test
     @MockedConfig("configForClusterWithVirtGlusterServicesNotAllowed")
-    public void memoryOptimizationWithoutKsm(){
+    public void memoryOptimizationWithoutKsm() {
         final Cluster cluster = createDefaultCluster();
         cluster.setMaxVdsMemoryOverCommit(200);
         cluster.setEnableKsm(false);
@@ -587,7 +587,7 @@ public class UpdateClusterCommandTest {
 
     @Test
     @MockedConfig("configForClusterWithVirtGlusterServicesNotAllowed")
-    public void memoryOptimizationWithKsmAndBallooning(){
+    public void memoryOptimizationWithKsmAndBallooning() {
         final Cluster cluster = createDefaultCluster();
         cluster.setMaxVdsMemoryOverCommit(200);
         cluster.setEnableKsm(true);

@@ -319,7 +319,7 @@ public class GlusterVolumeDaoImpl extends MassOperationsGenericDao<GlusterVolume
                 glusterAsyncTaskRowMapper,
                 createVolumeIdParams(volumeId));
 
-        if(glusterAsyncTasks != null && !glusterAsyncTasks.isEmpty()) {
+        if (glusterAsyncTasks != null && !glusterAsyncTasks.isEmpty()) {
             return glusterAsyncTasks.get(0);
         }
         return null;

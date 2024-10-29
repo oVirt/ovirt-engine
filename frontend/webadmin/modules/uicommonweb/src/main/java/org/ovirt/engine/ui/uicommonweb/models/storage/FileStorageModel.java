@@ -9,7 +9,7 @@ import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
 
 @SuppressWarnings("unused")
-public abstract class FileStorageModel extends Model implements IStorageModel{
+public abstract class FileStorageModel extends Model implements IStorageModel {
     private EntityModel<String> path;
 
     protected void setPath(EntityModel<String> value) {

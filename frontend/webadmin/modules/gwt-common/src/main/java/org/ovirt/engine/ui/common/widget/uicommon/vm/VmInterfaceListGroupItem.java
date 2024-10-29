@@ -428,7 +428,7 @@ public class VmInterfaceListGroupItem extends PatternflyListViewItem<VmNetworkIn
         );
         icon.add(plugItalic);
         SafeHtmlBuilder tooltipText = new SafeHtmlBuilder();
-        if(isCardPlugged(vmNetworkInterface)) {
+        if (isCardPlugged(vmNetworkInterface)) {
             tooltipText.appendHtmlConstant(constants.pluggedNetworkInterface());
         } else {
             Italic unplugged = italicWithStyles(

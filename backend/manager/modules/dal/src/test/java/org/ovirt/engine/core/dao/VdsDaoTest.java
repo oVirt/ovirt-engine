@@ -527,9 +527,9 @@ public class VdsDaoTest extends BaseDaoTestCase<VdsDao> {
             assertNotNull(host.getSwapFree());
             assertNotNull(host.getSwapTotal());
 
-            assertNotEquals(0, (long)host.getMemFree());
-            assertNotEquals(0, (long)host.getSwapFree());
-            assertNotEquals(0, (long)host.getSwapTotal());
+            assertNotEquals(0, (long) host.getMemFree());
+            assertNotEquals(0, (long) host.getSwapFree());
+            assertNotEquals(0, (long) host.getSwapTotal());
         }
     }
 

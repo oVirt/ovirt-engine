@@ -25,7 +25,7 @@ public class ServletUtils {
         // Load the system wide MIME types map:
         try {
             mimeMap = new MimetypesFileTypeMap(System.getProperty("org.ovirt.engine.mime.types", "/etc/mime.types"));
-        } catch(IOException exception) {
+        } catch (IOException exception) {
             log.error("Can't load system mime types file.", exception);
             mimeMap = new MimetypesFileTypeMap();
         }
@@ -144,7 +144,7 @@ public class ServletUtils {
             while ((count = in.read(buffer)) != -1) {
                 out.write(buffer, 0, count);
             }
-        } catch(IOException exception) {
+        } catch (IOException exception) {
             final String message = "Error sending file '" + file.getAbsolutePath() + "'.";
             log.error(message, exception);
             throw new IOException(message, exception);

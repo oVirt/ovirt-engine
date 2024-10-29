@@ -266,7 +266,7 @@ public class VmDeviceCommonUtils {
 
     public static Map<VmDeviceId, DiskVmElement> extractDiskVmElements(VM vm) {
         Map<VmDeviceId, DiskVmElement> result = new HashMap<>();
-        for(Disk disk : vm.getDiskMap().values()) {
+        for (Disk disk : vm.getDiskMap().values()) {
             DiskVmElement element = disk.getDiskVmElementForVm(vm.getId());
             if (element != null) {
                 result.put(element.getId(), element);
@@ -418,7 +418,7 @@ public class VmDeviceCommonUtils {
         vmBase.getManagedDeviceMap().put(vmDevice.getDeviceId(), vmDevice);
     }
 
-    public static void addGraphicsDevice(VmBase vmBase, VmDeviceType vmDeviceType)  {
+    public static void addGraphicsDevice(VmBase vmBase, VmDeviceType vmDeviceType) {
         GraphicsDevice graphicsDevice = new GraphicsDevice(vmDeviceType);
         graphicsDevice.setId(new VmDeviceId(Guid.newGuid(), vmBase.getId()));
         vmBase.getManagedDeviceMap().put(graphicsDevice.getDeviceId(), graphicsDevice);

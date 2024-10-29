@@ -99,25 +99,25 @@ public class DiskModule extends AbstractGinModule {
         bind(DiskVmListModel.class).in(Singleton.class);
         bind(DiskTemplateListModel.class).in(Singleton.class);
         bind(DiskStorageListModel.class).in(Singleton.class);
-        bind(new TypeLiteral<PermissionListModel<Disk>>(){}).in(Singleton.class);
+        bind(new TypeLiteral<PermissionListModel<Disk>>() { }).in(Singleton.class);
         bind(DiskMainSelectedItems.class).asEagerSingleton();
 
         // Form Detail Models
-        bind(new TypeLiteral<DetailModelProvider<DiskListModel, DiskGeneralModel>>(){})
-            .to(new TypeLiteral<DetailTabModelProvider<DiskListModel, DiskGeneralModel>>(){}).in(Singleton.class);
+        bind(new TypeLiteral<DetailModelProvider<DiskListModel, DiskGeneralModel>>() { })
+            .to(new TypeLiteral<DetailTabModelProvider<DiskListModel, DiskGeneralModel>>() { }).in(Singleton.class);
         // Search-able Detail Models
-        bind(new TypeLiteral<SearchableDetailModelProvider<VM, DiskListModel, DiskVmListModel>>(){})
-            .to(new TypeLiteral<SearchableDetailTabModelProvider<VM, DiskListModel, DiskVmListModel>>(){})
+        bind(new TypeLiteral<SearchableDetailModelProvider<VM, DiskListModel, DiskVmListModel>>() { })
+            .to(new TypeLiteral<SearchableDetailTabModelProvider<VM, DiskListModel, DiskVmListModel>>() { })
             .in(Singleton.class);
-        bind(new TypeLiteral<SearchableDetailModelProvider<VmTemplate, DiskListModel, DiskTemplateListModel>>(){})
-            .to(new TypeLiteral<SearchableDetailTabModelProvider<VmTemplate, DiskListModel, DiskTemplateListModel>>(){})
+        bind(new TypeLiteral<SearchableDetailModelProvider<VmTemplate, DiskListModel, DiskTemplateListModel>>() { })
+            .to(new TypeLiteral<SearchableDetailTabModelProvider<VmTemplate, DiskListModel, DiskTemplateListModel>>() { })
             .in(Singleton.class);
-        bind(new TypeLiteral<SearchableDetailModelProvider<StorageDomain, DiskListModel, DiskStorageListModel>>(){})
-            .to(new TypeLiteral<SearchableDetailTabModelProvider<StorageDomain, DiskListModel, DiskStorageListModel>>(){})
+        bind(new TypeLiteral<SearchableDetailModelProvider<StorageDomain, DiskListModel, DiskStorageListModel>>() { })
+            .to(new TypeLiteral<SearchableDetailTabModelProvider<StorageDomain, DiskListModel, DiskStorageListModel>>() { })
             .in(Singleton.class);
         // Permission Detail Model
-        bind(new TypeLiteral<SearchableDetailModelProvider<Permission, DiskListModel, PermissionListModel<Disk>>>(){})
-            .to(new TypeLiteral<PermissionModelProvider<Disk, DiskListModel>>(){}).in(Singleton.class);
+        bind(new TypeLiteral<SearchableDetailModelProvider<Permission, DiskListModel, PermissionListModel<Disk>>>() { })
+            .to(new TypeLiteral<PermissionModelProvider<Disk, DiskListModel>>() { }).in(Singleton.class);
     }
 
 }

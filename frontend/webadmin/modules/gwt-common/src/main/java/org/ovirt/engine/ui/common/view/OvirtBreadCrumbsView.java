@@ -145,7 +145,7 @@ public class OvirtBreadCrumbsView<T, M extends SearchableListModel> extends Abst
     public SafeHtml getName(T item) {
         String result = "";
         if (item instanceof Nameable) {
-            result = ((Nameable)item).getName();
+            result = ((Nameable) item).getName();
         }
         return SafeHtmlUtils.fromString(result);
     }

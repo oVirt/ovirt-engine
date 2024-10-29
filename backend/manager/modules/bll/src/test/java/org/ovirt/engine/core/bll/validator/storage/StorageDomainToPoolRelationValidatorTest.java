@@ -137,7 +137,7 @@ public class StorageDomainToPoolRelationValidatorTest {
             ValidationResult attachMultipleISOOrExportResult = validator.validateDomainCanBeAttachedToPool();
             assertThat("Attaching domain of type " + type + " succeeded though another domain of the same type already exists in the pool",
                     attachMultipleISOOrExportResult,
-                    failsWith(type  == StorageDomainType.ISO ? EngineMessage.ERROR_CANNOT_ATTACH_MORE_THAN_ONE_ISO_DOMAIN :
+                    failsWith(type == StorageDomainType.ISO ? EngineMessage.ERROR_CANNOT_ATTACH_MORE_THAN_ONE_ISO_DOMAIN :
                             EngineMessage.ERROR_CANNOT_ATTACH_MORE_THAN_ONE_EXPORT_DOMAIN));
         }
     }

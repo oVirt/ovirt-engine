@@ -457,7 +457,7 @@ class CopyHostNetworksHelperTest {
                 printShape(ifaceName);
                 String networkName = toNetworkName(networkId);
                 printShape(networkName);
-                printout.append("    " + prefix() + ifaceName + " -> " + prefix() +  networkName);
+                printout.append("    " + prefix() + ifaceName + " -> " + prefix() + networkName);
             }
             printIfaceAttachment = true;
         }
@@ -465,7 +465,7 @@ class CopyHostNetworksHelperTest {
         void printVlanToNetwork(Integer vlanId, Guid networkId) {
             String networkName = toNetworkName(networkId);
             printShape(networkName);
-            printout.append("    " + prefix() + toVlanName(vlanId) + " -> " + prefix() +  networkName);
+            printout.append("    " + prefix() + toVlanName(vlanId) + " -> " + prefix() + networkName);
             printIfaceAttachment = false;
         }
 
@@ -529,7 +529,7 @@ class CopyHostNetworksHelperTest {
         }
 
         void printDigraphPrefix() {
-            switch(node){
+            switch (node) {
             case SOURCE:
                 printout.append("digraph ScenarioResult {\n"
                         + "\n"

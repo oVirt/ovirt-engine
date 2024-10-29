@@ -181,7 +181,7 @@ public class UpdateGlusterHookCommand extends GlusterHookCommandBase<GlusterHook
 
         if (errors.size() > 0) {
             setSucceeded(false);
-            errorType =  AuditLogType.GLUSTER_HOOK_UPDATE_FAILED;
+            errorType = AuditLogType.GLUSTER_HOOK_UPDATE_FAILED;
             handleVdsErrors(getAuditLogTypeValue(), errors);
             addCustomValue(GlusterConstants.FAILURE_MESSAGE , StringUtils.join(errors, System.lineSeparator()));
         }

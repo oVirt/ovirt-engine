@@ -25,10 +25,10 @@ import com.google.inject.Inject;
 public class OptionsModel extends EntityModel<EditOptionsModel> {
 
     private static final UIConstants constants = ConstantsManager.getInstance().getConstants();
-    private static final String EDIT_SETTINGS = "EditSettings";//$NON-NLS-1$
-    public static String RESET_SETTINGS = "ResetSettings";//$NON-NLS-1$
-    public static String SAVE_SETTINGS = "SaveSettings";//$NON-NLS-1$
-    public static String CANCEL_SETTINGS = "CancelSettings";//$NON-NLS-1$
+    private static final String EDIT_SETTINGS = "EditSettings"; //$NON-NLS-1$
+    public static String RESET_SETTINGS = "ResetSettings"; //$NON-NLS-1$
+    public static String SAVE_SETTINGS = "SaveSettings"; //$NON-NLS-1$
+    public static String CANCEL_SETTINGS = "CancelSettings"; //$NON-NLS-1$
     private final UserProfileManager userProfileManager;
 
     private final UICommand editCommand;
@@ -153,16 +153,16 @@ public class OptionsModel extends EntityModel<EditOptionsModel> {
                 .collect(Collectors.toList()));
 
         List<Boolean> results = new ArrayList<>();
-        Consumer<Boolean> markAsDone = result ->{
+        Consumer<Boolean> markAsDone = result -> {
             results.add(result);
-            if(results.size() >= removals.size()) {
+            if (results.size() >= removals.size()) {
                 setConfirmWindow(null);
                 cancel();
                 onEdit();
             }
         };
 
-        UICommand ok = UICommand.createDefaultOkUiCommand("ConfirmReset", new BaseCommandTarget() {//$NON-NLS-1$
+        UICommand ok = UICommand.createDefaultOkUiCommand("ConfirmReset", new BaseCommandTarget() { //$NON-NLS-1$
             @Override
             public void executeCommand(UICommand uiCommand) {
                 removals.stream()
@@ -177,7 +177,7 @@ public class OptionsModel extends EntityModel<EditOptionsModel> {
                                 false));
             }
         });
-        UICommand cancel = UICommand.createCancelUiCommand("AbortReset", new BaseCommandTarget() {//$NON-NLS-1$
+        UICommand cancel = UICommand.createCancelUiCommand("AbortReset", new BaseCommandTarget() { //$NON-NLS-1$
             @Override
             public void executeCommand(UICommand uiCommand) {
                 setConfirmWindow(null);

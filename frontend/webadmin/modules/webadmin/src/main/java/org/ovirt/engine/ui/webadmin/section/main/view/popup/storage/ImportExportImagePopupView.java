@@ -196,7 +196,7 @@ public class ImportExportImagePopupView extends AbstractModelBoundPopupView<Impo
 
         messagePanel.setVisible(message != null && !message.isEmpty());
         messagePanel.clear();
-        if(message != null) {
+        if (message != null) {
             messagePanel.add(new Label(message));
         }
     }

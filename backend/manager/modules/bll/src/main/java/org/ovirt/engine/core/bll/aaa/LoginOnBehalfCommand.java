@@ -106,7 +106,7 @@ public class LoginOnBehalfCommand<T extends LoginOnBehalfParameters> extends Com
             throw new EngineException(EngineError.PRINCIPAL_NOT_FOUND,
                     String.format("%s in domain '%s", principalName, authzName));
         }
-        DbUser user =  new DbUser(directoryUtils.mapPrincipalRecordToDirectoryUser(authzName, principalRecord));
+        DbUser user = new DbUser(directoryUtils.mapPrincipalRecordToDirectoryUser(authzName, principalRecord));
         user.setId(Guid.newGuid());
         return user;
     }

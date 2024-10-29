@@ -65,7 +65,7 @@ public class SsoLogoutServlet extends HttpServlet {
             session.setAttribute(FiltersHelper.Constants.LOGOUT_INPROGRESS, true);
         }
 
-        Map<String, Object> revokeResponse =  SsoOAuthServiceUtils.revoke(token);
+        Map<String, Object> revokeResponse = SsoOAuthServiceUtils.revoke(token);
         String error_description = (String) revokeResponse.get("error_description");
         String error = (String) revokeResponse.get("error");
         if (StringUtils.isNotEmpty(error_description)) {

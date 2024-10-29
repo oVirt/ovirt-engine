@@ -380,10 +380,10 @@ public class ClusterModel extends EntityModel<Cluster> implements HasValidatedTa
     }
     private EntityModel<String> glusterHostSshPublicKey;
 
-    public EntityModel<String> getGlusterHostSshPublicKey(){
+    public EntityModel<String> getGlusterHostSshPublicKey() {
         return glusterHostSshPublicKey;
     }
-    public void setGlusterHostSshPublicKey(EntityModel<String> glusterHostSshPublicKey){
+    public void setGlusterHostSshPublicKey(EntityModel<String> glusterHostSshPublicKey) {
         this.glusterHostSshPublicKey = glusterHostSshPublicKey;
     }
 
@@ -1253,7 +1253,7 @@ public class ClusterModel extends EntityModel<Cluster> implements HasValidatedTa
         getEnableKsm().setEntity(true);
         getKsmPolicyForNumaSelection().setIsChangeable(true);
         getEnableKsm().getEntityChangedEvent().addListener((ev, sender, args) -> {
-            if (getEnableKsm().getEntity() == null){
+            if (getEnableKsm().getEntity() == null) {
                 return;
             }
             if (getEnableKsm().getEntity()) {
@@ -1921,9 +1921,9 @@ public class ClusterModel extends EntityModel<Cluster> implements HasValidatedTa
                 getOptimizeForSpeed().setEntity(false);
             } else if (senderEntityModel == getOptimizeForSpeed()) {
                 getOptimizeForUtilization().setEntity(false);
-            } else if(senderEntityModel == getGuarantyResources()) {
+            } else if (senderEntityModel == getGuarantyResources()) {
                 getAllowOverbooking().setEntity(false);
-            } else if(senderEntityModel == getAllowOverbooking()) {
+            } else if (senderEntityModel == getAllowOverbooking()) {
                 getGuarantyResources().setEntity(false);
             }
         }
@@ -2204,8 +2204,8 @@ public class ClusterModel extends EntityModel<Cluster> implements HasValidatedTa
         if (shouldFindEquivalentCpu) {
             String flags;
             if (oldSelectedCpu != null) {
-                flags = String.join(",", oldSelectedCpu.getFlags());//$NON-NLS-1$
-            } else if (getEntity() != null && getEntity().getCpuFlags() != null){
+                flags = String.join(",", oldSelectedCpu.getFlags()); //$NON-NLS-1$
+            } else if (getEntity() != null && getEntity().getCpuFlags() != null) {
                 flags = getEntity().getCpuFlags();
             } else {
                 return;

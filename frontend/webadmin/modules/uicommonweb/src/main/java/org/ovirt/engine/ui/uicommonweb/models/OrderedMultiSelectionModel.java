@@ -213,7 +213,7 @@ public class OrderedMultiSelectionModel<T> extends AbstractSelectionModel<T> {
 
         int shiftSelectedRow = lastSelectedRow + shift;
         int nextRow =
-                shiftSelectedRow >= 0  && dataDisplay.getRowCount() != 0 ?
+                shiftSelectedRow >= 0 && dataDisplay.getRowCount() != 0 ?
                         shiftSelectedRow % dataDisplay.getRowCount() : shiftSelectedRow + dataDisplay.getRowCount();
 
         if (disabledRows.contains(nextRow)) {

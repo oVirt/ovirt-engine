@@ -9,7 +9,7 @@ public class GetFileStatsParameters extends IrsBaseVDSCommandParameters {
     private String pattern;
     private boolean caseSensitive;
 
-    public GetFileStatsParameters() {}
+    public GetFileStatsParameters() { }
 
     public GetFileStatsParameters(Guid spUUID, Guid sdUUID, String pattern, boolean caseSensitive) {
         super(spUUID);

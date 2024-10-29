@@ -51,9 +51,9 @@ public class ItemInfoPopup extends DecoratedPopupPanel {
     private static final ApplicationResources resources = AssetProvider.getResources();
     private static final ApplicationConstants constants = AssetProvider.getConstants();
     private static final ApplicationMessages messages = AssetProvider.getMessages();
-    private static final String BACKGROUND_COLOR = "#333333";//$NON-NLS-1$
-    private static final String WHITE_TEXT_COLOR = "white";//$NON-NLS-1$
-    private static final String TEXT_COLOR = "#c4c4c4";//$NON-NLS-1$
+    private static final String BACKGROUND_COLOR = "#333333"; //$NON-NLS-1$
+    private static final String WHITE_TEXT_COLOR = "white"; //$NON-NLS-1$
+    private static final String TEXT_COLOR = "#c4c4c4"; //$NON-NLS-1$
     private static final String BOND_OPTIONS_IP_SEPARATOR = ","; //$NON-NLS-1$
 
     private SafeHtml mgmtNetworkImage = safeHtmlFromTrustedString(resources.mgmtNetwork());
@@ -86,7 +86,7 @@ public class ItemInfoPopup extends DecoratedPopupPanel {
             showNetwork((LogicalNetworkModel) item);
         } else if (item instanceof NetworkInterfaceModel) {
             showNic((NetworkInterfaceModel) item);
-        } else if (item instanceof NetworkLabelModel){
+        } else if (item instanceof NetworkLabelModel) {
             return null;
         }
 
@@ -213,7 +213,7 @@ public class ItemInfoPopup extends DecoratedPopupPanel {
     private void addSyncDiff(LogicalNetworkModel networkModel) {
         addRow(templates.imageTextSetupNetwork(notInSyncImage, templates.coloredText(constants.hostOutOfSync(),
                 SafeStylesUtils.forTrustedColor(TEXT_COLOR))));
-        SafeHtml safeHtml  = SafeHtmlUtils.fromTrustedString(generatePreviewSentence());
+        SafeHtml safeHtml = SafeHtmlUtils.fromTrustedString(generatePreviewSentence());
         addRow(safeHtml);
         List<ReportedConfiguration> panelParameters = filterSyncProperties(networkModel);
         Widget networkOutOfSyncPanel = new NetworkOutOfSyncPanel(panelParameters).outOfSyncTableAsWidget();
@@ -235,7 +235,7 @@ public class ItemInfoPopup extends DecoratedPopupPanel {
      * will filter out all sync properties
      * @param networkModel must be managed
      */
-    private List<ReportedConfiguration> filterSyncProperties(LogicalNetworkModel networkModel){
+    private List<ReportedConfiguration> filterSyncProperties(LogicalNetworkModel networkModel) {
         ReportedConfigurations reportedConfigurations = networkModel.getReportedConfigurations();
         List<ReportedConfiguration> reportedConfigurationList = reportedConfigurations.getReportedConfigurationList();
         return Linq.where(reportedConfigurationList, reportedConfiguration -> !reportedConfiguration.isInSync());

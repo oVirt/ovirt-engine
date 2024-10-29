@@ -72,7 +72,7 @@ public class RngDeviceMapper {
     }
 
     public static List<VmRngDevice.Source> mapRngSources(List<RngSource> model) {
-        List<VmRngDevice.Source> result = new ArrayList<>(model != null? model.size(): 0);
+        List<VmRngDevice.Source> result = new ArrayList<>(model != null ? model.size() : 0);
         if (model != null) {
             for (RngSource source : model) {
                 result.add(map(source, null));
@@ -82,7 +82,7 @@ public class RngDeviceMapper {
     }
 
     public static List<RngSource> mapRngSources(Collection<VmRngDevice.Source> entity) {
-        List<RngSource> result = new ArrayList<>(entity != null ? entity.size(): 0);
+        List<RngSource> result = new ArrayList<>(entity != null ? entity.size() : 0);
         if (entity != null) {
             for (VmRngDevice.Source source : entity) {
                 RngSource restSource = map(source, null);

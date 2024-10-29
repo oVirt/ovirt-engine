@@ -88,7 +88,7 @@ public class QuotaManagerAuditLogger {
         addClusterRequested(cpuRequestPercentage, memRequestPercentage);
 
         auditLogDirector.log(auditLogable, hardEnforcement ?
-                AuditLogType.USER_EXCEEDED_QUOTA_CLUSTER_GRACE_LIMIT:
+                AuditLogType.USER_EXCEEDED_QUOTA_CLUSTER_GRACE_LIMIT :
                 AuditLogType.USER_EXCEEDED_QUOTA_CLUSTER_GRACE_LIMIT_PERMISSIVE_MODE);
     }
 

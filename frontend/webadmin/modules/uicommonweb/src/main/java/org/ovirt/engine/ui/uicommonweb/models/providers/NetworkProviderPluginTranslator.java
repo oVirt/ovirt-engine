@@ -25,8 +25,8 @@ public enum NetworkProviderPluginTranslator {
     private Enum defaultPlugin;
 
     private static final String EMPTY_NAME = "";
-    private static final Map<String, Enum> pluginForDisplay  = new HashMap<>();
-    private static final Map<String, Enum> pluginForName  = new HashMap<>();
+    private static final Map<String, Enum> pluginForDisplay = new HashMap<>();
+    private static final Map<String, Enum> pluginForName = new HashMap<>();
 
     static {
         for (NetworkProviderPluginTranslator translator: NetworkProviderPluginTranslator.values()) {
@@ -47,7 +47,7 @@ public enum NetworkProviderPluginTranslator {
     }
 
     NetworkProviderPluginTranslator(Enum[] plugins, Enum defaultPlugin) {
-        for(Enum plugin: plugins) {
+        for (Enum plugin: plugins) {
             members.add(plugin);
         }
         this.defaultPlugin = defaultPlugin;

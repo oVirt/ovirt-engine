@@ -56,7 +56,7 @@ public class IsRoleNetworkIpConfigurationValid {
      * must be in sync with {@link #validate(NetworkAttachment)}
      */
     public boolean validateAddressesOnExistingNic(VdsNetworkInterface nic) {
-        if (networkCluster.isMigration() || networkCluster.isDefaultRoute()  || networkCluster.isDisplay() || networkCluster.isGluster()) {
+        if (networkCluster.isMigration() || networkCluster.isDefaultRoute() || networkCluster.isDisplay() || networkCluster.isGluster()) {
             return StringUtils.isNotEmpty(nic.getIpv4Address()) || StringUtils.isNotEmpty(nic.getIpv6Address());
         }
         return StringUtils.isNotEmpty(nic.getIpv4Address());

@@ -76,7 +76,7 @@ public class VmNicFilterParameterDaoImpl extends DefaultGenericDao<VmNicFilterPa
                 .addValue("value", obj.getValue());
     }
 
-    public static class VmNicFilterParameterRowMapper implements RowMapper<VmNicFilterParameter>  {
+    public static class VmNicFilterParameterRowMapper implements RowMapper<VmNicFilterParameter> {
 
         private static final VmNicFilterParameterRowMapper INSTANCE = new VmNicFilterParameterRowMapper();
 

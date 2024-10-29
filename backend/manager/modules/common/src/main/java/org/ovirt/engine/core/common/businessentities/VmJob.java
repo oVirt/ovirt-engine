@@ -87,6 +87,6 @@ public class VmJob implements BusinessEntity<Guid> {
 
     @Override
     public String toString() {
-        return "VM Job [" + getId() +"]";
+        return "VM Job [" + getId() + "]";
     }
 }

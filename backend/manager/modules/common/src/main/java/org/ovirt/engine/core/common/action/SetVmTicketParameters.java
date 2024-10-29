@@ -22,7 +22,7 @@ public class SetVmTicketParameters extends VmOperationParameterBase {
         this.validTime = validTime;
     }
 
-    public SetVmTicketParameters(Guid vmId, String ticket, int validTime, GraphicsType graphicsType,  String clientIp) {
+    public SetVmTicketParameters(Guid vmId, String ticket, int validTime, GraphicsType graphicsType, String clientIp) {
         this(vmId, ticket, validTime, graphicsType);
         this.clientIp = clientIp;
     }

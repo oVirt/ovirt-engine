@@ -79,7 +79,7 @@ public class ListModelListBoxCell<T> extends AbstractInputCell<ListModel, String
         SafeHtmlBuilder sbDelegate = new SafeHtmlBuilder();
         delegate.render(context, renderer.render((T) value.getSelectedItem()), sbDelegate);
         String select = sbDelegate.toSafeHtml().asString();
-        select = select.replaceFirst(PATTERN_SELECT, PATTERN_SELECT + " id=\"" + id  + "\""); //$NON-NLS-1$ //$NON-NLS-2$
+        select = select.replaceFirst(PATTERN_SELECT, PATTERN_SELECT + " id=\"" + id + "\""); //$NON-NLS-1$ //$NON-NLS-2$
         if (value.getIsChangable()) {
             sb.append(SafeHtmlUtils.fromTrustedString(select));
         } else {

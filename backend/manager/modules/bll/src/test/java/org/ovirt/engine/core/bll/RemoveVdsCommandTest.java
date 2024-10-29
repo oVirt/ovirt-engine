@@ -363,7 +363,7 @@ public class RemoveVdsCommandTest extends BaseCommandTest {
     @MethodSource("removeWithAnsiblePlaybookScenarios")
     public void auditAnsibleRemoveVdsPlaybookExecution(AnsibleReturnCode ansibleReturnCode,
                                                        VDSStatus vdsStatus,
-                                                       AuditLogType  expectedAuditLogType) {
+                                                       AuditLogType expectedAuditLogType) {
         mockVdsWithStatus(vdsStatus);
         mockIsGlusterEnabled(true);
         mockHasMultipleClusters(false);

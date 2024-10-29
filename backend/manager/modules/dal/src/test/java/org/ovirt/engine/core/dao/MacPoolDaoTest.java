@@ -14,7 +14,7 @@ import org.ovirt.engine.core.common.businessentities.MacRange;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.utils.RandomUtils;
 
-public class MacPoolDaoTest extends BaseGenericDaoTestCase<Guid, MacPool, MacPoolDao>{
+public class MacPoolDaoTest extends BaseGenericDaoTestCase<Guid, MacPool, MacPoolDao> {
     @Test
     public void testGetDefaultPool() {
         final MacPool defaultPool = dao.getDefaultPool();

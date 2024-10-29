@@ -23,7 +23,7 @@ public class GlusterEventsProcessor {
 
     private ConcurrentMap<String, GlusterEventSubscriber> subscribers = new ConcurrentHashMap<>();
 
-    public GlusterEventsProcessor(){
+    public GlusterEventsProcessor() {
         subscribers.put("EVENT_GEOREP_.*", Injector.injectMembers(new GeorepEventSubscriber()));
         subscribers.put("BRICK.*", Injector.injectMembers(new GlusterBrickEventSubscriber()));
     }

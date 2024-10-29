@@ -82,7 +82,7 @@ public class BackendUserTagResourceTest extends AbstractBackendSubResourceTest<T
             GetTagsByUserIdParameters.class,
             new String[] { "UserId" },
             new Object[] { USER_ID.toString() },
-            succeed? setUpTagsExpectations(): Collections.emptyList()
+            succeed ? setUpTagsExpectations() : Collections.emptyList()
         );
     }
 

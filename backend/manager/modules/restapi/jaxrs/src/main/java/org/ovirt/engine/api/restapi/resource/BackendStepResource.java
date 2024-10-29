@@ -20,7 +20,7 @@ import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.queries.gluster.GlusterVolumeQueriesParameters;
 import org.ovirt.engine.core.compat.Guid;
 
-public class BackendStepResource extends AbstractBackendActionableResource<org.ovirt.engine.api.model.Step, org.ovirt.engine.core.common.job.Step> implements StepResource{
+public class BackendStepResource extends AbstractBackendActionableResource<org.ovirt.engine.api.model.Step, org.ovirt.engine.core.common.job.Step> implements StepResource {
 
     private BackendStepsResource parent;
 
@@ -47,7 +47,7 @@ public class BackendStepResource extends AbstractBackendActionableResource<org.o
     public Response end(Action action) {
         EndExternalStepParameters parameters = new EndExternalStepParameters(
             guid,
-            action.isSetSucceeded() ? action.isSucceeded(): true
+            action.isSetSucceeded() ? action.isSucceeded() : true
         );
         return doAction(ActionType.EndExternalStep, parameters, action);
     }
@@ -58,7 +58,7 @@ public class BackendStepResource extends AbstractBackendActionableResource<org.o
     }
 
     private Step getStepById(Guid id) {
-        IdQueryParameters params =  new IdQueryParameters(id);
+        IdQueryParameters params = new IdQueryParameters(id);
         Step step = performGet(QueryType.GetStepWithSubjectEntitiesByStepId, params);
         return step;
     }
@@ -76,7 +76,7 @@ public class BackendStepResource extends AbstractBackendActionableResource<org.o
 
         @Override
         public GlusterVolumeTaskStatusEntity resolve(Guid id) throws BackendFailureException {
-            org.ovirt.engine.core.common.job.Step stepEntity =  getEntity(org.ovirt.engine.core.common.job.Step.class,
+            org.ovirt.engine.core.common.job.Step stepEntity = getEntity(org.ovirt.engine.core.common.job.Step.class,
                     QueryType.GetStepWithSubjectEntitiesByStepId,
                     new IdQueryParameters(id),
                     null,
@@ -108,7 +108,7 @@ public class BackendStepResource extends AbstractBackendActionableResource<org.o
             case REMOVING_BRICKS:
                 List<GlusterBrickEntity> bricks = new ArrayList<>();
                 for (GlusterBrickEntity brick: volume.getBricks()) {
-                    if (brick.getAsyncTask()!=null && brick.getAsyncTask().getTaskId()!=null) {
+                    if (brick.getAsyncTask() != null && brick.getAsyncTask().getTaskId() != null) {
                         bricks.add(brick);
                     }
                 }

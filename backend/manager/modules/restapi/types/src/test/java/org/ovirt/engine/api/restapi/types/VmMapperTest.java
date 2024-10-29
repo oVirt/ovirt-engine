@@ -196,10 +196,10 @@ public class VmMapperTest extends
     }
 
     private void assertHostsListMatch(List<Host> modelHostsList, List<Host> trnsfHostsList) {
-        for (Host host : modelHostsList){
+        for (Host host : modelHostsList) {
             boolean foundInTransformation = false;
-            for (Host otherHost : trnsfHostsList){
-                if (host.getId().equals(otherHost.getId())){
+            for (Host otherHost : trnsfHostsList) {
+                if (host.getId().equals(otherHost.getId())) {
                     foundInTransformation = true;
                     break;
                 }
@@ -237,7 +237,7 @@ public class VmMapperTest extends
         final VmStatic mappedVm = VmMapper.map(vm, vmTemplate);
 
         final List<Guid> hosts = new ArrayList<>();
-        for (Host host : vm.getPlacementPolicy().getHosts().getHosts()){
+        for (Host host : vm.getPlacementPolicy().getHosts().getHosts()) {
             hosts.add(Guid.createGuidFromString(host.getId()));
         }
         assertEquals(new HashSet(hosts), new HashSet(mappedVm.getDedicatedVmForVdsList()));
@@ -312,10 +312,10 @@ public class VmMapperTest extends
         assertNull(map.getGuestOperatingSystem().getVersion().getRevision());
         assertEquals("x86_64", map.getGuestOperatingSystem().getArchitecture());
         assertEquals("2.6.32-431.el6.x86_64", map.getGuestOperatingSystem().getKernel().getVersion().getFullVersion());
-        assertEquals(2, (long)map.getGuestOperatingSystem().getKernel().getVersion().getMajor());
-        assertEquals(6, (long)map.getGuestOperatingSystem().getKernel().getVersion().getMinor());
-        assertEquals(32, (long)map.getGuestOperatingSystem().getKernel().getVersion().getBuild());
-        assertEquals(431, (long)map.getGuestOperatingSystem().getKernel().getVersion().getRevision());
+        assertEquals(2, (long) map.getGuestOperatingSystem().getKernel().getVersion().getMajor());
+        assertEquals(6, (long) map.getGuestOperatingSystem().getKernel().getVersion().getMinor());
+        assertEquals(32, (long) map.getGuestOperatingSystem().getKernel().getVersion().getBuild());
+        assertEquals(431, (long) map.getGuestOperatingSystem().getKernel().getVersion().getRevision());
     }
 
     @Test

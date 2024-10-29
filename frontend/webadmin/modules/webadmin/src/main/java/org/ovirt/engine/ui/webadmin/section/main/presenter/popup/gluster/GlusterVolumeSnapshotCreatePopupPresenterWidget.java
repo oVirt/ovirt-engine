@@ -35,10 +35,10 @@ public class GlusterVolumeSnapshotCreatePopupPresenterWidget extends AbstractMod
         model.getEndByOptions().getSelectedItemChangedEvent().addListener((ev, sender, args) -> getView().setEndDateVisibility(model));
 
         model.getPropertyChangedEvent().addListener((ev, sender, args) -> {
-            if(args.propertyName.equalsIgnoreCase("validateAndSwitchAppropriateTab")) {//$NON-NLS-1$
+            if (args.propertyName.equalsIgnoreCase("validateAndSwitchAppropriateTab")) { //$NON-NLS-1$
                 getView().handleValidationErrors(model);
                 getView().switchTabBasedOnEditorInvalidity();
-            } else if(args.propertyName.equalsIgnoreCase("modelPropertiesChanged")) {//$NON-NLS-1$
+            } else if (args.propertyName.equalsIgnoreCase("modelPropertiesChanged")) { //$NON-NLS-1$
                 getView().handleValidationErrors(model);
             }
         });

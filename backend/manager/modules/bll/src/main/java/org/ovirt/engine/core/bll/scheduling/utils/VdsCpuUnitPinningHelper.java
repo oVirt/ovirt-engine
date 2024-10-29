@@ -163,7 +163,7 @@ public class VdsCpuUnitPinningHelper {
             int amountOfVSocketsInPSockets = Integer.MAX_VALUE;
             if (!vm.getvNumaNodeList().isEmpty()) {
                 int highestAmountOfvNumaNodesInSocket = getVirtualNumaNodesInSocket(cpuTopology, vm, hostId, cpusInChosenSocket.get(0).getSocket());
-                int vNumaNodesInVirtualSocket = (int) Math.ceil((float)vm.getvNumaNodeList().size() / (float)vm.getNumOfSockets());
+                int vNumaNodesInVirtualSocket = (int) Math.ceil((float) vm.getvNumaNodeList().size() / (float) vm.getNumOfSockets());
                 amountOfVSocketsInPSockets = highestAmountOfvNumaNodesInSocket / vNumaNodesInVirtualSocket;
             }
             // coreCount is based on the VM topology
@@ -212,7 +212,7 @@ public class VdsCpuUnitPinningHelper {
             int amountOfVSocketsInPSockets = Integer.MAX_VALUE;
             if (!vm.getvNumaNodeList().isEmpty()) {
                 int highestAmountOfvNumaNodesInSocket = getVirtualNumaNodesInSocket(cpuTopology, vm, hostId, cpusInChosenSocket.get(0).getSocket());
-                int vNumaNodesInVirtualSocket = (int) Math.ceil((float)vm.getvNumaNodeList().size() / (float)vm.getNumOfSockets());
+                int vNumaNodesInVirtualSocket = (int) Math.ceil((float) vm.getvNumaNodeList().size() / (float) vm.getNumOfSockets());
                 amountOfVSocketsInPSockets = highestAmountOfvNumaNodesInSocket / vNumaNodesInVirtualSocket;
             }
             // coreCount is based on the VM topology
@@ -257,7 +257,7 @@ public class VdsCpuUnitPinningHelper {
 
     private void releaseIsolateThreadsCpu(Guid vmId, List<VdsCpuUnit> cpusToBeAllocated) {
         VdsCpuUnit cpuUnit = cpusToBeAllocated.get(cpusToBeAllocated.size() - 1);
-        int coreId  = cpuUnit.getCore();
+        int coreId = cpuUnit.getCore();
         int socketId = cpuUnit.getSocket();
         List<VdsCpuUnit> cpusToRemove = getCpusInCore(getCoresInSocket(cpusToBeAllocated, socketId), coreId);
         cpusToRemove.forEach(vdsCpuUnit -> {

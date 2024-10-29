@@ -51,7 +51,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @Singleton
-public class GlusterTasksSyncJob extends GlusterJob  {
+public class GlusterTasksSyncJob extends GlusterJob {
     private static final Logger log = LoggerFactory.getLogger(GlusterTasksSyncJob.class);
 
     @Inject
@@ -101,9 +101,9 @@ public class GlusterTasksSyncJob extends GlusterJob  {
 
     private void updateTasksInCluster(final Cluster cluster, final Map<Guid, GlusterAsyncTask> runningTasks) {
 
-        for  (Entry<Guid, GlusterAsyncTask> entry :  runningTasks.entrySet()) {
+        for (Entry<Guid, GlusterAsyncTask> entry : runningTasks.entrySet()) {
             Guid taskId = entry.getKey();
-            final GlusterAsyncTask task =  entry.getValue();
+            final GlusterAsyncTask task = entry.getValue();
 
             List<Step> steps = stepDao.getStepsByExternalId(taskId);
 
@@ -311,7 +311,7 @@ public class GlusterTasksSyncJob extends GlusterJob  {
         log.debug("Tasks to be cleaned up in db '{}'", tasksNotRunning);
 
         for (Guid taskId: tasksNotRunning) {
-            GlusterVolumeEntity vol= volumeDao.getVolumeByGlusterTask(taskId);
+            GlusterVolumeEntity vol = volumeDao.getVolumeByGlusterTask(taskId);
             if (vol != null
                     && (vol.getStatus() != GlusterStatus.UP || !runningTasksInClusterMap.keySet()
                             .contains(vol.getClusterId()))) {
@@ -325,7 +325,7 @@ public class GlusterTasksSyncJob extends GlusterJob  {
             //will mark job ended with status unknown.
             List<Step> steps = stepDao.getStepsByExternalId(taskId);
             Map<String, String> values = new HashMap<>();
-            values.put(GlusterConstants.CLUSTER, vol == null ? "" :vol.getClusterName());
+            values.put(GlusterConstants.CLUSTER, vol == null ? "" : vol.getClusterName());
             values.put(GlusterConstants.VOLUME, vol == null ? "" : vol.getName());
             values.put(GlusterConstants.JOB_STATUS, JobExecutionStatus.UNKNOWN.toString());
             values.put(GlusterConstants.JOB_INFO, " ");

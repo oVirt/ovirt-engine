@@ -137,14 +137,14 @@ public class UiCommonEditorVisitor extends EditorVisitor {
         eventMap.registerListener(absolutePath, "SelectedItemChanged", (ev, sender, args) -> { //$NON-NLS-1$
             T selectedItem = (T) ((ListModel) sender).getSelectedItem();
             if (editor instanceof TakesConstrainedValueListEditor && ownerModels.get(absolutePath) instanceof ListModel) {
-                editor.setValue((T)Arrays.asList(selectedItem));
+                editor.setValue((T) Arrays.asList(selectedItem));
             } else {
                 editor.setValue(selectedItem);
             }
         });
         eventMap.registerListener(absolutePath, "SelectedItemsChanged", (ev, sender, args) -> { //$NON-NLS-1$
             if (editor instanceof TakesConstrainedValueListEditor && ownerModels.get(absolutePath) instanceof ListModel) {
-                ((TakesConstrainedValueListEditor)editor).setListValue((List<T>)((ListModel) sender).getSelectedItems());
+                ((TakesConstrainedValueListEditor) editor).setListValue((List<T>) ((ListModel) sender).getSelectedItems());
             }
         });
 
@@ -201,7 +201,7 @@ public class UiCommonEditorVisitor extends EditorVisitor {
                 if (items.contains(value)) {
                     if (listEditor instanceof TakesConstrainedValueListEditor) {
                         if (parentModel.getSelectedItems() != null) {
-                            ((TakesConstrainedValueListEditor<O>)listEditor).setListValue(parentModel.getSelectedItems());
+                            ((TakesConstrainedValueListEditor<O>) listEditor).setListValue(parentModel.getSelectedItems());
                         }
                     } else {
                         listEditor.setValue(value);
@@ -209,7 +209,7 @@ public class UiCommonEditorVisitor extends EditorVisitor {
                 }
             }
             if (listEditor instanceof TakesConstrainedValueListEditor) {
-                ((TakesConstrainedValueListEditor<O>)listEditor).setAcceptableListValues(items);
+                ((TakesConstrainedValueListEditor<O>) listEditor).setAcceptableListValues(items);
             } else {
                 listEditor.setAcceptableValues(items);
             }

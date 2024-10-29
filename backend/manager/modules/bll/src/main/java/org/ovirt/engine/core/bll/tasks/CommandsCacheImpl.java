@@ -35,7 +35,7 @@ public class CommandsCacheImpl implements CommandsCache {
 
     private void initializeCache() {
         if (!cacheInitialized) {
-            synchronized(LOCK) {
+            synchronized (LOCK) {
                 if (!cacheInitialized) {
                     List<CommandEntity> cmdEntities = commandEntityDao.getAll();
                     for (CommandEntity cmdEntity : cmdEntities) {

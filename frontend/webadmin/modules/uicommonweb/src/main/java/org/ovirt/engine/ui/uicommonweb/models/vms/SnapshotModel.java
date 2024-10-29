@@ -378,7 +378,7 @@ public class SnapshotModel extends EntityModel<Snapshot> {
         ArrayList<ActionParametersBase> params = new ArrayList<>();
         Set<Guid> snapshotDisksIds = null;
         if (getSnapshotDisks().getSelectedItems() != null) {
-                snapshotDisksIds =  getSnapshotDisks()
+                snapshotDisksIds = getSnapshotDisks()
                         .getSelectedItems()
                         .stream()
                         .map(BaseDisk::getId)

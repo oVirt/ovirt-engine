@@ -179,7 +179,7 @@ public class ConnectAllHostsToLunCommand<T extends ExtendSANStorageDomainParamet
             res = (Map<String, Boolean>) runVdsCommand(VDSCommandType.GetDevicesVisibility,
                     new GetDevicesVisibilityVDSCommandParameters(vds.getId(),
                             processedLunIds.toArray(new String[processedLunIds.size()]))).getReturnValue();
-        } catch(EngineException e) {
+        } catch (EngineException e) {
             handleFailure(vds, null);
             throw e;
         }

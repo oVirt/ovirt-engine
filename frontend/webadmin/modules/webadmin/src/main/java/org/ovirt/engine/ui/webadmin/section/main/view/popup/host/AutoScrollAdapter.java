@@ -47,8 +47,8 @@ public class AutoScrollAdapter implements
             int top = sp.getAbsoluteTop();
             int height = sp.getOffsetHeight();
 
-            int topEdgeDelta    = mouseY < top || mouseY > (top+height) ? -1 : mouseY - top;
-            int bottomEdgeDelta = mouseY < top || mouseY > (top+height) ? -1 : top + height - mouseY;
+            int topEdgeDelta = mouseY < top || mouseY > (top + height) ? -1 : mouseY - top;
+            int bottomEdgeDelta = mouseY < top || mouseY > (top + height) ? -1 : top + height - mouseY;
 
             if (topEdgeDelta > -1 && topEdgeDelta < EDGE_DELTA_FOR_SCROLLING) {
                 log.finer("inside the EDGE_DELTA_FOR_SCROLLING on the top"); //$NON-NLS-1$

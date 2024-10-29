@@ -532,7 +532,7 @@ public class VdsEventListener implements IVdsEventListener {
                     Guid diskProfileId = diskImage.getDiskProfileId();
                     StorageQos storageQos = storageQosMap.get(diskProfileId);
 
-                    if(storageQos != null) {
+                    if (storageQos != null) {
                         params.getStorageQos().put(diskImage, storageQos);
                     }
                 }

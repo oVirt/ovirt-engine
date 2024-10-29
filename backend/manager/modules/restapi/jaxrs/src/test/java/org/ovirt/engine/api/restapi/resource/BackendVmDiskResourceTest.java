@@ -63,7 +63,7 @@ public class BackendVmDiskResourceTest
     private static final Guid DISK_ID = GUIDS[1];
 
     public BackendVmDiskResourceTest() {
-        super((BackendVmDiskResource)getCollection().getDiskResource(DISK_ID.toString()));
+        super((BackendVmDiskResource) getCollection().getDiskResource(DISK_ID.toString()));
     }
 
     protected static BackendVmDisksResource getCollection() {

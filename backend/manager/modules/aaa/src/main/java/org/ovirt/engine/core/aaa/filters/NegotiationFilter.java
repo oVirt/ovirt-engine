@@ -91,7 +91,7 @@ public class NegotiationFilter implements Filter {
     public void doFilter(ServletRequest req, ServletResponse rsp, FilterChain chain)
             throws IOException, ServletException {
 
-        HttpServletRequest httpreq = (HttpServletRequest)req;
+        HttpServletRequest httpreq = (HttpServletRequest) req;
 
         if (FiltersHelper.isAuthenticated(httpreq) || httpreq.getAttribute(FiltersHelper.Constants.REQUEST_AUTH_RECORD_KEY) != null) {
             chain.doFilter(req, rsp);
@@ -100,7 +100,7 @@ public class NegotiationFilter implements Filter {
             HttpSession session = httpreq.getSession(false);
             Deque<AuthenticationProfile> stack = null;
             if (session != null) {
-                stack = (Deque<AuthenticationProfile>)session.getAttribute(STACK_ATTR);
+                stack = (Deque<AuthenticationProfile>) session.getAttribute(STACK_ATTR);
             }
             if (stack == null) {
                 stack = new ArrayDeque<>();

@@ -325,9 +325,9 @@ public class ConsolePopupView extends AbstractModelBoundPopupView<ConsolePopupMo
         Label rdpInvocationLabel = new Label();
         rdpInvocationLabel.setText(constants.consoleInvocation());
 
-        vncHeadline= new WidgetWithInfo(vncInvocationLabel);
+        vncHeadline = new WidgetWithInfo(vncInvocationLabel);
         vncHeadline.setIconTooltipText(SafeHtmlUtils.fromTrustedString(createVncInvocationInfo()));
-        rdpHeadline= new WidgetWithInfo(rdpInvocationLabel);
+        rdpHeadline = new WidgetWithInfo(rdpInvocationLabel);
         rdpHeadline.setIconTooltipText(SafeHtmlUtils.fromTrustedString(createRdpInvocationInfo()));
 
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
@@ -447,7 +447,7 @@ public class ConsolePopupView extends AbstractModelBoundPopupView<ConsolePopupMo
     }
 
     private void setSelectedVncImpl() {
-        VncConsoleModel vncConsoleModel= model.getVmConsoles().getConsoleModel(VncConsoleModel.class);
+        VncConsoleModel vncConsoleModel = model.getVmConsoles().getConsoleModel(VncConsoleModel.class);
 
         if (vncConsoleModel == null) {
             return;

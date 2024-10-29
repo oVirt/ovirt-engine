@@ -177,7 +177,7 @@ public class SimpleJdbcCallsHandler {
         if (call == null) {
             call = callCreator.createCall();
             if (outParamsMap.containsKey(procedureName)) {
-                Pair<String, Integer>  pair = outParamsMap.get(procedureName);
+                Pair<String, Integer> pair = outParamsMap.get(procedureName);
                 call.declareParameters(new SqlOutParameter("v_" + pair.getFirst(), pair.getSecond()));
             }
             call.compile();

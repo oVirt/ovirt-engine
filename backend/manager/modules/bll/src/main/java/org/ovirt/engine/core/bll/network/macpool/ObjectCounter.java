@@ -10,7 +10,7 @@ import org.apache.commons.collections.iterators.UnmodifiableIterator;
  * Associative array counting instances of given object.
  * @param <T> class of instances being count.
  */
-class ObjectCounter<T> implements Iterable<T>{
+class ObjectCounter<T> implements Iterable<T> {
 
     private Map<T, Counter> map = new HashMap<>();
     private final boolean allowDuplicate;

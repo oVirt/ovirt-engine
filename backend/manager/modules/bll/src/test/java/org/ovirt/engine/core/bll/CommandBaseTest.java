@@ -126,7 +126,7 @@ public class CommandBaseTest extends BaseCommandTest {
     public void testExtractVariableDeclarationsForDynamicMsgs() {
         String msg1_1 = "ACTION_TYPE_FAILED_TEMPLATE_IS_USED_FOR_CREATE_VM";
         String msg1_2 = "$VmName Vm1";
-        String msg2   = "IRS_FAILED_CREATING_SNAPSHOT";
+        String msg2 = "IRS_FAILED_CREATING_SNAPSHOT";
         String msg3_1 = "ACTION_TYPE_FAILED_VM_SNAPSHOT_HAS_NO_CONFIGURATION";
         String msg3_2 = "$VmName Vm2";
         String msg3_3 = "$SnapshotName Snapshot";

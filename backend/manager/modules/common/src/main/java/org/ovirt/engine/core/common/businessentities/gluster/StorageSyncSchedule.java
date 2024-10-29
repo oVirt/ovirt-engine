@@ -12,7 +12,7 @@ import javax.validation.constraints.Min;
 import org.ovirt.engine.core.compat.StringFormat;
 
 
-public class StorageSyncSchedule implements Serializable{
+public class StorageSyncSchedule implements Serializable {
 
     private static final long serialVersionUID = -3688076333085745256L;
 
@@ -56,7 +56,7 @@ public class StorageSyncSchedule implements Serializable{
         } else {
             this.setFrequency(StorageSyncSchedule.Frequency.WEEKLY);
              List<Day> dayList = new ArrayList<>();
-             for(String day: cronParts[5].split(",")) {
+             for (String day: cronParts[5].split(",")) {
                  dayList.add(StorageSyncSchedule.Day.valueOf(day));
             }
             this.setDays(dayList.toArray(new Day[dayList.size()]));

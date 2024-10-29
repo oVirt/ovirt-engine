@@ -67,7 +67,7 @@ public class MappingTestHelper {
                     random(method, model);
                 } else if (takesEnum(method)) {
                     //do nothing
-                } else if(takesBigDecimal(method)) {
+                } else if (takesBigDecimal(method)) {
                     populateBigDecimal(method, model);
                 } else if (takesXmlGregorianCalendar(method)) {
                     populateXmlGregorianCalendar(method, model);

@@ -43,7 +43,7 @@ public class BackendExternalHostGroupResource
         ProviderQueryParameters parameters = new ProviderQueryParameters();
         parameters.setProvider(provider);
         QueryReturnValue result = runQuery(QueryType.GetHostGroupsFromExternalProvider, parameters);
-        List<org.ovirt.engine.core.common.businessentities.ExternalHostGroup> entities =  result.getReturnValue();
+        List<org.ovirt.engine.core.common.businessentities.ExternalHostGroup> entities = result.getReturnValue();
         if (entities != null) {
             for (org.ovirt.engine.core.common.businessentities.ExternalHostGroup entity : entities) {
                 if (name.equals(entity.getName())) {

@@ -52,7 +52,7 @@ public class RefreshGlusterHooksCommandTest extends BaseCommandTest {
     }
 
     protected VDS getServer() {
-        VDS server =  new VDS();
+        VDS server = new VDS();
         server.setId(Guid.newGuid());
         server.setVdsName("VDS1");
         server.setStatus(VDSStatus.Up);

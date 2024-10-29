@@ -84,7 +84,7 @@ public class MultiLevelAdministrationHandler {
      * @return true if role is the last with Super User privileges, otherwise, false
      */
     public boolean isLastSuperUserPermission(Guid roleId) {
-        boolean retValue=false;
+        boolean retValue = false;
         if (PredefinedRoles.SUPER_USER.getId().equals(roleId)) {
             // check that there is at least one super-user left in the system
             List<Permission> permissions = permissionDao.getAllForRole(
@@ -104,15 +104,15 @@ public class MultiLevelAdministrationHandler {
      * @return true if group is the last with Super User privileges, otherwise, false
      */
     public boolean isLastSuperUserGroup(Guid groupId) {
-        boolean retValue=false;
+        boolean retValue = false;
         // check that there is at least one super-user left in the system
         List<Permission> permissions = permissionDao.getAllForRole(
                 PredefinedRoles.SUPER_USER.getId());
         if (permissions.size() <= 1) {
             // get group role
             permissions = permissionDao.getAllForAdElement(groupId);
-            for (Permission permission : permissions){
-                if (permission.getRoleId().equals(PredefinedRoles.SUPER_USER.getId())){
+            for (Permission permission : permissions) {
+                if (permission.getRoleId().equals(PredefinedRoles.SUPER_USER.getId())) {
                     retValue = true;
                     break;
                 }

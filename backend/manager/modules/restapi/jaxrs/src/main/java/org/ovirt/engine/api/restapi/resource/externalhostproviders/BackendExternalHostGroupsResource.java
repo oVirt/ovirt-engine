@@ -24,7 +24,7 @@ public class BackendExternalHostGroupsResource
     private String providerId;
 
     public BackendExternalHostGroupsResource(String providerId) {
-        super(ExternalHostGroup.class,  org.ovirt.engine.core.common.businessentities.ExternalHostGroup.class);
+        super(ExternalHostGroup.class, org.ovirt.engine.core.common.businessentities.ExternalHostGroup.class);
         this.providerId = providerId;
     }
 

@@ -382,7 +382,7 @@ public class HostSetupNetworksCommand<T extends HostSetupNetworksParameters> ext
 
         List<CreateOrUpdateBond> createOrUpdateBonds = getParameters().getCreateOrUpdateBonds();
         for (Iterator<CreateOrUpdateBond> iterator = createOrUpdateBonds.iterator(); iterator.hasNext();) {
-            CreateOrUpdateBond bondFromRequest =  iterator.next();
+            CreateOrUpdateBond bondFromRequest = iterator.next();
             Guid idOfBondFromRequest = bondFromRequest.getId();
 
             boolean bondFromRequestIsNewBond = idOfBondFromRequest == null;
@@ -417,7 +417,7 @@ public class HostSetupNetworksCommand<T extends HostSetupNetworksParameters> ext
         Map<Guid, NetworkAttachment> existingAttachmentsById = Entities.businessEntitiesById(getExistingAttachments());
 
         for (Iterator<NetworkAttachment> iterator = getParameters().getNetworkAttachments().iterator(); iterator.hasNext();) {
-            NetworkAttachment attachmentFromRequest =  iterator.next();
+            NetworkAttachment attachmentFromRequest = iterator.next();
             Guid idOfAttachmentFromRequest = attachmentFromRequest.getId();
 
             boolean attachmentFromRequestIsNewAttachment = idOfAttachmentFromRequest == null;
@@ -988,12 +988,12 @@ public class HostSetupNetworksCommand<T extends HostSetupNetworksParameters> ext
         return clusterNetworks;
     }
 
-    private boolean isManagementNetworkChanged(List<HostNetwork> networksToConfigure){
+    private boolean isManagementNetworkChanged(List<HostNetwork> networksToConfigure) {
         Network managementNetwork = managementNetworkUtil.getManagementNetwork(getClusterNetworks(), getClusterId());
 
         String managementNetworkName = managementNetwork.getName();
         for (HostNetwork network : networksToConfigure) {
-            if (managementNetworkName.equals(network.getNetworkName())){
+            if (managementNetworkName.equals(network.getNetworkName())) {
                 return true;
             }
         }

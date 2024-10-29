@@ -22,7 +22,7 @@ public interface BusinessEntitySnapshotDao extends Dao {
      * Removes all snapshots for a given command
      * @param commandID the command ID to remove  snapshots for
      */
-    public void removeAllForCommandId(Guid   commandID);
+    public void removeAllForCommandId(Guid commandID);
 
     /**
      * Saves a new snapshot

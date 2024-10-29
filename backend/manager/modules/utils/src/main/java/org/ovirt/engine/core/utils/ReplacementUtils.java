@@ -15,7 +15,7 @@ public class ReplacementUtils {
     protected static final String DEFAULT_SEPARATOR = "," + System.lineSeparator();
     private static final String COUNTER_SUFFIX = "_COUNTER";
     private static final String LIST_SUFFIX = "_LIST";
-    private static final String ENTITY_SUFFIX  = "_ENTITY";
+    private static final String ENTITY_SUFFIX = "_ENTITY";
 
     private ReplacementUtils() {
     }

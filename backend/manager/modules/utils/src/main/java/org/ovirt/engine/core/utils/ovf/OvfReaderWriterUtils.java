@@ -13,7 +13,7 @@ public class OvfReaderWriterUtils {
             return true;
         }
 
-        switch(type) {
+        switch (type) {
         case MDEV:
         case SOUND:
             return true;

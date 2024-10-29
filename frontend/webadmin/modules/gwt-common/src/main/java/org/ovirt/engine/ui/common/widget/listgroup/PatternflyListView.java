@@ -141,7 +141,7 @@ public class PatternflyListView<E, T, M extends SearchableListModel<E, T>> exten
             int i = 0;
             List<PatternflyListViewItem<T>> newCurrentState = new ArrayList<>();
             Set<Integer> selectedItemsIndexes = new HashSet<>();
-            for(T item: getModel().getItems()) {
+            for (T item: getModel().getItems()) {
                 if (item == null) {
                     continue;
                 }

@@ -29,7 +29,7 @@ public class SsoLocalConfig extends ShellLikeConfd {
             instance = new SsoLocalConfig(values);
         } else {
             if (instance == null) {
-                synchronized(SsoLocalConfig.class) {
+                synchronized (SsoLocalConfig.class) {
                     if (instance == null) {
                         instance = new SsoLocalConfig();
                     }

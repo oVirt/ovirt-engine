@@ -92,7 +92,7 @@ public class EngineEncryptionUtils {
      */
     public static KeyStore.PrivateKeyEntry getPrivateKeyEntry() {
         try {
-            KeyStore.PrivateKeyEntry entry = (KeyStore.PrivateKeyEntry)getKeyStore().getEntry(
+            KeyStore.PrivateKeyEntry entry = (KeyStore.PrivateKeyEntry) getKeyStore().getEntry(
                 keystoreAlias,
                 keystorePassword
             );
@@ -100,7 +100,7 @@ public class EngineEncryptionUtils {
                 throw new RuntimeException("Alias was not found");
             }
             return entry;
-        } catch(Exception e) {
+        } catch (Exception e) {
             throw new RuntimeException(
                 String.format(
                     "Failed to locate key '%1$s'",
@@ -239,7 +239,7 @@ public class EngineEncryptionUtils {
         try {
             getPrivateKeyEntry();
             return true;
-        } catch(Exception e) {
+        } catch (Exception e) {
             return false;
         }
     }

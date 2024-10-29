@@ -42,7 +42,7 @@ public class PasswordValueHelper implements ValueHelper {
          * On failure we return an error.
          */
         String returnedValue = "Empty";
-        if (value != null && !value.equals("")){
+        if (value != null && !value.equals("")) {
             try {
                 decrypt(value);
                 returnedValue = "Set";
@@ -74,7 +74,7 @@ public class PasswordValueHelper implements ValueHelper {
                 return StringUtils.EMPTY;
             }
             returnedValue = encrypt(password);
-        } catch(Throwable exception) {
+        } catch (Throwable exception) {
             String msg = "Failed to encrypt the current value.";
             console.writeLine(msg);
             log.error(msg, exception);

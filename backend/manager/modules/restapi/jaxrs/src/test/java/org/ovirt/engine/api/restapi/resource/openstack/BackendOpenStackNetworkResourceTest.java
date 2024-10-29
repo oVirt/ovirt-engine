@@ -55,7 +55,7 @@ public class BackendOpenStackNetworkResourceTest
             IdQueryParameters.class,
             new String[] { "Id" },
             new Object[] { GUIDS[0] },
-            notFound? null: getNetworks()
+            notFound ? null : getNetworks()
         );
     }
 

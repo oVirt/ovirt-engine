@@ -55,7 +55,7 @@ public class IOExceptionMapper implements ExceptionMapper<IOException> {
             log.error("Exception", exception);
             UsageFinder finder = new UsageFinder();
             return Response.status(Status.BAD_REQUEST).entity(finder.getUsageMessage(uriInfo, request)).build();
-        } catch(Exception error) {
+        } catch (Exception error) {
             throw new WebApplicationException(error, Response.status(Status.INTERNAL_SERVER_ERROR).build());
         }
     }

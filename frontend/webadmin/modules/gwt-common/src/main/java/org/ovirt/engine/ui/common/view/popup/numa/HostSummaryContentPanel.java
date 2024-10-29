@@ -47,12 +47,12 @@ public class HostSummaryContentPanel extends Composite {
     }
 
     public void setModel(List<VdsNumaNode> numaNodes, List<VNodeModel> vNodeModels) {
-        for(VNodeModel vNodeModel: vNodeModels) {
+        for (VNodeModel vNodeModel: vNodeModels) {
             VirtualNumaPanel panel = virtualNumaPanelProvider.get();
             panel.setModel(vNodeModel);
             vNumaPanel.add(panel);
         }
-        for(VdsNumaNode numaNode: numaNodes) {
+        for (VdsNumaNode numaNode: numaNodes) {
             numaPanel.add(new HTML(messages.numaNode(numaNode.getIndex())));
         }
     }

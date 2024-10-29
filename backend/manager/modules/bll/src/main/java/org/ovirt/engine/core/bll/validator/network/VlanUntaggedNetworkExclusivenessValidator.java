@@ -30,7 +30,7 @@ final class VlanUntaggedNetworkExclusivenessValidator implements NetworkExclusiv
      */
     @Override
     public boolean isNetworkExclusive(List<NetworkType> networksOnIface) {
-        return  networksOnIface.stream().filter(untaggedNetworkPredicate).count() <= 1;
+        return networksOnIface.stream().filter(untaggedNetworkPredicate).count() <= 1;
     }
 
     @Override

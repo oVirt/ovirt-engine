@@ -785,7 +785,7 @@ public enum NetworkOperation {
     /**
      * Implement to provide a Command Target for this Operation
      */
-    protected NetworkOperationCommandTarget getTarget(){
+    protected NetworkOperationCommandTarget getTarget() {
         return new NetworkOperationCommandTarget() {
 
             @Override
@@ -799,7 +799,7 @@ public enum NetworkOperation {
         };
     }
 
-    public boolean isNullOperation(){
+    public boolean isNullOperation() {
         return false;
     }
 

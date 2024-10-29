@@ -1055,21 +1055,21 @@ public class HostListModel<E> extends ListWithSimpleDetailsModel<E, VDS> impleme
     }
 
     private String getSsoToken() {
-        return JsSingleValueStringObject.getProperty("userInfo", "ssoToken");//$NON-NLS-1$ //$NON-NLS-2$
+        return JsSingleValueStringObject.getProperty("userInfo", "ssoToken"); //$NON-NLS-1$ //$NON-NLS-2$
     }
 
     private String getEngineSSORootUrl() {
         String protocolSeparator = "://"; //$NON-NLS-1$
         String engineSSOUrl = FrontendUrlUtils.getRootURL(); // like: https://engine.fqdn:8080/
 
-        if (engineSSOUrl.endsWith("/")) {//$NON-NLS-1$
-            engineSSOUrl = engineSSOUrl.substring(0, engineSSOUrl.lastIndexOf("/"));//$NON-NLS-1$
+        if (engineSSOUrl.endsWith("/")) { //$NON-NLS-1$
+            engineSSOUrl = engineSSOUrl.substring(0, engineSSOUrl.lastIndexOf("/")); //$NON-NLS-1$
         }
 
         int index = engineSSOUrl.indexOf(protocolSeparator);
         index = (index >= 0) ? index + protocolSeparator.length() : 0; // start of hostname
         index = engineSSOUrl.indexOf(':', index); // start of port
-        if (index >= 0) {// port found
+        if (index >= 0) { // port found
             engineSSOUrl = engineSSOUrl.substring(0, index); // remove port number since SSO is served from different one
         }
 
@@ -1091,13 +1091,13 @@ public class HostListModel<E> extends ListWithSimpleDetailsModel<E, VDS> impleme
                 cockpitUrl.append(':');
                 cockpitUrl.append(cockpitSSOPort);
             }
-            cockpitUrl.append("/=");//$NON-NLS-1$
+            cockpitUrl.append("/="); //$NON-NLS-1$
             cockpitUrl.append(item.getId());
-            cockpitUrl.append("/machines#access_token=");//$NON-NLS-1$
+            cockpitUrl.append("/machines#access_token="); //$NON-NLS-1$
             cockpitUrl.append(ssoToken);
 
-            getLogger().info("About to open: " + cockpitUrl.toString());//$NON-NLS-1$
-            Window.open(cockpitUrl.toString(), "_blank", "");//$NON-NLS-1$
+            getLogger().info("About to open: " + cockpitUrl.toString()); //$NON-NLS-1$
+            Window.open(cockpitUrl.toString(), "_blank", ""); //$NON-NLS-1$
         }
     }
 
@@ -1115,8 +1115,8 @@ public class HostListModel<E> extends ListWithSimpleDetailsModel<E, VDS> impleme
                 cockpitUrl.append(cockpitPort);
             }
 
-            getLogger().info("About to open: " + cockpitUrl.toString());//$NON-NLS-1$
-            Window.open(cockpitUrl.toString(), "_blank", "");//$NON-NLS-1$
+            getLogger().info("About to open: " + cockpitUrl.toString()); //$NON-NLS-1$
+            Window.open(cockpitUrl.toString(), "_blank", ""); //$NON-NLS-1$
         }
     }
 

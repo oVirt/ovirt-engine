@@ -84,7 +84,7 @@ public class BackendVmTagResourceTest extends AbstractBackendSubResourceTest<Tag
             GetTagsByVmIdParameters.class,
             new String[] { "VmId" },
             new Object[] { VM_ID.toString() },
-            succeed? setUpTagsExpectations(): Collections.emptyList()
+            succeed ? setUpTagsExpectations() : Collections.emptyList()
         );
     }
 

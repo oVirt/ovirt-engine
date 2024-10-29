@@ -8,7 +8,7 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.AbstractNetwork
 import com.google.gwt.event.shared.EventBus;
 import com.google.inject.Inject;
 
-public class NewNetworkPopupPresenterWidget extends AbstractNetworkPopupPresenterWidget<NewNetworkModel, NewNetworkPopupPresenterWidget.ViewDef>{
+public class NewNetworkPopupPresenterWidget extends AbstractNetworkPopupPresenterWidget<NewNetworkModel, NewNetworkPopupPresenterWidget.ViewDef> {
 
     public interface ViewDef extends AbstractNetworkPopupPresenterWidget.ViewDef<NewNetworkModel> {
         void setNetworkClusterList(ListModel<NetworkClusterModel> networkClusterList);

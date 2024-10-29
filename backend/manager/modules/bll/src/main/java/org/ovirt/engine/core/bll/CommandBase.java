@@ -402,7 +402,7 @@ public abstract class CommandBase<T extends ActionParametersBase>
         String tempVar = getDescription();
         getReturnValue().setDescription((tempVar != null) ? tempVar : getReturnValue().getDescription());
         setActionMessageParameters();
-        Step validatingStep=null;
+        Step validatingStep = null;
         boolean actionAllowed;
         boolean isExternal = this.getParameters().getJobId() != null || this.getParameters().getStepId() != null;
         if (!isExternal) {
@@ -1315,7 +1315,7 @@ public abstract class CommandBase<T extends ActionParametersBase>
     }
 
     private void executeActionInTransactionScope() {
-        registerRollbackHandler((TransactionRollbackListener)() -> {
+        registerRollbackHandler((TransactionRollbackListener) () -> {
             log.error("Transaction rolled-back for command '{}'.", getClass().getName());
             try {
                 if (isQuotaDependant()) {

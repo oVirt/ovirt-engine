@@ -99,7 +99,7 @@ public class AnsibleRunnerClient {
             BiConsumer<String, String> fn,
             AnsibleRunnerLogger runnerLogger) {
         String jobEvents = getJobEventsDir(returnValue.getPlayUuid());
-        while(true){
+        while (true) {
             // get next event
             String event = getEventFileName(returnValue.getPlayUuid(), returnValue.getLastEventId() + 1);
             if (event == null) {
@@ -302,7 +302,7 @@ public class AnsibleRunnerClient {
                 );
             }
             currentNode = mapper.readTree(jsonOutput);
-        } catch(Exception ex) {
+        } catch (Exception ex) {
             throw new AnsibleRunnerCallException("Failed to read event: %1$s", eventPath);
         }
         return currentNode;

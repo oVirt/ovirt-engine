@@ -277,7 +277,7 @@ public class BackendVmDisksResourceTest
         assertEquals(202, response.getStatus());
         assertTrue(response.getEntity() instanceof Disk);
         verifyModel((Disk) response.getEntity(), 0);
-        Disk created = (Disk)response.getEntity();
+        Disk created = (Disk) response.getEntity();
         assertNotNull(created.getCreationStatus());
         assertEquals(creationStatus.value(), created.getCreationStatus());
     }
@@ -301,8 +301,8 @@ public class BackendVmDisksResourceTest
         Response response = collection.add(getModel());
         assertEquals(201, response.getStatus());
         assertTrue(response.getEntity() instanceof Disk);
-        verifyModel((Disk)response.getEntity(), 0);
-        assertNull(((Disk)response.getEntity()).getCreationStatus());
+        verifyModel((Disk) response.getEntity(), 0);
+        assertNull(((Disk) response.getEntity()).getCreationStatus());
     }
 
     @Test
@@ -324,8 +324,8 @@ public class BackendVmDisksResourceTest
         Response response = collection.add(getModel());
         assertEquals(201, response.getStatus());
         assertTrue(response.getEntity() instanceof Disk);
-        verifyModel((Disk)response.getEntity(), 0);
-        assertNull(((Disk)response.getEntity()).getCreationStatus());
+        verifyModel((Disk) response.getEntity(), 0);
+        assertNull(((Disk) response.getEntity()).getCreationStatus());
     }
 
     private void setUpGetDiskExpectations() {
@@ -387,8 +387,8 @@ public class BackendVmDisksResourceTest
         Response response = collection.add(model);
         assertEquals(201, response.getStatus());
         assertTrue(response.getEntity() instanceof Disk);
-        verifyModel((Disk)response.getEntity(), 0);
-        assertNull(((Disk)response.getEntity()).getCreationStatus());
+        verifyModel((Disk) response.getEntity(), 0);
+        assertNull(((Disk) response.getEntity()).getCreationStatus());
     }
 
     @Test
@@ -437,8 +437,8 @@ public class BackendVmDisksResourceTest
         Response response = collection.add(model);
         assertEquals(201, response.getStatus());
         assertTrue(response.getEntity() instanceof Disk);
-        verifyModel((Disk)response.getEntity(), 0);
-        assertNull(((Disk)response.getEntity()).getCreationStatus());
+        verifyModel((Disk) response.getEntity(), 0);
+        assertNull(((Disk) response.getEntity()).getCreationStatus());
     }
 
     private List<org.ovirt.engine.core.common.businessentities.StorageDomain> getStorageDomains() {
@@ -492,8 +492,8 @@ public class BackendVmDisksResourceTest
         Response response = collection.add(model);
         assertEquals(201, response.getStatus());
         assertTrue(response.getEntity() instanceof Disk);
-        verifyModel((Disk)response.getEntity(), 0);
-        assertNull(((Disk)response.getEntity()).getCreationStatus());
+        verifyModel((Disk) response.getEntity(), 0);
+        assertNull(((Disk) response.getEntity()).getCreationStatus());
     }
 
     @Test

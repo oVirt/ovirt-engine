@@ -51,9 +51,9 @@ public class InstanceImagesEditor extends AddRemoveRowWidget<InstanceImagesModel
     public void setUsePatternFly(boolean use) {
         super.setUsePatternFly(use);
         if (use) {
-            title.removeStyleName(((InstanceImagesWidgetStyle)style).titleStylePadding());
-            mainPanel.removeStyleName(((InstanceImagesWidgetStyle)style).mainPanel());
-            contentPanel.removeStyleName(((InstanceImagesWidgetStyle)style).contentPanel());
+            title.removeStyleName(((InstanceImagesWidgetStyle) style).titleStylePadding());
+            mainPanel.removeStyleName(((InstanceImagesWidgetStyle) style).mainPanel());
+            contentPanel.removeStyleName(((InstanceImagesWidgetStyle) style).contentPanel());
         }
     }
 

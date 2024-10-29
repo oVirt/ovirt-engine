@@ -100,7 +100,7 @@ public class GwtMessagesValidator {
 
                 for (Class<?> up : c.getInterfaces()) {
                     if (Messages.class.isAssignableFrom(up) && Messages.class != up) {
-                        round2.add((Class<? extends Messages>)up);
+                        round2.add((Class<? extends Messages>) up);
                     }
                 }
             }
@@ -111,7 +111,7 @@ public class GwtMessagesValidator {
 
         // load the properties into the hierarchy from the root down
         for (Class<?> theClass : hierarchy) {
-            String classPropertyFileName = theClass.getName().replace(".",  "/") + ".properties";
+            String classPropertyFileName = theClass.getName().replace(".", "/") + ".properties";
 
             URL theResource = theClass.getResource(classPropertyFileName);
             if (theResource == null) {

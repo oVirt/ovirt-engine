@@ -45,7 +45,7 @@ public class GetStorageDomainsByVmTemplateIdQuery<P extends IdQueryParameters>
 
                 Set<Guid> domains = new HashSet<>();
                 for (Disk templateDisk : templateDisks) {
-                    domains.addAll(((DiskImage)templateDisk).getStorageIds());
+                    domains.addAll(((DiskImage) templateDisk).getStorageIds());
                 }
 
                 for (Guid domainId : domains) {

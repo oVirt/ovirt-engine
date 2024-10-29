@@ -88,7 +88,7 @@ public class RangeTest {
         assertThat(rangeOf10Macs.getAvailableCount(), is(0));
         assertThat(rangeOf10Macs.containsDuplicates(), is(false));
 
-        for(int i = 1; i <= NUMBER_OF_MACS; i++) {
+        for (int i = 1; i <= NUMBER_OF_MACS; i++) {
             rangeOf10Macs.freeMac(allocatedMacs.remove(0));
             assertThat(rangeOf10Macs.getAvailableCount(), is(i));
             assertThat(rangeOf10Macs.containsDuplicates(), is(false));
@@ -160,7 +160,7 @@ public class RangeTest {
     public void testOrderOrAcquiredMACs() {
         Range range = new Range(new LongRange(0, 5));
         List<Integer> usedMacs = Arrays.asList(0, 2, 4);
-        for(int i = 0; i < 5; i++) {
+        for (int i = 0; i < 5; i++) {
             boolean usedMac = usedMacs.contains(i);
             if (usedMac) {
                 boolean allowDuplicates = false;

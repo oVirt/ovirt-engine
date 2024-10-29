@@ -259,7 +259,7 @@ public class FenceAgentWidget extends AbstractModelBoundPopupWidget<FenceAgentMo
         for (int i = 0; i < concurrentPanel.getWidgetCount(); i++) {
             IsWidget widget = concurrentPanel.getWidget(i);
             if (widget instanceof HasEnabled) {
-                ((HasEnabled)widget).setEnabled(enabled);
+                ((HasEnabled) widget).setEnabled(enabled);
             }
         }
         editFenceAgent.setEnabled(enabled);

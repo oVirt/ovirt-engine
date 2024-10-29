@@ -28,7 +28,7 @@ public class SubnetMaskValidationTest {
     @MethodSource
     public void checkValidMask(String mask, boolean isMaskValid, boolean isPrefixAllowed) {
         SubnetMaskValidation underTest = createUnderTest(isPrefixAllowed);
-        assertEquals(isMaskValid, underTest.validate(mask).getSuccess(), "Failed to validate mask: " + mask);//$NON-NLS-1$
+        assertEquals(isMaskValid, underTest.validate(mask).getSuccess(), "Failed to validate mask: " + mask); //$NON-NLS-1$
     }
 
     @Test

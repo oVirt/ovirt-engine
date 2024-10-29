@@ -437,7 +437,7 @@ public class PoolListModel extends ListWithSimpleDetailsModel<Void, VmPool> {
         param.setTpmEnabled(model.getTpmEnabled().getEntity());
         param.setRngDevice(model.getIsRngEnabled().getEntity() ? model.generateRngDevice() : null);
 
-        if(model.getIsHeadlessModeEnabled().getEntity()) {
+        if (model.getIsHeadlessModeEnabled().getEntity()) {
             param.getVmStaticData().setDefaultDisplayType(DisplayType.none);
        }
         BuilderExecutor.build(model, param, new UnitToGraphicsDeviceParamsBuilder());

@@ -18,13 +18,13 @@ public class GlusterVolumeGeoRepActionConfirmPopUpViewPresenterWidget extends Ab
         super.init(model);
 
         model.getPropertyChangedEvent().addListener((ev, sender, args) -> {
-            if(args.propertyName.equalsIgnoreCase("forceLabel")) {//$NON-NLS-1$
+            if (args.propertyName.equalsIgnoreCase("forceLabel")) { //$NON-NLS-1$
                 getView().setForceLabelMessage(model.getForceLabel());
-            } else if(args.propertyName.equalsIgnoreCase("forceHelp")) {//$NON-NLS-1$
+            } else if (args.propertyName.equalsIgnoreCase("forceHelp")) { //$NON-NLS-1$
                 getView().setForceHelp(model.getForceHelp());
-            } else if (args.propertyName.equalsIgnoreCase("Message")) {//$NON-NLS-1$
+            } else if (args.propertyName.equalsIgnoreCase("Message")) { //$NON-NLS-1$
                 getView().setErrorMessage(model.getMessage());
-            } else if(args.propertyName.equalsIgnoreCase("ActionConfirmationMessage")) {//$NON-NLS-1$
+            } else if (args.propertyName.equalsIgnoreCase("ActionConfirmationMessage")) { //$NON-NLS-1$
                 getView().setActionConfirmationMessage(model.getMessage());
             }
         });

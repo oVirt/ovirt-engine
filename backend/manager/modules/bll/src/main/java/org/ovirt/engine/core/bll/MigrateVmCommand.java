@@ -233,7 +233,7 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
 
     private List<Guid> getDestinationHostList() {
         List<Guid> destinationHostGuidList = new LinkedList<>();
-        if (getDestinationVdsId() != null){
+        if (getDestinationVdsId() != null) {
             destinationHostGuidList.add(getDestinationVdsId());
         }
         return destinationHostGuidList;
@@ -270,7 +270,7 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
             getParameters().setTotalMigrationTime(new Date());
             getParameters().resetStartTime();
 
-            BooleanSupplier attachMBSDisks =  () -> managedBlockStorageCommandUtil
+            BooleanSupplier attachMBSDisks = () -> managedBlockStorageCommandUtil
                     .attachManagedBlockStorageDisks(getVm(), vmHandler, getDestinationVds(), true);
             if (unplugPassthroughNics() && connectLunDisks(getDestinationVdsId()) &&
                     attachOrDetachMBSFromDest(attachMBSDisks) &&
@@ -343,7 +343,7 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
                 auditLogDirector.log(this, AuditLogType.VM_MIGRATION_NOT_ALL_VM_NICS_WERE_PLUGGED_BACK);
             }
 
-        } catch(Exception e) {
+        } catch (Exception e) {
             auditLogDirector.log(this, AuditLogType.VM_MIGRATION_PLUGGING_VM_NICS_FAILED);
             log.error("Failed to plug nics back after migration of vm {}: {}", getVmName(), e.getMessage());
             log.debug("Exception: ", e);

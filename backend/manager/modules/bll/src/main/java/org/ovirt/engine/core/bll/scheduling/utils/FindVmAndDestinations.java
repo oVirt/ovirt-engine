@@ -53,7 +53,7 @@ public class FindVmAndDestinations {
             VmDao vmDao,
             ResourceManager resourceManager) {
 
-        Map<Guid, List<VM>> vmsForHost =  getMigratableVmsRunningOnHosts(vmDao,
+        Map<Guid, List<VM>> vmsForHost = getMigratableVmsRunningOnHosts(vmDao,
                 sourceHosts.stream().map(VDS::getId).collect(Collectors.toList()));
 
         List<BalanceResult> results = new ArrayList<>();
@@ -64,12 +64,12 @@ public class FindVmAndDestinations {
             migratableVms.forEach(vm -> vm.setStatisticsData(resourceManager.getVmManager(vm.getId(), false).getStatistics()));
             migratableVms.sort(VmCpuUsageComparator.INSTANCE);
 
-            for (VM vm : migratableVms){
+            for (VM vm : migratableVms) {
                 // Check if vm not over utilize memory or CPU of destination hosts
                 List<VDS> validDestinationHosts = getValidHosts(
                         destinationHosts, cluster, vm, highCpuUtilization, requiredMemory);
 
-                if (!validDestinationHosts.isEmpty()){
+                if (!validDestinationHosts.isEmpty()) {
                     // Add the current host, it is possible it is the best host after all,
                     // because the balancer does not know about affinity for example
                     validDestinationHosts.add(sourceHost);

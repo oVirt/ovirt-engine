@@ -1,6 +1,6 @@
 package org.ovirt.engine.core.bll.scheduling.external;
 
-public class ExternalSchedulerDiscoveryUnit{
+public class ExternalSchedulerDiscoveryUnit {
     private String name;
     private String description;
     private String regex;

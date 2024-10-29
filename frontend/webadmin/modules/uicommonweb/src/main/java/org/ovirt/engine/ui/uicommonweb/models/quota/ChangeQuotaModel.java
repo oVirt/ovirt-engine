@@ -49,7 +49,7 @@ public class ChangeQuotaModel extends ListModel<ChangeQuotaItemModel> {
                     ChangeQuotaItemModel itemModel = new ChangeQuotaItemModel();
                     itemModel.setEntity(diskImage);
                     itemModel.getObject().setEntity(diskImage.getDiskAlias());
-                    itemModel.getCurrentQuota().setEntity(diskImage.getQuotaNames() != null && diskImage.getQuotaNames().size() >= i+1 ? diskImage.getQuotaNames().get(i) : null);
+                    itemModel.getCurrentQuota().setEntity(diskImage.getQuotaNames() != null && diskImage.getQuotaNames().size() >= i + 1 ? diskImage.getQuotaNames().get(i) : null);
                     itemModel.setStorageDomainId(storageDomainId);
                     itemModel.setStorageDomainName(diskImage.getStoragesNames().get(i));
                     itemModel.getQuota().setItems(storageDomainIdMap.get(storageDomainId));

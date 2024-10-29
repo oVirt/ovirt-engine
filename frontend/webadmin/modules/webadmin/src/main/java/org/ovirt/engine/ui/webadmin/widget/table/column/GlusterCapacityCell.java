@@ -19,7 +19,7 @@ import com.google.gwt.safecss.shared.SafeStylesBuilder;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 
-public abstract class GlusterCapacityCell<P extends Serializable> extends AbstractCell<P>{
+public abstract class GlusterCapacityCell<P extends Serializable> extends AbstractCell<P> {
 
     protected ApplicationTemplates templates = AssetProvider.getTemplates();
     protected ApplicationMessages messages = AssetProvider.getMessages();
@@ -31,7 +31,7 @@ public abstract class GlusterCapacityCell<P extends Serializable> extends Abstra
     private SizeUnit inUnit;
 
     protected String getSizeString(Double size, SizeUnit inUnit) {
-        if(size == null) {
+        if (size == null) {
             return constants.notAvailableLabel();
         } else {
             Pair<SizeUnit, Double> sizeWithUnits = SizeConverter.autoConvert(size.longValue(), inUnit);
@@ -41,26 +41,26 @@ public abstract class GlusterCapacityCell<P extends Serializable> extends Abstra
     }
 
     private String formatSize(double size) {
-        return NumberFormat.getFormat("#.##").format(size);//$NON-NLS-1$
+        return NumberFormat.getFormat("#.##").format(size); //$NON-NLS-1$
     }
 
     protected String getProgressText(Double freeSize, Double totalSize) {
-        if(freeSize == null || totalSize == null) {
-            return "?";//$NON-NLS-1$
+        if (freeSize == null || totalSize == null) {
+            return "?"; //$NON-NLS-1$
         } else {
-            return (int) getPercentageUsage(freeSize, totalSize) + "%";//$NON-NLS-1$
+            return (int) getPercentageUsage(freeSize, totalSize) + "%"; //$NON-NLS-1$
         }
     }
 
     protected int getProgressValue(Double freeSize, Double totalSize) {
-        if(freeSize == null || totalSize == null) {
+        if (freeSize == null || totalSize == null) {
             return 0;
         }
         return (int) Math.round(getPercentageUsage(freeSize, totalSize));
     }
 
     private double getPercentageUsage(Double freeSize, Double totalSize) {
-        return ((totalSize - freeSize)  * 100 )/totalSize;
+        return ((totalSize - freeSize) * 100 ) / totalSize;
     }
 
     protected void setFreeSize(Double freeSize) {
@@ -88,7 +88,7 @@ public abstract class GlusterCapacityCell<P extends Serializable> extends Abstra
 
     @Override
     public void render(Context context, Serializable value, SafeHtmlBuilder sb, String id) {
-        if(value == null) {
+        if (value == null) {
             clearAll();
         }
         SafeStylesBuilder stylesBuilder = new SafeStylesBuilder();

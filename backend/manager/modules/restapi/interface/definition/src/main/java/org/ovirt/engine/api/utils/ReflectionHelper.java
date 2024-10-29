@@ -17,7 +17,7 @@ public class ReflectionHelper {
     private static final String IS_ROOT = "is";
     private static final String IS_SET_ROOT = "isSet";
 
-    private ReflectionHelper() {}
+    private ReflectionHelper() { }
 
     public static <R extends BaseResource> R newModel(Class<R> clz) {
         R ret = null;
@@ -56,7 +56,7 @@ public class ReflectionHelper {
 
     public static boolean isSet(Object o, String name) {
         boolean set = false;
-        if(o != null){
+        if (o != null) {
             Method m = getMethod(o, IS_SET_ROOT + name);
             Object ret = invoke(o, m);
             if (ret != null && ret instanceof Boolean && ((Boolean) ret).booleanValue()) {

@@ -6,7 +6,7 @@ import java.util.Objects;
 
 import org.ovirt.engine.core.compat.Guid;
 
-public class GlusterGeoRepSessionDetails implements Serializable{
+public class GlusterGeoRepSessionDetails implements Serializable {
 
     private static final long serialVersionUID = -8084667500866439692L;
 

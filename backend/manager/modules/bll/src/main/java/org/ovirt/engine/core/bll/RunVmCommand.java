@@ -303,7 +303,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
                         markHostDevicesAsUsed();
                     }
                 }
-            } catch(EngineException e) {
+            } catch (EngineException e) {
                 // if the returned exception is such that shoudn't trigger the re-run process,
                 // re-throw it. otherwise, continue (the vm will be down and a re-run will be triggered)
                 switch (e.getErrorCode()) {
@@ -427,7 +427,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
             return cachedFlow;
         }
 
-        switch(getVm().getStatus()) {
+        switch (getVm().getStatus()) {
         case Paused:
             return setFlow(RunVmFlow.RESUME_PAUSE);
 
@@ -459,7 +459,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
     }
 
     protected void perform() {
-        switch(getFlow()) {
+        switch (getFlow()) {
         case RESUME_PAUSE:
             resumeVm();
             break;
@@ -646,7 +646,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
      * @return the VDS create VM parameters
      */
     protected CreateVDSCommandParameters buildCreateVmParameters() {
-        CreateVDSCommandParameters parameters  = new CreateVDSCommandParameters(getVdsId(), getVm());
+        CreateVDSCommandParameters parameters = new CreateVDSCommandParameters(getVdsId(), getVm());
         parameters.setRunInUnknownStatus(getParameters().isRunInUnknownStatus());
         parameters.setVmPayload(vmPayload);
         if (shouldRestoreMemory()) {
@@ -893,7 +893,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
                     }
                 } else {
                     if (!isPayloadExists(VmDeviceType.CDROM)) {
-                        if(osRepository.isCloudInit(getVm().getVmOsId())) {
+                        if (osRepository.isCloudInit(getVm().getVmOsId())) {
                             initializationType = InitializationType.CloudInit;
                         } else {
                             initializationType = InitializationType.Ignition;
@@ -1045,7 +1045,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
                     .filter(m -> m.getRepoImageName().equals(toolsName))
                     .findFirst()
                     .orElse(null);
-            if (dataDisk != null){
+            if (dataDisk != null) {
                 return dataDisk.getRepoImageId();
             }
             String isoDir = (String) runVdsCommand(VDSCommandType.IsoDirectory,

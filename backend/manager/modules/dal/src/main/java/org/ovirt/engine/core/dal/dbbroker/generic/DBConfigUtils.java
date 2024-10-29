@@ -68,13 +68,13 @@ public class DBConfigUtils implements IConfigUtilsInterface {
                  * - if it is enclosed between brackets, then it is handled as json object and a map is returned
                  * - otherwise it is handled as a string, the client code handles parsing it
                  */
-                if(StringUtils.startsWith(value, "{") && StringUtils.endsWith(value, "}")) {
+                if (StringUtils.startsWith(value, "{") && StringUtils.endsWith(value, "}")) {
                     return new JsonObjectDeserializer().deserialize(value, HashMap.class);
                 } else {
                     return value;
                 }
             } else if (fieldType.isEnum()) {
-                return Enum.valueOf((Class<Enum>)fieldType, value.toUpperCase());
+                return Enum.valueOf((Class<Enum>) fieldType, value.toUpperCase());
             } else {
                 return value;
             }

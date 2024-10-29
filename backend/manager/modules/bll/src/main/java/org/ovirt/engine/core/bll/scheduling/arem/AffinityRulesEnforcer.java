@@ -123,7 +123,7 @@ public class AffinityRulesEnforcer {
                 .collect(Collectors.toList());
 
         if (allVmToHostsAffinityGroups.isEmpty()) {
-            return new Pair<>(IteratorUtils::emptyIterator,  IteratorUtils::emptyIterator);
+            return new Pair<>(IteratorUtils::emptyIterator, IteratorUtils::emptyIterator);
         }
 
         List<Guid> vmIds = allVmToHostsAffinityGroups.stream()
@@ -363,7 +363,7 @@ public class AffinityRulesEnforcer {
         Set<Guid> removedHosts = new HashSet<>();
 
         Map<Guid, List<Guid>> res = new HashMap<>();
-        for(Guid vmId : vms) {
+        for (Guid vmId : vms) {
             VM vm = cache.getVm(vmId);
 
             Guid host = vm.getRunOnVds();

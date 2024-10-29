@@ -47,7 +47,7 @@ public class LockProperties implements Serializable {
      */
     private long timeoutMillis = WAIT_FOREVER;
 
-    private LockProperties() {}
+    private LockProperties() { }
 
     public boolean isNoWait() {
         return timeoutMillis == NO_WAIT;

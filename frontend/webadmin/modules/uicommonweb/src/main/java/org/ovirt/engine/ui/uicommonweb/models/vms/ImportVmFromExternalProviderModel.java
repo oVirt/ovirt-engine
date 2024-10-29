@@ -86,7 +86,7 @@ public abstract class ImportVmFromExternalProviderModel extends ImportVmModel {
         boolean someDriverSelected = getIso().getSelectedItem() != null;
         boolean isWindows = AsyncDataProvider.getInstance().isWindowsOsType(selectedOS);
 
-        if (isWindows && sourceIsNotKvm &&  (!attachDrivers || !someDriverSelected)) {
+        if (isWindows && sourceIsNotKvm && (!attachDrivers || !someDriverSelected)) {
                 setWinWithoutVirtioMessage(ConstantsManager.getInstance()
                     .getConstants().missingVirtioDriversForWindows());
         }
@@ -280,7 +280,7 @@ public abstract class ImportVmFromExternalProviderModel extends ImportVmModel {
                     Iterator<QueryReturnValue> returnValuesIter = result.getReturnValues().iterator();
                     Iterator<StorageDomain> domainsIter = getStorage().getItems().iterator();
                     boolean noQuota = true;
-                    while(domainsIter.hasNext()) {
+                    while (domainsIter.hasNext()) {
                         ArrayList<Quota> quotaList = returnValuesIter.next().getReturnValue();
                         noQuota = noQuota && quotaList.isEmpty();
                         storageQuotaMap.put(

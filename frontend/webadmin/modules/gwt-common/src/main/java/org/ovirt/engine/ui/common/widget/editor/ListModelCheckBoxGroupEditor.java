@@ -15,7 +15,7 @@ import com.google.gwt.text.shared.Renderer;
  * ListModel bound CheckBoxGroup Editor with Label that uses {@link ListModelCheckBoxGroup}.
  */
 
-public class ListModelCheckBoxGroupEditor<T> extends AbstractValidatedWidgetWithLabel<List<T>, ListModelCheckBoxGroup<T>> implements IsEditor<WidgetWithLabelEditor<List<T>, ListModelCheckBoxGroupEditor<T>>>{
+public class ListModelCheckBoxGroupEditor<T> extends AbstractValidatedWidgetWithLabel<List<T>, ListModelCheckBoxGroup<T>> implements IsEditor<WidgetWithLabelEditor<List<T>, ListModelCheckBoxGroupEditor<T>>> {
 
     private final WidgetWithLabelEditor<List<T>, ListModelCheckBoxGroupEditor<T>> editor;
 

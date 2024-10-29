@@ -185,7 +185,7 @@ public class ShellLikeConfd {
                 escape = false;
                 ret.append(c);
             } else {
-                switch(c) {
+                switch (c) {
                     case '\\':
                         escape = true;
                     break;
@@ -198,7 +198,7 @@ public class ShellLikeConfd {
                             throw new RuntimeException("Malformed variable assignement");
                         }
                         String name = value.substring(index, i);
-                        index = i+1;
+                        index = i + 1;
                         String v = values.get(name);
                         if (v != null) {
                             ret.append(v);

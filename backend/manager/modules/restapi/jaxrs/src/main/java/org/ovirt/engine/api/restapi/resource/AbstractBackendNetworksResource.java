@@ -80,7 +80,7 @@ public abstract class AbstractBackendNetworksResource
 
         protected String name;
 
-        NetworkIdResolver() {}
+        NetworkIdResolver() { }
 
         NetworkIdResolver(String name) {
             this.name = name;

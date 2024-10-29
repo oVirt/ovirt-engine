@@ -42,8 +42,8 @@ public class GlusterTasksListReturn extends StatusReturn {
         Map<String, Object> tasksMap = (Map<String, Object>) innerMap.get(TASKS_LIST);
         if (tasksMap != null) {
             for (Entry<String, Object> entry: tasksMap.entrySet()) {
-                GlusterAsyncTask task = getTask(entry.getKey(), (Map<String, Object>)entry.getValue());
-                if(GlusterTaskType.UNKNOWN != task.getType()){
+                GlusterAsyncTask task = getTask(entry.getKey(), (Map<String, Object>) entry.getValue());
+                if (GlusterTaskType.UNKNOWN != task.getType()) {
                     tasks.add(task);
                 }
             }
@@ -55,12 +55,12 @@ public class GlusterTasksListReturn extends StatusReturn {
     private GlusterAsyncTask getTask(String taskId, Map<String, Object> map) {
         GlusterAsyncTask task = new GlusterAsyncTask();
         task.setTaskId(Guid.createGuidFromString(taskId));
-        task.setStatus(GlusterAsyncTaskStatus.from((String)map.get(STATUS)).getJobExecutionStatus());
-        task.setType(GlusterTaskType.fromValue((String)map.get(TASK_TYPE)));
-        if(GlusterTaskType.UNKNOWN != task.getType()){
-            task.setMessage(getMessage((Map<String, Object>)map.get(DATA)));
+        task.setStatus(GlusterAsyncTaskStatus.from((String) map.get(STATUS)).getJobExecutionStatus());
+        task.setType(GlusterTaskType.fromValue((String) map.get(TASK_TYPE)));
+        if (GlusterTaskType.UNKNOWN != task.getType()) {
+            task.setMessage(getMessage((Map<String, Object>) map.get(DATA)));
             task.setTaskParameters(new GlusterTaskParameters());
-            task.getTaskParameters().setVolumeName((String)map.get(VOLUME_NAME));
+            task.getTaskParameters().setVolumeName((String) map.get(VOLUME_NAME));
             task.getTaskParameters().setBricks(getBrickNames(map.get(BRICK_NAMES)));
         }
         return task;
@@ -79,17 +79,17 @@ public class GlusterTasksListReturn extends StatusReturn {
         NumberFormat formatSize = NumberFormat.getInstance();
         formatSize.setMaximumFractionDigits(2);
         formatSize.setMinimumFractionDigits(2);
-        Pair<SizeConverter.SizeUnit, Double> sizeMoved= SizeConverter.autoConvert(size, SizeUnit.BYTES);
+        Pair<SizeConverter.SizeUnit, Double> sizeMoved = SizeConverter.autoConvert(size, SizeUnit.BYTES);
         return formatSize.format(sizeMoved.getSecond().doubleValue()).toString().concat(" ").concat(sizeMoved.getFirst().toString());
     }
 
-    private String[] getBrickNames(Object bricksObj){
+    private String[] getBrickNames(Object bricksObj) {
         if (bricksObj == null || !(bricksObj instanceof Object[])) {
             return null;
         }
-        Object[] brickObjectArray = (Object[])bricksObj;
+        Object[] brickObjectArray = (Object[]) bricksObj;
         String[] brickNames = new String[brickObjectArray.length];
-        for (int i=0; i< brickNames.length; i++){
+        for (int i = 0; i < brickNames.length; i++) {
             brickNames[i] = brickObjectArray[i].toString();
         }
         return brickNames;

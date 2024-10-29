@@ -14,7 +14,7 @@ public class AddVmFromSnapshotParameters extends AddVmParameters implements Seri
     private static final long serialVersionUID = -3400982291165788716L;
 
     //Unique Identifier of Source Snapshot
-    @NotNull(message="VALIDATION_SOURCE_SNAPSHOT_ID_NOT_NULL")
+    @NotNull(message = "VALIDATION_SOURCE_SNAPSHOT_ID_NOT_NULL")
     private Guid sourceSnapshotId;
 
     public AddVmFromSnapshotParameters() {

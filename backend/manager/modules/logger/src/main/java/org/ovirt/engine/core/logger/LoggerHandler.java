@@ -32,7 +32,7 @@ public class LoggerHandler extends Handler implements Observer {
                 extension.invoke(
                         publishInputMap,
                         publishOutputMap);
-            } catch(Exception ex) {
+            } catch (Exception ex) {
                 // ignore, logging this exception will result in infinite loop
             }
         }
@@ -46,7 +46,7 @@ public class LoggerHandler extends Handler implements Observer {
                         .mput(Base.InvokeKeys.COMMAND, Logger.InvokeCommands.FLUSH),
                         true,
                         true);
-            } catch(Exception ex) {
+            } catch (Exception ex) {
                 // ignore, logging this exception will result in infinite loop
             }
         }
@@ -60,7 +60,7 @@ public class LoggerHandler extends Handler implements Observer {
                         .mput(Base.InvokeKeys.COMMAND, Logger.InvokeCommands.CLOSE),
                         true,
                         true);
-            } catch(Exception ex) {
+            } catch (Exception ex) {
                 // ignore, logging this exception will result in infinite loop
             }
         }

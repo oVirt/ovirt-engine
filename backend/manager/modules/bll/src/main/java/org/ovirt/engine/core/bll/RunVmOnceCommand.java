@@ -146,7 +146,7 @@ public class RunVmOnceCommand<T extends RunVmOnceParams> extends RunVmCommand<T>
     @Override
     protected List<Guid> getPredefinedVdsIdListToRunOn() {
         // destination VDS ID has priority over the dedicated VDS
-        if (getParameters().getDestinationVdsId() != null){
+        if (getParameters().getDestinationVdsId() != null) {
             List<Guid> destIdList = new LinkedList<>();
             destIdList.add(getParameters().getDestinationVdsId());
             return destIdList;
@@ -217,7 +217,7 @@ public class RunVmOnceCommand<T extends RunVmOnceParams> extends RunVmCommand<T>
 
     @Override
     protected List<Guid> getVdsWhiteList() {
-        if (getPredefinedVdsIdListToRunOn().size() > 0){
+        if (getPredefinedVdsIdListToRunOn().size() > 0) {
             return getPredefinedVdsIdListToRunOn();
         }
         return super.getVdsWhiteList();

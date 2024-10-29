@@ -328,7 +328,7 @@ public class BackendTemplateResourceTest
 
         Response response = resource.export(action);
         verifyActionResponse(response, "templates/" + GUIDS[0], true, null);
-        action = (Action)response.getEntity();
+        action = (Action) response.getEntity();
         assertTrue(action.isSetStatus());
         assertEquals(CreationStatus.IN_PROGRESS.value(), action.getStatus());
     }

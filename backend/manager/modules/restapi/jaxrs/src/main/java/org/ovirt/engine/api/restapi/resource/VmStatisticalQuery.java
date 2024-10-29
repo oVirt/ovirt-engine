@@ -12,22 +12,22 @@ import org.ovirt.engine.core.compat.Guid;
 
 public class VmStatisticalQuery extends AbstractStatisticalQuery<Vm, org.ovirt.engine.core.common.businessentities.VM> {
 
-    private static final Statistic MEM_CONFIG            = create("memory.installed",       "Total memory configured", GAUGE, BYTES,   INTEGER);
-    private static final Statistic MEM_USED              = create("memory.used",            "Memory used (agent)",     GAUGE, BYTES,   INTEGER);
-    private static final Statistic MEM_FREE              = create("memory.free",            "Memory free (agent)",     GAUGE, BYTES,   INTEGER);
-    private static final Statistic MEM_BUFFERED          = create("memory.buffered",        "Memory buffered (agent)", GAUGE, BYTES,   INTEGER);
-    private static final Statistic MEM_CACHED            = create("memory.cached",          "Memory cached (agent)",   GAUGE, BYTES,   INTEGER);
-    private static final Statistic MEM_UNUSED            = create("memory.unused",          "Memory unused (agent)",   GAUGE, BYTES,   INTEGER);
-    private static final Statistic CPU_GUEST             = create("cpu.current.guest",      "CPU used by guest",       GAUGE, PERCENT, DECIMAL);
-    private static final Statistic CPU_OVERHEAD          = create("cpu.current.hypervisor", "CPU overhead",            GAUGE, PERCENT, DECIMAL);
-    private static final Statistic CPU_TOTAL             = create("cpu.current.total",      "Total CPU used",          GAUGE, PERCENT, DECIMAL);
-    private static final Statistic NETWORK_TOTAL         = create("network.current.total",  "Total network used",      GAUGE, PERCENT, DECIMAL);
-    private static final Statistic MIGRATION_PROGRESS    = create("migration.progress",     "Migration Progress",      GAUGE, PERCENT, DECIMAL);
-    private static final Statistic ELAPSED_TIME          = create("elapsed.time",           "Elapsed VM runtime",      COUNTER, SECONDS, INTEGER);
-    private static final Statistic CPU_USAGE_HISTORY     = create("cpu.usage.history",      "List of CPU usage history, sorted by date from newest to oldest, at intervals of 30 seconds",     GAUGE, PERCENT, DECIMAL);
-    private static final Statistic MEM_USAGE_HISTORY     = create("memory.usage.history",   "List of memory usage history, sorted by date from newest to oldest, at intervals of 30 seconds",  GAUGE, PERCENT, DECIMAL);
-    private static final Statistic NETWORK_USAGE_HISTORY = create("network.usage.history",  "List of network usage history, sorted by date from newest to oldest, at intervals of 30 seconds", GAUGE, PERCENT, DECIMAL);
-    private static final Statistic DISKS_USAGE           = create("disks.usage",            "Disk usage, in bytes, per filesystem as JSON (agent)", GAUGE, NONE, STRING);
+    private static final Statistic MEM_CONFIG = create("memory.installed", "Total memory configured", GAUGE, BYTES, INTEGER);
+    private static final Statistic MEM_USED = create("memory.used", "Memory used (agent)", GAUGE, BYTES, INTEGER);
+    private static final Statistic MEM_FREE = create("memory.free", "Memory free (agent)", GAUGE, BYTES, INTEGER);
+    private static final Statistic MEM_BUFFERED = create("memory.buffered", "Memory buffered (agent)", GAUGE, BYTES, INTEGER);
+    private static final Statistic MEM_CACHED = create("memory.cached", "Memory cached (agent)", GAUGE, BYTES, INTEGER);
+    private static final Statistic MEM_UNUSED = create("memory.unused", "Memory unused (agent)", GAUGE, BYTES, INTEGER);
+    private static final Statistic CPU_GUEST = create("cpu.current.guest", "CPU used by guest", GAUGE, PERCENT, DECIMAL);
+    private static final Statistic CPU_OVERHEAD = create("cpu.current.hypervisor", "CPU overhead", GAUGE, PERCENT, DECIMAL);
+    private static final Statistic CPU_TOTAL = create("cpu.current.total", "Total CPU used", GAUGE, PERCENT, DECIMAL);
+    private static final Statistic NETWORK_TOTAL = create("network.current.total", "Total network used", GAUGE, PERCENT, DECIMAL);
+    private static final Statistic MIGRATION_PROGRESS = create("migration.progress", "Migration Progress", GAUGE, PERCENT, DECIMAL);
+    private static final Statistic ELAPSED_TIME = create("elapsed.time", "Elapsed VM runtime", COUNTER, SECONDS, INTEGER);
+    private static final Statistic CPU_USAGE_HISTORY = create("cpu.usage.history", "List of CPU usage history, sorted by date from newest to oldest, at intervals of 30 seconds", GAUGE, PERCENT, DECIMAL);
+    private static final Statistic MEM_USAGE_HISTORY = create("memory.usage.history", "List of memory usage history, sorted by date from newest to oldest, at intervals of 30 seconds", GAUGE, PERCENT, DECIMAL);
+    private static final Statistic NETWORK_USAGE_HISTORY = create("network.usage.history", "List of network usage history, sorted by date from newest to oldest, at intervals of 30 seconds", GAUGE, PERCENT, DECIMAL);
+    private static final Statistic DISKS_USAGE = create("disks.usage", "Disk usage, in bytes, per filesystem as JSON (agent)", GAUGE, NONE, STRING);
 
     protected VmStatisticalQuery(Vm parent) {
         this(null, parent);

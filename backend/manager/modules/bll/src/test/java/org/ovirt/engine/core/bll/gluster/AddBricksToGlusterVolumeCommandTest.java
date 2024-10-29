@@ -248,7 +248,7 @@ public class AddBricksToGlusterVolumeCommandTest extends BaseCommandTest {
     @Test
     public void validateFailsOnSameServerIncreasingReplica() {
         initTestCommand(volumeIdRepl, getBricks(volumeIdRepl, 2, true), 3, 0, false);
-        GlusterVolumeEntity vol =  getMultiBrickVolume(volumeIdRepl, 4);
+        GlusterVolumeEntity vol = getMultiBrickVolume(volumeIdRepl, 4);
         vol.setVolumeType(GlusterVolumeType.DISTRIBUTED_REPLICATE);
         vol.setReplicaCount(2);
         doReturn(vol).when(volumeDao).getById(volumeIdRepl);
@@ -262,7 +262,7 @@ public class AddBricksToGlusterVolumeCommandTest extends BaseCommandTest {
         bricks.add(getBrick(volumeIdRepl, Guid.newGuid(), "/brick2"));
         initTestCommand(volumeIdRepl, bricks, 3, 0, false);
         doReturn(getVdsStatic()).when(vdsStaticDao).get(any());
-        GlusterVolumeEntity vol =  getMultiBrickVolume(volumeIdRepl, 4);
+        GlusterVolumeEntity vol = getMultiBrickVolume(volumeIdRepl, 4);
         vol.setVolumeType(GlusterVolumeType.DISTRIBUTED_REPLICATE);
         vol.setReplicaCount(2);
         doReturn(vol).when(volumeDao).getById(volumeIdRepl);
@@ -276,7 +276,7 @@ public class AddBricksToGlusterVolumeCommandTest extends BaseCommandTest {
         bricks.add(getBrick(volumeIdRepl, Guid.newGuid(), "/brick2"));
         initTestCommand(volumeIdRepl, bricks, 2, 0, false);
         doReturn(getVdsStatic()).when(vdsStaticDao).get(any());
-        GlusterVolumeEntity vol =  getMultiBrickVolume(volumeIdRepl, 4);
+        GlusterVolumeEntity vol = getMultiBrickVolume(volumeIdRepl, 4);
         vol.setVolumeType(GlusterVolumeType.DISTRIBUTED_REPLICATE);
         vol.setReplicaCount(2);
         doReturn(vol).when(volumeDao).getById(volumeIdRepl);

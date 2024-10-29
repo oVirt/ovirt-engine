@@ -125,7 +125,7 @@ public class CopyManagedBlockDiskCommand<T extends CopyImageGroupWithDataCommand
 
     @Override
     public boolean performNextOperation(int completedChildCount) {
-        switch(getParameters().getStage()) {
+        switch (getParameters().getStage()) {
         case LEASE_CREATION:
             if (!saveLease()) {
                     setCommandStatus(CommandStatus.FAILED);

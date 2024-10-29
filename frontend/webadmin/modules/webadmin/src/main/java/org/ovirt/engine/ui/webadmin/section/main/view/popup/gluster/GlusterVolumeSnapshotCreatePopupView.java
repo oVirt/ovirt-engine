@@ -192,7 +192,7 @@ public class GlusterVolumeSnapshotCreatePopupView extends
         endDate.getContentWidget().setDateTimeFormat(GwtBootstrapDateTimePicker.DEFAULT_DATE_TIME_FORMAT);
         endDate.getContentWidget().showDateAndTime();
         executionTimeEditor = new EntityModelDateTimeBoxEditor();
-        executionTimeEditor.getContentWidget().setDateTimeFormat("hh:ii");//$NON-NLS-1$
+        executionTimeEditor.getContentWidget().setDateTimeFormat("hh:ii"); //$NON-NLS-1$
         executionTimeEditor.getContentWidget().showTimeOnly();
         recurrenceEditor =
                 new ListModelListBoxEditor<>(new AbstractRenderer<GlusterVolumeSnapshotScheduleRecurrence>() {
@@ -276,7 +276,7 @@ public class GlusterVolumeSnapshotCreatePopupView extends
 
     private String collectGeneralTabErrors(GlusterVolumeSnapshotModel object) {
         StringBuilder generalTabErrorBuilder = new StringBuilder();
-        if (!snapshotNameEditor.isValid()){
+        if (!snapshotNameEditor.isValid()) {
             appendErrors(Collections.singletonList(constants.volumeSnapshotNamePrefixLabel()), generalTabErrorBuilder);
             appendErrors(object.getSnapshotName().getInvalidityReasons(), generalTabErrorBuilder);
         }
@@ -296,9 +296,9 @@ public class GlusterVolumeSnapshotCreatePopupView extends
     }
 
     private void appendErrors(List<String> errors, StringBuilder sBuilder) {
-        for(String currentError : errors) {
+        for (String currentError : errors) {
             sBuilder.append(currentError);
-            sBuilder.append("\n");//$NON-NLS-1$
+            sBuilder.append("\n"); //$NON-NLS-1$
         }
     }
 

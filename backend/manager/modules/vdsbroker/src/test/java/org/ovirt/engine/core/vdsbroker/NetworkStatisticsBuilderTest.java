@@ -123,7 +123,6 @@ public class NetworkStatisticsBuilderTest {
         );
     }
 
-
     public static Stream<Arguments> buildArguments(
             BigInteger bi0,
             BigInteger bi100,

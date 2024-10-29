@@ -147,7 +147,7 @@ public class HostDeviceDaoImpl extends MassOperationsGenericDao<HostDevice, Host
 
     private abstract static class BaseHostDeviceRowMapper<T extends HostDevice> implements RowMapper<T> {
 
-        protected void map(ResultSet rs, HostDevice device) throws SQLException{
+        protected void map(ResultSet rs, HostDevice device) throws SQLException {
             device.setHostId(getGuid(rs, "host_id"));
             device.setDeviceName(rs.getString("device_name"));
             device.setParentDeviceName(rs.getString("parent_device_name"));

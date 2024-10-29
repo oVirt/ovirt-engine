@@ -136,7 +136,7 @@ public class BackendInstanceTypeResource
                 updateParams.setUpdateRngDevice(true);
                 updateParams.setRngDevice(RngDeviceMapper.map(incoming.getRngDevice(), null));
             }
-            if(incoming.isSetSoundcardEnabled()) {
+            if (incoming.isSetSoundcardEnabled()) {
                 updateParams.setSoundDeviceEnabled(incoming.isSoundcardEnabled());
             }
             if (incoming.isSetVirtioScsi()) {

@@ -426,7 +426,7 @@ public class DataCenterListModel extends ListWithSimpleDetailsModel<Void, Storag
                 .map(storagePool -> new StoragePoolParametersBase(storagePool.getId()))
                 .collect(Collectors.toList());
 
-        Frontend.getInstance().runMultipleAction(ActionType.CleanFinishedTasks, parameters, result -> {}, null);
+        Frontend.getInstance().runMultipleAction(ActionType.CleanFinishedTasks, parameters, result -> { }, null);
     }
 
     public void onRecover() {
@@ -595,7 +595,7 @@ public class DataCenterListModel extends ListWithSimpleDetailsModel<Void, Storag
         Frontend.getInstance().runQuery(QueryType.GetStoragePoolByDatacenterName,
                 new NameQueryParameters(dataCenter.getName().getEntity()),
                 new AsyncQuery<QueryReturnValue>(returnValue -> {
-                    if (!((Collection<?>)returnValue.getReturnValue()).isEmpty()) {
+                    if (!((Collection<?>) returnValue.getReturnValue()).isEmpty()) {
                         dataCenter.getName().getInvalidityReasons().add(
                                 ConstantsManager.getInstance().getConstants().nameMustBeUniqueInvalidReason());
                         dataCenter.getName().setIsValid(false);

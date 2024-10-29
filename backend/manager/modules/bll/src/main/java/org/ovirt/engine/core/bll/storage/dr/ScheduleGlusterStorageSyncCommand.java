@@ -57,7 +57,7 @@ public class ScheduleGlusterStorageSyncCommand<T extends StorageSyncSchedulePara
 
     @Override
     protected Map<String, Pair<String, String>> getExclusiveLocks() {
-        return Collections.singletonMap(getStorageDomainId().toString() + ";" +getGeoRepSession().toString(),
+        return Collections.singletonMap(getStorageDomainId().toString() + ";" + getGeoRepSession().toString(),
                 LockMessagesMatchUtil.makeLockingPair(LockingGroup.GLUSTER_STORAGE_DOMAIN_SYNC,
                         new LockMessage(EngineMessage.STORAGE_DOMAIN_SYNC_SCHEDULING_IN_PROGRESS)));
     }

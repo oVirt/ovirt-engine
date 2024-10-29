@@ -245,7 +245,7 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
     }
 
     @Override
-    protected void logToAudit(){
+    protected void logToAudit() {
         AuditLogable logable = new AuditLogableImpl();
         logable.addCustomValue("CommandName", getCommandName());
         logable.addCustomValue("message", getReturnStatus().message);

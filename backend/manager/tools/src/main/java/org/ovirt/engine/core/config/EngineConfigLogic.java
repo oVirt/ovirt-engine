@@ -384,7 +384,7 @@ public class EngineConfigLogic {
             String valueInDb = configKey.getDisplayValue().trim();
             String delimiter = node.get(DELIMITER_TOKEN).asText(";");
             value = mergedValues(value, valueInDb, delimiter);
-            if(valueInDb.equals(value)) {
+            if (valueInDb.equals(value)) {
                 console.writeFormat(MERGE_SAME_VALUE_MSG);
                 console.writeLine();
                 return;

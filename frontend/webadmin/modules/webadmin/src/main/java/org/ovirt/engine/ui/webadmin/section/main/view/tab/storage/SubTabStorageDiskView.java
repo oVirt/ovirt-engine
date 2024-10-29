@@ -88,7 +88,7 @@ public class SubTabStorageDiskView extends AbstractSubTabTableView<StorageDomain
 
         getTable().ensureColumnVisible(sizeColumn, constants.provisionedSizeDisk(), true, "100px"); //$NON-NLS-1$
 
-        getTable().ensureColumnVisible(actualSizeColumn, constants.sizeDisk(), isDataStorage,   "130px"); //$NON-NLS-1$
+        getTable().ensureColumnVisible(actualSizeColumn, constants.sizeDisk(), isDataStorage, "130px"); //$NON-NLS-1$
 
         getTable().ensureColumnVisible(allocationColumn, constants.allocationDisk(), isDataStorage, "130px"); //$NON-NLS-1$
 

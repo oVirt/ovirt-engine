@@ -110,7 +110,7 @@ public class ListModelListBox<T> extends Composite implements EditorWidget<T, Ta
     @UiField
     protected FlowPanel dropdownPanel;
 
-    @UiField(provided=true)
+    @UiField(provided = true)
     protected Button dropdownButton;
 
     @UiField
@@ -239,7 +239,7 @@ public class ListModelListBox<T> extends Composite implements EditorWidget<T, Ta
         setChanging(!ignoreChanging());
         updateTitle(value);
         String renderedValue = renderer.render(value);
-        ((Element)dropdownButton.getElement().getChild(0)).setInnerHTML(renderedValue);
+        ((Element) dropdownButton.getElement().getChild(0)).setInnerHTML(renderedValue);
         Scheduler.get().scheduleDeferred(() -> listPanel.setSelected(value));
         currentValue = value;
         if (fireEvents) {
@@ -296,7 +296,7 @@ public class ListModelListBox<T> extends Composite implements EditorWidget<T, Ta
         if (values.isEmpty()) {
             updateCurrentValue(null, false);
         }
-        for(T value: values) {
+        for (T value: values) {
             addValue(value);
         }
     }
@@ -417,13 +417,13 @@ public class ListModelListBox<T> extends Composite implements EditorWidget<T, Ta
 
         @SuppressWarnings("unchecked")
         public void setSelected(T value) {
-            for(Widget child: getChildren()) {
+            for (Widget child: getChildren()) {
                 if (child instanceof ListModelListBox.ListItem) {
                     ListItem item = (ListModelListBox<T>.ListItem) child;
                     //Clear any selection first
                     item.removeSelected();
                     if (value instanceof List) {
-                        if (((List<T>)value).contains(((List<T>)item.getValue()).get(0))) {
+                        if (((List<T>) value).contains(((List<T>) item.getValue()).get(0))) {
                             item.setSelected();
                         }
                     } else {

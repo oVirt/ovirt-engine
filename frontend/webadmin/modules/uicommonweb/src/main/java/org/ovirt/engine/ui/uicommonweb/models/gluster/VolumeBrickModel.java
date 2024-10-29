@@ -335,7 +335,7 @@ public class VolumeBrickModel extends Model {
             return false;
         }
 
-        if(!brickDir.startsWith("/")) { //$NON-NLS-1$
+        if (!brickDir.startsWith("/")) { //$NON-NLS-1$
             setMessage(ConstantsManager.getInstance().getConstants().invalidBrickDirectoryStartWithSlashMsg());
             return false;
         }
@@ -578,7 +578,7 @@ public class VolumeBrickModel extends Model {
         int replicaCount = getReplicaCountValue();
         Set<String> servers = new HashSet<>();
 
-        if(replicaCount > oldReplicaCount) {
+        if (replicaCount > oldReplicaCount) {
             int count = 0;
             for (GlusterBrickEntity brick : existingBricks) {
                 servers.add(brick.getServerName());

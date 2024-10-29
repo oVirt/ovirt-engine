@@ -317,7 +317,7 @@ public class TryBackToAllSnapshotsOfVmCommand<T extends TryBackToAllSnapshotsOfV
                             continue;
                         }
                         if (image.getDiskStorageType() == DiskStorageType.CINDER) {
-                            cinderDisks.add((CinderDisk)image);
+                            cinderDisks.add((CinderDisk) image);
                             continue;
                         }
                         ActionReturnValue actionReturnValue =
@@ -562,7 +562,7 @@ public class TryBackToAllSnapshotsOfVmCommand<T extends TryBackToAllSnapshotsOfV
         // verify that the destination lease domain ID belongs to one of the VM's snapshots
         if (getParameters().getDstLeaseDomainId() != null) {
             if (!validate(snapshotsValidator.isLeaseDomainIdBelongsToSnapshot(getVmId(),
-                    getParameters().getDstLeaseDomainId())) &&!getParameters().getDstLeaseDomainId()
+                    getParameters().getDstLeaseDomainId())) && !getParameters().getDstLeaseDomainId()
                     .equals(getVm().getLeaseStorageDomainId())) {
                 return failValidation(EngineMessage.ACTION_TYPE_FAILED_LEASE_DOMAIN_ID_IS_NOT_VALID);
             }
@@ -637,7 +637,7 @@ public class TryBackToAllSnapshotsOfVmCommand<T extends TryBackToAllSnapshotsOfV
             return false;
         }
 
-        if(!canRestoreVmConfigFromSnapshot()) {
+        if (!canRestoreVmConfigFromSnapshot()) {
             return failValidation(EngineMessage.MAC_POOL_NOT_ENOUGH_MAC_ADDRESSES);
         }
         return true;

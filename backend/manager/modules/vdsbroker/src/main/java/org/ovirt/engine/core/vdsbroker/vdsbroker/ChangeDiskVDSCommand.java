@@ -17,7 +17,7 @@ public class ChangeDiskVDSCommand<P extends ChangeDiskVDSCommandParameters> exte
 
     @Override
     protected void executeVdsBrokerCommand() {
-        if (getParameters().getIface() != null)  {
+        if (getParameters().getIface() != null) {
             Map<String, Object> driveSpec = new HashMap<>();
             driveSpec.put(VdsProperties.INTERFACE, getParameters().getIface());
             driveSpec.put(VdsProperties.Index, Integer.toString(getParameters().getIndex()));
