@@ -3,7 +3,7 @@ package org.ovirt.engine.core.common.businessentities;
 import java.io.Serializable;
 import java.util.Objects;
 
-public class ReplaceHostConfiguration implements  Serializable {
+public class ReplaceHostConfiguration implements Serializable {
 
     private ReplaceHostConfiguration.Action deployAction;
 

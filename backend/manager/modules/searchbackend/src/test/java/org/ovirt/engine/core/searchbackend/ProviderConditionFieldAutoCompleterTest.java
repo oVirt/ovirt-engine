@@ -8,7 +8,7 @@ import org.ovirt.engine.core.common.businessentities.ProviderType;
 
 public class ProviderConditionFieldAutoCompleterTest {
 
-    private IConditionFieldAutoCompleter comp =  new ProviderConditionFieldAutoCompleter();
+    private IConditionFieldAutoCompleter comp = new ProviderConditionFieldAutoCompleter();
 
     @Test
     public void testExistentType() {

@@ -245,7 +245,7 @@ class NumaPinningHelperTest {
         return host;
     }
      private VdsNumaNode createHostNumaNodeWithCpus(int index, long freeMem, List<Integer> cpus) {
-        VdsNumaNode vdsNumaNode= createHostNumaNode(index, freeMem);
+        VdsNumaNode vdsNumaNode = createHostNumaNode(index, freeMem);
         vdsNumaNode.setCpuIds(cpus);
         return vdsNumaNode;
      }

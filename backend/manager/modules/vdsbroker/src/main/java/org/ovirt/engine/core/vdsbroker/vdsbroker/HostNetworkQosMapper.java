@@ -78,6 +78,6 @@ public class HostNetworkQosMapper {
         // json-rpc de-serializes a value to integer or to long according
         // to its magnitude, so convert int to long
         long avg = ((Number) parameters.get(VdsProperties.HOST_QOS_AVERAGE)).longValue();
-        return (int)(avg / conversionRate);
+        return (int) (avg / conversionRate);
     }
 }

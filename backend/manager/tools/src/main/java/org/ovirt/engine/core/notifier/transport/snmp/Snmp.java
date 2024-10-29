@@ -150,7 +150,7 @@ public class Snmp extends Transport {
 
     private int getSnmpVersion(String ver) {
         int version;
-        switch(ver) {
+        switch (ver) {
             case "2":
                 version = SnmpConstants.version2c;
                 break;
@@ -164,7 +164,7 @@ public class Snmp extends Transport {
     }
 
     private OID getAuthProtocol(String authProtocol) {
-        switch(authProtocol) {
+        switch (authProtocol) {
             case "MD5":
                 return AuthMD5.ID;
             case "SHA":
@@ -175,7 +175,7 @@ public class Snmp extends Transport {
     }
 
     private OID getPrivProtocol(String privProtocol) {
-        switch(privProtocol) {
+        switch (privProtocol) {
             case "AES128":
                 return PrivAES128.ID;
             case "AES192":
@@ -297,7 +297,7 @@ public class Snmp extends Transport {
         OctetString authenticationPassphrase = null;
         OID privacyProtocol = null;
         OctetString privacyPassphrase = null;
-        switch(profile.securityLevel) {
+        switch (profile.securityLevel) {
             case SecurityLevel.AUTH_NOPRIV:
                 authenticationProtocol = profile.authProtocol;
                 authenticationPassphrase = profile.authPassphrase;

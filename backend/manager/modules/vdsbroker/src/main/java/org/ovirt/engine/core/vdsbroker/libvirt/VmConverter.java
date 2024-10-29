@@ -103,7 +103,7 @@ public class VmConverter {
     }
 
     private Map<String, Object> parseInterface(XmlNode dev) {
-        switch(DomainXmlUtils.parseAttribute(dev, "type")) {
+        switch (DomainXmlUtils.parseAttribute(dev, "type")) {
         case "bridge":
             Map<String, Object> device = new HashMap<>();
             device.put(VdsProperties.Device, DomainXmlUtils.parseAttribute(dev, "type"));
@@ -121,7 +121,7 @@ public class VmConverter {
     }
 
     private Map<String, Object> parseDisk(XmlNode dev) {
-        switch(DomainXmlUtils.parseAttribute(dev, "device")) {
+        switch (DomainXmlUtils.parseAttribute(dev, "device")) {
         case "disk":
             Map<String, String> uuids = parseDiskUuids(DomainXmlUtils.parseDiskPath(dev));
             if (uuids == null) {

@@ -194,7 +194,7 @@ public class HostMaintenanceConfirmationPopupView extends AbstractModelBoundPopu
 
     @Override
     public void setMessage(String message) {
-        messageHTML.setHTML(SafeHtmlUtils.fromString(message != null ? message : "").asString().replace("\n", "<br>"));//$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+        messageHTML.setHTML(SafeHtmlUtils.fromString(message != null ? message : "").asString().replace("\n", "<br>")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
     }
 
     public void updatePinnedVMsInfoVisibility(HostMaintenanceConfirmationModel model) {

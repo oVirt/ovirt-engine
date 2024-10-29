@@ -82,7 +82,7 @@ public abstract class GetFromOvaQuery <T, P extends GetVmFromOvaQueryParameters>
 
     private Map<String, T> parseOvfs(String stdout) {
         if (stdout.startsWith("{")) {
-            stdout = stdout.substring(1, stdout.length()-1);
+            stdout = stdout.substring(1, stdout.length() - 1);
             return Arrays.stream(stdout.split("::"))
                     .map(this::splitToFileNameAndOvf)
                     .map(arr -> new Object[] { parseOvf(arr[1]), arr[0] })

@@ -64,7 +64,7 @@ public class ServiceTree {
         if (!nodes.containsKey(resource)) {
             nodes.put(resource, node);
         }
-        if (node.getSubServices()!=null) {
+        if (node.getSubServices() != null) {
             node.setSon(node.getSubService("{id}"));
         }
         return node;

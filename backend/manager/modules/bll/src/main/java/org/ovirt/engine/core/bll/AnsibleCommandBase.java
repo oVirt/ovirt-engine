@@ -40,7 +40,7 @@ public abstract class AnsibleCommandBase <T extends AnsibleCommandParameters> ex
     }
 
     @Override
-    protected void init(){
+    protected void init() {
         super.init();
         setVdsId(getParameters().getHostId());
     }

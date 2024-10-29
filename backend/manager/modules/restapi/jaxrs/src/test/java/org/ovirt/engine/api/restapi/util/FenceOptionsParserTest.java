@@ -32,21 +32,21 @@ public class FenceOptionsParserTest {
         assertEquals(1, ret.size());
         verifyResult(ret.get(0),
                      "foo",
-                     "one",   "bool", "1",
-                     "two",   "int",  "2",
+                     "one", "bool", "1",
+                     "two", "int", "2",
                      "three", "bool", "3");
     }
 
     @Test
     public void testParseMultiple() {
         List<Agent> ret = parse("foo:one=1,two=2,three=3;bar:ninetynine=99",
-                                          "one=bool,two=int,three=bool,ninetynine=int");
+ "one=bool,two=int,three=bool,ninetynine=int");
         assertNotNull(ret);
         assertEquals(2, ret.size());
         verifyResult(ret.get(0),
                      "foo",
-                     "one",   "bool", "1",
-                     "two",   "int",  "2",
+                     "one", "bool", "1",
+                     "two", "int", "2",
                      "three", "bool", "3");
         verifyResult(ret.get(1),
                      "bar",
@@ -60,8 +60,8 @@ public class FenceOptionsParserTest {
         assertEquals(1, ret.size());
         verifyResult(ret.get(0),
                      "foo",
-                     "one",   "bool", null,
-                     "two",   "int",  null,
+                     "one", "bool", null,
+                     "two", "int", null,
                      "three", "bool", null);
     }
 
@@ -72,8 +72,8 @@ public class FenceOptionsParserTest {
         assertEquals(1, ret.size());
         verifyResult(ret.get(0),
                      "foo",
-                     "one",   "bool", "1",
-                     "two",   "int",  "2",
+                     "one", "bool", "1",
+                     "two", "int", "2",
                      "three", "bool", "3");
     }
 
@@ -84,8 +84,8 @@ public class FenceOptionsParserTest {
         assertEquals(1, ret.size());
         verifyResult(ret.get(0),
                      "foo",
-                     "one",   "bool", "1",
-                     "two",   "int",  "2",
+                     "one", "bool", "1",
+                     "two", "int", "2",
                      "three", "bool", "3");
     }
 
@@ -136,10 +136,10 @@ public class FenceOptionsParserTest {
         assertNotNull(result.getOptions());
         assertEquals(options.length, result.getOptions().getOptions().size() * 3);
         for (int i = 0; i < options.length; i += 3) {
-            Option opt = result.getOptions().getOptions().get(i/3);
+            Option opt = result.getOptions().getOptions().get(i / 3);
             assertEquals(options[i], opt.getName());
-            assertEquals(options[i+1], opt.getType());
-            assertEquals(options[i+2], opt.getValue());
+            assertEquals(options[i + 1], opt.getType());
+            assertEquals(options[i + 2], opt.getValue());
         }
     }
 }

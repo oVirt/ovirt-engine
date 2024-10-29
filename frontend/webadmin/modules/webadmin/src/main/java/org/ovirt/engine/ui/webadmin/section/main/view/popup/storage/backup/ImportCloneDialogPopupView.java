@@ -95,7 +95,7 @@ public class ImportCloneDialogPopupView extends AbstractModelBoundPopupView<Impo
             suffixEditor.setLabel(constants.cloneImportSuffixVm());
         } else {
             dialogLabelEditor.setText(constants.sameTemplateNameExists()
-                    + " (" + ((ImportTemplateData) object.getEntity()).getTemplate().getName() + ")");//$NON-NLS-1$ //$NON-NLS-2$
+                    + " (" + ((ImportTemplateData) object.getEntity()).getTemplate().getName() + ")"); //$NON-NLS-1$ //$NON-NLS-2$
             cloneEditor.setLabel(constants.cloneImportTemplate());
             suffixEditor.setLabel(constants.cloneImportSuffixTemplate());
         }

@@ -660,7 +660,7 @@ public class StorageDataCenterListModel extends SearchableListModel<StorageDomai
             list.add(parameters);
         }
 
-        Frontend.getInstance().runMultipleAction(ActionType.ActivateStorageDomain, list, result -> {}, null);
+        Frontend.getInstance().runMultipleAction(ActionType.ActivateStorageDomain, list, result -> { }, null);
     }
 
     private void cancel() {

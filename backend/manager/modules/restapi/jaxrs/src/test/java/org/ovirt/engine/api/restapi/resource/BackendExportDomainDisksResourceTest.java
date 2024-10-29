@@ -47,7 +47,7 @@ public class BackendExportDomainDisksResourceTest
 
     private static final Guid TEMPLATE_ID = GUIDS[1];
     private static final Guid DATA_CENTER_ID = GUIDS[0];
-    private static final Guid STORAGE_DOMAIN_ID = GUIDS[GUIDS.length-1];
+    private static final Guid STORAGE_DOMAIN_ID = GUIDS[GUIDS.length - 1];
 
     public BackendExportDomainDisksResourceTest() {
         super(new BackendExportDomainDisksResource(
@@ -91,7 +91,7 @@ public class BackendExportDomainDisksResourceTest
         entity.setVolumeType(VolumeType.Sparse);
         entity.setShareable(false);
         entity.setPropagateErrors(PropagateErrors.On);
-        return setUpStatisticalEntityExpectations(entity);    }
+        return setUpStatisticalEntityExpectations(entity); }
 
     static org.ovirt.engine.core.common.businessentities.storage.Disk setUpStatisticalEntityExpectations(DiskImage entity) {
         entity.setReadRate(1L);

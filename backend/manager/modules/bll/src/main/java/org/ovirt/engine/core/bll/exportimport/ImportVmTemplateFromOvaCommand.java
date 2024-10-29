@@ -113,7 +113,7 @@ public class ImportVmTemplateFromOvaCommand<T extends ImportVmTemplateFromOvaPar
 
     @Override
     public boolean performNextOperation(int completedChildCount) {
-        switch(getParameters().getImportPhase()) {
+        switch (getParameters().getImportPhase()) {
         case CREATE_DISKS:
             getParameters().setImportPhase(Phase.CONVERT);
             if (getParameters().getProxyHostId() == null) {

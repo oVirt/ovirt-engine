@@ -96,7 +96,7 @@ public class RemoveSnapshotCommandTest extends BaseCommandTest {
         spySdValidator();
     }
 
-    private void mockStorageDomain(){
+    private void mockStorageDomain() {
         StorageDomain storageDomain = new StorageDomain();
         storageDomain.setStorageType(StorageType.NFS);
         doReturn(storageDomain).when(cmd).getStorageDomain();
@@ -277,7 +277,7 @@ public class RemoveSnapshotCommandTest extends BaseCommandTest {
     private List<DiskImage> mockDisksList(int numberOfDisks) {
         List<DiskImage> disksList = new ArrayList<>(numberOfDisks);
         for (int index = 0; index < numberOfDisks; index++) {
-            DiskImage image =createDiskImage(STORAGE_DOMAIN_ID);
+            DiskImage image = createDiskImage(STORAGE_DOMAIN_ID);
             disksList.add(image);
         }
         doReturn(disksList).when(cmd).getSourceImages();

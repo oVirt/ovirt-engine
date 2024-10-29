@@ -9,7 +9,7 @@ import org.ovirt.engine.api.restapi.types.DiskMapper;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 
-public class BackendSnapshotDisksResource extends AbstractBackendCollectionResource<Disk, Snapshot>  implements SnapshotDisksResource {
+public class BackendSnapshotDisksResource extends AbstractBackendCollectionResource<Disk, Snapshot> implements SnapshotDisksResource {
 
     protected BackendSnapshotResource parent;
 

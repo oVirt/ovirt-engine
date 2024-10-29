@@ -114,7 +114,7 @@ public class RedirectServlet extends HttpServlet {
             if (localhost.charAt(0) == '[') {
                 int n = localhost.indexOf("]");
                 if (n != -1) {
-                    localhost = localhost.substring(0, n+1);
+                    localhost = localhost.substring(0, n + 1);
                 }
             } else {
                 int n = localhost.indexOf(":");

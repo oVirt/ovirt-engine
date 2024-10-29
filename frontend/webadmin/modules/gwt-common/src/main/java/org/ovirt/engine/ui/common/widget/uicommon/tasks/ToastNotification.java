@@ -32,7 +32,7 @@ public class ToastNotification extends Composite {
         }
 
         public static NotificationStatus from(org.ovirt.engine.ui.frontend.NotificationStatus status) {
-            switch (status){
+            switch (status) {
             case DANGER:
                 return DANGER;
             case SUCCESS:

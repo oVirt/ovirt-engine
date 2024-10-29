@@ -26,7 +26,7 @@ public class GlusterHostValidator {
     private final GlusterVolumeDao volumeDao;
 
     @Inject
-    public GlusterHostValidator(GlusterVolumeDao volumeDao, GlusterBrickDao brickDao){
+    public GlusterHostValidator(GlusterVolumeDao volumeDao, GlusterBrickDao brickDao) {
         Validate.notNull(volumeDao, "volumeDao can not be null");
         Validate.notNull(brickDao, "brickDao can not be null");
         this.volumeDao = volumeDao;

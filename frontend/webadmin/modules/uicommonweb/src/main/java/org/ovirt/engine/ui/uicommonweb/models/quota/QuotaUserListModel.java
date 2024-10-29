@@ -201,7 +201,7 @@ public class QuotaUserListModel extends SearchableListModel<Quota, Permission> {
             }
         }
 
-        if(items.isEmpty()){
+        if (items.isEmpty()) {
             model.setIsValid(false);
             model.setMessage(ConstantsManager.getInstance().getConstants().selectUserOrGroup());
             return;

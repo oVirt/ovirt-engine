@@ -27,7 +27,7 @@ public abstract class ProfileParametersBase<T extends ProfileBase> extends Actio
     @Valid
     private T profile;
 
-    public ProfileParametersBase() {}
+    public ProfileParametersBase() { }
 
     public T getProfile() {
         return profile;

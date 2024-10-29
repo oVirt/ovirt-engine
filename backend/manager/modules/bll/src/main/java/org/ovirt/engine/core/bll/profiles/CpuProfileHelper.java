@@ -61,7 +61,7 @@ public class CpuProfileHelper {
             return assignFirstCpuProfile(vmBase, userId);
         }
 
-        Guid clusterId =  vmBase.getClusterId();
+        Guid clusterId = vmBase.getClusterId();
         if (clusterId == null) {
             return new ValidationResult(EngineMessage.ACTION_TYPE_CPU_PROFILE_CLUSTER_NOT_PROVIDED);
         }

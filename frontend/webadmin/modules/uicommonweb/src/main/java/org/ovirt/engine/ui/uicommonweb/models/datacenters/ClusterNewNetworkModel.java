@@ -4,12 +4,12 @@ import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 
-public class ClusterNewNetworkModel extends NewNetworkModel{
+public class ClusterNewNetworkModel extends NewNetworkModel {
 
     private final Cluster cluster;
     public ClusterNewNetworkModel(SearchableListModel<?, ? extends Network> sourceListModel, Cluster cluster) {
         super(sourceListModel);
-        this.cluster= cluster;
+        this.cluster = cluster;
     }
 
     @Override
@@ -21,7 +21,7 @@ public class ClusterNewNetworkModel extends NewNetworkModel{
             networkClusterModel.setIsChangeable(false);
 
             return networkClusterModel;
-         }else{
+         } else {
              return super.createNetworkClusterModel(cluster);
          }
     }

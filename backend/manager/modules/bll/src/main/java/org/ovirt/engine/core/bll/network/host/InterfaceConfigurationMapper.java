@@ -90,7 +90,7 @@ class InterfaceConfigurationMapper {
     }
 
     private List<Nic> filterNicsWithoutManagement(List<VdsNetworkInterface> vdsNetworkInterfaces) {
-        return  filterInterfacesWithoutManagment(vdsNetworkInterfaces)
+        return filterInterfacesWithoutManagment(vdsNetworkInterfaces)
                 .stream()
                 .filter(noBondAndVlanPredicate())
                 .map(nic -> (Nic) nic)

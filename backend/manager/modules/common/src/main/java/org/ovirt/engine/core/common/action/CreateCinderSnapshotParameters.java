@@ -3,7 +3,7 @@ package org.ovirt.engine.core.common.action;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
 import org.ovirt.engine.core.compat.Guid;
 
-public class CreateCinderSnapshotParameters extends ImagesContainterParametersBase{
+public class CreateCinderSnapshotParameters extends ImagesContainterParametersBase {
     private SnapshotType snapshotType;
 
     public CreateCinderSnapshotParameters(Guid imageId) {

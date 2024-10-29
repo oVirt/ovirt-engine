@@ -35,7 +35,7 @@ import org.ovirt.engine.core.dao.VmStaticDao;
 import org.ovirt.engine.core.dao.profiles.DiskProfileDao;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
-@NonTransactiveCommandAttribute(forceCompensation=true)
+@NonTransactiveCommandAttribute(forceCompensation = true)
 public class DetachStorageDomainFromPoolCommand<T extends DetachStorageDomainFromPoolParameters> extends
         StorageDomainCommandBase<T> {
 

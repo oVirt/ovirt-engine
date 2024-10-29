@@ -285,13 +285,13 @@ public class VmValidator {
         return Injector.get(VmDeviceUtils.class);
     }
 
-    public ValidationResult isPinnedVmRunningOnDedicatedHost(VM recentVm, VmStatic paramVm){
+    public ValidationResult isPinnedVmRunningOnDedicatedHost(VM recentVm, VmStatic paramVm) {
         boolean isPinned = paramVm.getMigrationSupport() == MigrationSupport.PINNED_TO_HOST;
         Guid vdsId = recentVm.getRunOnVds();
         List<Guid> hostList = paramVm.getDedicatedVmForVdsList();
 
         // If hostList is empty -> all hosts are allowed
-        if (isPinned && vdsId != null && !hostList.isEmpty() && !hostList.contains(vdsId)){
+        if (isPinned && vdsId != null && !hostList.isEmpty() && !hostList.contains(vdsId)) {
             // VM is NOT running on a dedicated host
             // fail with error message
             String hostName = String.format("$hostName %1$s", recentVm.getRunOnVdsName());

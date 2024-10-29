@@ -61,7 +61,7 @@ public class AffinityValidator {
             return new Result(validationResult, null);
         }
 
-        public static final Result VALID = newValid((a, b) -> {});
+        public static final Result VALID = newValid((a, b) -> { });
     }
 
     @Inject

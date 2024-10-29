@@ -42,7 +42,7 @@ public class RepeatingPushButton extends PushButton {
      * Called when the user finished clicking on this button.
      */
     @Override
-    protected void onClick(){
+    protected void onClick() {
         timer.cancel();
         super.onClick();
     }
@@ -53,7 +53,7 @@ public class RepeatingPushButton extends PushButton {
      * the mouse button.
      */
     @Override
-    protected void onClickCancel(){
+    protected void onClickCancel() {
         timer.cancel();
         super.onClickCancel();
     }
@@ -62,7 +62,7 @@ public class RepeatingPushButton extends PushButton {
      * Called when the user begins to click on this button.
      */
     @Override
-    protected void onClickStart(){
+    protected void onClickStart() {
         timer.scheduleRepeating(period);
         super.onClickStart();
     }

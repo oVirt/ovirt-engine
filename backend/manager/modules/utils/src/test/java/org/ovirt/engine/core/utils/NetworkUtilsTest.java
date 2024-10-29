@@ -125,14 +125,14 @@ public class NetworkUtilsTest {
 
     @Test
     public void testStripIpv6ZoneId() {
-        assertEquals("fe80::1",     NetworkUtils.stripIpv6ZoneIndex("fe80::1"));
-        assertEquals("fe80::1/64",  NetworkUtils.stripIpv6ZoneIndex("fe80::1/64"));
-        assertEquals("fe80::1",     NetworkUtils.stripIpv6ZoneIndex("fe80::1%"));
-        assertEquals("fe80::1",     NetworkUtils.stripIpv6ZoneIndex("fe80::1%1"));
-        assertEquals("fe80::1",     NetworkUtils.stripIpv6ZoneIndex("fe80::1%eth0"));
-        assertEquals("fe80::1",     NetworkUtils.stripIpv6ZoneIndex("fe80::1%eth0/64"));
-        assertEquals("",            NetworkUtils.stripIpv6ZoneIndex("%"));
-        assertEquals("",            NetworkUtils.stripIpv6ZoneIndex(""));
+        assertEquals("fe80::1", NetworkUtils.stripIpv6ZoneIndex("fe80::1"));
+        assertEquals("fe80::1/64", NetworkUtils.stripIpv6ZoneIndex("fe80::1/64"));
+        assertEquals("fe80::1", NetworkUtils.stripIpv6ZoneIndex("fe80::1%"));
+        assertEquals("fe80::1", NetworkUtils.stripIpv6ZoneIndex("fe80::1%1"));
+        assertEquals("fe80::1", NetworkUtils.stripIpv6ZoneIndex("fe80::1%eth0"));
+        assertEquals("fe80::1", NetworkUtils.stripIpv6ZoneIndex("fe80::1%eth0/64"));
+        assertEquals("", NetworkUtils.stripIpv6ZoneIndex("%"));
+        assertEquals("", NetworkUtils.stripIpv6ZoneIndex(""));
         assertNull(NetworkUtils.stripIpv6ZoneIndex(null));
     }
 

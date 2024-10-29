@@ -54,7 +54,7 @@ public abstract class VmNicFilterParameterCommandTest<T extends VmCommand> exten
     }
 
     private void validVmInterfaceId(boolean isValid) {
-        vmNicFilterParameter.setVmInterfaceId(isValid? Guid.newGuid() : null);
+        vmNicFilterParameter.setVmInterfaceId(isValid ? Guid.newGuid() : null);
         when(validator.vmInterfaceHavingIdExists(vmNicFilterParameter.getVmInterfaceId())).thenReturn(
                 isValid ? ValidationResult.VALID
                 : new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_INVALID_NIC_FILTER_PARAMETER_INTERFACE));

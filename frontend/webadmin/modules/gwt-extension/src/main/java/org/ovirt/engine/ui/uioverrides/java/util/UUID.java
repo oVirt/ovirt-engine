@@ -129,10 +129,10 @@ public final class UUID implements java.io.Serializable, Comparable<UUID> {
         long msb = 0;
         long lsb = 0;
         assert data.length == 16;
-        for (int i=0; i<8; i++) {
+        for (int i = 0; i < 8; i++) {
             msb = (msb << 8) | (data[i] & 0xff);
         }
-        for (int i=8; i<16; i++) {
+        for (int i = 8; i < 16; i++) {
             lsb = (lsb << 8) | (data[i] & 0xff);
         }
         this.mostSigBits = msb;
@@ -176,7 +176,7 @@ public final class UUID implements java.io.Serializable, Comparable<UUID> {
         // per rfc4122, sec. 4.1.5
         for (int i = 0; i < 36; i++) {
             if (uuid[i] == 0) {
-                r = (int) (Math.random()*16);
+                r = (int) (Math.random() * 16);
                 uuid[i] = CHARS[(i == 19) ? (r & 0x3) | 0x8 : r & 0xf];
             }
         }
@@ -215,7 +215,7 @@ public final class UUID implements java.io.Serializable, Comparable<UUID> {
         if (components.length != 5) {
             throw new IllegalArgumentException("Invalid UUID string: " + name);
         }
-        for (int i=0; i<5; i++) {
+        for (int i = 0; i < 5; i++) {
             components[i] = "0x" + components[i];
         }
 
@@ -270,7 +270,7 @@ public final class UUID implements java.io.Serializable, Comparable<UUID> {
     public int version() {
         if (version < 0) {
             // Version is bits masked by 0x000000000000F000 in MS long
-            version = (int)((mostSigBits >> 12) & 0x0f);
+            version = (int) ((mostSigBits >> 12) & 0x0f);
         }
         return version;
     }
@@ -297,7 +297,7 @@ public final class UUID implements java.io.Serializable, Comparable<UUID> {
             } else if ((leastSigBits >>> 62) == 2) {
                 variant = 2;
             } else {
-                variant = (int)(leastSigBits >>> 61);
+                variant = (int) (leastSigBits >>> 61);
             }
         }
         return variant;
@@ -354,7 +354,7 @@ public final class UUID implements java.io.Serializable, Comparable<UUID> {
             throw new UnsupportedOperationException("Not a time-based UUID");
         }
         if (sequence < 0) {
-            sequence = (int)((leastSigBits & 0x3FFF000000000000L) >>> 48);
+            sequence = (int) ((leastSigBits & 0x3FFF000000000000L) >>> 48);
         }
         return sequence;
     }
@@ -434,7 +434,7 @@ public final class UUID implements java.io.Serializable, Comparable<UUID> {
      */
     public int hashCode() {
         if (hashCode == -1) {
-            hashCode = (int)((mostSigBits >> 32) ^
+            hashCode = (int) ((mostSigBits >> 32) ^
                              mostSigBits ^
                              (leastSigBits >> 32) ^
                              leastSigBits);
@@ -458,10 +458,10 @@ public final class UUID implements java.io.Serializable, Comparable<UUID> {
         if (!(obj instanceof UUID)) {
             return false;
         }
-        if (((UUID)obj).variant() != this.variant()) {
+        if (((UUID) obj).variant() != this.variant()) {
             return false;
         }
-        UUID id = (UUID)obj;
+        UUID id = (UUID) obj;
         return mostSigBits == id.mostSigBits &&
                 leastSigBits == id.leastSigBits;
     }

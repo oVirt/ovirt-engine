@@ -17,7 +17,7 @@ public interface SerialChildExecutingCommand {
     /**
      * method to handle immediately (before endWithFailure() is called) a failure.
      */
-    default void handleFailure() {};
+    default void handleFailure() { };
 
     /**
      * method to indicate whether on failed execution of child commands the command

@@ -32,7 +32,7 @@ public class RefreshGlusterVolumeDetailsCommand extends GlusterVolumeCommandBase
 
     @Override
     protected boolean validate() {
-        if(!super.validate()) {
+        if (!super.validate()) {
             return false;
         }
 

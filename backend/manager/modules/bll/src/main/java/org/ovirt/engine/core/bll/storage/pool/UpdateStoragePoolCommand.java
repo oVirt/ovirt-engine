@@ -53,8 +53,7 @@ import org.ovirt.engine.core.utils.ReplacementUtils;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 @NonTransactiveCommandAttribute
-public class UpdateStoragePoolCommand<T extends StoragePoolManagementParameter> extends
-        StoragePoolManagementCommandBase<T>  implements RenamedEntityInfoProvider{
+public class UpdateStoragePoolCommand<T extends StoragePoolManagementParameter> extends StoragePoolManagementCommandBase<T> implements RenamedEntityInfoProvider {
 
     @Inject
     private AuditLogDirector auditLogDirector;
@@ -128,7 +127,7 @@ public class UpdateStoragePoolCommand<T extends StoragePoolManagementParameter> 
     }
 
     private void updateQuotaCache() {
-        if(wasQuotaEnforcementChanged()){
+        if (wasQuotaEnforcementChanged()) {
             getQuotaManager().removeStoragePoolFromCache(getStoragePool().getId());
         }
     }

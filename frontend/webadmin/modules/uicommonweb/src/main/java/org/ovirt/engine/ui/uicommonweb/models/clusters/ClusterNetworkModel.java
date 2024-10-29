@@ -25,7 +25,7 @@ public class ClusterNetworkModel extends EntityModel<Network> {
         }
     }
 
-    public String getDisplayedName(){
+    public String getDisplayedName() {
         return getNetworkName();
     }
 
@@ -37,7 +37,7 @@ public class ClusterNetworkModel extends EntityModel<Network> {
         return cluster;
     }
 
-    public void setCluster(Cluster cluster){
+    public void setCluster(Cluster cluster) {
         this.cluster = cluster;
     }
 

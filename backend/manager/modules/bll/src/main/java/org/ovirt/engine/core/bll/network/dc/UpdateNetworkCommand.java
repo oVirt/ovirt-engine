@@ -576,7 +576,7 @@ public class UpdateNetworkCommand<T extends AddNetworkStoragePoolParameters> ext
     }
 
     private Guid getProviderId() {
-        return (getNetwork()==null || !getNetwork().isExternal()) ?
+        return (getNetwork() == null || !getNetwork().isExternal()) ?
                 null : getNetwork().getProvidedBy().getProviderId();
     }
 

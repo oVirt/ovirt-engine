@@ -96,7 +96,7 @@ public class VnicProfileMapper {
         final VnicPassThrough vnicPassThrough = new VnicPassThrough();
         vnicPassThrough.setMode(map(entity.isPassthrough()));
         model.setPassThrough(vnicPassThrough);
-        if (entity.getNetworkFilterId() != null){
+        if (entity.getNetworkFilterId() != null) {
             model.setNetworkFilter(new NetworkFilter());
             model.getNetworkFilter().setId(entity.getNetworkFilterId().toString());
         }

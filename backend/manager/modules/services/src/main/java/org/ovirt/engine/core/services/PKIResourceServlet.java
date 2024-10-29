@@ -42,7 +42,7 @@ public class PKIResourceServlet extends HttpServlet {
 
         value = request.getParameter(name);
         if (value == null) {
-            value = (String)request.getAttribute(name);
+            value = (String) request.getAttribute(name);
         }
         if (value == null) {
             value = getInitParameter(name);
@@ -93,7 +93,7 @@ public class PKIResourceServlet extends HttpServlet {
                 response.setContentType(resource.getContentType(format));
                 out.print(resource.toString(format, alias));
             }
-        } catch(Exception e) {
+        } catch (Exception e) {
             log.error("Cannot send public key resource '{}' format '{}': {}", resourceStr, formatStr, e.getMessage());
             log.debug("Exception", e);
             response.sendError(HttpServletResponse.SC_BAD_REQUEST, e.getMessage());

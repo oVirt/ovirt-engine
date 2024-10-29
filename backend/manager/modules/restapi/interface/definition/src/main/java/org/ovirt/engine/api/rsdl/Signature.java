@@ -37,7 +37,7 @@ public class Signature implements Cloneable {
     public void addOptionalArgument(Object name, Object type) {
         optionalArguments.put(name, type);
     }
-    public Signature clone()  throws CloneNotSupportedException {
+    public Signature clone() throws CloneNotSupportedException {
         super.clone();
         Signature clonedSignature = new Signature();
         Map<Object, Object> mandatoryArguments = new HashMap<>();

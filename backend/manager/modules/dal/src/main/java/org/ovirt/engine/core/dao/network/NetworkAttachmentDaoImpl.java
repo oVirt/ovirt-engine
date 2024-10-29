@@ -62,7 +62,7 @@ public class NetworkAttachmentDaoImpl extends DefaultGenericDao<NetworkAttachmen
             qosResultSetMapper, dnsDaoRetriever
     );
 
-    private static final class NetworkAttachmentRowMapper  implements RowMapper<NetworkAttachment>  {
+    private static final class NetworkAttachmentRowMapper implements RowMapper<NetworkAttachment> {
 
         private final RowMapper<HostNetworkQos> hostNetworkQosMapper;
         private final RowMapper<DnsResolverConfiguration> dnsMapper;

@@ -123,7 +123,7 @@ public class BackendSnapshotsResourceTest
                 new Object[]{SNAPSHOT_IDS[0]},
                 resultSnapshot1);
         collection.setUriInfo(uriInfo);
-        List<Snapshot> snapshots =  getCollection();
+        List<Snapshot> snapshots = getCollection();
         verifyCollection(snapshots);
         for (int i = 0; i < 2; i++) {
             verifyAllContent(snapshots.get(i), ConfigurationType.OVF, ovfData);
@@ -181,7 +181,7 @@ public class BackendSnapshotsResourceTest
         Response response = collection.add(snapshot);
         assertEquals(202, response.getStatus());
         assertTrue(response.getEntity() instanceof Snapshot);
-        Snapshot responseSnapshot = (Snapshot)response.getEntity();
+        Snapshot responseSnapshot = (Snapshot) response.getEntity();
         verifyModel(responseSnapshot, 0);
         verifyAllContent(responseSnapshot, ConfigurationType.OVF, ovfData);
         assertNotNull(responseSnapshot.getCreationStatus());
@@ -208,7 +208,7 @@ public class BackendSnapshotsResourceTest
 
     protected List<org.ovirt.engine.core.common.businessentities.Snapshot> getEntities() {
         List<org.ovirt.engine.core.common.businessentities.Snapshot> entities = new ArrayList<>();
-        for (int i = 0; i<2; i++) {
+        for (int i = 0; i < 2; i++) {
             entities.add(getEntity(i));
         }
         return entities;

@@ -179,7 +179,7 @@ public class VmMapper extends VmBaseMapper {
 
         mapVmBaseModelToEntity(staticVm, vm);
 
-        if (!vm.isSetMemory() && staticVm.getMemSizeMb()==0){
+        if (!vm.isSetMemory() && staticVm.getMemSizeMb() == 0) {
           //TODO: Get rid of this logic code when Backend supports default memory.
             staticVm.setMemSizeMb(DEFAULT_MEMORY_SIZE);
         }
@@ -249,7 +249,7 @@ public class VmMapper extends VmBaseMapper {
             model.getTemplate().setId(entity.getVmtGuid().toString());
             // display this property only if the vm is stateless
             // otherwise the value of this property is meaningless and misleading
-            if(entity.isStateless()) {
+            if (entity.isStateless()) {
                 model.setUseLatestTemplateVersion(entity.isUseLatestVersion());
             }
         }
@@ -328,7 +328,7 @@ public class VmMapper extends VmBaseMapper {
 
         // fill dynamic data
         if (entity.getDynamicData() != null && !entity.getStatus().isNotRunning()) {
-            if(entity.getRunOnVds() != null) {
+            if (entity.getRunOnVds() != null) {
                 model.setHost(new Host());
                 model.getHost().setId(entity.getRunOnVds().toString());
             }
@@ -339,7 +339,7 @@ public class VmMapper extends VmBaseMapper {
             final boolean hasGuestOsVersion = entity.getGuestOsVersion() != null && !entity.getGuestOsVersion().isEmpty();
             if (hasGuestOsVersion) {
                 GuestOperatingSystem os = model.getGuestOperatingSystem();
-                if(os == null) {
+                if (os == null) {
                     os = new GuestOperatingSystem();
                     model.setGuestOperatingSystem(os);
                 }
@@ -347,10 +347,10 @@ public class VmMapper extends VmBaseMapper {
                 os.setCodename(entity.getGuestOsCodename());
                 os.setDistribution(entity.getGuestOsDistribution());
                 String kernelVersionString = entity.getGuestOsKernelVersion();
-                if(StringUtils.isNotEmpty(kernelVersionString)) {
+                if (StringUtils.isNotEmpty(kernelVersionString)) {
                     org.ovirt.engine.api.model.Version kernelVersion = VersionMapper.fromVersionString(kernelVersionString);
-                    if(kernelVersion != null) {
-                        if(os.getKernel() == null) {
+                    if (kernelVersion != null) {
+                        if (os.getKernel() == null) {
                             os.setKernel(new Kernel());
                         }
                         os.getKernel().setVersion(kernelVersion);
@@ -358,9 +358,9 @@ public class VmMapper extends VmBaseMapper {
                     }
                 }
                 String osVersionString = entity.getGuestOsVersion();
-                if(StringUtils.isNotEmpty(osVersionString)) {
+                if (StringUtils.isNotEmpty(osVersionString)) {
                     os.setVersion(VersionMapper.fromVersionString(osVersionString));
-                    if(os.getVersion() != null) {
+                    if (os.getVersion() != null) {
                         os.getVersion().setFullVersion(entity.getGuestOsVersion());
                     }
                 }
@@ -370,7 +370,7 @@ public class VmMapper extends VmBaseMapper {
             final boolean hasTimezoneName = entity.getGuestOsTimezoneName() != null && !entity.getGuestOsTimezoneName().isEmpty();
             if (hasTimezoneName) {
                 TimeZone guestTz = model.getGuestTimeZone();
-                if(guestTz == null) {
+                if (guestTz == null) {
                     guestTz = new TimeZone();
                     model.setGuestTimeZone(guestTz);
                 }
@@ -392,7 +392,7 @@ public class VmMapper extends VmBaseMapper {
                 Integer displayPort = graphicsInfo == null ? null : graphicsInfo.getPort();
                 model.getDisplay().setPort(displayPort == null || displayPort.equals(-1) ? null : displayPort);
                 Integer displaySecurePort = graphicsInfo == null ? null : graphicsInfo.getTlsPort();
-                model.getDisplay().setSecurePort(displaySecurePort==null || displaySecurePort.equals(-1) ? null : displaySecurePort);
+                model.getDisplay().setSecurePort(displaySecurePort == null || displaySecurePort.equals(-1) ? null : displaySecurePort);
             }
         }
         if (entity.getLastStopTime() != null) {
@@ -724,18 +724,18 @@ public class VmMapper extends VmBaseMapper {
     @Mapping(from = org.ovirt.engine.api.model.VmDeviceType.class, to = VmDeviceType.class)
     public static VmDeviceType map(org.ovirt.engine.api.model.VmDeviceType deviceType, VmDeviceType template) {
         switch (deviceType) {
-            case FLOPPY:            return VmDeviceType.FLOPPY;
-            case CDROM:             return VmDeviceType.CDROM;
-            default:                return null;
+            case FLOPPY: return VmDeviceType.FLOPPY;
+            case CDROM: return VmDeviceType.CDROM;
+            default: return null;
         }
     }
 
     @Mapping(from = VmDeviceType.class, to = org.ovirt.engine.api.model.VmDeviceType.class)
     public static org.ovirt.engine.api.model.VmDeviceType map(VmDeviceType deviceType, org.ovirt.engine.api.model.VmDeviceType template) {
         switch (deviceType) {
-            case FLOPPY:            return org.ovirt.engine.api.model.VmDeviceType.FLOPPY;
-            case CDROM:             return org.ovirt.engine.api.model.VmDeviceType.CDROM;
-            default:                return null;
+            case FLOPPY: return org.ovirt.engine.api.model.VmDeviceType.FLOPPY;
+            case CDROM: return org.ovirt.engine.api.model.VmDeviceType.CDROM;
+            default: return null;
         }
     }
 
@@ -748,7 +748,7 @@ public class VmMapper extends VmBaseMapper {
             List<Property> propertyList = properties.getProperties();
             for (Entry entry : device.getSpecParams().entrySet()) {
                 Property property = new Property();
-                property.setName((String)entry.getKey());
+                property.setName((String) entry.getKey());
                 property.setValue(entry.getValue().toString());
                 propertyList.add(property);
             }
@@ -1269,12 +1269,12 @@ public class VmMapper extends VmBaseMapper {
             consoleUser.setUserName(userName);
             consoleUser.setDomain(new Domain());
             consoleUser.getDomain().setName(domainName);
-            if (vm.getConsoleUserId()!=null) {
+            if (vm.getConsoleUserId() != null) {
                 consoleUser.setId(vm.getConsoleUserId().toString());
             }
             Session consoleSession = new Session();
             consoleSession.setUser(consoleUser);
-            if (vm.getClientIp()!=null && !vm.getClientIp().isEmpty()) {
+            if (vm.getClientIp() != null && !vm.getClientIp().isEmpty()) {
                 Ip ip = new Ip();
                 ip.setAddress(vm.getClientIp());
                 consoleSession.setIp(ip);

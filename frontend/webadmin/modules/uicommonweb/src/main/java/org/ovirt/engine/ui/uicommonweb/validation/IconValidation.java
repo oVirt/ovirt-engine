@@ -86,7 +86,7 @@ public class IconValidation implements IValidation {
      */
     private ValidationResult validateSize(String icon) {
         final int maxEncodedSize = 32 * 1024;
-        final int maxRawSize = (int) (maxEncodedSize * (3d/4d) / 1024); // just estimate for users, in kB
+        final int maxRawSize = (int) (maxEncodedSize * (3d / 4d) / 1024); // just estimate for users, in kB
         boolean valid = maxEncodedSize > icon.length();
         if (valid) {
             return ValidationResult.ok();

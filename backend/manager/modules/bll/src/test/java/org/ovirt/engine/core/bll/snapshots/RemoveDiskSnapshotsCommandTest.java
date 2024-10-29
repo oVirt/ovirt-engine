@@ -88,7 +88,7 @@ public class RemoveDiskSnapshotsCommandTest extends BaseCommandTest {
         doReturn(ValidationResult.VALID).when(diskImagesValidator).diskImagesSnapshotsNotAttachedToOtherVms(false);
     }
 
-    private void mockStorageDomain(){
+    private void mockStorageDomain() {
         StorageDomain storageDomain = new StorageDomain();
         storageDomain.setStorageType(StorageType.NFS);
         doReturn(storageDomain).when(cmd).getStorageDomain();

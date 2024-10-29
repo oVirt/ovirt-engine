@@ -111,8 +111,8 @@ public class HttpClientBuilder {
     public CloseableHttpClient build() throws IOException, GeneralSecurityException {
         // Prepare the default configuration for all requests:
         RequestConfig requestConfig = RequestConfig.custom()
-                .setConnectTimeout(connectTimeout != null? connectTimeout: 0)
-                .setSocketTimeout(readTimeout != null? readTimeout: 0)
+                .setConnectTimeout(connectTimeout != null ? connectTimeout : 0)
+                .setSocketTimeout(readTimeout != null ? readTimeout : 0)
                 .build();
 
         // Configure the trust manager:

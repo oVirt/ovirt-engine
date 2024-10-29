@@ -18,7 +18,7 @@ public class MergeParameters extends StorageDomainParametersBase {
     private Guid vmJobId;
     private Set<Guid> vmVolumeChain;
 
-    private MergeParameters() {}
+    private MergeParameters() { }
 
     public MergeParameters(
             Guid vdsId,

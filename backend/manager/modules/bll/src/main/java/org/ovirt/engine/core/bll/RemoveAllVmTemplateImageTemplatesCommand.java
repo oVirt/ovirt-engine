@@ -59,7 +59,7 @@ public class RemoveAllVmTemplateImageTemplatesCommand<T extends VmTemplateManage
                 ONLY_ACTIVE);
         for (DiskImage template : imageTemplates) {
             // remove this disk in all domain that were sent
-            for (Guid domain : (Collection<Guid>)CollectionUtils.intersection(getParameters().getStorageDomainsList(), template.getStorageIds())) {
+            for (Guid domain : (Collection<Guid>) CollectionUtils.intersection(getParameters().getStorageDomainsList(), template.getStorageIds())) {
                 ImagesContainterParametersBase tempVar = new ImagesContainterParametersBase(template.getImageId(),
                         getVmTemplateId());
                 tempVar.setStorageDomainId(domain);

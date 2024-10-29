@@ -179,7 +179,7 @@ public class AddManagedBlockStorageDiskCommand<T extends AddManagedBlockStorageD
      * @return The next GiB multiple in bytes
      */
     private long getDiskSize(long size) {
-        long correctedSize = (long) Math.ceil((double)size / (double)SizeConverter.BYTES_IN_GB);
+        long correctedSize = (long) Math.ceil((double) size / (double) SizeConverter.BYTES_IN_GB);
         return SizeConverter.convert(correctedSize, SizeConverter.SizeUnit.GiB, SizeConverter.SizeUnit.BYTES)
                 .longValue();
     }

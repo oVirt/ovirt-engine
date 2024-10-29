@@ -93,7 +93,7 @@ public class PendingResourceManagerTest {
         Set<Guid> pending = PendingVM.collectForHost(manager, host.getId());
         assertEquals(2, pending.size());
         assertEquals(11, PendingCpuCores.collectForHost(manager, host.getId()));
-        assertEquals(1024+768, PendingMemory.collectForHost(manager, host.getId()));
+        assertEquals(1024 + 768, PendingMemory.collectForHost(manager, host.getId()));
         assertEquals(host.getId(), PendingVM.getScheduledHost(manager, vm1));
         assertEquals(host.getId(), PendingVM.getScheduledHost(manager, vm2));
     }

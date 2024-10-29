@@ -119,7 +119,7 @@ public class RemoveDiskCommandTest extends BaseCommandTest {
         ArrayList<Guid> storageIds = new ArrayList<>();
         storageIds.add(domain.getId());
         storageIds.add(Guid.newGuid());
-        ((DiskImage)disk).setStorageIds(storageIds);
+        ((DiskImage) disk).setStorageIds(storageIds);
 
         doReturn(domain).when(cmd).getStorageDomain();
         doReturn(new VmTemplate()).when(cmd).getVmTemplate();
@@ -138,7 +138,7 @@ public class RemoveDiskCommandTest extends BaseCommandTest {
 
     @Test
     public void testValidateOvfDiskNotIllegal() {
-        ((DiskImage)disk).setImageStatus(ImageStatus.OK);
+        ((DiskImage) disk).setImageStatus(ImageStatus.OK);
         disk.setContentType(DiskContentType.OVF_STORE);
         ValidateTestUtils.runAndAssertValidateFailure(cmd,
                 EngineMessage.ACTION_TYPE_FAILED_OVF_DISK_NOT_IN_APPLICABLE_STATUS);

@@ -46,7 +46,7 @@ public abstract class AbstractBackendActionableResource <R extends BaseResource,
             if (actionResult.getHasAsyncTasks()) {
                 if (expectBlocking(action)) {
                     CreationStatus status = awaitCompletion(actionResult, pollingType);
-                    if (status != CreationStatus.FAILED){
+                    if (status != CreationStatus.FAILED) {
                         Object model = resolveCreated(actionResult, entityResolver, null);
                         return actionStatus(status, action, model);
                     }

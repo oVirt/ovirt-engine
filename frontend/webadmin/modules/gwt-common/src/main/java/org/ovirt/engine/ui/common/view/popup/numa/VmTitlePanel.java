@@ -20,7 +20,7 @@ public class VmTitlePanel extends Composite {
         WidgetUiBinder uiBinder = GWT.create(WidgetUiBinder.class);
     }
 
-    @UiField(provided=true)
+    @UiField(provided = true)
     final CommonApplicationResources resources = AssetProvider.getResources();
 
     @UiField

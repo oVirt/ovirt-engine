@@ -12,10 +12,10 @@ public class NumaPanel extends Composite {
         WidgetUiBinder uiBinder = GWT.create(WidgetUiBinder.class);
     }
 
-    @UiField(provided=true)
+    @UiField(provided = true)
     CpuSummaryPanel cpuSummaryPanel;
 
-    @UiField(provided=true)
+    @UiField(provided = true)
     MemorySummaryPanel memorySummaryPanel;
 
     @Inject

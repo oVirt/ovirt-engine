@@ -13,7 +13,7 @@ public class StorageServerConnectionExtensionParameters extends ActionParameters
         this.connExt = connExt;
     }
 
-    public StorageServerConnectionExtensionParameters() {}
+    public StorageServerConnectionExtensionParameters() { }
 
     public StorageServerConnectionExtension getStorageServerConnectionExtension() {
         return connExt;

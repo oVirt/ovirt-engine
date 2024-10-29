@@ -12,7 +12,7 @@ public class SPMGetVolumeInfoVDSCommandParameters extends StoragePoolDomainAndGr
         this.imageId = imageId;
     }
 
-    public SPMGetVolumeInfoVDSCommandParameters() {}
+    public SPMGetVolumeInfoVDSCommandParameters() { }
 
     public Guid getImageId() {
         return imageId;

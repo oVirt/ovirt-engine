@@ -23,7 +23,7 @@ public class GetVolumeInfoVDSCommandParameters extends VdsIdVDSCommandParameters
         this(null, storagePoolId, storageDomainId, imageGroupId, imageId);
     }
 
-    public GetVolumeInfoVDSCommandParameters() {}
+    public GetVolumeInfoVDSCommandParameters() { }
 
     public Guid getStoragePoolId() {
         return storagePoolId;

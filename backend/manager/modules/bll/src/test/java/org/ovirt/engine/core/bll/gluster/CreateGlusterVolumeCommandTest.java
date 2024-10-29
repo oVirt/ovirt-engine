@@ -111,7 +111,7 @@ public class CreateGlusterVolumeCommandTest extends BaseCommandTest {
         doReturn(getCluster(true, Version.v4_3)).when(clusterDao).get(any());
     }
 
-    private GlusterVolumeEntity getVolume(int brickCount, boolean withDuplicateBricks){
+    private GlusterVolumeEntity getVolume(int brickCount, boolean withDuplicateBricks) {
         return getVolume(brickCount, withDuplicateBricks, GlusterVolumeType.DISTRIBUTE, 0, false);
     }
 

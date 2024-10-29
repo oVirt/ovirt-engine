@@ -139,7 +139,7 @@ public class NetworkAttachmentDaoImplTest extends BaseDaoTestCase<NetworkAttachm
         assertEquals(2, result.size());
         result.forEach(r -> assertNull(r.getHostNetworkQos()));
 
-        result.forEach(r-> {
+        result.forEach(r -> {
             HostNetworkQos hostNetworkQos = new HostNetworkQos();
             hostNetworkQos.setId(r.getId());
             hostNetworkQos.setOutAverageLinkshare(31);

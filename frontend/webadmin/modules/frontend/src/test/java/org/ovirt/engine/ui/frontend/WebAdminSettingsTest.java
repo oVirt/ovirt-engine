@@ -80,7 +80,7 @@ public class WebAdminSettingsTest {
     public void parseVersion() {
         WebAdminSettings.Builder builder = new WebAdminSettings.Builder(str -> parser);
         when(parser.parseStorage()).thenReturn(Collections.emptyMap());
-        when(parser.getVersion()).thenReturn("1");//$NON-NLS-1$
+        when(parser.getVersion()).thenReturn("1"); //$NON-NLS-1$
         when(parser.getLocalStoragePersistence()).thenReturn(null);
 
         UserProfileProperty property = createWebAdminProperty();
@@ -96,7 +96,7 @@ public class WebAdminSettingsTest {
         WebAdminSettings.Builder builder = new WebAdminSettings.Builder(str -> parser);
         when(parser.parseStorage()).thenReturn(Collections.emptyMap());
         when(parser.getVersion()).thenReturn(null);
-        when(parser.getLocalStoragePersistence()).thenReturn("false");//$NON-NLS-1$
+        when(parser.getLocalStoragePersistence()).thenReturn("false"); //$NON-NLS-1$
 
         UserProfileProperty property = createWebAdminProperty();
         WebAdminSettings settings = builder.fromProperty(property).build();

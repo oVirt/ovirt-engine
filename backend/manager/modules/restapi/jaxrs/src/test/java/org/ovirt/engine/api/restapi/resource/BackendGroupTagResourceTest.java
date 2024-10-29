@@ -82,7 +82,7 @@ public class BackendGroupTagResourceTest extends AbstractBackendSubResourceTest<
             GetTagsByUserGroupIdParameters.class,
             new String[] { "GroupId" },
             new Object[] { GROUP_ID.toString() },
-            succeed? setUpTagsExpectations(): Collections.emptyList()
+            succeed ? setUpTagsExpectations() : Collections.emptyList()
         );
     }
 

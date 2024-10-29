@@ -103,7 +103,7 @@ public class JAXBProvider implements MessageBodyReader<Object>, MessageBodyWrite
         // Create a JAXB context for the tyeps package:
         try {
             jaxbContext = JAXBContext.newInstance(typesPackage.getName());
-        } catch(JAXBException exception) {
+        } catch (JAXBException exception) {
             log.error("Can't create JAXB context for package \"{}\"", typesPackage.getName(), exception);
         }
     }
@@ -143,7 +143,7 @@ public class JAXBProvider implements MessageBodyReader<Object>, MessageBodyWrite
         try {
             reader = parserFactory.createXMLStreamReader(entityStream, "UTF-8");
             return readFrom(reader);
-        } catch(XMLStreamException exception) {
+        } catch (XMLStreamException exception) {
             throw new IOException(exception);
         } finally {
             if (reader != null) {
@@ -169,7 +169,7 @@ public class JAXBProvider implements MessageBodyReader<Object>, MessageBodyWrite
                 result = ((JAXBElement) result).getValue();
             }
             return result;
-        } catch(JAXBException exception) {
+        } catch (JAXBException exception) {
             Throwable linked = exception.getLinkedException();
             if (linked != null) {
                 Throwable cause = linked;
@@ -196,8 +196,8 @@ public class JAXBProvider implements MessageBodyReader<Object>, MessageBodyWrite
         JAXBElement<Object> element;
         try {
             element = (JAXBElement<Object>) factoryMethod.invoke(objectFactory, object);
-        } catch(IllegalAccessException|InvocationTargetException exception) {
-            throw new IOException("Error invoking factory method for type \"" +  type.getName() + "\".", exception);
+        } catch (IllegalAccessException | InvocationTargetException exception) {
+            throw new IOException("Error invoking factory method for type \"" + type.getName() + "\".", exception);
         }
 
         // Marshal the element:
@@ -206,7 +206,7 @@ public class JAXBProvider implements MessageBodyReader<Object>, MessageBodyWrite
             marshaller.setProperty(Marshaller.JAXB_ENCODING, "UTF-8");
             marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
             marshaller.marshal(element, entityStream);
-        } catch(JAXBException exception) {
+        } catch (JAXBException exception) {
             throw new IOException("Can't marshall JAXB element of type \"" + type.getName() + "\".", exception);
         }
     }

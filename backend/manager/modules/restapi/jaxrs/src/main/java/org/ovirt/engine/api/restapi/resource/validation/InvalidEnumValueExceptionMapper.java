@@ -8,7 +8,7 @@ import org.ovirt.engine.api.model.Fault;
 import org.ovirt.engine.api.utils.InvalidEnumValueException;
 
 @Provider
-public class InvalidEnumValueExceptionMapper implements ExceptionMapper<InvalidEnumValueException>{
+public class InvalidEnumValueExceptionMapper implements ExceptionMapper<InvalidEnumValueException> {
 
     @Override
     public Response toResponse(InvalidEnumValueException exception) {

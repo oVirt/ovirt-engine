@@ -10,7 +10,7 @@ import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.common.vdscommands.gluster.GlusterVolumeGeoRepSessionVDSParameters;
 
-public class ResumeGeoRepSessionCommand extends GeoRepSessionCommandBase<GlusterVolumeGeoRepSessionParameters>{
+public class ResumeGeoRepSessionCommand extends GeoRepSessionCommandBase<GlusterVolumeGeoRepSessionParameters> {
 
     private GlusterVolumeGeoRepSessionParameters parameters;
 
@@ -57,7 +57,7 @@ public class ResumeGeoRepSessionCommand extends GeoRepSessionCommandBase<Gluster
 
     @Override
     public AuditLogType getAuditLogTypeValue() {
-        if(getSucceeded()) {
+        if (getSucceeded()) {
             return AuditLogType.GLUSTER_VOLUME_GEO_REP_RESUME;
         } else {
             return AuditLogType.GLUSTER_VOLUME_GEO_REP_RESUME_FAILED;

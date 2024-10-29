@@ -17,7 +17,7 @@ import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.gluster.GlusterGeoRepDao;
 
-public class GetGlusterVolumeGeoRepSessionsQueryTest extends AbstractQueryTest<IdQueryParameters, GetGlusterVolumeGeoRepSessionsQuery<IdQueryParameters>>{
+public class GetGlusterVolumeGeoRepSessionsQueryTest extends AbstractQueryTest<IdQueryParameters, GetGlusterVolumeGeoRepSessionsQuery<IdQueryParameters>> {
 
     private Guid masterVolumeId = Guid.newGuid();
     private Guid sessionId = Guid.newGuid();

@@ -16,7 +16,7 @@ public class GetSignedWebsocketProxyTicketParams extends QueryParametersBase imp
         this.graphicsType = graphicsType;
     }
 
-    private GetSignedWebsocketProxyTicketParams() {}
+    private GetSignedWebsocketProxyTicketParams() { }
 
     public Guid getVmId() {
         return vmId;

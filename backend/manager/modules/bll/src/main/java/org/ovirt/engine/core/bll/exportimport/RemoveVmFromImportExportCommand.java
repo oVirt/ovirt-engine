@@ -47,7 +47,7 @@ import org.ovirt.engine.core.dao.StorageDomainDao;
 import org.ovirt.engine.core.dao.VmDao;
 
 @NonTransactiveCommandAttribute
-public class RemoveVmFromImportExportCommand<T extends RemoveVmFromImportExportParameters> extends RemoveVmCommand<T>{
+public class RemoveVmFromImportExportCommand<T extends RemoveVmFromImportExportParameters> extends RemoveVmCommand<T> {
 
 
     @Inject

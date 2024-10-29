@@ -381,7 +381,7 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
     }
 
     protected String getImageAlias() {
-        return  getParameters().getAddDiskParameters() != null ?
+        return getParameters().getAddDiskParameters() != null ?
                 getParameters().getAddDiskParameters().getDiskInfo().getDiskAlias() :
                 getDiskImage().getDiskAlias();
     }

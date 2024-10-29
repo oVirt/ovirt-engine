@@ -12,7 +12,7 @@ public class GuidUtils {
     public static Guid asGuid(String id) {
         try {
             return new Guid(id);
-        }catch (IllegalArgumentException e) {
+        } catch (IllegalArgumentException e) {
             throw new MalformedIdException(e);
         }
     }

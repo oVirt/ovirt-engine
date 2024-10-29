@@ -148,7 +148,7 @@ public class BackendOpenStackImageProviderResourceTest
                 IdQueryParameters.class,
                 new String[] { "Id" },
                 new Object[] { GUIDS[0] },
-                notFound? null: getEntity(0)
+                notFound ? null : getEntity(0)
             );
         }
     }

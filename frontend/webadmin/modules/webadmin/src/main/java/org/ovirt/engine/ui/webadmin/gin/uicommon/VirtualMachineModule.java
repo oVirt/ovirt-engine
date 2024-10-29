@@ -516,7 +516,7 @@ public class VirtualMachineModule extends AbstractGinModule {
 
     @Override
     protected void configure() {
-        bind(new TypeLiteral<VmListModel<Void>>() {}).in(Singleton.class);
+        bind(new TypeLiteral<VmListModel<Void>>() { }).in(Singleton.class);
         bind(VmGeneralModel.class).in(Singleton.class);
         bind(VmImportGeneralModel.class).in(Singleton.class);
         bind(VmGuestInfoModel.class).in(Singleton.class);
@@ -525,35 +525,35 @@ public class VirtualMachineModule extends AbstractGinModule {
         bind(VmEventListModel.class).in(Singleton.class);
         bind(VmSnapshotListModel.class).in(Singleton.class);
         bind(VmAffinityGroupListModel.class).in(Singleton.class);
-        bind(new TypeLiteral<VmAppListModel<VM>>() {}).in(Singleton.class);
+        bind(new TypeLiteral<VmAppListModel<VM>>() { }).in(Singleton.class);
         bind(VmGuestContainerListModel.class).in(Singleton.class);
         bind(VmHostDeviceListModel.class).in(Singleton.class);
-        bind(new TypeLiteral<PermissionListModel<VM>>(){}).in(Singleton.class);
-        bind(new TypeLiteral<VmDevicesListModel<VM>>() {}).in(Singleton.class);
+        bind(new TypeLiteral<PermissionListModel<VM>>() { }).in(Singleton.class);
+        bind(new TypeLiteral<VmDevicesListModel<VM>>() { }).in(Singleton.class);
         bind(VmErrataCountModel.class).in(Singleton.class);
         bind(VmErrataListModel.class).in(Singleton.class);
         bind(VmAffinityLabelListModel.class).in(Singleton.class);
         bind(VirtualMachineMainSelectedItems.class).asEagerSingleton();
 
         // Form Detail Models
-        bind(new TypeLiteral<DetailModelProvider<VmListModel<Void>, VmGeneralModel>>(){})
-            .to(new TypeLiteral<DetailTabModelProvider<VmListModel<Void>, VmGeneralModel>>(){}).in(Singleton.class);
-        bind(new TypeLiteral<DetailModelProvider<ImportVmsModel, VmImportGeneralModel>>(){})
-            .to(new TypeLiteral<DetailTabModelProvider<ImportVmsModel, VmImportGeneralModel>>(){}).in(Singleton.class);
-        bind(new TypeLiteral<DetailModelProvider<VmListModel<Void>, VmGuestInfoModel>>(){})
-           .to(new TypeLiteral<DetailTabModelProvider<VmListModel<Void>, VmGuestInfoModel>>(){}).in(Singleton.class);
+        bind(new TypeLiteral<DetailModelProvider<VmListModel<Void>, VmGeneralModel>>() { })
+            .to(new TypeLiteral<DetailTabModelProvider<VmListModel<Void>, VmGeneralModel>>() { }).in(Singleton.class);
+        bind(new TypeLiteral<DetailModelProvider<ImportVmsModel, VmImportGeneralModel>>() { })
+            .to(new TypeLiteral<DetailTabModelProvider<ImportVmsModel, VmImportGeneralModel>>() { }).in(Singleton.class);
+        bind(new TypeLiteral<DetailModelProvider<VmListModel<Void>, VmGuestInfoModel>>() { })
+           .to(new TypeLiteral<DetailTabModelProvider<VmListModel<Void>, VmGuestInfoModel>>() { }).in(Singleton.class);
         // Search-able Detail Models
-        bind(new TypeLiteral<SearchableDetailModelProvider<String, VmListModel<Void>, VmAppListModel<VM>>>(){})
-           .to(new TypeLiteral<SearchableDetailTabModelProvider<String, VmListModel<Void>, VmAppListModel<VM>>>(){})
+        bind(new TypeLiteral<SearchableDetailModelProvider<String, VmListModel<Void>, VmAppListModel<VM>>>() { })
+           .to(new TypeLiteral<SearchableDetailTabModelProvider<String, VmListModel<Void>, VmAppListModel<VM>>>() { })
            .in(Singleton.class);
-        bind(new TypeLiteral<SearchableDetailModelProvider<GuestContainer, VmListModel<Void>, VmGuestContainerListModel>>(){})
-                .to(new TypeLiteral<SearchableDetailTabModelProvider<GuestContainer, VmListModel<Void>, VmGuestContainerListModel>>(){})
+        bind(new TypeLiteral<SearchableDetailModelProvider<GuestContainer, VmListModel<Void>, VmGuestContainerListModel>>() { })
+                .to(new TypeLiteral<SearchableDetailTabModelProvider<GuestContainer, VmListModel<Void>, VmGuestContainerListModel>>() { })
                 .in(Singleton.class);
         // Permission Detail Model
-        bind(new TypeLiteral<SearchableDetailModelProvider<Permission, VmListModel<Void>, PermissionListModel<VM>>>(){})
-           .to(new TypeLiteral<PermissionModelProvider<VM, VmListModel<Void>>>() {}).in(Singleton.class);
-        bind(new TypeLiteral<SearchableDetailModelProvider<VmDeviceFeEntity, VmListModel<Void>, VmDevicesListModel<VM>>>(){})
-                .to(new TypeLiteral<SearchableDetailTabModelProvider<VmDeviceFeEntity, VmListModel<Void>, VmDevicesListModel<VM>>>(){})
+        bind(new TypeLiteral<SearchableDetailModelProvider<Permission, VmListModel<Void>, PermissionListModel<VM>>>() { })
+           .to(new TypeLiteral<PermissionModelProvider<VM, VmListModel<Void>>>() { }).in(Singleton.class);
+        bind(new TypeLiteral<SearchableDetailModelProvider<VmDeviceFeEntity, VmListModel<Void>, VmDevicesListModel<VM>>>() { })
+                .to(new TypeLiteral<SearchableDetailTabModelProvider<VmDeviceFeEntity, VmListModel<Void>, VmDevicesListModel<VM>>>() { })
                 .in(Singleton.class);
     }
 

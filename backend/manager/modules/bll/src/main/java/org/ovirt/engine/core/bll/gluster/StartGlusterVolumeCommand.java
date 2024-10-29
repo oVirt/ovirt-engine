@@ -42,7 +42,7 @@ public class StartGlusterVolumeCommand extends GlusterVolumeCommandBase<GlusterV
 
     @Override
     protected boolean validate() {
-        if(! super.validate()) {
+        if (! super.validate()) {
             return false;
         }
 
@@ -63,7 +63,7 @@ public class StartGlusterVolumeCommand extends GlusterVolumeCommandBase<GlusterV
                                         new GlusterVolumeActionVDSParameters(upServer.getId(),
                                                 getGlusterVolumeName(), getParameters().isForceAction()));
         setSucceeded(returnValue.getSucceeded());
-        if(getSucceeded()) {
+        if (getSucceeded()) {
             glusterDBUtils.updateVolumeStatus(getParameters().getVolumeId(), GlusterStatus.UP);
             /* Refresh volume details once the volume is started.
              * A specific requirement for this was user might create a volume for the sake of using it for geo-replication.

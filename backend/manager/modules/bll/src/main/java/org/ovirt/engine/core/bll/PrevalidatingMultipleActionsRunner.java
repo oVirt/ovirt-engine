@@ -126,7 +126,7 @@ public class PrevalidatingMultipleActionsRunner implements MultipleActionsRunner
     }
 
     private void freeLockForValidationPassedCommands() {
-        getCommands().stream().filter(command->command.getReturnValue().isValid()).forEach(command->command.freeLock());
+        getCommands().stream().filter(command -> command.getReturnValue().isValid()).forEach(command -> command.freeLock());
     }
 
     /**

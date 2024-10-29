@@ -22,7 +22,7 @@ public class DialogTab extends AbstractValidatedWidget {
         WidgetUiBinder uiBinder = GWT.create(WidgetUiBinder.class);
     }
 
-    @UiField(provided=true)
+    @UiField(provided = true)
     OvirtTabListItem tabListItem;
 
     private Widget tabContent;

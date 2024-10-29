@@ -109,7 +109,7 @@ public class ClusterPolicyDaoImpl extends DefaultGenericDao<ClusterPolicy, Guid>
                 }
             }
             if (policyUnitTypeMap.get(clusterPolicyUnit.getPolicyUnitId()) == PolicyUnitType.WEIGHT) {
-                if(clusterPolicy.getFunctions() == null){
+                if (clusterPolicy.getFunctions() == null) {
                     clusterPolicy.setFunctions(new ArrayList<>());
                 }
                 clusterPolicy.getFunctions().add(new Pair<>(clusterPolicyUnit.getPolicyUnitId(),

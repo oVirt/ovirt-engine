@@ -73,7 +73,7 @@ public class SnapshotVmConfigurationHelperTest {
         snapshotVmConfigurationHelper.markImagesIllegalIfNotInDb(existingVm, existingSnapshotId);
 
         for (Disk diskImage : existingVm.getDiskMap().values()) {
-            assertEquals(ImageStatus.ILLEGAL, ((DiskImage)diskImage).getImageStatus());
+            assertEquals(ImageStatus.ILLEGAL, ((DiskImage) diskImage).getImageStatus());
         }
     }
 }

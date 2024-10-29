@@ -155,7 +155,7 @@ public abstract class EventSubscriptionCommandBase<T extends EventSubscriptionPa
     protected static boolean isEmailValid(String email) {
         boolean valid = false;
         try {
-            if (email == null){
+            if (email == null) {
                 throw new AddressException();
             }
             new InternetAddress(email, true);

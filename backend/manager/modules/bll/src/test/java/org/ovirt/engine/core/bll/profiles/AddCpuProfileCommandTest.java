@@ -22,7 +22,7 @@ import org.ovirt.engine.core.common.businessentities.profiles.CpuProfile;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.profiles.CpuProfileDao;
 
-public class AddCpuProfileCommandTest extends BaseCommandTest{
+public class AddCpuProfileCommandTest extends BaseCommandTest {
     private static final Guid CLUSTER_ID = Guid.newGuid();
     private static final String PROFILE_NAME = "profile name";
     private static final String SESSION_ID = "S3SS10N1D";

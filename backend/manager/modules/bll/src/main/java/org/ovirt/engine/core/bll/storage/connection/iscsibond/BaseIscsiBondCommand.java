@@ -76,7 +76,7 @@ public abstract class BaseIscsiBondCommand<T extends ActionParametersBase> exten
                             .collect(Collectors.toList());
                     if (!failedConnectionsList.isEmpty()) {
                         log.error("Host '{}' - '{}' encounter problems to connect to the iSCSI Storage"
-                                        + " Server. The following connections were problematic"+ "" +
+                                        + " Server. The following connections were problematic" + "" +
                                         " (connectionid=vdsm result): {}",
                                 host.getName(),
                                 host.getId(),

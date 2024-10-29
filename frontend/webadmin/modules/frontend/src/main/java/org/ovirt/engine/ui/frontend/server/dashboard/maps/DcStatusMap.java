@@ -17,7 +17,7 @@ public enum DcStatusMap {
 
     private StoragePoolStatus[] values;
 
-    private DcStatusMap(StoragePoolStatus ...values) {
+    private DcStatusMap(StoragePoolStatus ... values) {
         this.values = values.clone();
     }
 

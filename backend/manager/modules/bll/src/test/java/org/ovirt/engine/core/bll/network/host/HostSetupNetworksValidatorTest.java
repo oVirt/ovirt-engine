@@ -1181,7 +1181,7 @@ public class HostSetupNetworksValidatorTest {
         VdsNetworkInterface nicA = createNic("nicA");
         VdsNetworkInterface nicB = createNic("nicB");
 
-        NetworkAttachment networkAttachment = createNetworkAttachment(networkA, (Guid)null);
+        NetworkAttachment networkAttachment = createNetworkAttachment(networkA, (Guid) null);
         networkAttachment.setNicId(nicA.getId());
         networkAttachment.setNicName(nicA.getName());
         networkAttachment.setNetworkId(networkA.getId());

@@ -74,7 +74,7 @@ public class BackendGlusterBrickResourceTest extends AbstractBackendSubResourceT
 
     @Test
     public void testReplace() {
-        WebApplicationException wae = assertThrows(WebApplicationException.class,  () -> resource.replace(new Action()));
+        WebApplicationException wae = assertThrows(WebApplicationException.class, () -> resource.replace(new Action()));
         assertTrue(wae.getResponse().getEntity() instanceof Fault);
     }
 

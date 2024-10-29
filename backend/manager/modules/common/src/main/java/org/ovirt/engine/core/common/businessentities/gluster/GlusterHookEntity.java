@@ -236,7 +236,7 @@ public class GlusterHookEntity implements Queryable, BusinessEntity<Guid> {
             return false;
         }
         GlusterHookEntity hook = (GlusterHookEntity) obj;
-        return  Objects.equals(id, hook.id)
+        return Objects.equals(id, hook.id)
                 && Objects.equals(clusterId, hook.clusterId)
                 && Objects.equals(glusterCommand, hook.glusterCommand)
                 && stage == hook.stage

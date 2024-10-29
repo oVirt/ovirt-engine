@@ -85,7 +85,7 @@ public class BackendEventsResource
                 ExternalStatusMapper.map(event.getStorageDomain().getExternalStatus())
             );
         } else {
-            parameters =  new AddExternalEventParameters(map(event), null);
+            parameters = new AddExternalEventParameters(map(event), null);
         }
         return parameters;
     }

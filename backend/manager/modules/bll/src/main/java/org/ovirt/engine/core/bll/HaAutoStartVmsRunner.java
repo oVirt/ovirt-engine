@@ -76,7 +76,7 @@ public class HaAutoStartVmsRunner extends AutoStartVmsRunner {
         return AuditLogType.EXCEEDED_MAXIMUM_NUM_OF_RESTART_HA_VM_ATTEMPTS;
     }
 
-    private static class  HaVmToRestart extends AutoStartVmToRestart {
+    private static class HaVmToRestart extends AutoStartVmToRestart {
         private static final int RETRY_TO_RUN_AUTO_START_VM_LONG_INTERVAL =
                 Config.<Integer> getValue(ConfigValues.RetryToRunAutoStartVmLongIntervalInSeconds);
         private static final long MAXIMUM_TIME_AUTO_START_BLOCKED_ON_PRIORITY =

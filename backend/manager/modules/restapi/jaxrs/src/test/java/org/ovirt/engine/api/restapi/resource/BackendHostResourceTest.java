@@ -150,7 +150,7 @@ public class BackendHostResourceTest
         setUriInfo(setUpActionExpectations(ActionType.ChangeVDSCluster,
                 ChangeVDSClusterParameters.class,
                 new String[] { "ClusterId", "VdsId" },
-                new Object[] { GUIDS[1],  GUIDS[0]},
+                new Object[] { GUIDS[1], GUIDS[0]},
                 true,
                 true,
                 new ActionReturnValue(),
@@ -278,7 +278,7 @@ public class BackendHostResourceTest
 
         Response response = resource.activate(new Action());
         verifyActionResponse(response, "hosts/" + GUIDS[0], true, null);
-        Action action = (Action)response.getEntity();
+        Action action = (Action) response.getEntity();
         assertTrue(action.isSetStatus());
         assertEquals(actionStatus.value(), action.getStatus());
 
@@ -301,7 +301,7 @@ public class BackendHostResourceTest
         setUriInfo(setUpActionExpectations(ActionType.ChangeVDSCluster,
                                            ChangeVDSClusterParameters.class,
                                            new String[] { "ClusterId", "VdsId" },
-                                           new Object[] { GUIDS[0],  GUIDS[0]},
+                                           new Object[] { GUIDS[0], GUIDS[0]},
                                            true,
                                            true,
                                            new ActionReturnValue(),
@@ -511,7 +511,7 @@ public class BackendHostResourceTest
 
         @SuppressWarnings("unchecked")
         BackendStatisticsResource<Host, VDS> statisticsResource =
-            (BackendStatisticsResource<Host, VDS>)resource.getStatisticsResource();
+            (BackendStatisticsResource<Host, VDS>) resource.getStatisticsResource();
         assertNotNull(statisticsResource);
 
         verifyQuery(statisticsResource.getQuery(), entity);
@@ -544,7 +544,7 @@ public class BackendHostResourceTest
         Action action = new Action();
         action.setFenceType(FenceType.STATUS.value());
         Response response = resource.fence(action);
-        Action actionReturned = (Action)response.getEntity();
+        Action actionReturned = (Action) response.getEntity();
         assertEquals(actionReturned.getStatus(), CreationStatus.FAILED.value());
         assertNotNull(actionReturned.getFault());
         assertEquals("some_error", actionReturned.getFault().getReason());

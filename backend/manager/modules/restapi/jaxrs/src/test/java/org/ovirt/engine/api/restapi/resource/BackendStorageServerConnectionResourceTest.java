@@ -148,7 +148,7 @@ public class BackendStorageServerConnectionResourceTest extends AbstractBackendS
                 GUIDS[1].toString()
         );
         setUriInfo(uriInfo);
-        verifyBadRequest(assertThrows(WebApplicationException.class, () ->  resource.remove()));
+        verifyBadRequest(assertThrows(WebApplicationException.class, () -> resource.remove()));
     }
 
     protected void update(boolean valid, boolean executeCommandResult, int getConnectionExecTimes) {

@@ -282,7 +282,7 @@ public class SyncLunsInfoForBlockStorageDomainCommand<T extends SyncLunsInfoForB
         }
     };
 
-    protected final LunHandler noOp = luns -> {};
+    protected final LunHandler noOp = luns -> { };
 
     protected interface LunHandler extends Consumer<List<LUNs>> {
 

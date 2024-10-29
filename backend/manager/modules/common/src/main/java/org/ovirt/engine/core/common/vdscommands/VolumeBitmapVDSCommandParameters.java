@@ -8,7 +8,7 @@ public class VolumeBitmapVDSCommandParameters extends StorageJobVdsCommandParame
     private Integer generation;
     private String bitmapName;
 
-    public VolumeBitmapVDSCommandParameters() {}
+    public VolumeBitmapVDSCommandParameters() { }
 
     public VolumeBitmapVDSCommandParameters(Guid storageDomainId, Guid vdsId, Guid jobId, Guid imageGroupId,
                                             Guid imageId, Integer generation, String bitmapName) {

@@ -93,10 +93,10 @@ public class BackendStatisticsResourceTest extends AbstractBackendCollectionReso
             }
             when(query.getStatistics(same(entity))).thenReturn(statistics);
             when(query.getParentType()).thenReturn(Host.class);
-        } else  if (failure instanceof String) {
-            String detail = mockl10n((String)failure);
+        } else if (failure instanceof String) {
+            String detail = mockl10n((String) failure);
             when(query.resolve(eq(GUIDS[1]))).thenThrow(new BaseBackendResource.BackendFailureException(detail, Status.CONFLICT));
-        } else  if (failure instanceof Exception) {
+        } else if (failure instanceof Exception) {
             when(query.resolve(eq(GUIDS[1]))).thenThrow((Exception) failure);
         }
     }

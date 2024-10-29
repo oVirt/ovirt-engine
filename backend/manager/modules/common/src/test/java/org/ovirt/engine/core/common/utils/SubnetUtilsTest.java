@@ -39,12 +39,12 @@ public class SubnetUtilsTest {
     }
 
     @Test
-    public void checkEqualNetmaskRepresentation(){
+    public void checkEqualNetmaskRepresentation() {
         assertTrue(underTest.equalSubnet("255.255.255.255", "255.255.255.255"));
     }
 
     @Test
-    public void checkEqualPrefixRepresentation(){
+    public void checkEqualPrefixRepresentation() {
         assertTrue(underTest.equalSubnet("8", "8"));
     }
 

@@ -44,13 +44,13 @@ public class ImageInfoForm extends AbstractModelBoundFormWidget<ImageInfoModel> 
         setModel(model);
         driver.initialize(this);
 
-        formBuilder.addFormItem(new FormItem(constants.imageFormat(), format, 0, 0){
+        formBuilder.addFormItem(new FormItem(constants.imageFormat(), format, 0, 0) {
             @Override
             public boolean getIsAvailable() {
                 return getModel().getFileLoaded();
             }
         });
-        formBuilder.addFormItem(new FormItem(constants.imageActualSize(), actualSize, 1, 0){
+        formBuilder.addFormItem(new FormItem(constants.imageActualSize(), actualSize, 1, 0) {
             @Override
             public boolean getIsAvailable() {
                 return getModel().getFileLoaded();

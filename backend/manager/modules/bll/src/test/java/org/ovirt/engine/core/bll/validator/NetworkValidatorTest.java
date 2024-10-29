@@ -323,10 +323,10 @@ public class NetworkValidatorTest {
     @Test
     public void networkInUseByManyVms() {
         VM vm1 = mock(VM.class);
-        when(vm1.getName()).thenReturn(NAMEABLE_NAME+1);
+        when(vm1.getName()).thenReturn(NAMEABLE_NAME + 1);
 
         VM vm2 = mock(VM.class);
-        when(vm2.getName()).thenReturn(NAMEABLE_NAME+2);
+        when(vm2.getName()).thenReturn(NAMEABLE_NAME + 2);
 
         networkNotUsedByVmsTest(failsWithManyNetworkInUse(), Arrays.asList(vm1, vm2));
     }
@@ -352,10 +352,10 @@ public class NetworkValidatorTest {
     @Test
     public void networkInUseByManyHosts() {
         VDS host1 = mock(VDS.class);
-        when(host1.getName()).thenReturn(NAMEABLE_NAME+1);
+        when(host1.getName()).thenReturn(NAMEABLE_NAME + 1);
 
         VDS host2 = mock(VDS.class);
-        when(host2.getName()).thenReturn(NAMEABLE_NAME+2);
+        when(host2.getName()).thenReturn(NAMEABLE_NAME + 2);
 
         networkNotUsedByHostsTest(failsWithManyNetworkInUse(), Arrays.asList(host1, host2));
     }
@@ -381,10 +381,10 @@ public class NetworkValidatorTest {
     @Test
     public void networkInUseByManyTemplates() {
         VmTemplate template1 = mock(VmTemplate.class);
-        when(template1.getName()).thenReturn(NAMEABLE_NAME+1);
+        when(template1.getName()).thenReturn(NAMEABLE_NAME + 1);
 
         VmTemplate template2 = mock(VmTemplate.class);
-        when(template2.getName()).thenReturn(NAMEABLE_NAME+2);
+        when(template2.getName()).thenReturn(NAMEABLE_NAME + 2);
 
         networkNotUsedByTemplatesTest(failsWithManyNetworkInUse(), Arrays.asList(template1, template2));
     }

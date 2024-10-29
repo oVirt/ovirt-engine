@@ -21,7 +21,7 @@ public class StorageDomainDynamic implements BusinessEntity<Guid> {
     private Integer availableDiskSize;
     private Integer confirmedAvailableDiskSize;
     private Integer vdoSavings;
-    private  ExternalStatus externalStatus;
+    private ExternalStatus externalStatus;
     private boolean containsUnregisteredEntities;
 
     public boolean isContainsUnregisteredEntities() {

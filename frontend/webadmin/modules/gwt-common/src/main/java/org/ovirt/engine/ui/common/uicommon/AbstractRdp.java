@@ -21,7 +21,7 @@ public abstract class AbstractRdp extends AbstractConsole {
         String username = Frontend.getInstance().getLoggedInUser().getLoginName();
         String domain = Frontend.getInstance().getLoggedInUser().getDomain();
 
-        return username.contains("@") ? username : username + "@" + domain;//$NON-NLS-1$ //$NON-NLS-2$
+        return username.contains("@") ? username : username + "@" + domain; //$NON-NLS-1$ //$NON-NLS-2$
     }
 
     public String getUserName() {

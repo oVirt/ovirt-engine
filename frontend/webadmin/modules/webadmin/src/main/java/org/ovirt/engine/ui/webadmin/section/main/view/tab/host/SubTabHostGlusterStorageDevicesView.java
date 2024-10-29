@@ -99,7 +99,7 @@ public class SubTabHostGlusterStorageDevicesView extends AbstractSubTabTableView
     }
 
     public String formatSize(double size) {
-        return NumberFormat.getFormat("#.##").format(size);//$NON-NLS-1$
+        return NumberFormat.getFormat("#.##").format(size); //$NON-NLS-1$
     }
 
     @Override

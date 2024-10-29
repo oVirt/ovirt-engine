@@ -129,7 +129,7 @@ public class ListModelSearchBox<T, M extends SearchableListModel<?, T>> extends 
     }
 
     private AnchorListItem getAnchorListItem(int index) {
-        return (AnchorListItem)menu.getWidget(index);
+        return (AnchorListItem) menu.getWidget(index);
     }
 
     private void stopPropagation(DomEvent<?> event) {
@@ -152,7 +152,7 @@ public class ListModelSearchBox<T, M extends SearchableListModel<?, T>> extends 
     @Override
     public void setVisible(boolean value) {
         if (value) {
-            Scheduler.get().scheduleDeferred( ()-> {
+            Scheduler.get().scheduleDeferred( () -> {
                 searchBox.setFocus(true);
                 currentFocusIndex = -1;
             });
@@ -170,7 +170,7 @@ public class ListModelSearchBox<T, M extends SearchableListModel<?, T>> extends 
     private void selectItem(String name) {
         M listModel = listModelProvider.getModel();
         for (T model: listModel.getItems()) {
-            if(getName(model).asString().equals(name)) {
+            if (getName(model).asString().equals(name)) {
                 for (ListModelSelectedCallback<T> callback: this.callbacks) {
                     callback.modelSelected(model);
                 }
@@ -188,7 +188,7 @@ public class ListModelSearchBox<T, M extends SearchableListModel<?, T>> extends 
     protected SafeHtml getName(T item) {
         String result = "";
         if (item instanceof Nameable) {
-            result = ((Nameable)item).getName();
+            result = ((Nameable) item).getName();
         }
         return SafeHtmlUtils.fromString(result);
     }
@@ -198,7 +198,7 @@ public class ListModelSearchBox<T, M extends SearchableListModel<?, T>> extends 
         clearMenu();
         emptyMenuHandlers();
         for (T model: values) {
-            if(model instanceof Nameable) {
+            if (model instanceof Nameable) {
                 final String text = getName(model).asString();
                 final AnchorListItem item = new SearchBoxAnchorListItem(this);
                 item.setText(text);
@@ -223,7 +223,7 @@ public class ListModelSearchBox<T, M extends SearchableListModel<?, T>> extends 
             currentFocusIndex = menu.getWidgetCount() - 1;
         }
         if (currentFocusIndex >= 0) {
-            ((AnchorListItem)menu.getWidget(currentFocusIndex)).setFocus(true);
+            ((AnchorListItem) menu.getWidget(currentFocusIndex)).setFocus(true);
         }
     }
 
@@ -244,7 +244,7 @@ public class ListModelSearchBox<T, M extends SearchableListModel<?, T>> extends 
         } else if (keycode == KeyCodes.KEY_DOWN || keycode == KeyCodes.KEY_TAB && !shiftKey) {
             incrementCurrentIndex();
         } else if (keycode == KeyCodes.KEY_ENTER) {
-            selectItem(((AnchorListItem)menu.getWidget(currentFocusIndex)).getText());
+            selectItem(((AnchorListItem) menu.getWidget(currentFocusIndex)).getText());
         } else if (keycode == KeyCodes.KEY_ESCAPE) {
             for (ListModelSelectedCallback<T> callback: this.callbacks) {
                 callback.modelSelected(listModelProvider.getModel().getSelectedItem());
@@ -258,7 +258,7 @@ public class ListModelSearchBox<T, M extends SearchableListModel<?, T>> extends 
             searchBox.setFocus(true);
             currentFocusIndex = -1;
         } else {
-            ((AnchorListItem)menu.getWidget(currentFocusIndex)).setFocus(true);
+            ((AnchorListItem) menu.getWidget(currentFocusIndex)).setFocus(true);
         }
     }
 
@@ -267,7 +267,7 @@ public class ListModelSearchBox<T, M extends SearchableListModel<?, T>> extends 
         if (currentFocusIndex == -1) {
             searchBox.setFocus(true);
         } else {
-            ((AnchorListItem)menu.getWidget(currentFocusIndex)).setFocus(true);
+            ((AnchorListItem) menu.getWidget(currentFocusIndex)).setFocus(true);
         }
     }
 }

@@ -239,14 +239,14 @@ public class NumaPinningHelper {
             }
             boolean singleThreaded = coresInNuma == cpusInNuma.size();
             for (int i = 1; i <= vCpusPerNumaThread; i++) {
-                final int pinnedCpus = ((i-1) + numaNodeNumber * vCpusPerNumaThread) * hostThreadsPerCore;
+                final int pinnedCpus = ((i - 1) + numaNodeNumber * vCpusPerNumaThread) * hostThreadsPerCore;
                 String pinning;
                 if (singleThreaded) {
                     pinning = String.format("#%d_", cpusInNuma.get(i));
                 } else {
                     pinning = String.format("#%d,%d_", cpusInNuma.get(i), cpusInNuma.get(i + coresInNuma));
                 }
-                IntStream.range(0, hostThreadsPerCore).forEach(idx -> sb.append(pinnedCpus+idx).append(pinning));
+                IntStream.range(0, hostThreadsPerCore).forEach(idx -> sb.append(pinnedCpus + idx).append(pinning));
             }
             numaNodeNumber++;
         }
@@ -348,7 +348,7 @@ public class NumaPinningHelper {
 
         private List<HugePage> hugePages;
 
-        private  HostNumaNodeData() {
+        private HostNumaNodeData() {
         }
 
         public HostNumaNodeData(VdsNumaNode numaNode, boolean considerCpuPinning) {

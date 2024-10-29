@@ -138,7 +138,7 @@ public abstract class AbstractValidatedWidgetWithLabel<T, W extends EditorWidget
 
     protected LabelWithTooltip getFormLabel() {
         if (label instanceof LabelWithTooltip) {
-            return (LabelWithTooltip)label;
+            return (LabelWithTooltip) label;
         }
         throw new IllegalStateException("No label defined in widget that requires a label"); //$NON-NLS-1$
     }
@@ -229,7 +229,7 @@ public abstract class AbstractValidatedWidgetWithLabel<T, W extends EditorWidget
     /**
      * Insert a widget that will be place directly after the {@link #getContentWidgetContainer()}.
      */
-    @UiChild(tagname="WidgetDecorator", limit=1)
+    @UiChild(tagname = "WidgetDecorator", limit = 1)
     public void addWidgetDecorator(Widget widget) {
         wrapperPanel.insert(widget, wrapperPanel.getWidgetIndex(contentWidgetContainerTooltip) + 1);
     }

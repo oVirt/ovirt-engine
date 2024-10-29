@@ -319,7 +319,7 @@ public class VmHandler implements BackendService {
                     refreshVmsToolsVersion(storagePoolId, Set.of());
                 }
             }
-        } catch (Throwable t){
+        } catch (Throwable t) {
             log.error("Exception while checking guest tools version: {}", ExceptionUtils.getRootCauseMessage(t));
             log.debug("Exception", t);
         }
@@ -1010,7 +1010,7 @@ public class VmHandler implements BackendService {
         } else if (value instanceof VmWatchdog) {
             VmDevice watchdogDevice = ((VmWatchdog) value).createVmDevice();
             if (vmDeviceUtils.vmDeviceChanged(vmId, generalType, typeName, watchdogDevice)) {
-                updates.add(new VmDeviceUpdate(generalType, type, readOnly, name,  watchdogDevice));
+                updates.add(new VmDeviceUpdate(generalType, type, readOnly, name, watchdogDevice));
             }
         } else {
             log.warn("addDeviceUpdateOnNextRun: Unsupported value type: " +
@@ -1037,7 +1037,7 @@ public class VmHandler implements BackendService {
         return ValidationResult.VALID;
     }
 
-    public void updateNumaNodesFromDb(VM vm){
+    public void updateNumaNodesFromDb(VM vm) {
         List<VmNumaNode> nodes = vmNumaNodeDao.getAllVmNumaNodeByVmId(vm.getId());
 
         vm.setvNumaNodeList(nodes);
@@ -1084,7 +1084,7 @@ public class VmHandler implements BackendService {
             }
         }
 
-        if (result.isEmpty()) {// if graphics are set in params, do not use template graphics
+        if (result.isEmpty()) { // if graphics are set in params, do not use template graphics
             for (GraphicsType type : GraphicsType.values()) {
                 if (srcEntityGraphics.contains(type) && !graphicsResetInParams(type, graphicsDevices)) { // graphics is in template and is not nulled in params
                     result.add(type);
@@ -1202,7 +1202,7 @@ public class VmHandler implements BackendService {
     }
 
     public String currentOvirtGuestAgentVersion(VM vm) {
-        if (vm.getAppList() != null){
+        if (vm.getAppList() != null) {
             if (!FeatureSupported.isWindowsGuestToolsSupported(vm.getCompatibilityVersion())) {
                 if (vm.getAppList().toLowerCase().contains("qemu-guest-agent")) {
                     Matcher m = QEMU_GA_PATTERN_VER.matcher(vm.getAppList().toLowerCase());
@@ -1449,7 +1449,7 @@ public class VmHandler implements BackendService {
         }
 
         if (defaultDisplayType == null) {
-            if (!displayGraphicsSupport.isEmpty()) {// when not found otherwise, let's take osinfo's record as the default
+            if (!displayGraphicsSupport.isEmpty()) { // when not found otherwise, let's take osinfo's record as the default
                 for (Map.Entry<DisplayType, Set<GraphicsType>> entry : displayGraphicsSupport.entrySet()) {
                     if (defaultDisplayType == null) {
                         // prioritize first display type based on osinfo
@@ -1461,7 +1461,7 @@ public class VmHandler implements BackendService {
                         break;
                     }
                 }
-            } else {// no osinfo record
+            } else { // no osinfo record
                 defaultDisplayType = DisplayType.vga;
             }
         }
@@ -1494,7 +1494,7 @@ public class VmHandler implements BackendService {
                 }
 
                 if (defaultGraphicsType != null) {
-                    for (GraphicsType graphicsType : GraphicsType.values()) {// reset graphics devices
+                    for (GraphicsType graphicsType : GraphicsType.values()) { // reset graphics devices
                         graphicsDevices.put(graphicsType, null);
                     }
 

@@ -161,7 +161,7 @@ public class StorageQosMetricParametersModel extends Model {
 
     private void updateChangeability() {
         //Suppress update of changeability when entities weren't constructed yet.
-        if(getChoiceGroupNone() == null || getChoiceGroupNone().getEntity() == null ||
+        if (getChoiceGroupNone() == null || getChoiceGroupNone().getEntity() == null ||
            getChoiceGroupTotal() == null || getChoiceGroupTotal().getEntity() == null ||
            getChoiceGroupReadWrite() == null || getChoiceGroupReadWrite().getEntity() == null) {
             return;

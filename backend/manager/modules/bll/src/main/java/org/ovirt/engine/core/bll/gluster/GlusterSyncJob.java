@@ -159,7 +159,7 @@ public class GlusterSyncJob extends GlusterJob {
             if (fetchedServers != null) {
                 syncServers(cluster, existingServers, fetchedServers);
             }
-        } catch(Exception e) {
+        } catch (Exception e) {
             log.error("Error while refreshing server data for cluster '{}' from database: {}",
                     cluster.getName(),
                     e.getMessage());
@@ -863,8 +863,8 @@ public class GlusterSyncJob extends GlusterJob {
         boolean changed = false;
         boolean volumeTypeUnSupported = false;
         if (existingVolume.getVolumeType() != fetchedVolume.getVolumeType()) {
-            if(existingVolume.getVolumeType().isSupported() && !fetchedVolume.getVolumeType().isSupported()){
-                volumeTypeUnSupported= true;
+            if (existingVolume.getVolumeType().isSupported() && !fetchedVolume.getVolumeType().isSupported()) {
+                volumeTypeUnSupported = true;
             }
             existingVolume.setVolumeType(fetchedVolume.getVolumeType());
             changed = true;
@@ -1057,12 +1057,12 @@ public class GlusterSyncJob extends GlusterJob {
                 null,
                 AuditLogType.GLUSTER_BRICK_STATUS_CHANGED,
                 customValues);
-        if(fetchedStatus == GlusterStatus.DOWN){
+        if (fetchedStatus == GlusterStatus.DOWN) {
             logUtil.logAuditMessage(volume,
                     AuditLogType.GLUSTER_BRICK_STATUS_DOWN,
                     brick.getId(),
                     brick.getQualifiedName());
-        }else if(fetchedStatus == GlusterStatus.UP){
+        } else if (fetchedStatus == GlusterStatus.UP) {
             alertDirector.removeAlertsByBrickIdLogType(brick.getId(), AuditLogType.GLUSTER_BRICK_STATUS_DOWN);
         }
     }
@@ -1199,9 +1199,9 @@ public class GlusterSyncJob extends GlusterJob {
         VDSReturnValue result = runVdsCommand(VDSCommandType.GetGlusterVolumeHealInfo,
                 new GlusterVolumeVDSParameters(upServer.getId(), volumeName));
 
-        if(result.getSucceeded()){
+        if (result.getSucceeded()) {
             return (Map<Guid, Integer>) result.getReturnValue();
-        }else{
+        } else {
             return Collections.emptyMap();
         }
     }

@@ -42,7 +42,7 @@ public class GetPermissionsOnBehalfByAdElementIdQuery<P extends IdQueryParameter
     protected void executeQueryCommand() {
         QueryReturnValue returnValue = backend.runInternalQuery(QueryType.GetAuthzGroupsByUserId, getParameters());
         Collection<AuthzGroup> authzGroups = returnValue.getReturnValue();
-        List<Guid>  groupsIds = authzGroups.stream()
+        List<Guid> groupsIds = authzGroups.stream()
             .map(g -> dbGroupDao.getByExternalId(g.getAuthz(), g.getId()))
             .filter(Objects::nonNull)
             .map(g -> g.getId())

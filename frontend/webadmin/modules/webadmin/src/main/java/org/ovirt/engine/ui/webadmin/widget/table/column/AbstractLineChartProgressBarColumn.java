@@ -127,7 +127,7 @@ public abstract class AbstractLineChartProgressBarColumn<T> extends AbstractSafe
 
         if (actualWidth.indexOf("px") == -1) { //$NON-NLS-1$
             // this is a developer mistake - fail with an exception to simplify debugging
-            throw new IllegalArgumentException("The size is expected to be in PX in a format: 100px but it was: '"  + actualWidth + "'"); //$NON-NLS-1$ //$NON-NLS-2$
+            throw new IllegalArgumentException("The size is expected to be in PX in a format: 100px but it was: '" + actualWidth + "'"); //$NON-NLS-1$ //$NON-NLS-2$
         }
 
         String withoutPx = actualWidth.substring(0, actualWidth.indexOf("px")); //$NON-NLS-1$

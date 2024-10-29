@@ -545,29 +545,29 @@ public class StorageModule extends AbstractGinModule {
         bind(DiskProfileListModel.class).in(Singleton.class);
         bind(StorageDRListModel.class).in(Singleton.class);
         bind(StorageLeaseListModel.class).in(Singleton.class);
-        bind(new TypeLiteral<PermissionListModel<StorageDomain>>(){}).in(Singleton.class);
-        bind(new TypeLiteral<PermissionListModel<DiskProfile>>(){}).in(Singleton.class);
+        bind(new TypeLiteral<PermissionListModel<StorageDomain>>() { }).in(Singleton.class);
+        bind(new TypeLiteral<PermissionListModel<DiskProfile>>() { }).in(Singleton.class);
         bind(StorageMainSelectedItems.class).asEagerSingleton();
 
         // Form Detail Models
-        bind(new TypeLiteral<DetailModelProvider<StorageListModel, StorageGeneralModel>>(){})
-            .to(new TypeLiteral<DetailTabModelProvider<StorageListModel, StorageGeneralModel>>(){}).in(Singleton.class);
+        bind(new TypeLiteral<DetailModelProvider<StorageListModel, StorageGeneralModel>>() { })
+            .to(new TypeLiteral<DetailTabModelProvider<StorageListModel, StorageGeneralModel>>() { }).in(Singleton.class);
         // Search-able Detail Models
-        bind(new TypeLiteral<SearchableDetailModelProvider<VmTemplate, StorageListModel, StorageTemplateListModel>>(){})
-           .to(new TypeLiteral<SearchableDetailTabModelProvider<VmTemplate, StorageListModel, StorageTemplateListModel>>(){})
+        bind(new TypeLiteral<SearchableDetailModelProvider<VmTemplate, StorageListModel, StorageTemplateListModel>>() { })
+           .to(new TypeLiteral<SearchableDetailTabModelProvider<VmTemplate, StorageListModel, StorageTemplateListModel>>() { })
            .in(Singleton.class);
-        bind(new TypeLiteral<SearchableDetailModelProvider<VM, StorageListModel, StorageVmListModel>>(){})
-           .to(new TypeLiteral<SearchableDetailTabModelProvider<VM, StorageListModel, StorageVmListModel>>(){})
+        bind(new TypeLiteral<SearchableDetailModelProvider<VM, StorageListModel, StorageVmListModel>>() { })
+           .to(new TypeLiteral<SearchableDetailTabModelProvider<VM, StorageListModel, StorageVmListModel>>() { })
            .in(Singleton.class);
-        bind(new TypeLiteral<SearchableDetailModelProvider<VmBase, StorageListModel, StorageLeaseListModel>>(){})
-                .to(new TypeLiteral<SearchableDetailTabModelProvider<VmBase, StorageListModel, StorageLeaseListModel>>(){})
+        bind(new TypeLiteral<SearchableDetailModelProvider<VmBase, StorageListModel, StorageLeaseListModel>>() { })
+                .to(new TypeLiteral<SearchableDetailTabModelProvider<VmBase, StorageListModel, StorageLeaseListModel>>() { })
                 .in(Singleton.class);
         // Permission Detail Model
-        bind(new TypeLiteral<SearchableDetailModelProvider<Permission, StorageListModel, PermissionListModel<StorageDomain>>>(){})
-           .to(new TypeLiteral<PermissionModelProvider<StorageDomain, StorageListModel>>(){}).in(Singleton.class);
+        bind(new TypeLiteral<SearchableDetailModelProvider<Permission, StorageListModel, PermissionListModel<StorageDomain>>>() { })
+           .to(new TypeLiteral<PermissionModelProvider<StorageDomain, StorageListModel>>() { }).in(Singleton.class);
         // Permission Disk Profiles
-        bind(new TypeLiteral<SearchableDetailModelProvider<Permission, DiskProfileListModel, PermissionListModel<DiskProfile>>>(){})
-           .to(new TypeLiteral<PermissionModelProvider<DiskProfile, DiskProfileListModel>>(){}).in(Singleton.class);
+        bind(new TypeLiteral<SearchableDetailModelProvider<Permission, DiskProfileListModel, PermissionListModel<DiskProfile>>>() { })
+           .to(new TypeLiteral<PermissionModelProvider<DiskProfile, DiskProfileListModel>>() { }).in(Singleton.class);
     }
 
 }

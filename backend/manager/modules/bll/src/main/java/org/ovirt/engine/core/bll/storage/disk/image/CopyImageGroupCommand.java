@@ -255,7 +255,7 @@ public class CopyImageGroupCommand<T extends MoveOrCopyImageGroupParameters> ext
 
     @Override
     public CommandCallback getCallback() {
-        if (isUsingSPDMFlow()){
+        if (isUsingSPDMFlow()) {
             return callbackProvider.get();
         }
 

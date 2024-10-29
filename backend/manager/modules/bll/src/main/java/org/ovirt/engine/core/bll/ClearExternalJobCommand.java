@@ -14,7 +14,7 @@ import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.job.Job;
 import org.ovirt.engine.core.dao.JobDao;
 
-public class ClearExternalJobCommand <T extends ActionParametersBase> extends CommandBase<T>{
+public class ClearExternalJobCommand <T extends ActionParametersBase> extends CommandBase<T> {
 
     @Inject
     private JobDao jobDao;
@@ -58,7 +58,7 @@ public class ClearExternalJobCommand <T extends ActionParametersBase> extends Co
 
     @Override
     public List<PermissionSubject> getPermissionCheckSubjects() {
-        List<PermissionSubject>  permissionList = new ArrayList<>();
+        List<PermissionSubject> permissionList = new ArrayList<>();
         permissionList.add(new PermissionSubject(MultiLevelAdministrationHandler.SYSTEM_OBJECT_ID,
                 VdcObjectType.System,
                 ActionGroup.INJECT_EXTERNAL_TASKS));

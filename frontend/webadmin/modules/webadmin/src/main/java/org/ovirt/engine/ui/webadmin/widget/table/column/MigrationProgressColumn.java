@@ -45,7 +45,7 @@ public class MigrationProgressColumn extends AbstractOneColorPercentColumn<VM> {
 
     @Override
     protected String getStyle() {
-        return "engine-progress-box-migration";//$NON-NLS-1$
+        return "engine-progress-box-migration"; //$NON-NLS-1$
 
     }
 

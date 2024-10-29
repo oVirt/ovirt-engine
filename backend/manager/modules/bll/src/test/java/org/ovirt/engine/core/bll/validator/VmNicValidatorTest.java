@@ -235,14 +235,14 @@ public class VmNicValidatorTest {
     }
 
     @Test
-    public void forbidEmptyProfileForHostedEngineVm(){
+    public void forbidEmptyProfileForHostedEngineVm() {
         vm.setOrigin(OriginType.HOSTED_ENGINE);
         assertThat(validator.validateProfileNotEmptyForHostedEngineVm(vm),
                 failsWith(EngineMessage.HOSTED_ENGINE_VM_CANNOT_HAVE_NIC_WITH_EMPTY_PROFILE));
     }
 
     @Test
-    public void allowEmptyProfileForNonHostedEngineVm(){
+    public void allowEmptyProfileForNonHostedEngineVm() {
         vm.setOrigin(OriginType.RHEV);
         assertThat(validator.validateProfileNotEmptyForHostedEngineVm(vm), isValid());
     }

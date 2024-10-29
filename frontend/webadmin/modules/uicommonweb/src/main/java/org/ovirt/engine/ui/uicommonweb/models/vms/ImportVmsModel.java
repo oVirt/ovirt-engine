@@ -211,7 +211,7 @@ public class ImportVmsModel extends ListWithSimpleDetailsModel {
     public ImportVmModel getSpecificImportModel(boolean vmsToImportHaveFullInfo) {
         selectedImportVmModel = null;
 
-        switch(importSources.getSelectedItem()) {
+        switch (importSources.getSelectedItem()) {
         case EXPORT_DOMAIN:
             importFromExportDomainModel.setEntity(null);
             importFromExportDomainModel.init(getVmsToImport(), exportDomain.getEntity().getId());
@@ -336,7 +336,7 @@ public class ImportVmsModel extends ListWithSimpleDetailsModel {
 
     private void providerChanged() {
         clearValidations();
-        switch(importSources.getSelectedItem()) {
+        switch (importSources.getSelectedItem()) {
         case VMWARE:
             vmwareProviderChanged();
             break;
@@ -560,7 +560,7 @@ public class ImportVmsModel extends ListWithSimpleDetailsModel {
     }
 
     private void loadProviders() {
-        switch(importSources.getSelectedItem()) {
+        switch (importSources.getSelectedItem()) {
         case VMWARE:
             loadVmwareProviders();
             break;
@@ -855,7 +855,7 @@ public class ImportVmsModel extends ListWithSimpleDetailsModel {
     }
 
     public boolean vmsToImportHaveFullInfo() {
-        switch(importSources.getSelectedItem()) {
+        switch (importSources.getSelectedItem()) {
             case VMWARE:
             case KVM:
             case XEN:

@@ -54,7 +54,7 @@ public class GetGlusterStorageDevicesQuery<P extends IdQueryParameters> extends 
         // Mounts to be ignored can be exact mount point or a regular expression which should be with the starting part
         // of the mount point. So create a regex which can match against any given pattern in the list.
         StringBuilder pattern = new StringBuilder();
-        for(String mointPoint:mountPointsToIgnore){
+        for (String mointPoint:mountPointsToIgnore) {
             pattern.append("^");
             pattern.append(mointPoint);
             pattern.append("$");

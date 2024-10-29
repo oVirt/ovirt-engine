@@ -214,7 +214,7 @@ public class VmAnalyzer {
     }
 
     void proceedVmReportedOnOtherHost() {
-        switch(vdsmVm.getVmDynamic().getStatus()) {
+        switch (vdsmVm.getVmDynamic().getStatus()) {
         case MigratingTo:
             if (dbVm.getRunOnVds() == null) {
                 log.info("VM '{}' is found as migrating on VDS '{}'({}) ",
@@ -483,7 +483,7 @@ public class VmAnalyzer {
     }
 
     private void auditVmMigrationAbort(String exitMessage) {
-        AuditLogableBase logable =Injector.injectMembers(new AuditLogableBase(vdsManager.getVdsId(), dbVm.getId()));
+        AuditLogableBase logable = Injector.injectMembers(new AuditLogableBase(vdsManager.getVdsId(), dbVm.getId()));
         logable.addCustomValue("MigrationError", exitMessage);
         auditLog(logable, AuditLogType.VM_MIGRATION_ABORT);
     }
@@ -961,7 +961,7 @@ public class VmAnalyzer {
     }
 
     private void updateDiskImageDynamics() {
-        vmDiskImageDynamicToSave =  vdsmVm.getDiskStatistics().stream()
+        vmDiskImageDynamicToSave = vdsmVm.getDiskStatistics().stream()
                 .map(diskImageDynamic -> new Pair<>(dbVm.getId(), diskImageDynamic))
                 .collect(Collectors.toList());
     }

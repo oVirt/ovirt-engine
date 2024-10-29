@@ -7,7 +7,7 @@ public class GetStorageDomainDefaultWipeAfterDeleteParameters extends QueryParam
     private static final long serialVersionUID = 6469435734937894858L;
     private StorageType storageType;
 
-    public GetStorageDomainDefaultWipeAfterDeleteParameters() {}
+    public GetStorageDomainDefaultWipeAfterDeleteParameters() { }
 
     public GetStorageDomainDefaultWipeAfterDeleteParameters(StorageType storageType) {
         this.storageType = storageType;

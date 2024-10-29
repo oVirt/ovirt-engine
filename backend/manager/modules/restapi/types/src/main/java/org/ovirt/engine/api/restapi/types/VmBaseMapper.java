@@ -373,8 +373,8 @@ public class VmBaseMapper {
         }
 
         MemoryPolicy policy = new MemoryPolicy();
-        policy.setGuaranteed((long)entity.getMinAllocatedMem() * (long)BYTES_PER_MB);
-        policy.setMax((long)entity.getMaxMemorySizeMb() * (long)BYTES_PER_MB);
+        policy.setGuaranteed((long) entity.getMinAllocatedMem() * (long) BYTES_PER_MB);
+        policy.setMax((long) entity.getMaxMemorySizeMb() * (long) BYTES_PER_MB);
         policy.setBallooning(entity.isBalloonEnabled());
         model.setMemoryPolicy(policy);
 
@@ -435,7 +435,7 @@ public class VmBaseMapper {
             model.getBios().setType(map(entity.getBiosType(), null));
         }
 
-        if(entity.getTimeZone() != null) {
+        if (entity.getTimeZone() != null) {
             model.setTimeZone(new TimeZone());
             model.getTimeZone().setName(entity.getTimeZone());
         }
@@ -484,7 +484,7 @@ public class VmBaseMapper {
             model.getSmallIcon().setId(entity.getSmallIconId().toString());
         }
 
-        if (entity.getQuotaId()!=null) {
+        if (entity.getQuotaId() != null) {
             Quota quota = new Quota();
             quota.setId(entity.getQuotaId().toString());
             model.setQuota(quota);
@@ -507,7 +507,7 @@ public class VmBaseMapper {
             break;
         }
 
-        if(entity.isUseHostCpuFlags()) {
+        if (entity.isUseHostCpuFlags()) {
             model.getCpu().setMode(CpuMode.HOST_PASSTHROUGH);
         }
         model.getCpu().setCpuTune(stringToCpuTune(entity.getCpuPinning()));
@@ -630,7 +630,7 @@ public class VmBaseMapper {
 
     @Mapping(from = VmAffinity.class, to = MigrationSupport.class)
     public static MigrationSupport map(VmAffinity vmAffinity, MigrationSupport template) {
-        if(vmAffinity!=null){
+        if (vmAffinity != null) {
             switch (vmAffinity) {
             case MIGRATABLE:
                 return MigrationSupport.MIGRATABLE;
@@ -647,7 +647,7 @@ public class VmBaseMapper {
 
     @Mapping(from = MigrationSupport.class, to = VmAffinity.class)
     public static VmAffinity map(MigrationSupport migrationSupport, VmAffinity template) {
-        if(migrationSupport!=null){
+        if (migrationSupport != null) {
             switch (migrationSupport) {
             case MIGRATABLE:
                 return VmAffinity.MIGRATABLE;
@@ -713,12 +713,12 @@ public class VmBaseMapper {
      * Maps the stringified CPU-pinning to the API format.
      */
     static CpuTune stringToCpuTune(String cpuPinning) {
-        if(StringUtils.isEmpty(cpuPinning)) {
+        if (StringUtils.isEmpty(cpuPinning)) {
             return null;
         }
         final CpuTune cpuTune = new CpuTune();
         VcpuPins pins = new VcpuPins();
-        for(String strCpu : cpuPinning.split("_")) {
+        for (String strCpu : cpuPinning.split("_")) {
             VcpuPin pin = stringToVCpupin(strCpu);
             pins.getVcpuPins().add(pin);
         }

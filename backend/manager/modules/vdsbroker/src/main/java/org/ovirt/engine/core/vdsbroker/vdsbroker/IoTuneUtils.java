@@ -22,8 +22,8 @@ public class IoTuneUtils {
 
         ioTuneMap.put(VdsProperties.TotalBytesSec, convertThroughput(storageQos.getMaxThroughput()));
         ioTuneMap.put(VdsProperties.TotalIopsSec, convertIops(storageQos.getMaxIops()));
-        ioTuneMap.put(VdsProperties.ReadBytesSec,  convertThroughput(storageQos.getMaxReadThroughput()));
-        ioTuneMap.put(VdsProperties.ReadIopsSec,  convertIops(storageQos.getMaxReadIops()));
+        ioTuneMap.put(VdsProperties.ReadBytesSec, convertThroughput(storageQos.getMaxReadThroughput()));
+        ioTuneMap.put(VdsProperties.ReadIopsSec, convertIops(storageQos.getMaxReadIops()));
         ioTuneMap.put(VdsProperties.WriteBytesSec, convertThroughput(storageQos.getMaxWriteThroughput()));
         ioTuneMap.put(VdsProperties.WriteIopsSec, convertIops(storageQos.getMaxWriteIops()));
 

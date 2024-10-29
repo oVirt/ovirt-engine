@@ -910,7 +910,7 @@ public class VolumeBrickListModel extends SearchableListModel<GlusterVolumeEntit
         cModel.setHelpTag(HelpTag.volume_remove_bricks_status);
         cModel.setHashName("volume_remove_bricks_status"); ////$NON-NLS-1$
 
-        UICommand removeBrickStatusOk = new UICommand("CancelConfirmation", VolumeBrickListModel.this);//$NON-NLS-1$
+        UICommand removeBrickStatusOk = new UICommand("CancelConfirmation", VolumeBrickListModel.this); //$NON-NLS-1$
         removeBrickStatusOk.setTitle(ConstantsManager.getInstance().getConstants().ok());
         removeBrickStatusOk.setIsCancel(true);
         cModel.startProgress(ConstantsManager.getInstance().getConstants().fetchingDataMessage());
@@ -918,19 +918,19 @@ public class VolumeBrickListModel extends SearchableListModel<GlusterVolumeEntit
         cModel.setTitle(ConstantsManager.getInstance().getConstants().removeBricksStatusTitle());
         setConfirmWindow(cModel);
 
-        final UICommand stopRemoveBrickFromStatus = new UICommand("StopRemoveBricksOnStatus", this);//$NON-NLS-1$
+        final UICommand stopRemoveBrickFromStatus = new UICommand("StopRemoveBricksOnStatus", this); //$NON-NLS-1$
         stopRemoveBrickFromStatus.setTitle(ConstantsManager.getInstance().getConstants().stopRemoveBricksButton());
         stopRemoveBrickFromStatus.setIsExecutionAllowed(false);
 
-        final UICommand commitRemoveBrickFromStatus = new UICommand("CommitRemoveBricksOnStatus", this);//$NON-NLS-1$
+        final UICommand commitRemoveBrickFromStatus = new UICommand("CommitRemoveBricksOnStatus", this); //$NON-NLS-1$
         commitRemoveBrickFromStatus.setTitle(ConstantsManager.getInstance().getConstants().commitRemoveBricksButton());
         commitRemoveBrickFromStatus.setIsExecutionAllowed(false);
 
-        final UICommand retainBricksFromStatus = new UICommand("RetainBricksOnStatus", this);//$NON-NLS-1$
+        final UICommand retainBricksFromStatus = new UICommand("RetainBricksOnStatus", this); //$NON-NLS-1$
         retainBricksFromStatus.setTitle(ConstantsManager.getInstance().getConstants().retainBricksButton());
         retainBricksFromStatus.setIsExecutionAllowed(false);
 
-        final UICommand cancelCommand = new UICommand("CancelRemoveBricksStatus", this);//$NON-NLS-1$
+        final UICommand cancelCommand = new UICommand("CancelRemoveBricksStatus", this); //$NON-NLS-1$
         cancelCommand.setTitle(ConstantsManager.getInstance().getConstants().close());
         cancelCommand.setIsCancel(true);
 
@@ -1305,7 +1305,7 @@ public class VolumeBrickListModel extends SearchableListModel<GlusterVolumeEntit
             replaceBrick();
         } else if (command.getName().equals("OnReplace")) { //$NON-NLS-1$
             onReplaceBrick();
-        }  else if (command.equals(getBrickAdvancedDetailsCommand())) {
+        } else if (command.equals(getBrickAdvancedDetailsCommand())) {
             showBrickAdvancedDetails();
         } else if (command.equals(getResetBrickCommand())) {
             resetBrick();

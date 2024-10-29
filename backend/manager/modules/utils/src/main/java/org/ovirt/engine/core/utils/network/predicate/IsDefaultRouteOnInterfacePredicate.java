@@ -24,6 +24,6 @@ public final class IsDefaultRouteOnInterfacePredicate implements Predicate<VdsNe
     }
 
     private boolean hasIpv6Gateway(VdsNetworkInterface iface) {
-        return iface!= null && !ipUnspecifiedPredicate().test(iface.getIpv6Gateway());
+        return iface != null && !ipUnspecifiedPredicate().test(iface.getIpv6Gateway());
     }
 }

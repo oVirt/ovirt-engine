@@ -88,11 +88,11 @@ public class ExternalRegistrationConfigurationMapper {
         ExternalVnicProfileMapping m = new ExternalVnicProfileMapping(
                 regMapping.getFrom().getNetwork().getName(),
                 regMapping.getFrom().getName());
-        if(isSetToId(regMapping)) {
+        if (isSetToId(regMapping)) {
             try {
                 Guid targetId = asGuid(regMapping.getTo().getId());
                 m.setTargetProfileId(targetId);
-            } catch (Exception e){
+            } catch (Exception e) {
                 //bad id - ignore
             }
         }

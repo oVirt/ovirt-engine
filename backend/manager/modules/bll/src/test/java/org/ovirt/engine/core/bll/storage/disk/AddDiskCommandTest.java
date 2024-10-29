@@ -897,8 +897,8 @@ public class AddDiskCommandTest extends BaseCommandTest {
         mockEntities(storageId);
 
         Guid quotaId = Guid.newGuid();
-        ((DiskImage)command.getParameters().getDiskInfo()).setSize(1);
-        ((DiskImage)command.getParameters().getDiskInfo()).setQuotaId(quotaId);
+        ((DiskImage) command.getParameters().getDiskInfo()).setSize(1);
+        ((DiskImage) command.getParameters().getDiskInfo()).setQuotaId(quotaId);
 
         doReturn(ValidationResult.VALID).when(quotaValidator).isValid();
         doReturn(ValidationResult.VALID).when(quotaValidator).isDefinedForStoragePool(any(Guid.class));
@@ -927,7 +927,7 @@ public class AddDiskCommandTest extends BaseCommandTest {
                 command, EngineMessage.ACTION_TYPE_FAILED_PASS_DISCARD_NOT_SUPPORTED_BY_DISK_INTERFACE);
     }
 
-    private void clearValidationMessages(){
+    private void clearValidationMessages() {
         command.getReturnValue()
         .getValidationMessages()
         .clear();

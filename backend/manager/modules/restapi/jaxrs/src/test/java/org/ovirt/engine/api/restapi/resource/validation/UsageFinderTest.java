@@ -60,7 +60,7 @@ public class UsageFinderTest {
         return requestMock;
     }
 
-    private UriInfo mockUri(String...strings) {
+    private UriInfo mockUri(String... strings) {
         UriInfo uriInfoMock = mock(UriInfo.class);
         List<PathSegment> pathSegments = new ArrayList<>();
         for (String s : strings) {

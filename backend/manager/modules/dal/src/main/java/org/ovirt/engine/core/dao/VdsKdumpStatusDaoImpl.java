@@ -12,7 +12,7 @@ import org.springframework.jdbc.core.RowMapper;
 
 @Named
 @Singleton
-public class VdsKdumpStatusDaoImpl  extends BaseDao implements VdsKdumpStatusDao {
+public class VdsKdumpStatusDaoImpl extends BaseDao implements VdsKdumpStatusDao {
     private static RowMapper<VdsKdumpStatus> vdsKdumpStatusMapper = (rs, rowNum) -> {
         VdsKdumpStatus entity = new VdsKdumpStatus();
         entity.setVdsId(Guid.createGuidFromStringDefaultEmpty(rs.getString("vds_id")));
@@ -22,7 +22,7 @@ public class VdsKdumpStatusDaoImpl  extends BaseDao implements VdsKdumpStatusDao
     };
 
     @Override
-    public void update(VdsKdumpStatus vdsKdumpStatus){
+    public void update(VdsKdumpStatus vdsKdumpStatus) {
         getCallsHandler().executeModification(
                 "UpsertKdumpStatus",
                 getCustomMapSqlParameterSource()
@@ -40,7 +40,7 @@ public class VdsKdumpStatusDaoImpl  extends BaseDao implements VdsKdumpStatusDao
      * @param vdsKdumpStatus
      *            updated kdump status
      */
-    public void updateForIp(String ip, VdsKdumpStatus vdsKdumpStatus){
+    public void updateForIp(String ip, VdsKdumpStatus vdsKdumpStatus) {
         getCallsHandler().executeModification(
                 "UpsertKdumpStatusForIp",
                 getCustomMapSqlParameterSource()
@@ -70,7 +70,7 @@ public class VdsKdumpStatusDaoImpl  extends BaseDao implements VdsKdumpStatusDao
     }
 
     @Override
-    public List<VdsKdumpStatus> getAllUnfinishedVdsKdumpStatus(){
+    public List<VdsKdumpStatus> getAllUnfinishedVdsKdumpStatus() {
         return getCallsHandler().executeReadList(
                 "GetAllUnfinishedVdsKdumpStatus",
                 vdsKdumpStatusMapper,

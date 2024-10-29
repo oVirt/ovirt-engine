@@ -39,7 +39,7 @@ public class RemoveMacPoolCommand extends MacPoolCommandBase<RemoveMacPoolByIdPa
 
     @Override
     protected void executeCommand() {
-        registerRollbackHandler((TransactionRollbackListener)() -> macPoolPerCluster.createPool(getOldMacPool()));
+        registerRollbackHandler((TransactionRollbackListener) () -> macPoolPerCluster.createPool(getOldMacPool()));
 
         macPoolDao.remove(getMacPoolId());
         macPoolPerCluster.removePool(getMacPoolId());

@@ -151,7 +151,7 @@ public class BaseConditionFieldAutoCompleter extends BaseAutoCompleter implement
             boolean caseSensitive) {
         String val;
         if (!StringHelper.isNullOrEmpty(value) && !"''".equals(value)) {
-            val= StringFormat.format(getI18NPrefix() + "'%%%1$s%%'", StringHelper.trim(value, '\''));
+            val = StringFormat.format(getI18NPrefix() + "'%%%1$s%%'", StringHelper.trim(value, '\''));
         } else {
             val = value;
         }
@@ -208,7 +208,7 @@ public class BaseConditionFieldAutoCompleter extends BaseAutoCompleter implement
             new BigDecimal(value); // No assignment, we just want to create a new instance and to see if there's an
                                    // Exception
             return true;
-        } catch(NumberFormatException e) {
+        } catch (NumberFormatException e) {
             return false;
         }
     };

@@ -7,7 +7,7 @@ public class StorageFormatMapper {
 
     @Mapping(from = StorageFormatType.class, to = StorageFormat.class)
     public static StorageFormat map(StorageFormatType model, StorageFormat template) {
-        if (model==null) {
+        if (model == null) {
             return null;
         }
         switch (model) {
@@ -29,7 +29,7 @@ public class StorageFormatMapper {
 
     @Mapping(from = StorageFormat.class, to = StorageFormatType.class)
     public static StorageFormatType map(StorageFormat model, StorageFormatType template) {
-        if (model==null) {
+        if (model == null) {
             return null;
         }
         switch (model) {

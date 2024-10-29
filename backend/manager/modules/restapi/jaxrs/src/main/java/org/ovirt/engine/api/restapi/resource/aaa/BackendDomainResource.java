@@ -43,7 +43,7 @@ implements DomainResource {
 
     @Override
     protected Domain addParents(Domain domain) {
-        if(parent!=null){
+        if (parent != null) {
             assignChildModel(domain, Domain.class).setId(id);
         }
         return domain;

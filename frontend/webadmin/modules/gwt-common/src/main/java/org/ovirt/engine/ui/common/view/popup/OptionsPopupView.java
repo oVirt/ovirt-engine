@@ -115,7 +115,7 @@ public class OptionsPopupView extends AbstractModelBoundPopupView<EditOptionsMod
         localStoragePersistedOnServerCheckBox = new EntityModelCheckBoxEditor(Align.RIGHT);
         confirmSuspendingVmCheckBox = new EntityModelCheckBoxEditor(Align.RIGHT);
         isHomePageCustom = new EntityModelRadioButtonEditor("homePage", Align.RIGHT); // $NON-NLS-1$
-        isHomePageDefault = new EntityModelRadioButtonEditor("homePage", Align.RIGHT);// $NON-NLS-1$
+        isHomePageDefault = new EntityModelRadioButtonEditor("homePage", Align.RIGHT); // $NON-NLS-1$
 
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         ViewIdHandler.idHandler.generateAndSetIds(this);

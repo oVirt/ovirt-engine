@@ -453,7 +453,7 @@ public class Cluster implements Queryable, BusinessEntity<Guid>, HasStoragePool,
         this.hasHostWithMissingCpuFlags = hasHostWithMissingCpuFlags;
     }
 
-    public boolean isInUpgradeMode(){
+    public boolean isInUpgradeMode() {
         return ClusterPolicy.UPGRADE_POLICY_GUID.equals(clusterPolicyId);
     }
 

@@ -36,7 +36,7 @@ public class EngineLocalConfig extends ShellLikeConfd {
             instance = new EngineLocalConfig(values);
         } else {
             if (instance == null) {
-                synchronized(EngineLocalConfig.class) {
+                synchronized (EngineLocalConfig.class) {
                     if (instance == null) {
                         instance = new EngineLocalConfig();
                     }
@@ -47,7 +47,7 @@ public class EngineLocalConfig extends ShellLikeConfd {
     }
 
     public static void clearInstance() {
-        synchronized(EngineLocalConfig.class) {
+        synchronized (EngineLocalConfig.class) {
             instance = null;
         }
     }
@@ -156,7 +156,7 @@ public class EngineLocalConfig extends ShellLikeConfd {
      * enabled or the engine HTTP port otherwise.
      */
     public int getExternalHttpPort () {
-        return isProxyEnabled()? getProxyHttpPort(): getHttpPort();
+        return isProxyEnabled() ? getProxyHttpPort() : getHttpPort();
     }
 
     /**
@@ -165,7 +165,7 @@ public class EngineLocalConfig extends ShellLikeConfd {
      * enabled or the engine HTTPS port otherwise.
      */
     public int getExternalHttpsPort () {
-        return isProxyEnabled()? getProxyHttpsPort(): getHttpsPort();
+        return isProxyEnabled() ? getProxyHttpsPort() : getHttpsPort();
     }
 
     /**
@@ -264,11 +264,11 @@ public class EngineLocalConfig extends ShellLikeConfd {
         return getProperty("ENGINE_PKI_ENGINE_STORE_ALIAS");
     }
 
-    public File getEngineUpMark(){
+    public File getEngineUpMark() {
         return getFile("ENGINE_UP_MARK");
     }
 
-    public String getEngineURI(){
+    public String getEngineURI() {
         return getProperty("ENGINE_URI");
     }
 

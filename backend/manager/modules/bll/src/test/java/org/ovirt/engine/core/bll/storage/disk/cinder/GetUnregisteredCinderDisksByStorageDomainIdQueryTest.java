@@ -79,7 +79,7 @@ public class GetUnregisteredCinderDisksByStorageDomainIdQueryTest
         assertDiskFromVolume(volumes.get(2), result.get(1));
     }
 
-    private void assertDiskFromVolume(Volume volume, CinderDisk  disk) {
+    private void assertDiskFromVolume(Volume volume, CinderDisk disk) {
         assertEquals(volume.getId(), disk.getId().toString());
         assertEquals(volume.getName(), disk.getDiskAlias());
         assertEquals(volume.getSize().intValue(), disk.getSizeInGigabytes());

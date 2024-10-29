@@ -101,31 +101,31 @@ public abstract class StorageHandlingCommandBase<T extends StoragePoolParameters
     private AuditLogDirector auditLogDirector;
 
     @Inject
-    private  MacPoolPerCluster macPoolPerCluster;
+    private MacPoolPerCluster macPoolPerCluster;
     @Inject
-    private  SnapshotsValidator snapshotsValidator;
+    private SnapshotsValidator snapshotsValidator;
     @Inject
-    private  VdsDao vdsDao;
+    private VdsDao vdsDao;
     @Inject
-    private  StoragePoolDao storagePoolDao;
+    private StoragePoolDao storagePoolDao;
     @Inject
-    private  StorageDomainDao storageDomainDao;
+    private StorageDomainDao storageDomainDao;
     @Inject
     protected VmTemplateDao vmTemplateDao;
     @Inject
-    private  DiskImageDao diskImageDao;
+    private DiskImageDao diskImageDao;
     @Inject
-    private  UnregisteredOVFDataDao unregisteredOVFDataDao;
+    private UnregisteredOVFDataDao unregisteredOVFDataDao;
     @Inject
     protected VmNicDao vmNicDao;
     @Inject
-    private  StorageDomainOvfInfoDao storageDomainOvfInfoDao;
+    private StorageDomainOvfInfoDao storageDomainOvfInfoDao;
     @Inject
-    private  StorageDomainStaticDao storageDomainStaticDao;
+    private StorageDomainStaticDao storageDomainStaticDao;
     @Inject
     private StoragePoolIsoMapDao storagePoolIsoMapDao;
     @Inject
-    private  UnregisteredDisksDao unregisteredDisksDao;
+    private UnregisteredDisksDao unregisteredDisksDao;
     @Inject
     private VmDao vmDao;
     @Inject
@@ -518,7 +518,7 @@ public abstract class StorageHandlingCommandBase<T extends StoragePoolParameters
                 size = Long.valueOf(diskDescriptionMap.get(OvfInfoFileConstants.Size).toString());
             }
         }
-        return new Pair<>((DiskImage)ovfDisk, size);
+        return new Pair<>((DiskImage) ovfDisk, size);
     }
 
     protected List<OvfEntityData> getEntitiesFromStorageOvfDisk(Guid storageDomainId, Guid storagePoolId) {

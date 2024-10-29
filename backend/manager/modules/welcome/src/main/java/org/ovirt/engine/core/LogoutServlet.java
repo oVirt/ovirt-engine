@@ -26,7 +26,7 @@ public class LogoutServlet extends HttpServlet {
         String errorDescription = null;
         String error = null;
         try {
-            Map<String, Object> revokeResponse =  SsoOAuthServiceUtils.revoke(
+            Map<String, Object> revokeResponse = SsoOAuthServiceUtils.revoke(
                     (String) request.getSession(true).getAttribute(WelcomeUtils.TOKEN));
             errorDescription = (String) revokeResponse.get(WelcomeUtils.ERROR_DESCRIPTION);
             error = (String) revokeResponse.get(WelcomeUtils.ERROR);

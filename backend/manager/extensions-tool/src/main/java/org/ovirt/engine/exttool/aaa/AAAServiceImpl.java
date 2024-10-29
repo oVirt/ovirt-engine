@@ -91,7 +91,7 @@ public class AAAServiceImpl implements ModuleService {
                             module.argMap.get("user-name")
                         ).mput(
                             Authn.InvokeKeys.CREDENTIALS,
-                            getPassword((String)module.argMap.get("password"))
+                            getPassword((String) module.argMap.get("password"))
                         )
                     );
                     log.info(
@@ -113,13 +113,13 @@ public class AAAServiceImpl implements ModuleService {
         ),
         CHANGE_CREDENTIALS(
                 module -> {
-                    AAAProfile aaaprofile = module.new AAAProfile((String)module.argMap.get("profile"));
+                    AAAProfile aaaprofile = module.new AAAProfile((String) module.argMap.get("profile"));
                     if ((aaaprofile.getAuthnExtension().getContext().<Long>get(Authn.ContextKeys.CAPABILITIES, 0L) & Authn.Capabilities.CREDENTIALS_CHANGE) == 0 &&
-                            !(Boolean)module.argMap.get("ignore-capabilities")) {
+                            !(Boolean) module.argMap.get("ignore-capabilities")) {
                         throw new IllegalArgumentException("Unsupported operation: CREDENTIALS_CHANGE");
                     }
 
-                    String user = aaaprofile.mapUser((String)module.argMap.get("user-name"));
+                    String user = aaaprofile.mapUser((String) module.argMap.get("user-name"));
                     log.info("API: -->Authn.InvokeCommands.CREDENTIALS_CHANGES profile='{}' user='{}'", aaaprofile.getProfile(), user);
                     ExtMap outMap = aaaprofile.getAuthnExtension().invoke(
                             new ExtMap().mput(
@@ -130,10 +130,10 @@ public class AAAServiceImpl implements ModuleService {
                                     user
                             ).mput(
                                     Authn.InvokeKeys.CREDENTIALS,
-                                    getPassword((String)module.argMap.get("password"))
+                                    getPassword((String) module.argMap.get("password"))
                             ).mput(
                                     Authn.InvokeKeys.CREDENTIALS_NEW,
-                                    getPassword((String)module.argMap.get("password-new"), "New password: ")
+                                    getPassword((String) module.argMap.get("password-new"), "New password: ")
                             )
                     );
                     log.info(
@@ -151,8 +151,8 @@ public class AAAServiceImpl implements ModuleService {
         ),
         LOGIN_USER(
                 module -> {
-                    AAAProfile aaaprofile = module.new AAAProfile((String)module.argMap.get("profile"));
-                    String user = aaaprofile.mapUser((String)module.argMap.get("user-name"));
+                    AAAProfile aaaprofile = module.new AAAProfile((String) module.argMap.get("profile"));
+                    String user = aaaprofile.mapUser((String) module.argMap.get("user-name"));
                     log.info("API: -->Authn.InvokeCommands.AUTHENTICATE_CREDENTIALS profile='{}' user='{}'", aaaprofile.getProfile(), user);
                     ExtMap outMap = aaaprofile.getAuthnExtension().invoke(
                         new ExtMap().mput(
@@ -163,7 +163,7 @@ public class AAAServiceImpl implements ModuleService {
                             user
                         ).mput(
                             Authn.InvokeKeys.CREDENTIALS,
-                            getPassword((String)module.argMap.get("password"))
+                            getPassword((String) module.argMap.get("password"))
                         )
                     );
                     log.info(
@@ -192,7 +192,7 @@ public class AAAServiceImpl implements ModuleService {
                         );
                     }
 
-                    if(aaaprofile.getMappingExtension() != null) {
+                    if (aaaprofile.getMappingExtension() != null) {
                         log.info("API: -->Mapping.InvokeCommands.MAP_AUTH_RECORD");
                         Dump.AUTH_RECORD.dump(module, authRecord);
                         authRecord = aaaprofile.getMappingExtension().invoke(
@@ -302,7 +302,7 @@ public class AAAServiceImpl implements ModuleService {
         SEARCH(
                 module -> {
                     ExtensionProxy authzExtension = module.getExtensionsManager().getExtensionByName((String) module.argMap.get("extension-name"));
-                    ExtUUID entity = getQueryEntity((String)module.argMap.get("entity"));
+                    ExtUUID entity = getQueryEntity((String) module.argMap.get("entity"));
                     ExtMap filter = createQueryFilter(entity, module.argMap);
                     Dump.QUERY_FILTER_RECORD.dump(module, filter, "");
 
@@ -311,7 +311,7 @@ public class AAAServiceImpl implements ModuleService {
                         Collections.<String>emptyList()
                     );
                     if (module.argMap.get("namespace") != null) {
-                        namespaces = (Collection<String>)module.argMap.get("namespace");
+                        namespaces = (Collection<String>) module.argMap.get("namespace");
                     }
 
                     for (String namespace : namespaces) {
@@ -325,7 +325,7 @@ public class AAAServiceImpl implements ModuleService {
                                 entity
                             ).mput(
                                 Authz.InvokeKeys.QUERY_FLAGS,
-                                getAuthzFlags((List<String>)module.argMap.get("authz-flag"))
+                                getAuthzFlags((List<String>) module.argMap.get("authz-flag"))
                             ).mput(
                                 Authz.InvokeKeys.QUERY_FILTER,
                                 filter
@@ -395,12 +395,12 @@ public class AAAServiceImpl implements ModuleService {
             parser.parse(actionArgs);
             Map<String, Object> argMap = parser.getParsedArgs();
 
-            if((Boolean)argMap.get("help")) {
+            if ((Boolean) argMap.get("help")) {
                 System.out.format("Usage: %s", parser.getUsage());
                 throw new ExitException("Help", 0);
             }
-            if(!parser.getErrors().isEmpty()) {
-                for(Throwable t : parser.getErrors()) {
+            if (!parser.getErrors().isEmpty()) {
+                for (Throwable t : parser.getErrors()) {
                     log.error(t.getMessage());
                 }
                 throw new ExitException("Parsing error", 1);
@@ -492,7 +492,7 @@ public class AAAServiceImpl implements ModuleService {
                 Collection<ExtKey> keys = new HashSet<>(extMap.keySet());
                 if (module.argModuleMap.get("key") != null) {
                     Collection<ExtKey> k = new HashSet<>();
-                    for (String uuid : (List<String>)module.argModuleMap.get("key")) {
+                    for (String uuid : (List<String>) module.argModuleMap.get("key")) {
                         k.add(new ExtKey("Unknown", Object.class, uuid));
                     }
                     keys.retainAll(k);
@@ -505,7 +505,7 @@ public class AAAServiceImpl implements ModuleService {
                         continue;
                     }
                     module.output(
-                        ((String)module.argModuleMap.get("format")).replace(
+                        ((String) module.argModuleMap.get("format")).replace(
                             "{key}",
                             key.getUuid().getUuid().toString()
                         ).replace(
@@ -540,7 +540,7 @@ public class AAAServiceImpl implements ModuleService {
     }
 
     private ExtensionsManager getExtensionsManager() {
-        return (ExtensionsManager)context.get(ContextKeys.EXTENSION_MANAGER);
+        return (ExtensionsManager) context.get(ContextKeys.EXTENSION_MANAGER);
     }
 
     private ExtensionProxy getExtensionByProfile(String name) {
@@ -554,7 +554,7 @@ public class AAAServiceImpl implements ModuleService {
     private ExtensionProxy getExtensionByConfigKey(String key, String value) {
         ExtensionProxy ret = null;
 
-        for(ExtensionProxy proxy : getExtensionsManager().getExtensionsByService(Authn.class.getName())) {
+        for (ExtensionProxy proxy : getExtensionsManager().getExtensionsByService(Authn.class.getName())) {
             if (
                 value.equals(
                     proxy.getContext().<Properties>get(
@@ -591,7 +591,7 @@ public class AAAServiceImpl implements ModuleService {
         if ("pass".equals(type)) {
             password = value;
         } else if ("file".equals(type)) {
-            try(
+            try (
                 InputStream is = new FileInputStream(value);
                 Reader reader = new InputStreamReader(is, StandardCharsets.UTF_8);
                 BufferedReader breader = new BufferedReader(reader)
@@ -652,12 +652,12 @@ public class AAAServiceImpl implements ModuleService {
         parser.parse(args);
         argModuleMap = parser.getParsedArgs();
 
-        if((Boolean)argModuleMap.get("help")) {
+        if ((Boolean) argModuleMap.get("help")) {
             System.out.format("Usage: %s", parser.getUsage());
             throw new ExitException("Help", 0);
         }
-        if(!parser.getErrors().isEmpty()) {
-            for(Throwable t : parser.getErrors()) {
+        if (!parser.getErrors().isEmpty()) {
+            for (Throwable t : parser.getErrors()) {
                 log.error(t.getMessage());
             }
             throw new ExitException("Parsing error", 1);
@@ -670,7 +670,7 @@ public class AAAServiceImpl implements ModuleService {
 
         try {
             action = Action.valueOf(args.get(0).toUpperCase().replace("-", "_"));
-        } catch(IllegalArgumentException e) {
+        } catch (IllegalArgumentException e) {
             log.error("Invalid action '{}'", args.get(0));
             throw new ExitException("Invalid action", 1);
         }
@@ -680,7 +680,7 @@ public class AAAServiceImpl implements ModuleService {
 
     @Override
     public void run() throws Exception {
-        int iterations = (Integer)argModuleMap.get("iterations");
+        int iterations = (Integer) argModuleMap.get("iterations");
         for (int i = 0; i < iterations; i++) {
             log.info("Iteration: {}", i);
             action.execute(this);
@@ -699,7 +699,7 @@ public class AAAServiceImpl implements ModuleService {
             );
         }
 
-        for (String id : safeList((List<String>)argMap.get("entity-id"))) {
+        for (String id : safeList((List<String>) argMap.get("entity-id"))) {
             filter.add(
                 createQueryFilterElement(
                     Authz.QueryEntity.GROUP.equals(entity) ? Authz.GroupRecord.ID : Authz.PrincipalRecord.ID,
@@ -733,7 +733,7 @@ public class AAAServiceImpl implements ModuleService {
         );
     }
 
-    private static ExtUUID getQueryEntity(String entity)  {
+    private static ExtUUID getQueryEntity(String entity) {
         try {
             return (ExtUUID) Authz.QueryEntity.class.getDeclaredField(
                 entity.toUpperCase()
@@ -748,7 +748,7 @@ public class AAAServiceImpl implements ModuleService {
         for (String f : safeList(flags)) {
             try {
                 ret |= Authz.QueryFlags.class.getDeclaredField(f.toUpperCase().replace("-", "_")).getInt(new Authz.QueryFlags());
-            } catch(NoSuchFieldException | IllegalAccessException ex) {
+            } catch (NoSuchFieldException | IllegalAccessException ex) {
                 log.error("Unknown Authz flag '{}' (ignored)", f);
             }
         }
@@ -842,7 +842,7 @@ public class AAAServiceImpl implements ModuleService {
             this.authnName = this.authnExtension.getContext().get(Base.ContextKeys.INSTANCE_NAME);
 
             this.authzExtension = getExtensionsManager().getExtensionByName(authzName);
-            if(this.mappingName != null) {
+            if (this.mappingName != null) {
                 this.mappingExtension = getExtensionsManager().getExtensionByName(mappingName);
             }
 
@@ -856,7 +856,7 @@ public class AAAServiceImpl implements ModuleService {
         }
 
         public String mapUser(String user) {
-            if(getMappingExtension()!= null) {
+            if (getMappingExtension() != null) {
                 log.info("API: -->Mapping.InvokeCommands.MAP_USER profile='{}' user='{}'", getProfile(), user);
                 user = getMappingExtension().invoke(
                         new ExtMap().mput(

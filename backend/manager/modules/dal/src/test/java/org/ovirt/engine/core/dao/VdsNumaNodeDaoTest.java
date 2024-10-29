@@ -44,7 +44,7 @@ public class VdsNumaNodeDaoTest extends BaseDaoTestCase<VdsNumaNodeDao> {
         assertEquals(0, result.size());
 
         List<VdsNumaNode> newVdsNode = new ArrayList<>();
-        VdsNumaNode newVdsNumaNode= new VdsNumaNode();
+        VdsNumaNode newVdsNumaNode = new VdsNumaNode();
         newVdsNumaNode.setCpuIds(generateCpuList(0, 4));
         newVdsNumaNode.setId(Guid.newGuid());
         newVdsNumaNode.setIndex(0);
@@ -52,7 +52,7 @@ public class VdsNumaNodeDaoTest extends BaseDaoTestCase<VdsNumaNodeDao> {
         newVdsNumaNode.setNumaNodeStatistics(newNodeStatistics);
         newVdsNode.add(newVdsNumaNode);
 
-        newVdsNumaNode= new VdsNumaNode();
+        newVdsNumaNode = new VdsNumaNode();
         newVdsNumaNode.setCpuIds(generateCpuList(4, 4));
         newVdsNumaNode.setId(Guid.newGuid());
         newVdsNumaNode.setIndex(1);

@@ -163,7 +163,7 @@ public class BackendGlusterHookResourceTest extends AbstractBackendSubResourceTe
                     new String[] { "HookId", "IncludeServerHooks" },
                     new Object[] { hookId , true},
                     notFound ? null : getEntity(0));
-            if(!notFound) {
+            if (!notFound) {
                 setUpEntityQueryExpectations(QueryType.GetGlusterHookContent,
                         GlusterHookContentQueryParameters.class,
                         new String[] { "GlusterHookId"},

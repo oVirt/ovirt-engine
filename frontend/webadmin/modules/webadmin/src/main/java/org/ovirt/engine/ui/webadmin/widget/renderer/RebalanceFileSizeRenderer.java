@@ -16,12 +16,12 @@ public class RebalanceFileSizeRenderer<T extends Number> extends AbstractRendere
 
     @Override
     public String render(T size) {
-        Pair<SizeUnit, Double>  sizePair = SizeConverter.autoConvert(size.longValue(), SizeUnit.BYTES);
+        Pair<SizeUnit, Double> sizePair = SizeConverter.autoConvert(size.longValue(), SizeUnit.BYTES);
         return messages.sizeUnitString(formatSize(sizePair.getSecond()),
                 EnumTranslator.getInstance().translate(sizePair.getFirst()));
     }
 
     public String formatSize(double size) {
-        return NumberFormat.getFormat("#.##").format(size);//$NON-NLS-1$
+        return NumberFormat.getFormat("#.##").format(size); //$NON-NLS-1$
     }
 }

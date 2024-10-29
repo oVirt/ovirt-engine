@@ -13,7 +13,7 @@ import org.ovirt.engine.core.dao.StoragePoolDao;
  * Class which encapsulates logic of figuring out macPoolId for data center based on pools used by data centers
  * clusters.
  */
-public abstract class StoragePoolQueryBase<P extends QueryParametersBase>  extends QueriesCommandBase<P> {
+public abstract class StoragePoolQueryBase<P extends QueryParametersBase> extends QueriesCommandBase<P> {
 
     @Inject
     protected StoragePoolDao storagePoolDao;
@@ -39,7 +39,7 @@ public abstract class StoragePoolQueryBase<P extends QueryParametersBase>  exten
         }
 
         if (dataCenterQueryResult instanceof StoragePool) {
-            dataCenterQueryResult((StoragePool)dataCenterQueryResult);
+            dataCenterQueryResult((StoragePool) dataCenterQueryResult);
             return;
         }
 

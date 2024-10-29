@@ -17,7 +17,7 @@ import org.ovirt.engine.core.compat.Guid;
 
 public class BackendMacPoolsResource
         extends AbstractBackendCollectionResource<MacPool, org.ovirt.engine.core.common.businessentities.MacPool>
-        implements MacPoolsResource{
+        implements MacPoolsResource {
 
     public BackendMacPoolsResource() {
         super(MacPool.class, org.ovirt.engine.core.common.businessentities.MacPool.class);

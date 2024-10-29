@@ -135,7 +135,7 @@ public class FakeDataGenerator {
     private static void createFakeUtilization(Utilization utilization, Random random) {
         int sendValues = random.nextInt(10);
         if (sendValues > 1) {
-            for(int i = 0; i < random.nextInt(10) + 1; i++) {
+            for (int i = 0; i < random.nextInt(10) + 1; i++) {
                 UtilizedEntity host = new UtilizedEntity();
                 if (utilization instanceof ResourceUtilization) {
                     host.setName("fake_host_" + i); //$NON-NLS-1$
@@ -150,7 +150,7 @@ public class FakeDataGenerator {
         }
         sendValues = random.nextInt(10);
         if (sendValues > 1) {
-            for(int i = 0; i < random.nextInt(10) + 1; i++) {
+            for (int i = 0; i < random.nextInt(10) + 1; i++) {
                 UtilizedEntity vm = new UtilizedEntity();
                 vm.setName("fake_vm" + i); //$NON-NLS-1$
                 vm.setTotal(random.nextDouble() * 100 + 1);

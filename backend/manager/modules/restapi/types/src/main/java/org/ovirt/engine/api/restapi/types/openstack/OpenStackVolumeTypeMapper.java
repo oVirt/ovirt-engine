@@ -13,7 +13,7 @@ import org.ovirt.engine.core.common.businessentities.storage.CinderVolumeType;
 public class OpenStackVolumeTypeMapper {
     @Mapping(from = CinderVolumeType.class, to = OpenStackVolumeType.class)
     public static OpenStackVolumeType map(CinderVolumeType entity, OpenStackVolumeType template) {
-        OpenStackVolumeType model = template != null ? template: new OpenStackVolumeType();
+        OpenStackVolumeType model = template != null ? template : new OpenStackVolumeType();
         if (entity.getId() != null) {
             model.setId(entity.getId());
         }
@@ -28,7 +28,7 @@ public class OpenStackVolumeTypeMapper {
 
     @Mapping(from = OpenStackVolumeType.class, to = CinderVolumeType.class)
     public static CinderVolumeType map(OpenStackVolumeType model, CinderVolumeType template) {
-        CinderVolumeType entity = template != null ? template: new CinderVolumeType();
+        CinderVolumeType entity = template != null ? template : new CinderVolumeType();
         if (model.isSetId()) {
             entity.setId(model.getId());
         }

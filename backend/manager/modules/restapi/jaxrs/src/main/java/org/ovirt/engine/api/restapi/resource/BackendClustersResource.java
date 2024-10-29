@@ -153,7 +153,7 @@ public class BackendClustersResource extends AbstractBackendCollectionResource<o
 
     @Override
     public void follow(ActionableResource entity, LinksTreeNode linksTree) {
-        Clusters clusters = (Clusters)entity;
+        Clusters clusters = (Clusters) entity;
         for (org.ovirt.engine.api.model.Cluster cluster : clusters.getClusters()) {
             BackendClusterResource.removeGlusterVolumesFromFollowTree(linksTree, cluster);
         }

@@ -27,7 +27,7 @@ public abstract class AddProfileCommandBase<T extends ProfileParametersBase<P>, 
         getProfileDao().save(getParameters().getProfile());
         getReturnValue().setActionReturnValue(getParameters().getProfile().getId());
 
-        if(getParameters().isAddPermissions()) {
+        if (getParameters().isAddPermissions()) {
             addPermissions();
         }
 

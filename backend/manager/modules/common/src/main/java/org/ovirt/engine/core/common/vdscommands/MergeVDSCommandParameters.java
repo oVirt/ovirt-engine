@@ -15,7 +15,7 @@ public class MergeVDSCommandParameters extends VdsAndVmIDVDSParametersBase {
     private Guid topImageId;
     private long bandwidth;
 
-    private MergeVDSCommandParameters() {}
+    private MergeVDSCommandParameters() { }
 
     public MergeVDSCommandParameters(
             Guid vdsId,

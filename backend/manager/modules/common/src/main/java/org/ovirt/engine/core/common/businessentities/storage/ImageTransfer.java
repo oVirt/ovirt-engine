@@ -42,7 +42,7 @@ public class ImageTransfer implements BusinessEntity<Guid>, Queryable {
         this.commandId = commandId;
     }
 
-    public ImageTransfer() {}
+    public ImageTransfer() { }
 
     public Guid getId() {
         return commandId;

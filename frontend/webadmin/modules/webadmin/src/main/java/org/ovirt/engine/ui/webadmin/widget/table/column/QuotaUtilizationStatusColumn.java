@@ -20,9 +20,9 @@ public class QuotaUtilizationStatusColumn<Queryable> extends AbstractImageResour
     public ImageResource getValue(Queryable quota) {
         boolean quotaExceeded = false;
         if (quota instanceof QuotaStorage) {
-            quotaExceeded = getQuotaExceeded((QuotaStorage)quota);
+            quotaExceeded = getQuotaExceeded((QuotaStorage) quota);
         } else if (quota instanceof QuotaCluster) {
-            quotaExceeded = getQuotaExceeded((QuotaCluster)quota);
+            quotaExceeded = getQuotaExceeded((QuotaCluster) quota);
         } else {
             return null;
         }
@@ -34,9 +34,9 @@ public class QuotaUtilizationStatusColumn<Queryable> extends AbstractImageResour
     public SafeHtml getTooltip(Queryable quota) {
         boolean quotaExceeded = false;
         if (quota instanceof QuotaStorage) {
-            quotaExceeded = getQuotaExceeded((QuotaStorage)quota);
+            quotaExceeded = getQuotaExceeded((QuotaStorage) quota);
         } else if (quota instanceof QuotaCluster) {
-            quotaExceeded = getQuotaExceeded((QuotaCluster)quota);
+            quotaExceeded = getQuotaExceeded((QuotaCluster) quota);
         }
 
         if (quotaExceeded) {

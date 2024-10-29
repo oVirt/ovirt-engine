@@ -74,7 +74,7 @@ public class PopupUtils {
             top += relativeHeight;
         } else if (distanceFromWindowTop >= popup.getOffsetHeight()) {
             top -= popup.getOffsetHeight() - itemHeight;
-        } else {// Position above the relative object and add scroll
+        } else { // Position above the relative object and add scroll
             top += relativeHeight;
             style.setHeight(distanceToWindowBottom, Unit.PX);
             style.setOverflowY(Overflow.SCROLL);
@@ -133,7 +133,7 @@ public class PopupUtils {
                     // Align with the left edge of the relative object.
                     left = relativeTarget;
                 }
-            }else{
+            } else {
                 style.setWidth(relativeWidth, Unit.PX);
             }
         } else { // LTR case
@@ -169,7 +169,7 @@ public class PopupUtils {
                     left -= offsetWidthDiff;
 
                 }
-            }else{
+            } else {
                 style.setWidth(relativeWidth, Unit.PX);
             }
         }

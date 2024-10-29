@@ -112,7 +112,7 @@ public class ConvertVmVDSParameters extends VdsIdVDSCommandParametersBase {
                 .append("storagePoolId", getStoragePoolId())
                 .append("virtioIsoPath", getVirtioIsoPath())
                 .append("compatVersion", getCompatVersion());
-        for (int i=0; i<getDisks().size(); ++i) {
+        for (int i = 0; i < getDisks().size(); ++i) {
             builder.append(String.format("Disk%d", i), getDisks().get(i).getId());
         }
         return builder;

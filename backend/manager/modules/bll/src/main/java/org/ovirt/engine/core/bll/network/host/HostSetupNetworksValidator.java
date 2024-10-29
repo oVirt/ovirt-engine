@@ -181,15 +181,15 @@ public class HostSetupNetworksValidator {
         Map<String, VdsNetworkInterface> hostInterfacesByNetworkName =
                 NetworkUtils.hostInterfacesByNetworkName(existingInterfaces);
 
-        for (NetworkAttachment attachment : attachmentsToConfigure){
-            if (!mustAttachementBeCheckedForBondMode(attachment, hostInterfacesByNetworkName)){
+        for (NetworkAttachment attachment : attachmentsToConfigure) {
+            if (!mustAttachementBeCheckedForBondMode(attachment, hostInterfacesByNetworkName)) {
                 continue;
             }
             CreateOrUpdateBond bondToCheck = createOrUpdateBondBusinessEntityMap.get(attachment.getNicName());
 
-            if (bondToCheck == null){
+            if (bondToCheck == null) {
                 VdsNetworkInterface existingNetworkInterfaceForAttachement = existingInterfacesMap.get(attachment.getNicName());
-                if(existingNetworkInterfaceForAttachement == null || !existingNetworkInterfaceForAttachement.isBond()){
+                if (existingNetworkInterfaceForAttachement == null || !existingNetworkInterfaceForAttachement.isBond()) {
                     continue;
                 }
                 bondToCheck = CreateOrUpdateBond.fromBond((Bond) existingNetworkInterfaceForAttachement);
@@ -197,7 +197,7 @@ public class HostSetupNetworksValidator {
 
             String networkLabel = networkBusinessEntityMap.get(attachment.getNetworkName()).getLabel();
             ValidationResult validationResult = checkBondMode(bondToCheck, networkLabel, attachment.getNetworkName());
-            if (!validationResult.isValid()){
+            if (!validationResult.isValid()) {
                 return validationResult;
             }
         }
@@ -205,11 +205,11 @@ public class HostSetupNetworksValidator {
     }
 
     private ValidationResult checkBondMode(CreateOrUpdateBond createOrUpdateBond, String networkLabel, String networkName) {
-        if (BondMode.isBondModeValidForVmNetwork(createOrUpdateBond.getBondOptions())){
+        if (BondMode.isBondModeValidForVmNetwork(createOrUpdateBond.getBondOptions())) {
             return ValidationResult.VALID;
         }
 
-        if (networkLabel != null && isNicToConfigureContainTheLabel(createOrUpdateBond.getName(), networkLabel)){
+        if (networkLabel != null && isNicToConfigureContainTheLabel(createOrUpdateBond.getName(), networkLabel)) {
             return new ValidationResult(EngineMessage.INVALID_BOND_MODE_FOR_BOND_WITH_LABELED_VM_NETWORK,
                     ReplacementUtils.createSetVariableString(VAR_BOND_NAME, createOrUpdateBond.getName()),
                     ReplacementUtils.createSetVariableString(VAR_LABEL, networkLabel),
@@ -222,14 +222,14 @@ public class HostSetupNetworksValidator {
     }
 
     private boolean mustAttachementBeCheckedForBondMode(NetworkAttachment attachment,
-            Map<String, VdsNetworkInterface> hostInterfacesByNetworkName){
+            Map<String, VdsNetworkInterface> hostInterfacesByNetworkName) {
         Network network = networkBusinessEntityMap.get(attachment.getNetworkName());
         String networkName = attachment.getNetworkName();
-        if (!network.isVmNetwork()){
+        if (!network.isVmNetwork()) {
             return false;
         }
         VdsNetworkInterface nic = hostInterfacesByNetworkName.get(networkName);
-        if (nic == null){
+        if (nic == null) {
             return true;
         }
         NetworkImplementationDetails networkImplementationDetails = nic.getNetworkImplementationDetails();

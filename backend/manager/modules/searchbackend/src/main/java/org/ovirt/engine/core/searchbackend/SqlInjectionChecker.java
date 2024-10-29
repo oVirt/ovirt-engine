@@ -61,8 +61,8 @@ public abstract class SqlInjectionChecker {
      * in order to test for injection only on sql keywords and not on values.
      */
     private String removeAllStringValuesFromSql(String sql) {
-        boolean singleQuoteFound=false;
-        boolean doubleQuoteFound=false;
+        boolean singleQuoteFound = false;
+        boolean doubleQuoteFound = false;
         StringBuilder sb = new StringBuilder();
         // replace all occurrences of a quote/s inside a value with an empty string.
         final String[] QUOTES_INSIDE_VALUE_INDICATORES = {BACKSLASH_QUOTE, QUOTE_QUOTE, BACKSLASH_DOUBLE_QUOTE};
@@ -70,21 +70,21 @@ public abstract class SqlInjectionChecker {
             sql = sql.replaceAll(s, "");
         }
         StringTokenizer st = new StringTokenizer(sql, DELIMITERS, true);
-        while(st.hasMoreTokens()) {
+        while (st.hasMoreTokens()) {
             String token = st.nextToken();
             if (token.equals(QUOTE_STR)) {
-                if(singleQuoteFound){
+                if (singleQuoteFound) {
                 singleQuoteFound = false; // closing '
                 continue;
-                } else if (!doubleQuoteFound){ // ignore single quote inside double quotes
+                } else if (!doubleQuoteFound) { // ignore single quote inside double quotes
                     singleQuoteFound = true; // opening '
                     continue;
                 }
             } else if (token.equals(DOUBLE_QUOTE_STR)) {
-                if(doubleQuoteFound){
+                if (doubleQuoteFound) {
                     doubleQuoteFound = false; // closing ""
                     continue;
-                } else if (!singleQuoteFound){ // ignore double quote inside single quotes
+                } else if (!singleQuoteFound) { // ignore double quote inside single quotes
                     doubleQuoteFound = true; // opening "
                     continue;
                 }
@@ -100,7 +100,7 @@ public abstract class SqlInjectionChecker {
      * @param value the expression value
      * @return String the formatted expression.
      */
-    public static String  enforceEscapeCharacters(String value) {
+    public static String enforceEscapeCharacters(String value) {
         StringBuilder sb = new StringBuilder();
         if (value.indexOf(QUOTE) >= 0 || value.indexOf(BACKSLASH) >= 0 || value.indexOf(PERCENT) >= 0) {
             // the following is a Postgres limitation, since we are using LIKE/ILIKE and

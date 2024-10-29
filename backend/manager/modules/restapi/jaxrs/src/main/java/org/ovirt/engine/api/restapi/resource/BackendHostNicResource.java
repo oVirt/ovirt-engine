@@ -101,7 +101,7 @@ public class BackendHostNicResource
 
     private org.ovirt.engine.core.common.businessentities.network.Network getNewNetwork(HostNic nic) {
         org.ovirt.engine.core.common.businessentities.network.Network newNetwork = null;
-        if(nic.isSetNetwork()){
+        if (nic.isSetNetwork()) {
             newNetwork = map(nic.getNetwork(), parent.lookupClusterNetwork(nic.getNetwork()));
         }
         return newNetwork;
@@ -116,7 +116,7 @@ public class BackendHostNicResource
                                                                     originalInter.getVdsId(),
                                                                     originalInter);
             List<VdsNetworkInterface> vlans = getBackendCollection(VdsNetworkInterface.class, QueryType.GetAllChildVlanInterfaces, params);
-            if (vlans!=null && !vlans.isEmpty()) {
+            if (vlans != null && !vlans.isEmpty()) {
                 return lookupAtachedNetwork(vlans.get(0).getNetworkName());
             } else {
                 return null;
@@ -125,9 +125,9 @@ public class BackendHostNicResource
     }
 
     private org.ovirt.engine.core.common.businessentities.network.Network lookupAtachedNetwork(String networkName) {
-        if(!StringUtils.isEmpty(networkName)){
-            for(org.ovirt.engine.core.common.businessentities.network.Network nwk : parent.getClusterNetworks()){
-                if(nwk.getName().equals(networkName)) {
+        if (!StringUtils.isEmpty(networkName)) {
+            for (org.ovirt.engine.core.common.businessentities.network.Network nwk : parent.getClusterNetworks()) {
+                if (nwk.getName().equals(networkName)) {
                     return nwk;
                 }
             }

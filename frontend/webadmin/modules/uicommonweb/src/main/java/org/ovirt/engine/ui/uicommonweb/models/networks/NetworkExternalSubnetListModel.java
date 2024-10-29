@@ -87,7 +87,7 @@ public class NetworkExternalSubnetListModel extends SearchableListModel<NetworkV
         super.syncSearch(QueryType.GetExternalSubnetsOnProviderByNetwork, new IdQueryParameters(getEntity().getId()));
     }
 
-    private void adjustActionButtonsForNetworkReadOnlyProperty(){
+    private void adjustActionButtonsForNetworkReadOnlyProperty() {
         NetworkView networkView = getEntity();
 
         if (!networkView.isExternal()) {
@@ -99,20 +99,20 @@ public class NetworkExternalSubnetListModel extends SearchableListModel<NetworkV
                 createProviderReadOnlyCallback());
     }
 
-    private AsyncQuery<QueryReturnValue> createProviderReadOnlyCallback(){
+    private AsyncQuery<QueryReturnValue> createProviderReadOnlyCallback() {
         return new AsyncQuery<>(returnValue -> setCommandExecutionAllowedForProvider((Provider) (returnValue.getReturnValue())));
     }
 
-    private void setCommandExecutionAllowedForProvider(Provider provider){
+    private void setCommandExecutionAllowedForProvider(Provider provider) {
         OpenstackNetworkProviderProperties properties = (OpenstackNetworkProviderProperties) provider.getAdditionalProperties();
-        if (properties != null && properties.getReadOnly()){
+        if (properties != null && properties.getReadOnly()) {
             setCommandExecutionAllowed(false);
             return;
         }
         setCommandExecutionAllowed(true);
     }
 
-    private void setCommandExecutionAllowed(boolean isAllowed){
+    private void setCommandExecutionAllowed(boolean isAllowed) {
         isExecutionAllowed = isAllowed;
         updateActionAvailability();
     }

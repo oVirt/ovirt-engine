@@ -14,7 +14,7 @@ import org.ovirt.engine.core.common.businessentities.ProviderType;
 public class ExternalHostProviderMapper {
     @Mapping(from = ExternalHostProvider.class, to = Provider.class)
     public static Provider map(ExternalHostProvider model, Provider template) {
-        Provider entity = template != null? template: new Provider();
+        Provider entity = template != null ? template : new Provider();
         entity.setType(ProviderType.FOREMAN);
         if (model.isSetId()) {
             entity.setId(GuidUtils.asGuid(model.getId()));
@@ -42,7 +42,7 @@ public class ExternalHostProviderMapper {
 
     @Mapping(from = Provider.class, to = ExternalHostProvider.class)
     public static ExternalHostProvider map(Provider entity, ExternalHostProvider template) {
-        ExternalHostProvider model = template != null? template: new ExternalHostProvider();
+        ExternalHostProvider model = template != null ? template : new ExternalHostProvider();
         if (entity.getId() != null) {
             model.setId(entity.getId().toString());
         }

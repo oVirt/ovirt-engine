@@ -23,7 +23,7 @@ public abstract class DetailActionPanelPresenterWidget<E, T, M extends ListWithD
     }
 
     protected D getDetailModel() {
-        return (D) ((SearchableDetailModelProvider<T, ?, ?>)getDataProvider()).getModel();
+        return (D) ((SearchableDetailModelProvider<T, ?, ?>) getDataProvider()).getModel();
     }
 
 }

@@ -244,7 +244,7 @@ public class VdsBrokerObjectsBuilder {
                 Map<String, Object> deviceMap = (Map<String, Object>) device;
                 if (VdsProperties.VM_INTERFACE_DEVICE_TYPE.equals(deviceMap.get(VdsProperties.Type))) {
                     VmNetworkInterface nic = new VmNetworkInterface();
-                    nic.setId(Guid.createGuidFromString((String)deviceMap.get(VdsProperties.DeviceId)));
+                    nic.setId(Guid.createGuidFromString((String) deviceMap.get(VdsProperties.DeviceId)));
                     nic.setMacAddress((String) deviceMap.get(VdsProperties.MAC_ADDR));
                     nic.setName((String) deviceMap.get(VdsProperties.Name));
                     // FIXME we can't deduce the network profile by the network name. its many to many.
@@ -270,7 +270,7 @@ public class VdsBrokerObjectsBuilder {
         return nics;
     }
 
-    public VmDevice buildConsoleDevice(Map<String, Object> vmStruct, Guid vmId){
+    public VmDevice buildConsoleDevice(Map<String, Object> vmStruct, Guid vmId) {
         Object[] devices = (Object[]) vmStruct.get(VdsProperties.Devices);
         if (devices != null) {
             for (Object device : devices) {
@@ -349,7 +349,7 @@ public class VdsBrokerObjectsBuilder {
      */
     private static void addGraphicsDeviceFromExternalProvider(VmStatic vmStatic, Map<String, Object> struct) {
         Object graphicsName = struct.get(VdsProperties.GRAPHICS_DEVICE);
-        Object videoName =  struct.get(VdsProperties.VIDEO_DEVICE);
+        Object videoName = struct.get(VdsProperties.VIDEO_DEVICE);
         if (graphicsName == null || videoName == null) {
             return;
         }
@@ -682,11 +682,11 @@ public class VdsBrokerObjectsBuilder {
 
     private static void updateGuestOsInfo(VmDynamic vm, Map<String, Object> struct) {
         Map<String, Object> guestOsInfoStruct = (Map<String, Object>) struct.get(VdsProperties.GUEST_OS_INFO);
-        if(guestOsInfoStruct.containsKey(VdsProperties.GUEST_OS_INFO_ARCH)) {
+        if (guestOsInfoStruct.containsKey(VdsProperties.GUEST_OS_INFO_ARCH)) {
             String arch = assignStringValue(guestOsInfoStruct, VdsProperties.GUEST_OS_INFO_ARCH);
             try {
                 vm.setGuestOsArch(arch);
-            } catch(IllegalArgumentException e) {
+            } catch (IllegalArgumentException e) {
                 log.warn("Invalid or unknown guest architecture type '{}' received from guest agent", arch);
             }
         }
@@ -694,12 +694,12 @@ public class VdsBrokerObjectsBuilder {
         vm.setGuestOsCodename(assignStringValue(guestOsInfoStruct, VdsProperties.GUEST_OS_INFO_CODENAME));
         vm.setGuestOsDistribution(assignStringValue(guestOsInfoStruct, VdsProperties.GUEST_OS_INFO_DISTRIBUTION));
         vm.setGuestOsKernelVersion(assignStringValue(guestOsInfoStruct, VdsProperties.GUEST_OS_INFO_KERNEL));
-        if(guestOsInfoStruct.containsKey(VdsProperties.GUEST_OS_INFO_TYPE)) {
+        if (guestOsInfoStruct.containsKey(VdsProperties.GUEST_OS_INFO_TYPE)) {
             String osType = assignStringValue(guestOsInfoStruct, VdsProperties.GUEST_OS_INFO_TYPE);
             try {
                 OsType type = EnumUtils.valueOf(OsType.class, osType, true);
                 vm.setGuestOsType(type);
-            } catch(IllegalArgumentException e) {
+            } catch (IllegalArgumentException e) {
                 log.warn("Invalid or unknown guest os type '{}' received from guest agent", osType);
             }
         } else {
@@ -874,7 +874,7 @@ public class VdsBrokerObjectsBuilder {
         vm.setUsageMemPercent(assignIntValue(struct, VdsProperties.vm_usage_mem_percent));
 
         if (struct.containsKey(VdsProperties.vm_guest_mem_stats)) {
-            Map<String, Object> sub = (Map<String, Object>)struct.get(VdsProperties.vm_guest_mem_stats);
+            Map<String, Object> sub = (Map<String, Object>) struct.get(VdsProperties.vm_guest_mem_stats);
             if (sub.containsKey(VdsProperties.vm_guest_mem_buffered)) {
                 vm.setGuestMemoryBuffered(Long.parseLong(sub.get(VdsProperties.vm_guest_mem_buffered).toString()));
             }
@@ -990,11 +990,11 @@ public class VdsBrokerObjectsBuilder {
 
         // parse out the HBAs available in this host
         Map<String, List<Map<String, String>>> hbas = new HashMap<>();
-        for (Map.Entry<String, Object[]> el: ((Map<String, Object[]>)struct.get(VdsProperties.HBAInventory)).entrySet()) {
+        for (Map.Entry<String, Object[]> el: ((Map<String, Object[]>) struct.get(VdsProperties.HBAInventory)).entrySet()) {
             List<Map<String, String>> devicesList = new ArrayList<>();
 
             for (Object device: el.getValue()) {
-                devicesList.add((Map<String, String>)device);
+                devicesList.add((Map<String, String>) device);
             }
 
             hbas.put(el.getKey(), devicesList);
@@ -1234,7 +1234,7 @@ public class VdsBrokerObjectsBuilder {
         return new RpmVersion(sb.toString());
     }
 
-    public void updateHardwareSystemInformation(Map<String, Object> hwInfo, VDS vds){
+    public void updateHardwareSystemInformation(Map<String, Object> hwInfo, VDS vds) {
         vds.setHardwareManufacturer(assignStringValue(hwInfo, VdsProperties.hwManufacturer));
         vds.setHardwareProductName(assignStringValue(hwInfo, VdsProperties.hwProductName));
         vds.setHardwareVersion(assignStringValue(hwInfo, VdsProperties.hwVersion));
@@ -1606,18 +1606,18 @@ public class VdsBrokerObjectsBuilder {
                     data.setDelay(delay);
                     Boolean actual = Boolean.TRUE;
                     if (internalValue.containsKey(VdsProperties.actual)) {
-                        actual = (Boolean)internalValue.get(VdsProperties.actual);
+                        actual = (Boolean) internalValue.get(VdsProperties.actual);
                     }
                     data.setActual(actual);
                     Boolean acquired = Boolean.FALSE;
                     if (internalValue.containsKey(VdsProperties.acquired)) {
-                        acquired = (Boolean)internalValue.get(VdsProperties.acquired);
+                        acquired = (Boolean) internalValue.get(VdsProperties.acquired);
                     }
                     data.setAcquired(acquired);
 
                     Boolean valid = Boolean.FALSE;
                     if (internalValue.containsKey(VdsProperties.valid)) {
-                        valid = (Boolean)internalValue.get(VdsProperties.valid);
+                        valid = (Boolean) internalValue.get(VdsProperties.valid);
                     }
                     data.setValid(valid);
                     domainsData.add(data);
@@ -1847,7 +1847,7 @@ public class VdsBrokerObjectsBuilder {
                         log.warn("Failed to convert app: [null] to string");
                         continue; // Don't process this
                     }
-                    if(appString == null) {
+                    if (appString == null) {
                         // Note: app cannot be null here anymore
                         log.warn("Failed to convert app: [" + app.getClass().getName() + "] is not a string");
                         continue; // Don't process this
@@ -1871,19 +1871,19 @@ public class VdsBrokerObjectsBuilder {
             vm.setGuestContainers(new ArrayList<>());
             Object obj = vmStruct.get(VdsProperties.guest_containers);
             if (obj instanceof Object[]) {
-                Object[] containers = (Object[])obj;
+                Object[] containers = (Object[]) obj;
                 for (Object containerObj : containers) {
                     Map<String, Object> container = (Map<String, Object>) containerObj;
                     ArrayList<String> names = new ArrayList<>();
-                    for(Object o : (Object[]) container.get(VdsProperties.guest_container_names)) {
-                        names.add((String)o);
+                    for (Object o : (Object[]) container.get(VdsProperties.guest_container_names)) {
+                        names.add((String) o);
                     }
                     vm.getGuestContainers().add(new GuestContainer(
-                            (String)container.get(VdsProperties.guest_container_id),
+                            (String) container.get(VdsProperties.guest_container_id),
                             names,
-                            (String)container.get(VdsProperties.guest_container_image),
-                            (String)container.get(VdsProperties.guest_container_command),
-                            (String)container.get(VdsProperties.guest_container_status)
+                            (String) container.get(VdsProperties.guest_container_image),
+                            (String) container.get(VdsProperties.guest_container_command),
+                            (String) container.get(VdsProperties.guest_container_status)
                     ));
                 }
             }
@@ -1893,7 +1893,7 @@ public class VdsBrokerObjectsBuilder {
     }
 
     public VMStatus convertToVmStatus(String status) {
-        switch(status) {
+        switch (status) {
         case VdsProperties.MIGRATION_SOURCE:
             return VMStatus.MigratingFrom;
 
@@ -2192,7 +2192,7 @@ public class VdsBrokerObjectsBuilder {
 
         List<String> bondOptions = new ArrayList<>();
 
-        for(String key : reservedPositionKeys) {
+        for (String key : reservedPositionKeys) {
             String value = (String) struct.get(key);
             if (value != null) {
                 bondOptions.add(
@@ -2210,7 +2210,7 @@ public class VdsBrokerObjectsBuilder {
         return normalizeBondOptions(StringUtils.join(bondOptions, ' '));
     }
 
-    private static String normalizeBondOptions(String bondOptions){
+    private static String normalizeBondOptions(String bondOptions) {
         Matcher matcher = Pattern.compile("mode=([\\w-\\.]+)").matcher(bondOptions);
         if (!matcher.find()) {
             return bondOptions;
@@ -2553,7 +2553,7 @@ public class VdsBrokerObjectsBuilder {
                 int index = Integer.parseInt(item.getKey());
                 Map<String, Object> itemMap = item.getValue();
                 List<Integer> cpuIds = extractList(itemMap, VdsProperties.NUMA_NODE_CPU_LIST);
-                long memTotal =  assignLongValue(itemMap, VdsProperties.NUMA_NODE_TOTAL_MEM);
+                long memTotal = assignLongValue(itemMap, VdsProperties.NUMA_NODE_TOTAL_MEM);
                 VdsNumaNode numaNode = new VdsNumaNode();
                 numaNode.setIndex(index);
                 if (cpuIds != null) {
@@ -2617,7 +2617,7 @@ public class VdsBrokerObjectsBuilder {
     }
 
     private static <T> List<T> extractList(Map<String, Object> struct, String propertyName) {
-        if (struct.containsKey(propertyName)){
+        if (struct.containsKey(propertyName)) {
             Object[] items = (Object[]) struct.get(propertyName);
             if (items.length > 0) {
                 return Arrays.stream(items).map(item -> (T) item).collect(Collectors.toList());

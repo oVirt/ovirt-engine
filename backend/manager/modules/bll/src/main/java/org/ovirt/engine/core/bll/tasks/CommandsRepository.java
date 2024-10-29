@@ -222,7 +222,7 @@ public class CommandsRepository {
 
     private void initChildHierarchy() {
         if (!childHierarchyInitialized) {
-            synchronized(LOCK) {
+            synchronized (LOCK) {
                 if (!childHierarchyInitialized) {
                     childHierarchy.clear();
                     getCommands(false).forEach(this::buildCmdHierarchy);
@@ -255,7 +255,7 @@ public class CommandsRepository {
 
     public void removeAllCommandsBeforeDate(final DateTime cutoff) {
         commandsCache.removeAllCommandsBeforeDate(cutoff);
-        synchronized(LOCK) {
+        synchronized (LOCK) {
             childHierarchyInitialized = false;
         }
     }

@@ -76,7 +76,7 @@ public abstract class ImportVmTemplateCommandBase<T extends ImportVmTemplatePara
 
     private Guid sourceTemplateId;
 
-    private Runnable logOnExecuteEndMethod = () -> {};
+    private Runnable logOnExecuteEndMethod = () -> { };
 
     public ImportVmTemplateCommandBase(T parameters, CommandContext commandContext) {
         super(parameters, commandContext);
@@ -387,7 +387,7 @@ public abstract class ImportVmTemplateCommandBase<T extends ImportVmTemplatePara
         getVmTemplate().setClusterId(getParameters().getClusterId());
 
         // if "run on host" field points to a non existent vds (in the current cluster) -> remove field and continue
-        if(!vmHandler.validateDedicatedVdsExistOnSameCluster(getVmTemplate()).isValid()) {
+        if (!vmHandler.validateDedicatedVdsExistOnSameCluster(getVmTemplate()).isValid()) {
             getVmTemplate().setDedicatedVmForVdsList(Collections.emptyList());
             getVmTemplate().setCpuPinning(null);
         }
@@ -503,7 +503,7 @@ public abstract class ImportVmTemplateCommandBase<T extends ImportVmTemplatePara
 
     @Override
     protected List<Class<?>> getValidationGroups() {
-        if(getParameters().isImportAsNewEntity()){
+        if (getParameters().isImportAsNewEntity()) {
             return addValidationGroup(ImportClonedEntity.class);
         }
         return addValidationGroup(ImportEntity.class);
@@ -512,7 +512,7 @@ public abstract class ImportVmTemplateCommandBase<T extends ImportVmTemplatePara
     @Override
     public Map<String, String> getJobMessageProperties() {
         if (jobProperties == null) {
-            jobProperties =  super.getJobMessageProperties();
+            jobProperties = super.getJobMessageProperties();
             jobProperties.put(VdcObjectType.VmTemplate.name().toLowerCase(),
                     (getVmTemplateName() == null) ? "" : getVmTemplateName());
             jobProperties.put(VdcObjectType.Cluster.name().toLowerCase(), getClusterName());
@@ -549,7 +549,7 @@ public abstract class ImportVmTemplateCommandBase<T extends ImportVmTemplatePara
                     disk.getQuotaId(),
                     QuotaConsumptionParameter.QuotaAction.CONSUME,
                     imageToDestinationDomainMap.get(disk.getId()),
-                    (double)disk.getSizeInGigabytes()));
+                    (double) disk.getSizeInGigabytes()));
         }
         return list;
     }

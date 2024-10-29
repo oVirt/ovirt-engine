@@ -89,7 +89,7 @@ public class ListModelMultipleSelectListBox<T> extends ListModelListBox<List<T>>
         } else {
             renderedValue = SafeHtmlUtils.htmlEscape(renderedValue);
         }
-        ((Element)dropdownButton.getElement().getChild(0)).setInnerHTML(renderedValue);
+        ((Element) dropdownButton.getElement().getChild(0)).setInnerHTML(renderedValue);
         dropdownButton.setTitle(renderedValue);
         Scheduler.get().scheduleDeferred(() -> listPanel.setSelected(value));
         if (fireEvents) {

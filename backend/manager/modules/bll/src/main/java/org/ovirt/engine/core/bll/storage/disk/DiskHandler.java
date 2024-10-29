@@ -41,7 +41,7 @@ public class DiskHandler {
      * Loads a disk info for selected snapshot, if no snapshot ID was specified it will load the active snapshot
      */
     public Disk loadDiskFromSnapshot(Guid diskId, Guid snapshotId) {
-        return snapshotId == null ?  loadActiveDisk(diskId) :
+        return snapshotId == null ? loadActiveDisk(diskId) :
                 diskImageDao.getDiskSnapshotForVmSnapshot(diskId, snapshotId);
     }
 

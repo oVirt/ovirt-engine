@@ -12,7 +12,7 @@ public class UpgradeStoragePoolVDSCommandParameters extends IrsBaseVDSCommandPar
         setCompatibilityVersion(compatibilityVersion.getValue());
     }
 
-    public UpgradeStoragePoolVDSCommandParameters() {}
+    public UpgradeStoragePoolVDSCommandParameters() { }
 
     public String getCompatibilityVersion() {
         return compatibilityVersion;

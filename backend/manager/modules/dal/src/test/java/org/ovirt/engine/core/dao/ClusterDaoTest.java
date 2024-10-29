@@ -518,7 +518,7 @@ public class ClusterDaoTest extends BaseDaoTestCase<ClusterDao> {
         // get a cluster with migrating VMs
         List<VM> vms = vmDao.getAllRunningByCluster(FixturesTool.CLUSTER_RHEL6_ISCSI);
         // set every VM to UP
-        for(VM migratingVM : vms) {
+        for (VM migratingVM : vms) {
             vmDynamicDao.updateStatus(migratingVM.getId(), VMStatus.Up);
             migrationFreeClusters = dao.getWithoutMigratingVms();
         }

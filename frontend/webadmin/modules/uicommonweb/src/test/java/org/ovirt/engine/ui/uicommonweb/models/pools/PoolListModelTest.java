@@ -21,7 +21,7 @@ public class PoolListModelTest extends BaseVmListModelTest {
     PoolModel model;
 
     @BeforeEach
-    public void setUp()  {
+    public void setUp() {
         setUpUnitVmModelExpectations(model);
     }
 

@@ -49,7 +49,7 @@ public class EmulatedMachineFilterPolicyUnit extends PolicyUnitImpl {
         /* find compatible hosts */
         for (VDS host : hosts) {
             String supportedEmulatedMachines = host.getSupportedEmulatedMachines();
-            if(StringUtils.isNotEmpty(supportedEmulatedMachines)) {
+            if (StringUtils.isNotEmpty(supportedEmulatedMachines)) {
                 if (Arrays.asList(supportedEmulatedMachines.split(",")).contains(requiredEmulatedMachine)) {
                     hostsToRunOn.add(host);
                     log.debug("Host {} wasn't filtered out as it supports the VM required emulated machine ({})",

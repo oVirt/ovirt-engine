@@ -114,7 +114,7 @@ public class BackendHostResource extends AbstractBackendActionableResource<Host,
         BackendExternalProviderHelper.completeExternalNetworkProviderConfigurations(this,
                 incoming.getExternalNetworkProviderConfigurations());
         // if fence agents list is null set it to null in entity
-        if(incoming.getAgents() == null) {
+        if (incoming.getAgents() == null) {
             entity.setFenceAgents(null);
         }
         if (incoming.isSetCluster() && (incoming.getCluster().isSetId() || incoming.getCluster().isSetName())) {
@@ -349,7 +349,7 @@ public class BackendHostResource extends AbstractBackendActionableResource<Host,
     private void completeSlaveNames(BusinessEntityMap<VdsNetworkInterface> nicsFromBackend, HostNic bond) {
         if (bond.isSetBonding() && bond.getBonding().isSetSlaves()) {
             for (HostNic slave : bond.getBonding().getSlaves().getHostNics()) {
-                if (!slave.isSetName() && slave.isSetId()){
+                if (!slave.isSetName() && slave.isSetId()) {
                     Guid slaveId = new Guid(slave.getId());
                     String slaveNameFromBackend = nicsFromBackend.get(slaveId).getName();
                     slave.setName(slaveNameFromBackend);
@@ -398,7 +398,7 @@ public class BackendHostResource extends AbstractBackendActionableResource<Host,
             }
         }
 
-        return networkAttachmentMapper.map(model,  attachment);
+        return networkAttachmentMapper.map(model, attachment);
     }
 
 

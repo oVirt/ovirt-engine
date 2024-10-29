@@ -996,7 +996,7 @@ public class VdsManager {
 
         AuditLogable logable = createAuditLogableForHost(cachedVds);
         logable.updateCallStackFromThrowable(ex);
-        if (ex.getCause() instanceof java.net.UnknownHostException){
+        if (ex.getCause() instanceof java.net.UnknownHostException) {
             auditLogDirector.log(logable, AuditLogType.VDS_UNKNOWN_HOST);
         } else {
             auditLogDirector.log(logable, AuditLogType.VDS_FAILURE);

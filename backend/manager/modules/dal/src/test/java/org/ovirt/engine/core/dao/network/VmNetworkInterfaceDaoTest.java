@@ -31,7 +31,7 @@ public class VmNetworkInterfaceDaoTest extends BaseDaoTestCase<VmNetworkInterfac
     private static final Guid TEMPLATE_ID = FixturesTool.VM_TEMPLATE_RHEL5;
     private static final Guid VM_ID = FixturesTool.VM_RHEL5_POOL_57;
 
-    protected static final Guid PRIVILEGED_USER_ID   = new Guid("9bf7c640-b620-456f-a550-0348f366544b");
+    protected static final Guid PRIVILEGED_USER_ID = new Guid("9bf7c640-b620-456f-a550-0348f366544b");
     protected static final Guid UNPRIVILEGED_USER_ID = new Guid("9bf7c640-b620-456f-a550-0348f366544a");
 
     private VmNetworkInterface existingVmInterface;

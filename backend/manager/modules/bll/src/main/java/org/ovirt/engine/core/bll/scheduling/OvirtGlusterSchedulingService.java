@@ -134,7 +134,7 @@ public class OvirtGlusterSchedulingService {
                 clazz = Class.forName(job.getJobClassName());
             }
             methodToRun = clazz.getDeclaredMethod(job.getJobName(), (Class<?>[]) parameterTypes);
-            if(methodToRun == null) {
+            if (methodToRun == null) {
                 log.error("could not find the required method '{}' on instance of {}",
                         job.getJobName(),
                         clazz.getClass().getSimpleName());

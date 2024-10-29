@@ -35,7 +35,7 @@ public class MapVnicsFlowTest {
 
     private static final ExternalVnicProfileMapping NO_SOURCE_MAPPING = new ExternalVnicProfileMapping(null, null, PROFILE_ID);
     private static final ExternalVnicProfileMapping NO_TARGET_MAPPING = new ExternalVnicProfileMapping(NETWORK_NAME, PROFILE2_NAME, null);
-    private static final ExternalVnicProfileMapping FULL_MAPPING =  new ExternalVnicProfileMapping(NETWORK_NAME, PROFILE1_NAME, PROFILE_ID);
+    private static final ExternalVnicProfileMapping FULL_MAPPING = new ExternalVnicProfileMapping(NETWORK_NAME, PROFILE1_NAME, PROFILE_ID);
 
     private MapVnicsFlow underTest;
 
@@ -48,11 +48,11 @@ public class MapVnicsFlowTest {
         Pair someMappingsAndNullOvfs = testSomeMappingsAndNullOvfs();
 
         return Stream.of(
-            Arguments.of(nullMappingsAndNullOvfs.getFirst(),       nullMappingsAndNullOvfs.getSecond()  ),
-            Arguments.of(nullMappingsAndEmptyOvfs.getFirst(),      nullMappingsAndEmptyOvfs.getSecond() ),
-            Arguments.of(emptyMappingsAndEmptyOvfs.getFirst(),     emptyMappingsAndEmptyOvfs.getSecond()),
-            Arguments.of(emptyMappingsAndNullOvfs.getFirst(),      emptyMappingsAndNullOvfs.getSecond() ),
-            Arguments.of(someMappingsAndNullOvfs.getFirst(),       someMappingsAndNullOvfs.getSecond()  )
+            Arguments.of(nullMappingsAndNullOvfs.getFirst(), nullMappingsAndNullOvfs.getSecond() ),
+            Arguments.of(nullMappingsAndEmptyOvfs.getFirst(), nullMappingsAndEmptyOvfs.getSecond() ),
+            Arguments.of(emptyMappingsAndEmptyOvfs.getFirst(), emptyMappingsAndEmptyOvfs.getSecond()),
+            Arguments.of(emptyMappingsAndNullOvfs.getFirst(), emptyMappingsAndNullOvfs.getSecond() ),
+            Arguments.of(someMappingsAndNullOvfs.getFirst(), someMappingsAndNullOvfs.getSecond() )
         );
     }
 
@@ -141,7 +141,7 @@ public class MapVnicsFlowTest {
     /**
      * setup a context with user input - mappings and ovf vnics - that would be under test
      */
-    private static MapVnicsContext setupContext(List<ExternalVnicProfileMapping> mappings, List<VmNetworkInterface> vnics, String name){
+    private static MapVnicsContext setupContext(List<ExternalVnicProfileMapping> mappings, List<VmNetworkInterface> vnics, String name) {
         return new MapVnicsContext(name).setUserMappings(mappings).setOvfVnics(vnics);
     }
 }

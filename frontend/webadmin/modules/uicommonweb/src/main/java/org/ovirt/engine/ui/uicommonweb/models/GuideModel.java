@@ -79,9 +79,9 @@ public class GuideModel<T> extends EntityModel<T> {
         setConsoleHelpers();
     }
 
-    protected void cancel() {}
+    protected void cancel() { }
 
-    protected void postAction() {}
+    protected void postAction() { }
 
     protected String getVdsSearchString(final MoveHost moveHost) {
         StringBuilder buf = new StringBuilder("Host: "); //$NON-NLS-1$

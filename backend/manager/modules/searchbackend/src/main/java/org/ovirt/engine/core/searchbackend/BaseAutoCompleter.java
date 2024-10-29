@@ -17,7 +17,7 @@ public class BaseAutoCompleter implements IAutoCompleter {
     private static final List<String> daysOfWeek = new ArrayList<>();
 
     static {
-        for(DayOfWeek day: DayOfWeek.values()) {
+        for (DayOfWeek day: DayOfWeek.values()) {
             daysOfWeek.add(day.toString());
         }
     }

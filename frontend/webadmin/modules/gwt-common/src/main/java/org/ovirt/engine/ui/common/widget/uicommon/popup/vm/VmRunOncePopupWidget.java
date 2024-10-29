@@ -148,7 +148,7 @@ public class VmRunOncePopupWidget extends AbstractModelBoundPopupWidget<RunOnceM
     @Ignore
     KeyValueWidget<KeyValueModel> customPropertiesSheetEditor;
 
-    @UiField(provided=true)
+    @UiField(provided = true)
     @Path(value = "isoImage.selectedItem")
     @WithElementId("isoImage")
     ListModelListBoxEditor<RepoImage> isoImageEditor;
@@ -595,7 +595,7 @@ public class VmRunOncePopupWidget extends AbstractModelBoundPopupWidget<RunOnceM
         boolean possible = model.getIsCloudInitPossible().getEntity();
 
         runOnceModel.updateOSs();
-        if(runOnceModel.getIsIgnition()){
+        if (runOnceModel.getIsIgnition()) {
             cloudInitEnabledEditor.setLabel(constants.ignition() + " " + runOnceModel.getIgnitionVersion()); //$NON-NLS-1$
             vmInitWidget.setIgnitionContentVisible(selected && possible);
         } else {
@@ -720,7 +720,7 @@ public class VmRunOncePopupWidget extends AbstractModelBoundPopupWidget<RunOnceM
         String emulatedMachine = runOnceModel.getClusterEmulatedMachine().getEntity();
         String newClusterEmulatedMachine = constants.clusterDefaultOption();
         if (emulatedMachine != null) {
-            newClusterEmulatedMachine +=  "(" + emulatedMachine + ")"; //$NON-NLS-1$ //$NON-NLS-2$
+            newClusterEmulatedMachine += "(" + emulatedMachine + ")"; //$NON-NLS-1$ //$NON-NLS-2$
         }
         return newClusterEmulatedMachine;
     }

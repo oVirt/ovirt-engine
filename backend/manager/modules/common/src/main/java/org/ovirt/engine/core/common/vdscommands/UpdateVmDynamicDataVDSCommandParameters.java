@@ -3,7 +3,7 @@ package org.ovirt.engine.core.common.vdscommands;
 import org.ovirt.engine.core.common.businessentities.VmDynamic;
 import org.ovirt.engine.core.common.utils.ToStringBuilder;
 
-public class UpdateVmDynamicDataVDSCommandParameters extends VdsAndVmIDVDSParametersBase{
+public class UpdateVmDynamicDataVDSCommandParameters extends VdsAndVmIDVDSParametersBase {
     private VmDynamic privateVmDynamic;
 
     public VmDynamic getVmDynamic() {

@@ -128,7 +128,7 @@ public class ActionPanelView<E, T> extends AbstractView implements ActionPanelPr
         DropdownActionButton<E, T> dropdownActionButton;
         if (buttonDef.getIcon() instanceof IconType) {
             dropdownActionButton = new DropdownActionButton<>(subActions, selectedItemsProvider,
-                true, (IconType)buttonDef.getIcon());
+                true, (IconType) buttonDef.getIcon());
         } else {
             dropdownActionButton = new DropdownActionButton<>(subActions, selectedItemsProvider,
                     true, null);

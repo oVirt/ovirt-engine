@@ -9,7 +9,7 @@ public class GetConnectionsByDataCenterAndStorageTypeParameters extends IdQueryP
 
     private StorageType storageType;
 
-    public GetConnectionsByDataCenterAndStorageTypeParameters() {}
+    public GetConnectionsByDataCenterAndStorageTypeParameters() { }
 
     public GetConnectionsByDataCenterAndStorageTypeParameters(Guid dataCenterId, StorageType storageType) {
         super(dataCenterId);

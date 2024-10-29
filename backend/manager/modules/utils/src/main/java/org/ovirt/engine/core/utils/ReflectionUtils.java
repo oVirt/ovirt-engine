@@ -109,7 +109,7 @@ public class ReflectionUtils {
     public static Object invokeMethodWithNoArgs(Object o, Method method) {
         try {
             return method.invoke(o);
-        } catch(InvocationTargetException|IllegalAccessException e) {
+        } catch (InvocationTargetException | IllegalAccessException e) {
             return null;
         }
     }

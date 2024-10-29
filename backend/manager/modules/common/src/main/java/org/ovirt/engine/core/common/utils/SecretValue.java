@@ -40,6 +40,6 @@ public class SecretValue<T> {
         if (!(obj instanceof SecretValue)) {
             return false;
         }
-        return Objects.equals(value, ((SecretValue<?>)obj).getValue());
+        return Objects.equals(value, ((SecretValue<?>) obj).getValue());
     }
 }

@@ -52,22 +52,22 @@ public class VolumeGeoRepListModel extends SearchableListModel<GlusterVolumeEnti
 
     @Override
     protected String getListName() {
-        return "VolumeGeoReplicationModel";//$NON-NLS-1$
+        return "VolumeGeoReplicationModel"; //$NON-NLS-1$
     }
 
     public VolumeGeoRepListModel() {
         setTitle(constants.geoReplicationTitle());
         setHelpTag(HelpTag.geo_replication);
-        setHashName("geo_replication");//$NON-NLS-1$
-        setNewSessionCommand(new UICommand("createNewSession", this));//$NON-NLS-1$
-        setRemoveSessionCommand(new UICommand("removeSession", this));//$NON-NLS-1$
-        setStartSessionCommand(new UICommand("startSession", this));//$NON-NLS-1$
-        setStopSessionCommand(new UICommand("stopSession", this));//$NON-NLS-1$
-        setSessionOptionsCommand(new UICommand("sessionOptions", this));//$NON-NLS-1$
-        setViewSessionDetailsCommand(new UICommand("viewSessionDetails", this));//$NON-NLS-1$
-        setRefreshSessionsCommand(new UICommand("refreshSessions", this));//$NON-NLS-1$
-        setPauseSessionCommand(new UICommand("pauseSession", this));//$NON-NLS-1$
-        setResumeSessionCommand(new UICommand("resumeSession", this));//$NON-NLS-1$
+        setHashName("geo_replication"); //$NON-NLS-1$
+        setNewSessionCommand(new UICommand("createNewSession", this)); //$NON-NLS-1$
+        setRemoveSessionCommand(new UICommand("removeSession", this)); //$NON-NLS-1$
+        setStartSessionCommand(new UICommand("startSession", this)); //$NON-NLS-1$
+        setStopSessionCommand(new UICommand("stopSession", this)); //$NON-NLS-1$
+        setSessionOptionsCommand(new UICommand("sessionOptions", this)); //$NON-NLS-1$
+        setViewSessionDetailsCommand(new UICommand("viewSessionDetails", this)); //$NON-NLS-1$
+        setRefreshSessionsCommand(new UICommand("refreshSessions", this)); //$NON-NLS-1$
+        setPauseSessionCommand(new UICommand("pauseSession", this)); //$NON-NLS-1$
+        setResumeSessionCommand(new UICommand("resumeSession", this)); //$NON-NLS-1$
     }
 
     public UICommand getViewSessionDetailsCommand() {
@@ -187,7 +187,7 @@ public class VolumeGeoRepListModel extends SearchableListModel<GlusterVolumeEnti
         boolean allowSessionOptionsCommand = false;
         boolean allowRemoveSessionCommand = false;
         boolean allowSessionDetailsCommand = false;
-        if(volumeEntity == null) {
+        if (volumeEntity == null) {
             return;
         }
         if (getSelectedItems() != null && getSelectedItems().size() == 1) {
@@ -223,44 +223,44 @@ public class VolumeGeoRepListModel extends SearchableListModel<GlusterVolumeEnti
         if (command.equals(getNewSessionCommand())) {
             createGeoRepSession();
         } else if (command.equals(getRemoveSessionCommand())) {
-            confirmGeoRepAction(constants.geoReplicationRemoveTitle(), HelpTag.volume_geo_rep_remove_confirmation, "volume_geo_rep_remove_confirmation", "removeGeoRepSession", constants.removeGeoRep());//$NON-NLS-1$//$NON-NLS-2$
-        } else if(command.equals(getStartSessionCommand())) {
+            confirmGeoRepAction(constants.geoReplicationRemoveTitle(), HelpTag.volume_geo_rep_remove_confirmation, "volume_geo_rep_remove_confirmation", "removeGeoRepSession", constants.removeGeoRep()); //$NON-NLS-1$//$NON-NLS-2$
+        } else if (command.equals(getStartSessionCommand())) {
             startGeoRepSession();
-        } else if(command.equals(getStopSessionCommand())) {
-            confirmGeoRepAction(constants.geoReplicationStopTitle(), HelpTag.volume_geo_rep_stop_confirmation, "volume_geo_rep_stop_confirmation", "stopGeoRepSesssion", constants.stopGeoRep());//$NON-NLS-1$//$NON-NLS-2$
-        }  else if(command.equals(getPauseSessionCommand())) {
-            confirmGeoRepAction(constants.geoReplicationPauseTitle(), HelpTag.volume_geo_rep_pause_confirmation, "volume_geo_rep_pause_confirmation", "pauseGeoRepSession", constants.pauseGeoRep());//$NON-NLS-1$//$NON-NLS-2$
-        } else if(command.equals(getResumeSessionCommand())) {
+        } else if (command.equals(getStopSessionCommand())) {
+            confirmGeoRepAction(constants.geoReplicationStopTitle(), HelpTag.volume_geo_rep_stop_confirmation, "volume_geo_rep_stop_confirmation", "stopGeoRepSesssion", constants.stopGeoRep()); //$NON-NLS-1$//$NON-NLS-2$
+        } else if (command.equals(getPauseSessionCommand())) {
+            confirmGeoRepAction(constants.geoReplicationPauseTitle(), HelpTag.volume_geo_rep_pause_confirmation, "volume_geo_rep_pause_confirmation", "pauseGeoRepSession", constants.pauseGeoRep()); //$NON-NLS-1$//$NON-NLS-2$
+        } else if (command.equals(getResumeSessionCommand())) {
             resumeGeoRepSession();
-        } else if(command.equals(getSessionOptionsCommand())) {
+        } else if (command.equals(getSessionOptionsCommand())) {
             showSessionOptions();
-        } else if(command.equals(getViewSessionDetailsCommand())) {
+        } else if (command.equals(getViewSessionDetailsCommand())) {
             showGeoRepSessionDetails(getSelectedItem());
         } else if (command.equals(getRefreshSessionsCommand())) {
             refreshSessions();
-        } else if (command.getName().equalsIgnoreCase("onCreateSession")) {//$NON-NLS-1$
+        } else if (command.getName().equalsIgnoreCase("onCreateSession")) { //$NON-NLS-1$
             onCreateSession();
-        } else if (command.getName().equalsIgnoreCase("onStartGeoRepSession")) {//$NON-NLS-1$
+        } else if (command.getName().equalsIgnoreCase("onStartGeoRepSession")) { //$NON-NLS-1$
             onGeoRepSessionAction(ActionType.StartGlusterVolumeGeoRep);
-        } else if (command.getName().equalsIgnoreCase("onStopGeoRepSession")) {//$NON-NLS-1$
+        } else if (command.getName().equalsIgnoreCase("onStopGeoRepSession")) { //$NON-NLS-1$
             onGeoRepSessionAction(ActionType.StopGeoRepSession);
-        } else if (command.getName().equalsIgnoreCase("onPauseGeoRepSession")) {//$NON-NLS-1$
+        } else if (command.getName().equalsIgnoreCase("onPauseGeoRepSession")) { //$NON-NLS-1$
             onGeoRepSessionAction(ActionType.PauseGlusterVolumeGeoRepSession);
-        } else if (command.getName().equalsIgnoreCase("onResumeGeoRepSession")) {//$NON-NLS-1$
+        } else if (command.getName().equalsIgnoreCase("onResumeGeoRepSession")) { //$NON-NLS-1$
             onGeoRepSessionAction(ActionType.ResumeGeoRepSession);
-        } else if (command.getName().equalsIgnoreCase("onRemoveGeoRepSession")) {//$NON-NLS-1$
+        } else if (command.getName().equalsIgnoreCase("onRemoveGeoRepSession")) { //$NON-NLS-1$
             onGeoRepSessionAction(ActionType.DeleteGeoRepSession);
-        } else if (command.getName().equalsIgnoreCase("ok")) {//$NON-NLS-1$
+        } else if (command.getName().equalsIgnoreCase("ok")) { //$NON-NLS-1$
             updateConfig();
-        } else if (command.getName().equalsIgnoreCase("closeWindow")) {//$NON-NLS-1$
+        } else if (command.getName().equalsIgnoreCase("closeWindow")) { //$NON-NLS-1$
             closeWindow();
-        } else if(command.getName().equalsIgnoreCase("stopGeoRepSesssion")) {//$NON-NLS-1$
+        } else if (command.getName().equalsIgnoreCase("stopGeoRepSesssion")) { //$NON-NLS-1$
             stopGeoRepSession();
-        } else if(command.getName().equalsIgnoreCase("removeGeoRepSession")) {//$NON-NLS-1$
+        } else if (command.getName().equalsIgnoreCase("removeGeoRepSession")) { //$NON-NLS-1$
             removeGeoRepSession();
-        } else if(command.getName().equalsIgnoreCase("pauseGeoRepSession")) {//$NON-NLS-1$
+        } else if (command.getName().equalsIgnoreCase("pauseGeoRepSession")) { //$NON-NLS-1$
             pauseGeoRepSession();
-        } else if (command.getName().equalsIgnoreCase("closeConfirmWindow")) {//$NON-NLS-1$
+        } else if (command.getName().equalsIgnoreCase("closeConfirmWindow")) { //$NON-NLS-1$
             closeConfirmWindow();
         }
     }
@@ -272,12 +272,12 @@ public class VolumeGeoRepListModel extends SearchableListModel<GlusterVolumeEnti
     private void populateStatus(final List<GlusterGeoRepSessionDetails> details) {
         final VolumeGeoRepSessionDetailsModel windowModel = new VolumeGeoRepSessionDetailsModel();
         windowModel.setHelpTag(HelpTag.geo_replication_status_detail);
-        windowModel.setHashName("geo_replication_status_detail");//$NON-NLS-1$
+        windowModel.setHashName("geo_replication_status_detail"); //$NON-NLS-1$
 
         final UIConstants constants = ConstantsManager.getInstance().getConstants();
         windowModel.setTitle(constants.geoReplicationSessionDetailsTitle());
 
-        UICommand okCommand = new UICommand("closeWindow", this);//$NON-NLS-1$
+        UICommand okCommand = new UICommand("closeWindow", this); //$NON-NLS-1$
         okCommand.setIsCancel(true);
         okCommand.setTitle(constants.ok());
         windowModel.getCommands().add(okCommand);
@@ -293,14 +293,14 @@ public class VolumeGeoRepListModel extends SearchableListModel<GlusterVolumeEnti
 
     public void showGeoRepSessionDetails(GlusterGeoRepSession session) {
         ArrayList<GlusterGeoRepSessionDetails> details = session.getSessionDetails();
-        if(getWindow() != null) {
+        if (getWindow() != null) {
             return;
         }
-        if(details == null || details.size() == 0) {
+        if (details == null || details.size() == 0) {
             final UIConstants constants = ConstantsManager.getInstance().getConstants();
             final ConfirmationModel cModel = new ConfirmationModel();
             cModel.setTitle(constants.geoReplicationSessionDetailsTitle());
-            UICommand okCommand = new UICommand("closeConfirmWindow", this);//$NON-NLS-1$
+            UICommand okCommand = new UICommand("closeConfirmWindow", this); //$NON-NLS-1$
             okCommand.setTitle(constants.ok());
             okCommand.setIsCancel(true);
             cModel.getCommands().add(okCommand);
@@ -318,7 +318,7 @@ public class VolumeGeoRepListModel extends SearchableListModel<GlusterVolumeEnti
         GlusterGeoRepSession selectedGeoRepSession = getSelectedItem();
         GlusterVolumeGeoReplicationSessionConfigModel configModel = new GlusterVolumeGeoReplicationSessionConfigModel(selectedGeoRepSession);
         configModel.setTitle(constants.geoReplicationOptions());
-        configModel.setHashName("volume_geo_rep_configuration_display");//$NON-NLS-1$
+        configModel.setHashName("volume_geo_rep_configuration_display"); //$NON-NLS-1$
         configModel.setHelpTag(HelpTag.volume_geo_rep_configuration_display);
         configModel.startProgress();
 
@@ -401,10 +401,10 @@ public class VolumeGeoRepListModel extends SearchableListModel<GlusterVolumeEnti
     }
 
     private void addUICommandsToConfigWindow(GlusterVolumeGeoReplicationSessionConfigModel geoRepConfigModel) {
-        UICommand okCommand = UICommand.createDefaultOkUiCommand("ok", this);//$NON-NLS-1$
+        UICommand okCommand = UICommand.createDefaultOkUiCommand("ok", this); //$NON-NLS-1$
         geoRepConfigModel.addUpdateConfigsCommand(okCommand);
 
-        UICommand cancelCommand = UICommand.createCancelUiCommand("closeWindow", this);//$NON-NLS-1$
+        UICommand cancelCommand = UICommand.createCancelUiCommand("closeWindow", this); //$NON-NLS-1$
         geoRepConfigModel.addCancelCommand(cancelCommand);
     }
 
@@ -432,7 +432,7 @@ public class VolumeGeoRepListModel extends SearchableListModel<GlusterVolumeEnti
                     if (result.getReturnValue().getSucceeded()) {
                         closeWindow();
                         if (createModel.getStartSession().getEntity()) {
-                            initializeGeoRepActionConfirmation(constants.geoReplicationStartTitle(), HelpTag.volume_geo_rep_start_confirmation, "volume_geo_rep_start_confirmation", constants.geoRepForceHelp(), messages.geoRepForceTitle(constants.startGeoRep()), "onStartGeoRepSession", getEntity().getName(), remoteVolumeName, remoteHostName, null);//$NON-NLS-1$//$NON-NLS-2$
+                            initializeGeoRepActionConfirmation(constants.geoReplicationStartTitle(), HelpTag.volume_geo_rep_start_confirmation, "volume_geo_rep_start_confirmation", constants.geoRepForceHelp(), messages.geoRepForceTitle(constants.startGeoRep()), "onStartGeoRepSession", getEntity().getName(), remoteVolumeName, remoteHostName, null); //$NON-NLS-1$//$NON-NLS-2$
                             final GlusterVolumeGeoRepActionConfirmationModel cModel = (GlusterVolumeGeoRepActionConfirmationModel) getWindow();
                             cModel.startProgress();
                             Frontend.getInstance().runAction(ActionType.StartGlusterVolumeGeoRep,
@@ -472,12 +472,12 @@ public class VolumeGeoRepListModel extends SearchableListModel<GlusterVolumeEnti
         geoRepCreateModel.getSlaveUserName().setEntity(constants.rootUser());
         geoRepCreateModel.getShowEligibleVolumes().setEntity(true);
 
-        UICommand ok = new UICommand("onCreateSession", this);//$NON-NLS-1$
+        UICommand ok = new UICommand("onCreateSession", this); //$NON-NLS-1$
         ok.setTitle(constants.ok());
         ok.setIsDefault(true);
         geoRepCreateModel.getCommands().add(ok);
 
-        UICommand close = new UICommand("closeWindow", this);//$NON-NLS-1$
+        UICommand close = new UICommand("closeWindow", this); //$NON-NLS-1$
         close.setTitle(constants.cancel());
         close.setIsCancel(true);
         geoRepCreateModel.getCommands().add(close);
@@ -488,11 +488,11 @@ public class VolumeGeoRepListModel extends SearchableListModel<GlusterVolumeEnti
     }
 
     private void startGeoRepSession() {
-        performGeoRepAction("onStartGeoRepSession", constants.geoReplicationStartTitle(), HelpTag.volume_geo_rep_start_confirmation, "volume_geo_rep_start_confirmation", constants.startGeoRep(), ActionType.StartGlusterVolumeGeoRep);//$NON-NLS-1$//$NON-NLS-2$
+        performGeoRepAction("onStartGeoRepSession", constants.geoReplicationStartTitle(), HelpTag.volume_geo_rep_start_confirmation, "volume_geo_rep_start_confirmation", constants.startGeoRep(), ActionType.StartGlusterVolumeGeoRep); //$NON-NLS-1$//$NON-NLS-2$
     }
 
     private void stopGeoRepSession() {
-        performGeoRepAction("onStopGeoRepSession", constants.geoReplicationStopTitle(), HelpTag.volume_geo_rep_stop_confirmation, "volume_geo_rep_stop_confirmation", constants.stopGeoRep(), ActionType.StopGeoRepSession);//$NON-NLS-1$//$NON-NLS-2$
+        performGeoRepAction("onStopGeoRepSession", constants.geoReplicationStopTitle(), HelpTag.volume_geo_rep_stop_confirmation, "volume_geo_rep_stop_confirmation", constants.stopGeoRep(), ActionType.StopGeoRepSession); //$NON-NLS-1$//$NON-NLS-2$
     }
 
     private void confirmGeoRepAction(String title, HelpTag helpTag, String hashName, String commandName, String action) {
@@ -505,15 +505,15 @@ public class VolumeGeoRepListModel extends SearchableListModel<GlusterVolumeEnti
     }
 
     private void pauseGeoRepSession() {
-        performGeoRepAction("onPauseGeoRepSession", constants.geoReplicationPauseTitle(), HelpTag.volume_geo_rep_pause_confirmation, "volume_geo_rep_pause_confirmation", constants.pauseGeoRep(), ActionType.PauseGlusterVolumeGeoRepSession);//$NON-NLS-1$//$NON-NLS-2$
+        performGeoRepAction("onPauseGeoRepSession", constants.geoReplicationPauseTitle(), HelpTag.volume_geo_rep_pause_confirmation, "volume_geo_rep_pause_confirmation", constants.pauseGeoRep(), ActionType.PauseGlusterVolumeGeoRepSession); //$NON-NLS-1$//$NON-NLS-2$
     }
 
     private void resumeGeoRepSession() {
-        performGeoRepAction("onResumeGeoRepSession", constants.geoReplicationResumeTitle(), HelpTag.volume_geo_rep_resume_confirmation, "volume_geo_rep_resume_confirmation", constants.resumeGeoRep(), ActionType.ResumeGeoRepSession);//$NON-NLS-1$//$NON-NLS-2$
+        performGeoRepAction("onResumeGeoRepSession", constants.geoReplicationResumeTitle(), HelpTag.volume_geo_rep_resume_confirmation, "volume_geo_rep_resume_confirmation", constants.resumeGeoRep(), ActionType.ResumeGeoRepSession); //$NON-NLS-1$//$NON-NLS-2$
     }
 
     private void removeGeoRepSession() {
-        performGeoRepAction("onRemoveGeoRepSession", constants.geoReplicationRemoveTitle(), HelpTag.volume_geo_rep_remove_confirmation, "volume_geo_rep_remove_confirmation", constants.removeGeoRep(), ActionType.DeleteGeoRepSession);//$NON-NLS-1$//$NON-NLS-2$
+        performGeoRepAction("onRemoveGeoRepSession", constants.geoReplicationRemoveTitle(), HelpTag.volume_geo_rep_remove_confirmation, "volume_geo_rep_remove_confirmation", constants.removeGeoRep(), ActionType.DeleteGeoRepSession); //$NON-NLS-1$//$NON-NLS-2$
     }
 
     private void performGeoRepAction(String commandName,
@@ -533,8 +533,8 @@ public class VolumeGeoRepListModel extends SearchableListModel<GlusterVolumeEnti
 
     private void initializeGeoRepActionConfirmation(String title, HelpTag helpTag, String hashName, String forceHelp, String forceLabelText, String commandName, String masterVolumeName, String slaveVolumeName, String slaveHostName, String message) {
         GlusterVolumeGeoRepActionConfirmationModel cModel;
-        if(getWindow() != null) {
-            if(getWindow() instanceof GlusterVolumeGeoRepActionConfirmationModel) {
+        if (getWindow() != null) {
+            if (getWindow() instanceof GlusterVolumeGeoRepActionConfirmationModel) {
                 cModel = (GlusterVolumeGeoRepActionConfirmationModel) getWindow();
             } else {
                 return;
@@ -554,9 +554,9 @@ public class VolumeGeoRepListModel extends SearchableListModel<GlusterVolumeEnti
         cModel.setForceHelp(forceHelp);
         cModel.setForceLabel(forceLabelText);
 
-        List<UICommand> geoRepActionCommands = Arrays.asList(UICommand.createDefaultOkUiCommand(commandName, this), UICommand.createCancelUiCommand("closeWindow", this));//$NON-NLS-1$
+        List<UICommand> geoRepActionCommands = Arrays.asList(UICommand.createDefaultOkUiCommand(commandName, this), UICommand.createCancelUiCommand("closeWindow", this)); //$NON-NLS-1$
 
-        if(cModel.getCommands().size() > 0) {
+        if (cModel.getCommands().size() > 0) {
             cModel.setCommands(geoRepActionCommands);
         } else {
             cModel.getCommands().addAll(geoRepActionCommands);

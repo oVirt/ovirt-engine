@@ -9,7 +9,7 @@ public class AsyncTaskMapper {
     @Mapping(from = AsyncTaskStatus.class, to = CreationStatus.class)
     public static CreationStatus map(AsyncTaskStatus entity, CreationStatus template) {
         CreationStatus model = null;
-        switch(entity.getStatus()) {
+        switch (entity.getStatus()) {
             case unknown:
             case init:
                 model = template != CreationStatus.FAILED ? CreationStatus.PENDING : template;

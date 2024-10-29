@@ -246,7 +246,7 @@ public class ChangeVDSClusterCommand<T extends ChangeVDSClusterParameters> exten
         });
 
         if (targetStoragePool != null
-                && (getSourceCluster().getStoragePoolId()== null || !targetStoragePool.getId().equals(getSourceCluster().getStoragePoolId()))) {
+                && (getSourceCluster().getStoragePoolId() == null || !targetStoragePool.getId().equals(getSourceCluster().getStoragePoolId()))) {
             VdsActionParameters addVdsSpmIdParams = new VdsActionParameters(getVdsIdRef());
             addVdsSpmIdParams.setSessionId(getParameters().getSessionId());
             addVdsSpmIdParams.setCompensationEnabled(true);
@@ -276,7 +276,7 @@ public class ChangeVDSClusterCommand<T extends ChangeVDSClusterParameters> exten
         }
 
         if (getSourceCluster().getStoragePoolId() != null
-                && (targetStoragePool== null || !getSourceCluster().getStoragePoolId().equals(targetStoragePool.getId()))) {
+                && (targetStoragePool == null || !getSourceCluster().getStoragePoolId().equals(targetStoragePool.getId()))) {
             vdsSpmIdMapDao.removeByVdsAndStoragePool(getVds().getId(), getSourceCluster().getStoragePoolId());
         }
 

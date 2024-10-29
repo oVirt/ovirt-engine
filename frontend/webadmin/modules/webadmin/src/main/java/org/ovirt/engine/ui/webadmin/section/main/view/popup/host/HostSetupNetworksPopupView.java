@@ -156,7 +156,7 @@ public class HostSetupNetworksPopupView extends AbstractModelBoundPopupView<Host
     // Create an auto-scroll adapter for the nicList's parent ScrollPanel
     private void setupNicListAutoScrolling() {
         if (nicList.getParent() instanceof ScrollPanel) {
-            ScrollPanel sp = (ScrollPanel)nicList.getParent();
+            ScrollPanel sp = (ScrollPanel) nicList.getParent();
             new AutoScrollAdapter(eventBus, sp);
         }
     }

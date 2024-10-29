@@ -30,18 +30,18 @@ import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeProfil
 import org.ovirt.engine.core.common.businessentities.gluster.StatsInfo;
 
 public class GlusterVolumeProfileInfoMapper {
-    private static final Statistic BYTES_BLOCK_READ   = StatisticResourceUtils.create("block.bytes.read", "bytes read", GAUGE, BYTES, ValueType.INTEGER);
-    private static final Statistic BYTES_BLOCK_WRITE   = StatisticResourceUtils.create("block.bytes.write", "bytes written", GAUGE, BYTES, ValueType.INTEGER);
-    private static final Statistic BLOCK_SIZE   = StatisticResourceUtils.create("block.size", "block size", GAUGE, BYTES, ValueType.INTEGER);
-    private static final Statistic TOTAL_READ   = StatisticResourceUtils.create("total.bytes.read", "total bytes read", GAUGE, BYTES, ValueType.INTEGER);
-    private static final Statistic TOTAL_WRITE   = StatisticResourceUtils.create("total.bytes.write", "blockSize", GAUGE, BYTES, ValueType.INTEGER);
-    private static final Statistic MIN_LATENCY   = StatisticResourceUtils.create("min.latency", "minimum latency", GAUGE, SECONDS, ValueType.INTEGER);
-    private static final Statistic MAX_LATENCY   = StatisticResourceUtils.create("max.latency", "maximum latency", GAUGE, SECONDS, ValueType.INTEGER);
-    private static final Statistic AVG_LATENCY   = StatisticResourceUtils.create("avg.latency", "average latency", GAUGE, SECONDS, ValueType.INTEGER);
-    private static final Statistic HITS   = StatisticResourceUtils.create("hits", "number of hits", GAUGE, StatisticUnit.NONE, ValueType.INTEGER);
+    private static final Statistic BYTES_BLOCK_READ = StatisticResourceUtils.create("block.bytes.read", "bytes read", GAUGE, BYTES, ValueType.INTEGER);
+    private static final Statistic BYTES_BLOCK_WRITE = StatisticResourceUtils.create("block.bytes.write", "bytes written", GAUGE, BYTES, ValueType.INTEGER);
+    private static final Statistic BLOCK_SIZE = StatisticResourceUtils.create("block.size", "block size", GAUGE, BYTES, ValueType.INTEGER);
+    private static final Statistic TOTAL_READ = StatisticResourceUtils.create("total.bytes.read", "total bytes read", GAUGE, BYTES, ValueType.INTEGER);
+    private static final Statistic TOTAL_WRITE = StatisticResourceUtils.create("total.bytes.write", "blockSize", GAUGE, BYTES, ValueType.INTEGER);
+    private static final Statistic MIN_LATENCY = StatisticResourceUtils.create("min.latency", "minimum latency", GAUGE, SECONDS, ValueType.INTEGER);
+    private static final Statistic MAX_LATENCY = StatisticResourceUtils.create("max.latency", "maximum latency", GAUGE, SECONDS, ValueType.INTEGER);
+    private static final Statistic AVG_LATENCY = StatisticResourceUtils.create("avg.latency", "average latency", GAUGE, SECONDS, ValueType.INTEGER);
+    private static final Statistic HITS = StatisticResourceUtils.create("hits", "number of hits", GAUGE, StatisticUnit.NONE, ValueType.INTEGER);
 
 
-    @Mapping (from=GlusterVolumeProfileDetails.class, to=GlusterVolumeProfileInfo.class)
+    @Mapping (from = GlusterVolumeProfileDetails.class, to = GlusterVolumeProfileInfo.class)
     public static GlusterVolumeProfileInfo map(GlusterVolumeProfileDetails model, GlusterVolumeProfileInfo toEntity) {
         //GlusterVolumeProfileInfo is  read only from server and no support for setting these.
         //Hence mapping from REST model to Business entity not required.
@@ -49,7 +49,7 @@ public class GlusterVolumeProfileInfoMapper {
         return entity;
     }
 
-    @Mapping (from=GlusterVolumeProfileInfo.class, to=GlusterVolumeProfileDetails.class)
+    @Mapping (from = GlusterVolumeProfileInfo.class, to = GlusterVolumeProfileDetails.class)
     public static GlusterVolumeProfileDetails map(GlusterVolumeProfileInfo fromEntity, GlusterVolumeProfileDetails toModel) {
         GlusterVolumeProfileDetails model = new GlusterVolumeProfileDetails();
         BrickProfileDetails brickprofileDetails = new BrickProfileDetails();

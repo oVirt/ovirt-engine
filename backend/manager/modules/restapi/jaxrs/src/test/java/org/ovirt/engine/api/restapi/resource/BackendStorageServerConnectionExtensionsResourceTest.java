@@ -23,9 +23,9 @@ import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 @MockitoSettings(strictness = Strictness.LENIENT)
-public class BackendStorageServerConnectionExtensionsResourceTest extends AbstractBackendCollectionResourceTest<StorageConnectionExtension, StorageServerConnectionExtension, BackendStorageServerConnectionExtensionsResource>{
+public class BackendStorageServerConnectionExtensionsResourceTest extends AbstractBackendCollectionResourceTest<StorageConnectionExtension, StorageServerConnectionExtension, BackendStorageServerConnectionExtensionsResource> {
     private static Guid hostID = GUIDS[1];
-    private Guid extensionID    = GUIDS[0];
+    private Guid extensionID = GUIDS[0];
     private String iqn = "iqn";
     private String user = "user";
     private String pass = "pass";
@@ -108,7 +108,7 @@ public class BackendStorageServerConnectionExtensionsResourceTest extends Abstra
 
     public List<StorageServerConnectionExtension> getEntityList(int numOfEntities) {
         List<StorageServerConnectionExtension> retVal = new ArrayList<>();
-        for (int i = 0; i<numOfEntities; i++) {
+        for (int i = 0; i < numOfEntities; i++) {
             retVal.add(StorageConnectionExtensionResourceTestHelper.getEntity(extensionID, hostID, pass, user, iqn));
         }
         return retVal;

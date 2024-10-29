@@ -173,7 +173,7 @@ public class BackendVmCdromsResourceTest
             Object[] queryValues,
             Object queryReturn,
             int times) {
-        while (times-->0) {
+        while (times-- > 0) {
             setUpEntityQueryExpectations(query, queryClass, queryNames, queryValues, queryReturn);
         }
     }

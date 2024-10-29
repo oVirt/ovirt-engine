@@ -19,7 +19,7 @@ public class PathKey {
     @Override
     public boolean equals(Object obj) {
         if (obj instanceof PathKey) {
-            PathKey key = (PathKey)obj;
+            PathKey key = (PathKey) obj;
             return equals(service, key.service) && equals(parentService, key.parentService);
         } else {
             return false;

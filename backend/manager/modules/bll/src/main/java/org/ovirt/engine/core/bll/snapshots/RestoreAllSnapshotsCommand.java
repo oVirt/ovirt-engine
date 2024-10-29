@@ -597,7 +597,7 @@ public class RestoreAllSnapshotsCommand<T extends RestoreAllSnapshotsParameters>
                         && image.getDiskStorageType() != DiskStorageType.MANAGED_BLOCK_STORAGE) {
                     imagesToRestore.add(image);
                 } else {
-                    List<DiskImage> cinderDiskFromPreviewSnapshot = intersection.stream().filter(diskImage->
+                   List<DiskImage> cinderDiskFromPreviewSnapshot = intersection.stream().filter(diskImage ->
                             diskImage.getId().equals(image.getId())).collect(Collectors.toList());
                     if (!cinderDiskFromPreviewSnapshot.isEmpty()) {
                         imagesToRestore.add(cinderDiskFromPreviewSnapshot.get(0));
@@ -620,13 +620,13 @@ public class RestoreAllSnapshotsCommand<T extends RestoreAllSnapshotsParameters>
             // Set the active snapshot's images as target images for restore, because they are what we keep.
             getParameters().setImages(imagesFromActiveSnapshot);
             imagesFromActiveSnapshot.forEach(image -> {
-                List<DiskImage> cinderDiskFromPreviewSnapshot = imagesFromPreviewSnapshot.stream().filter(diskImage->
+                List<DiskImage> cinderDiskFromPreviewSnapshot = imagesFromPreviewSnapshot.stream().filter(diskImage ->
                         diskImage.getId().equals(image.getId())).collect(Collectors.toList());
                 if (!cinderDiskFromPreviewSnapshot.isEmpty()) {
                     if (image.getDiskStorageType() == DiskStorageType.IMAGE ||
                             image.getDiskStorageType() == DiskStorageType.MANAGED_BLOCK_STORAGE) {
                         imagesToRestore.add(image);
-                    } else if (image.getDiskStorageType() == DiskStorageType.CINDER){
+                    } else if (image.getDiskStorageType() == DiskStorageType.CINDER) {
                         CinderDisk cinderVolume = getInitialCinderVolumeToDelete(image);
                         if (cinderVolume != null) {
                             imagesToRestore.add(cinderVolume);
@@ -733,7 +733,7 @@ public class RestoreAllSnapshotsCommand<T extends RestoreAllSnapshotsParameters>
     private Set<Guid> getCriticalSnapshotsChain(List<DiskImage> imagesFromActiveSnapshot, List<CinderDisk> cinderImagesForPreviewedSnapshot) {
         Set<Guid> criticalSnapshotsChain = new HashSet<>();
         for (DiskImage image : cinderImagesForPreviewedSnapshot) {
-            List<DiskImage> cinderDiskFromSnapshot = imagesFromActiveSnapshot.stream().filter(diskImage->
+          List<DiskImage> cinderDiskFromSnapshot = imagesFromActiveSnapshot.stream().filter(diskImage ->
                     diskImage.getId().equals(image.getId())).collect(Collectors.toList());
             for (DiskImage diskImage : diskImageDao.getAllSnapshotsForLeaf(cinderDiskFromSnapshot.get(0).getImageId())) {
                 criticalSnapshotsChain.add(diskImage.getVmSnapshotId());
@@ -857,7 +857,7 @@ public class RestoreAllSnapshotsCommand<T extends RestoreAllSnapshotsParameters>
             return failValidation(EngineMessage.ACTION_TYPE_FAILED_VM_SNAPSHOT_NOT_IN_PREVIEW);
         }
 
-        if(!canRestoreVmConfigFromSnapshot()) {
+        if (!canRestoreVmConfigFromSnapshot()) {
             return failValidation(EngineMessage.MAC_POOL_NOT_ENOUGH_MAC_ADDRESSES);
         }
 

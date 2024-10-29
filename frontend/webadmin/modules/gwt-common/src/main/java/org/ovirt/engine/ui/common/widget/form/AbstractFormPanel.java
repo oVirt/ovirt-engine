@@ -50,7 +50,7 @@ public abstract class AbstractFormPanel extends Composite implements HasElementI
     private final Map<Integer, Integer> nextAvailableRowForColumn = new HashMap<>();
 
     public int getNextAvailableRow(int column) {
-        if(!nextAvailableRowForColumn.containsKey(column)) {
+        if (!nextAvailableRowForColumn.containsKey(column)) {
             nextAvailableRowForColumn.put(column, 0);
         }
         return nextAvailableRowForColumn.get(column);
@@ -73,7 +73,7 @@ public abstract class AbstractFormPanel extends Composite implements HasElementI
     }
 
     public void setRelativeColumnWidth(int columnNum, int widthInGridColumns) {
-        for(int i = 0; i < container.getWidgetCount(); i++) {
+        for (int i = 0; i < container.getWidgetCount(); i++) {
             Row row = (Row) container.getWidget(i);
             Column column = (Column) row.getWidget(columnNum);
             column.setSize(COL_PREFIX + widthInGridColumns);
@@ -163,10 +163,10 @@ public abstract class AbstractFormPanel extends Composite implements HasElementI
         if (widgetColumn != null) {
             IsWidget itemCell = widgetColumn.getWidget(0);
             if (itemCell instanceof Row) {
-                Row itemCellRow = (Row)itemCell;
+                Row itemCellRow = (Row) itemCell;
                 // Update item visibility
                 itemCellRow.setVisible(visible);
-                if(itemCellRow.getWidgetCount() > 1) {
+                if (itemCellRow.getWidgetCount() > 1) {
                     itemCellRow.remove(1); //Clear out old value.
                 }
                 Column valueColumn = new Column(COL_PREFIX + determineRealLabelWidth(item, labelWidth));

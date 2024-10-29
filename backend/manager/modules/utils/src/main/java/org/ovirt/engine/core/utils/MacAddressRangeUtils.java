@@ -150,7 +150,7 @@ public class MacAddressRangeUtils {
     /**
      * convert mac pool ranges to long ranges for bll usage with union of any two overlapping ranges into one range
      */
-    public static  Collection<LongRange> macPoolToRanges(org.ovirt.engine.core.common.businessentities.MacPool macPool) {
+    public static Collection<LongRange> macPoolToRanges(org.ovirt.engine.core.common.businessentities.MacPool macPool) {
         final DisjointRanges disjointRanges = new DisjointRanges();
         for (MacRange macRange : macPool.getRanges()) {
             disjointRanges.addRange(macToLong(macRange.getMacFrom()),
@@ -162,7 +162,7 @@ public class MacAddressRangeUtils {
     /**
      * convert mac pool ranges to long ranges for bll usage without union of overlapping ranges
      */
-    public static  Collection<LongRange> toRanges(org.ovirt.engine.core.common.businessentities.MacPool macPool) {
+    public static Collection<LongRange> toRanges(org.ovirt.engine.core.common.businessentities.MacPool macPool) {
         final List<LongRange> ranges = new ArrayList<>(macPool.getRanges().size());
         for (MacRange macRange : macPool.getRanges()) {
             ranges.add(new LongRange(macToLong(macRange.getMacFrom()), macToLong(macRange.getMacTo())));

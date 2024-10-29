@@ -7,7 +7,7 @@ import org.ovirt.engine.core.common.businessentities.Provider;
 
 public class ExternalNetworkProviderConfigurationMapper {
     @Mapping(from = Provider.class, to = ExternalNetworkProviderConfiguration.class)
-    public static ExternalNetworkProviderConfiguration map(Provider entity,  ExternalNetworkProviderConfiguration template) {
+    public static ExternalNetworkProviderConfiguration map(Provider entity, ExternalNetworkProviderConfiguration template) {
         if (entity == null) {
             return template;
         }

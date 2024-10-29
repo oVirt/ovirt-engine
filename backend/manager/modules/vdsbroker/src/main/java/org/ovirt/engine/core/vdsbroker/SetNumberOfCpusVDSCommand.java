@@ -25,7 +25,7 @@ public class SetNumberOfCpusVDSCommand<P extends SetNumberOfCpusVDSCommand.Param
         }
     }
 
-    public static class Params extends VdsAndVmIDVDSParametersBase{
+    public static class Params extends VdsAndVmIDVDSParametersBase {
 
         private int numberOfCpus;
 

@@ -129,7 +129,7 @@ public abstract class ImportVmCommandBase<T extends ImportVmParameters> extends 
     private static VmStatic vmStaticForDefaultValues = new VmStatic();
     private MacPool macPool;
 
-    private Runnable logOnExecuteEndMethod = () -> {};
+    private Runnable logOnExecuteEndMethod = () -> { };
 
     ImportVmCommandBase(T parameters, CommandContext commandContext) {
         super(parameters, commandContext);
@@ -418,7 +418,7 @@ public abstract class ImportVmCommandBase<T extends ImportVmParameters> extends 
      */
     protected void generateNewDiskId(List<DiskImage> diskImagesList, DiskImage disk) {
         Guid generatedGuid = generateNewDiskId(disk);
-        diskImagesList.forEach(diskImage ->  diskImage.setId(generatedGuid));
+        diskImagesList.forEach(diskImage -> diskImage.setId(generatedGuid));
     }
 
     /**

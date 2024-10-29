@@ -308,7 +308,7 @@ public class DashboardDataServlet extends HttpServlet {
         } else {
             dashboardCache.put(UTILIZATION_KEY, dashboard, UTILIZATION_CACHE_UPDATE_INTERVAL, TimeUnit.SECONDS);
         }
-        log.debug("Dashboard utilization cache updated in {}ms", endTime-startTime); //$NON-NLS-1$
+        log.debug("Dashboard utilization cache updated in {}ms", endTime - startTime); //$NON-NLS-1$
         return dashboard;
     }
 
@@ -322,7 +322,7 @@ public class DashboardDataServlet extends HttpServlet {
         } else {
             inventoryCache.put(INVENTORY_KEY, inventory, INVENTORY_CACHE_UPDATE_INTERVAL, TimeUnit.SECONDS);
         }
-        log.debug("Dashboard inventoy cache updated in {}ms", endTime-startTime); //$NON-NLS-1$
+        log.debug("Dashboard inventoy cache updated in {}ms", endTime - startTime); //$NON-NLS-1$
         return inventory;
     }
 

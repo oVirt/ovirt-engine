@@ -36,10 +36,10 @@ public class VmStatusIconColumn<T> extends AbstractColumn<T, VM> {
 
     @Override
     public VM getValue(T object) {
-        if (object instanceof VM){
-            return (VM)object;
+        if (object instanceof VM) {
+            return (VM) object;
         }
-        if (object instanceof PairQueryable && ((PairQueryable) object).getSecond() instanceof VM){
+        if (object instanceof PairQueryable && ((PairQueryable) object).getSecond() instanceof VM) {
             return ((PairQueryable<VmNetworkInterface, VM>) object).getSecond();
         }
         return null;

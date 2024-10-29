@@ -722,7 +722,7 @@ public class IrsProxyImpl implements IrsProxy {
             @Override
             public void run() {
                 try {
-                    if (isMasterDomainUp())  {
+                    if (isMasterDomainUp()) {
                         getEventListener().storagePoolUpEvent(storagePool);
                     }
                 } catch (RuntimeException exp) {
@@ -952,7 +952,7 @@ public class IrsProxyImpl implements IrsProxy {
             VDS vds = vdsDao.get(curVdsId);
             String vdsName = vds.getName();
             if (vds.getStatus() == VDSStatus.Initializing) {
-                final int DELAY = 5;// 5 Sec
+                final int DELAY = 5; // 5 Sec
                 int total = 0;
                 Integer maxSecToWait = Config.getValue(ConfigValues.WaitForVdsInitInSec);
                 while (total <= maxSecToWait
@@ -1249,7 +1249,7 @@ public class IrsProxyImpl implements IrsProxy {
      * @link StorageDomainStatus#Maintenance or @link StorageDomainStatus#PreparingForMaintenance.
      */
     private Set<Guid> handleDomainsInMaintenanceForHost(Collection<Guid> monitoredDomains) {
-        Set<Guid>  domainsInMaintenance = new HashSet<>();
+        Set<Guid> domainsInMaintenance = new HashSet<>();
         Set<Guid> maintInPool = new HashSet<>(
                 storageDomainStaticDao.getAllIds(
                         storagePoolId, StorageDomainStatus.Maintenance));
@@ -1614,7 +1614,7 @@ public class IrsProxyImpl implements IrsProxy {
         final StoragePool storagePool = storagePoolDao.get(storagePoolId);
         final Guid masterDomainId =
                 storageDomainDao.getMasterStorageDomainIdForPool(storagePoolId);
-        final  List<StoragePoolIsoMap> storagePoolIsoMap = storagePoolIsoMapDao.getAllForStoragePool(storagePoolId);
+        final List<StoragePoolIsoMap> storagePoolIsoMap = storagePoolIsoMapDao.getAllForStoragePool(storagePoolId);
 
         Map<String, Pair<String, String>> acquiredLocks = new HashMap<>();
         try {
@@ -1829,7 +1829,7 @@ public class IrsProxyImpl implements IrsProxy {
 
     private void removeVdsFromUnseenDomainsReport(List<Guid> nonOpVdss) {
         log.info("Removing host(s) '{}' from hosts unseen domain report cache", nonOpVdss);
-        for(Guid id : nonOpVdss) {
+        for (Guid id : nonOpVdss) {
             clearVdsReportInfoOnUnseenDomain(id);
         }
     }

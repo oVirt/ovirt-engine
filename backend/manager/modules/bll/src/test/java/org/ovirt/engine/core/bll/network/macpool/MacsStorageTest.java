@@ -34,7 +34,7 @@ public class MacsStorageTest {
     private static final int RANGE_TO = 19;
     private static final int NUMBER_OF_MACS = 12;
     private static final boolean ALLOW_DUPLICATES = true;
-    private static final List<Integer> RANGE_BOUNDARIES =Arrays.asList(
+    private static final List<Integer> RANGE_BOUNDARIES = Arrays.asList(
         RANGE_FROM,
         RANGE_FROM + NUMBER_OF_MACS / 3,
         RANGE_FROM + NUMBER_OF_MACS / 3 * 2,
@@ -100,7 +100,7 @@ public class MacsStorageTest {
     }
 
     private void mockAvailableMacsInRange(List<Range> ranges, List<Integer> rangesWithoutAvailableMacs) {
-        for(int i = 0; i < ranges.size(); i++) {
+        for (int i = 0; i < ranges.size(); i++) {
             Range range = ranges.get(i);
             boolean shouldBeEmpty = rangesWithoutAvailableMacs.contains(i);
             when(range.getAvailableCount()).thenReturn(shouldBeEmpty ? 0 : 1);
@@ -109,7 +109,7 @@ public class MacsStorageTest {
 
     private List<Range> createMockedRanges(int count) {
         List<Range> result = new ArrayList<>(count);
-        for(int i = 0; i < count; i++) {
+        for (int i = 0; i < count; i++) {
             result.add(mock(Range.class));
         }
         return result;

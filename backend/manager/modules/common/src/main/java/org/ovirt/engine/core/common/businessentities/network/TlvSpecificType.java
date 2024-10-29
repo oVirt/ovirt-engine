@@ -39,7 +39,7 @@ public enum TlvSpecificType {
         return oui;
     }
 
-    public boolean isSameAsTlv(Tlv tlv){
+    public boolean isSameAsTlv(Tlv tlv) {
         if (type < 127) {
             return type == tlv.getType();
         } else if (type == 127) {

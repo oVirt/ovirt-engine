@@ -133,7 +133,7 @@ public abstract class ImportVmModel extends ListWithDetailsModel {
         this.storagePool = storagePool;
     }
 
-    public void setItems(final AsyncCallback<QueryReturnValue> callback, final List<VM>  externalVms) {
+    public void setItems(final AsyncCallback<QueryReturnValue> callback, final List<VM> externalVms) {
         Frontend.getInstance().runQuery(QueryType.Search,
                 new SearchParameters(createSearchPattern(externalVms), SearchType.VM),
                 new AsyncQuery<QueryReturnValue>(returnValue -> {
@@ -221,7 +221,7 @@ public abstract class ImportVmModel extends ListWithDetailsModel {
     }
 
     private IValidation uniqueNameValidation(ImportVmData data, EntityModel<String> vmName) {
-        return value -> (isNameExistsInTheSystem(vmName.getEntity()) || !isVmNameUnique(data))?
+        return value -> (isNameExistsInTheSystem(vmName.getEntity()) || !isVmNameUnique(data)) ?
                ValidationResult.fail(ConstantsManager.getInstance().getConstants().nameMustBeUniqueInvalidReason())
                : ValidationResult.ok();
     }

@@ -241,7 +241,7 @@ public abstract class StorageHelperBase implements IStorageHelper {
         return true;
     }
 
-    public void addMessageToAuditLog(AuditLogType auditLogType, StorageDomain storageDomain, VDS vds){
+    public void addMessageToAuditLog(AuditLogType auditLogType, StorageDomain storageDomain, VDS vds) {
         AuditLogable logable = new AuditLogableImpl();
         logable.setVdsId(vds.getId());
         logable.setVdsName(vds.getName());

@@ -14,19 +14,19 @@ import org.ovirt.engine.core.common.businessentities.gluster.MallInfo;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BrickStatisticalQuery extends AbstractStatisticalQuery<GlusterBrick, GlusterBrickEntity> {
-    private static final Statistic MEM_TOTAL_SIZE   = create("memory.total.size", "Total size", GAUGE, BYTES, ValueType.INTEGER);
-    private static final Statistic MEM_FREE_SIZE   = create("memory.free.size", "Free size", GAUGE, BYTES, ValueType.INTEGER);
-    private static final Statistic MEM_BLOCK_SIZE   = create("memory.block.size", "Block size", GAUGE, BYTES, ValueType.INTEGER);
-    private static final Statistic MEM_MALL_ARENA   = create("malloc.arena", "Total memory allocated - Non mmapped", GAUGE, BYTES, ValueType.INTEGER);
-    private static final Statistic MEM_MALL_ORDBLKS   = create("malloc.ordblks", "No. of ordinary free blocks", COUNTER, StatisticUnit.NONE, ValueType.INTEGER);
-    private static final Statistic MEM_MALL_SMBLKS   = create("malloc.smblks", "No. of free fastbin blocks", COUNTER, StatisticUnit.NONE, ValueType.INTEGER);
-    private static final Statistic MEM_MALL_HBLKS   = create("malloc.hblks", "No. of mmapped blocks allocated", COUNTER, StatisticUnit.NONE, ValueType.INTEGER);
-    private static final Statistic MEM_MALL_HBLKSHD   = create("malloc.hblkhd", "Space allocated in mmapped blocks", GAUGE, StatisticUnit.BYTES, ValueType.INTEGER);
-    private static final Statistic MEM_MALL_USMBLKS   = create("malloc.usmblks", "Maximum total allocated space", GAUGE, StatisticUnit.BYTES, ValueType.INTEGER);
-    private static final Statistic MEM_MALL_FSMBLKS   = create("malloc.fsmblks", "Space in free fastbin blocks", GAUGE, StatisticUnit.BYTES, ValueType.INTEGER);
-    private static final Statistic MEM_MALL_UORDBLKS   = create("malloc.uordblks", "Total allocated space", GAUGE, StatisticUnit.BYTES, ValueType.INTEGER);
-    private static final Statistic MEM_MALL_FORDBLKS   = create("malloc.fordblks", "Total free space", GAUGE, StatisticUnit.BYTES, ValueType.INTEGER);
-    private static final Statistic MEM_MALL_KEEPCOST   = create("malloc.keepcost", "Releasable free space", GAUGE, StatisticUnit.BYTES, ValueType.INTEGER);
+    private static final Statistic MEM_TOTAL_SIZE = create("memory.total.size", "Total size", GAUGE, BYTES, ValueType.INTEGER);
+    private static final Statistic MEM_FREE_SIZE = create("memory.free.size", "Free size", GAUGE, BYTES, ValueType.INTEGER);
+    private static final Statistic MEM_BLOCK_SIZE = create("memory.block.size", "Block size", GAUGE, BYTES, ValueType.INTEGER);
+    private static final Statistic MEM_MALL_ARENA = create("malloc.arena", "Total memory allocated - Non mmapped", GAUGE, BYTES, ValueType.INTEGER);
+    private static final Statistic MEM_MALL_ORDBLKS = create("malloc.ordblks", "No. of ordinary free blocks", COUNTER, StatisticUnit.NONE, ValueType.INTEGER);
+    private static final Statistic MEM_MALL_SMBLKS = create("malloc.smblks", "No. of free fastbin blocks", COUNTER, StatisticUnit.NONE, ValueType.INTEGER);
+    private static final Statistic MEM_MALL_HBLKS = create("malloc.hblks", "No. of mmapped blocks allocated", COUNTER, StatisticUnit.NONE, ValueType.INTEGER);
+    private static final Statistic MEM_MALL_HBLKSHD = create("malloc.hblkhd", "Space allocated in mmapped blocks", GAUGE, StatisticUnit.BYTES, ValueType.INTEGER);
+    private static final Statistic MEM_MALL_USMBLKS = create("malloc.usmblks", "Maximum total allocated space", GAUGE, StatisticUnit.BYTES, ValueType.INTEGER);
+    private static final Statistic MEM_MALL_FSMBLKS = create("malloc.fsmblks", "Space in free fastbin blocks", GAUGE, StatisticUnit.BYTES, ValueType.INTEGER);
+    private static final Statistic MEM_MALL_UORDBLKS = create("malloc.uordblks", "Total allocated space", GAUGE, StatisticUnit.BYTES, ValueType.INTEGER);
+    private static final Statistic MEM_MALL_FORDBLKS = create("malloc.fordblks", "Total free space", GAUGE, StatisticUnit.BYTES, ValueType.INTEGER);
+    private static final Statistic MEM_MALL_KEEPCOST = create("malloc.keepcost", "Releasable free space", GAUGE, StatisticUnit.BYTES, ValueType.INTEGER);
 
     public BrickStatisticalQuery(GlusterBrick parent ) {
         this(null, parent);
@@ -43,7 +43,7 @@ public class BrickStatisticalQuery extends AbstractStatisticalQuery<GlusterBrick
         return asList(setDatum(clone(MEM_TOTAL_SIZE), brickDetails.getBrickProperties().getTotalSize() * Mb),
                       setDatum(clone(MEM_FREE_SIZE), brickDetails.getBrickProperties().getFreeSize() * Mb),
                       setDatum(clone(MEM_BLOCK_SIZE), brickDetails.getBrickProperties().getBlockSize() * Mb),
-                      setDatum(clone(MEM_MALL_ARENA),   mallInfo.getArena()),
+                      setDatum(clone(MEM_MALL_ARENA), mallInfo.getArena()),
                       setDatum(clone(MEM_MALL_ORDBLKS), mallInfo.getOrdblks()),
                       setDatum(clone(MEM_MALL_SMBLKS), mallInfo.getSmblks()),
                       setDatum(clone(MEM_MALL_HBLKS), mallInfo.getHblks()),

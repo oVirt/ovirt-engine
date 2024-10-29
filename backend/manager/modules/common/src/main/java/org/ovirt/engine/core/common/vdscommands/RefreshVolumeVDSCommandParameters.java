@@ -17,7 +17,7 @@ public class RefreshVolumeVDSCommandParameters extends VdsIdVDSCommandParameters
         this.imageId = imageId;
     }
 
-    public RefreshVolumeVDSCommandParameters() {}
+    public RefreshVolumeVDSCommandParameters() { }
 
     public Guid getStoragePoolId() {
         return storagePoolId;

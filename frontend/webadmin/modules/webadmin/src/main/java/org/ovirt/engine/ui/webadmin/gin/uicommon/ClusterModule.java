@@ -362,7 +362,7 @@ public class ClusterModule extends AbstractGinModule {
 
     @Override
     protected void configure() {
-        bind(new TypeLiteral<ClusterListModel<Void>> (){}).in(Singleton.class);
+        bind(new TypeLiteral<ClusterListModel<Void>> () { }).in(Singleton.class);
         bind(ClusterGeneralModel.class).in(Singleton.class);
         bind(ClusterHostListModel.class).in(Singleton.class);
         bind(ClusterNetworkListModel.class).in(Singleton.class);
@@ -371,28 +371,28 @@ public class ClusterModule extends AbstractGinModule {
         bind(ClusterGlusterHookListModel.class).in(Singleton.class);
         bind(ClusterAffinityGroupListModel.class).in(Singleton.class);
         bind(CpuProfileListModel.class).in(Singleton.class);
-        bind(new TypeLiteral<PermissionListModel<Cluster>>(){}).in(Singleton.class);
-        bind(new TypeLiteral<PermissionListModel<CpuProfile>>(){}).in(Singleton.class);
+        bind(new TypeLiteral<PermissionListModel<Cluster>>() { }).in(Singleton.class);
+        bind(new TypeLiteral<PermissionListModel<CpuProfile>>() { }).in(Singleton.class);
         bind(ClusterAffinityLabelListModel.class).in(Singleton.class);
         bind(ClusterEventListModel.class).in(Singleton.class);
         bind(ClusterMainSelectedItems.class).asEagerSingleton();
 
         // Form Detail Models
-        bind(new TypeLiteral<DetailModelProvider<ClusterListModel<Void>, ClusterServiceModel>>(){})
-            .to(new TypeLiteral<DetailTabModelProvider<ClusterListModel<Void>, ClusterServiceModel>>(){}).in(Singleton.class);
+        bind(new TypeLiteral<DetailModelProvider<ClusterListModel<Void>, ClusterServiceModel>>() { })
+            .to(new TypeLiteral<DetailTabModelProvider<ClusterListModel<Void>, ClusterServiceModel>>() { }).in(Singleton.class);
         // Search-able Detail Models
-        bind(new TypeLiteral<SearchableDetailModelProvider<VDS, ClusterListModel<Void>, ClusterHostListModel>>(){})
-            .to(new TypeLiteral<SearchableDetailTabModelProvider<VDS, ClusterListModel<Void>, ClusterHostListModel>>(){})
+        bind(new TypeLiteral<SearchableDetailModelProvider<VDS, ClusterListModel<Void>, ClusterHostListModel>>() { })
+            .to(new TypeLiteral<SearchableDetailTabModelProvider<VDS, ClusterListModel<Void>, ClusterHostListModel>>() { })
             .in(Singleton.class);
-        bind(new TypeLiteral<SearchableDetailModelProvider<VM, ClusterListModel<Void>, ClusterVmListModel>>(){})
-            .to(new TypeLiteral<SearchableDetailTabModelProvider<VM, ClusterListModel<Void>, ClusterVmListModel>>(){})
+        bind(new TypeLiteral<SearchableDetailModelProvider<VM, ClusterListModel<Void>, ClusterVmListModel>>() { })
+            .to(new TypeLiteral<SearchableDetailTabModelProvider<VM, ClusterListModel<Void>, ClusterVmListModel>>() { })
             .in(Singleton.class);
         // Permission Detail Model
-        bind(new TypeLiteral<SearchableDetailModelProvider<Permission, ClusterListModel<Void>, PermissionListModel<Cluster>>>(){})
-            .to(new TypeLiteral<PermissionModelProvider<Cluster, ClusterListModel<Void>>>(){}).in(Singleton.class);
+        bind(new TypeLiteral<SearchableDetailModelProvider<Permission, ClusterListModel<Void>, PermissionListModel<Cluster>>>() { })
+            .to(new TypeLiteral<PermissionModelProvider<Cluster, ClusterListModel<Void>>>() { }).in(Singleton.class);
         // Cpu Profile permission list model
-        bind(new TypeLiteral<SearchableDetailModelProvider<Permission, CpuProfileListModel, PermissionListModel<CpuProfile>>>(){})
-            .to(new TypeLiteral<PermissionModelProvider<CpuProfile, CpuProfileListModel>>(){}).in(Singleton.class);
+        bind(new TypeLiteral<SearchableDetailModelProvider<Permission, CpuProfileListModel, PermissionListModel<CpuProfile>>>() { })
+            .to(new TypeLiteral<PermissionModelProvider<CpuProfile, CpuProfileListModel>>() { }).in(Singleton.class);
     }
 
 }

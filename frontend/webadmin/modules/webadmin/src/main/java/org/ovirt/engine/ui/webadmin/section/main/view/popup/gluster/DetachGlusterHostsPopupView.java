@@ -65,7 +65,7 @@ public class DetachGlusterHostsPopupView extends AbstractModelBoundPopupView<Det
         driver.initialize(this);
     }
 
-    protected void initTableColumns(){
+    protected void initTableColumns() {
         // Table Entity Columns
         hostsTable.addColumn(new AbstractEntityModelTextColumn<String>() {
             @Override

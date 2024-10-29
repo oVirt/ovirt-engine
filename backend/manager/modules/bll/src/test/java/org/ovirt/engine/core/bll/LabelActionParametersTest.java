@@ -42,7 +42,7 @@ public class LabelActionParametersTest {
 
         List<String> validationMessages = ValidationUtils.validateInputs(new ArrayList<>(), parameters);
 
-        if(isValidLabelName){
+        if (isValidLabelName) {
             assertThat(validationMessages).isEmpty();
         } else {
             assertThat(validationMessages)

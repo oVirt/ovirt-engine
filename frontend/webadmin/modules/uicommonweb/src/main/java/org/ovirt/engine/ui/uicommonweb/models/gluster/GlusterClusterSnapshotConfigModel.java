@@ -66,7 +66,7 @@ public class GlusterClusterSnapshotConfigModel extends Model {
     public boolean validate() {
         boolean isValid = true;
         setMessage(null);
-        if(getClusterConfigOptions().getItems() == null || getClusterConfigOptions().getItems().isEmpty()) {
+        if (getClusterConfigOptions().getItems() == null || getClusterConfigOptions().getItems().isEmpty()) {
             setMessage(ConstantsManager.getInstance().getMessages().clusterSnapshotOptionNotExist());
             return false;
         }

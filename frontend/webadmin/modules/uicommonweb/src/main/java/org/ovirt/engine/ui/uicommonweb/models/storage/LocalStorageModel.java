@@ -49,7 +49,7 @@ public class LocalStorageModel extends FileStorageModel {
     }
 
     @Override
-    protected void prepareConnectionForEditing(StorageServerConnections connection) {}
+    protected void prepareConnectionForEditing(StorageServerConnections connection) { }
 
     public LocalStorageModel() {
         setUpdateCommand(new UICommand("Update", this)); //$NON-NLS-1$

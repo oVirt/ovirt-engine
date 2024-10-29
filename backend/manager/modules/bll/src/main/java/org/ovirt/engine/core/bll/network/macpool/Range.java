@@ -24,7 +24,7 @@ class Range {
 
     public Range(LongRange range) {
         this.range = range;
-        long numberOfMacsLong =  (range.getMaximumLong() - range.getMinimumLong()) + 1;
+        long numberOfMacsLong = (range.getMaximumLong() - range.getMinimumLong()) + 1;
         Validate.isTrue(numberOfMacsLong <= Integer.MAX_VALUE,
                 String.format("Range too big; Range shouldn't be bigger than %1$s, but passed one "
                         + "contains %2$s elements.", Integer.MAX_VALUE, numberOfMacsLong));

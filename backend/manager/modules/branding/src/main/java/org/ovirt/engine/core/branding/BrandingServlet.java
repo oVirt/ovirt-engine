@@ -60,7 +60,7 @@ public class BrandingServlet extends HttpServlet {
      */
     File getFile(final File brandingRootPath, final String path) {
         File result = null;
-        String mergedPath = new File(brandingRootPath.getAbsolutePath(), path == null ? "": path).getAbsolutePath();
+        String mergedPath = new File(brandingRootPath.getAbsolutePath(), path == null ? "" : path).getAbsolutePath();
         if (path != null && ServletUtils.isSane(mergedPath)) {
             // Return a result relative to the branding root path.
             result = new File(mergedPath);

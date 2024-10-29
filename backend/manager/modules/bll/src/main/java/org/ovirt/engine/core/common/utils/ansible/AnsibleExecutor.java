@@ -179,7 +179,7 @@ public class AnsibleExecutor {
             log.error("Error executing playbook: {}", message);
             log.debug("InventoryException: ", ex);
             ret.setStderr(message);
-            ret.setAnsibleReturnCode(message.contains(SSH_TIMEOUT) ? AnsibleReturnCode.UNREACHABLE: AnsibleReturnCode.FAIL);
+            ret.setAnsibleReturnCode(message.contains(SSH_TIMEOUT) ? AnsibleReturnCode.UNREACHABLE : AnsibleReturnCode.FAIL);
         } catch (Exception ex) {
             log.error("Exception: {}", ex.getMessage());
             log.debug("Exception: ", ex);

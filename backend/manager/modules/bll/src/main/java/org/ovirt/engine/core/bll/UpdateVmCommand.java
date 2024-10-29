@@ -132,7 +132,7 @@ import org.ovirt.engine.core.vdsbroker.ResourceManager;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.CloudInitHandler;
 
 public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmManagementCommandBase<T>
-        implements QuotaVdsDependent, RenamedEntityInfoProvider{
+        implements QuotaVdsDependent, RenamedEntityInfoProvider {
 
     private static final Base64 BASE_64 = new Base64(0, null);
     private static final String AUDIT_LOG_MEMORY_HOT_UNPLUG_OPTIONS = "memoryHotUnplugOptions";
@@ -201,7 +201,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
     private boolean isUpdateVmTemplateVersion = false;
     private String mdevType; // the value of the deprecated custom property mdev_type, if specified
 
-    private BiConsumer<AuditLogable, AuditLogDirector> affinityGroupLoggingMethod = (a, b) -> {};
+    private BiConsumer<AuditLogable, AuditLogDirector> affinityGroupLoggingMethod = (a, b) -> { };
 
     public UpdateVmCommand(T parameters, CommandContext commandContext) {
         super(parameters, commandContext);
@@ -444,7 +444,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
         return true;
     }
 
-    private void liveUpdateCpuProfile(){
+    private void liveUpdateCpuProfile() {
         if (getVm().getStatus().isQualifiedForQosChange() &&
                 !Objects.equals(oldVm.getCpuProfileId(), newVmStatic.getCpuProfileId())) {
             vmSlaPolicyUtils.refreshCpuQosOfRunningVm(getVm());
@@ -733,7 +733,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
 
     private boolean requiresSpecialBlock(int minimalHotPlugDeviceSizeMb) {
         if (!osRepository.requiresHotPlugSpecialBlock(getParameters().getVmStaticData().getOsId(),
-                getEffectiveCompatibilityVersion())){
+                getEffectiveCompatibilityVersion())) {
             return false;
         }
         final List<VmDevice> memoryDevices = getVmDeviceUtils().getMemoryDevices(getVmId());
@@ -813,7 +813,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
                 parameters.setAction(getParameters().getWatchdog().getAction());
                 parameters.setModel(getParameters().getWatchdog().getModel());
 
-                if(watchdogs.isEmpty()) {
+                if (watchdogs.isEmpty()) {
                     runInternalAction(ActionType.AddWatchdog, parameters, cloneContextAndDetachFromParent());
                 } else {
                     // there is a watchdog in the vm, we have to update.
@@ -1040,7 +1040,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
             } else if (vmFromDB.getVmPoolId() != null) {
                 isUpdateVmTemplateVersion = true;
                 return true; // no more tests are needed because no more changes are allowed in this state
-            } else {// template id can be changed for pool VMs only
+            } else { // template id can be changed for pool VMs only
                 return failValidation(EngineMessage.ACTION_TYPE_FAILED_TEMPLATE_ID_CANT_BE_CHANGED);
             }
         }
@@ -1247,7 +1247,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
             }
         }
 
-        if (isVirtioScsiEnabled())  {
+      if (isVirtioScsiEnabled()) {
             // Verify OS compatibility
             if (!validate(vmHandler.isOsTypeSupportedForVirtioScsi
                     (vmFromParams.getOs(), getEffectiveCompatibilityVersion()))) {
@@ -1258,7 +1258,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
         VmValidator vmValidator = createVmValidator(vmFromParams);
 
         // A pinned VM, must run on one of its hosts
-        if (!validate(vmValidator.isPinnedVmRunningOnDedicatedHost(vmFromDB, vmFromParams.getStaticData()))){
+        if (!validate(vmValidator.isPinnedVmRunningOnDedicatedHost(vmFromDB, vmFromParams.getStaticData()))) {
             return false;
         }
 
@@ -1409,7 +1409,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
             return false;
         }
 
-        if (!isIsoPathExists(vmFromParams.getStaticData(), getVm().getStoragePoolId())){
+        if (!isIsoPathExists(vmFromParams.getStaticData(), getVm().getStoragePoolId())) {
             return failValidation(EngineMessage.ERROR_CANNOT_FIND_ISO_IMAGE_PATH);
         }
         if (!validate(vmHandler.validateCpuPinningPolicy(getParameters().getVmStaticData(),
@@ -1433,7 +1433,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
         boolean countThreadsAsCores = getCluster().getCountThreadsAsCores();
         int availableCpus = SlaValidator.getEffectiveCpuCores(getVds(), countThreadsAsCores) -
                 vdsCpuUnitPinningHelper.countUnavailableCpus(
-                        getVdsManager(getVdsId()).getCpuTopology(),  countThreadsAsCores);
+                        getVdsManager(getVdsId()).getCpuTopology(), countThreadsAsCores);
         if (vmStaticData.getNumOfCpus(false) > availableCpus) {
             return false;
         }
@@ -1577,14 +1577,14 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
     private boolean isDedicatedVmForVdsChanged() {
         List<Guid> paramList = getParameters().getVmStaticData().getDedicatedVmForVdsList();
         List<Guid> vmList = getVm().getDedicatedVmForVdsList();
-        if (vmList == null && paramList == null){
+        if (vmList == null && paramList == null) {
             return false;
         }
-        if (vmList == null || paramList == null){
+        if (vmList == null || paramList == null) {
             return true;
         }
         //  vmList.equals(paramList) not good enough, the lists order could change
-        if (vmList.size() != paramList.size()){
+        if (vmList.size() != paramList.size()) {
             return true;
         }
         return !paramList.containsAll(vmList);
@@ -1603,7 +1603,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
     private boolean isChipsetChanged() {
         BiosType newBiosType = getParameters().getVmStaticData().getBiosType();
         BiosType oldBiosType = getVm().getBiosType();
-        return  newBiosType.getChipsetType() != oldBiosType.getChipsetType();
+        return newBiosType.getChipsetType() != oldBiosType.getChipsetType();
     }
 
     @Override

@@ -101,7 +101,7 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
     @Inject
     private AffinityValidator affinityValidator;
 
-    private BiConsumer<AuditLogable, AuditLogDirector> affinityGroupLoggingMethod = (a, b) -> {};
+    private BiConsumer<AuditLogable, AuditLogDirector> affinityGroupLoggingMethod = (a, b) -> { };
     /**
      * Constructor for command creation when compensation is applied on startup
      */
@@ -434,7 +434,7 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
             ByteArrayOutputStream out = new ConstraintByteArrayOutputStream(256);
             client.executeCommand(Config.getValue(ConfigValues.GetVdsmIdByVdsmToolCommand), null, out, err);
             return new String(out.toByteArray(), StandardCharsets.UTF_8).trim();
-        } catch(Exception e) {
+        } catch (Exception e) {
             log.warn(
                     "Failed to initiate vdsm-id request on host: {} with error: {}",
                     e.getMessage(),
@@ -512,8 +512,8 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
                 // Must not allow adding a server that already is part of another gluster cluster
                 Set<String> peers = glusterUtil.getPeers(sshclient);
                 if (peers.size() > 0) {
-                    for(String peer : peers) {
-                        if(glusterDBUtils.serverExists(clusterId, peer)) {
+                    for (String peer : peers) {
+                        if (glusterDBUtils.serverExists(clusterId, peer)) {
                             // peer present in cluster. so server being added is valid.
                             return true;
                         }

@@ -10,7 +10,7 @@ public class LeaseTaskInfoReturn extends StatusReturn {
         super(innerMap);
     }
 
-    public String getTaskId(){
+    public String getTaskId() {
         return (String) innerMap.get(TASK_ID_KEY);
     }
 }

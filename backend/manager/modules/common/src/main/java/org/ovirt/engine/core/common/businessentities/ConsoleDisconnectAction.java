@@ -8,7 +8,7 @@ public enum ConsoleDisconnectAction {
     REBOOT;
 
     public static ConsoleDisconnectAction fromString(String name) {
-        if(name == null) {
+        if (name == null) {
             return LOCK_SCREEN;
         }
         return ConsoleDisconnectAction.valueOf(name);

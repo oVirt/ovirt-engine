@@ -146,7 +146,7 @@ public abstract class RemoveSnapshotSingleDiskCommandBase<T extends ImagesContai
                 .map(CommandEntity::getId)
                 .collect(Collectors.toList());
         if (childCommandIds.size() != parameters.getChildCommands().size()) {
-            parameters.getChildCommands().put(parameters.getCommandStep(), childCommandIds.get(childCommandIds.size()-1));
+            parameters.getChildCommands().put(parameters.getCommandStep(), childCommandIds.get(childCommandIds.size() - 1));
         }
     }
 

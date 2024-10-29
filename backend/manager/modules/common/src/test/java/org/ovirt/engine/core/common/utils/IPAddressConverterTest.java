@@ -60,7 +60,7 @@ public class IPAddressConverterTest {
     }
 
     @Test
-    public void checkConvertPrefixToIpv4Address(){
+    public void checkConvertPrefixToIpv4Address() {
         runConvertPrefixToIpv4Address("255.255.255.255", "32");
         runConvertPrefixToIpv4Address("0.0.0.0", "0");
         runConvertPrefixToIpv4Address("255.255.255.254", "31");
@@ -68,7 +68,7 @@ public class IPAddressConverterTest {
         runConvertPrefixToIpv4Address("254.0.0.0", "7");
     }
 
-    private void runConvertPrefixToIpv4Address(String expectedIpv4Address, String prefix){
+    private void runConvertPrefixToIpv4Address(String expectedIpv4Address, String prefix) {
         String errorMessage =
                 String.format("Fail to convert prefix %s to IPv4 address: %s.", prefix, expectedIpv4Address);
         String actualIpv4Address = underTest.convertPrefixToIPv4Netmask(prefix);
@@ -86,7 +86,7 @@ public class IPAddressConverterTest {
     }
 
     @Test
-    public void checkConvertPrefixWithTrailingSlashToIpv4Address(){
+    public void checkConvertPrefixWithTrailingSlashToIpv4Address() {
         runConvertPrefixToIpv4Address("255.255.0.0", "/16");
     }
 

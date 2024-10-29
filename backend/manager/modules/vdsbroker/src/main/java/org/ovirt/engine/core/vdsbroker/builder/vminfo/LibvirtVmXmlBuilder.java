@@ -411,7 +411,7 @@ public class LibvirtVmXmlBuilder {
         writer.writeStartElement("cpu");
 
         String cpuType = vm.getCpuName();
-        if (vm.isUseHostCpuFlags()){
+        if (vm.isUseHostCpuFlags()) {
             cpuType = "hostPassthrough";
         }
         if (vm.getUseTscFrequency() && tscFrequencySupplier.get() != null) {
@@ -433,13 +433,13 @@ public class LibvirtVmXmlBuilder {
 
         String[] typeAndFlags = cpuType.split(",");
 
-        switch(vm.getClusterArch().getFamily()) {
+        switch (vm.getClusterArch().getFamily()) {
         case x86:
         case s390x:
             writer.writeAttributeString("match", "exact");
 
             // is this a list of strings??..
-            switch(typeAndFlags[0]) {
+            switch (typeAndFlags[0]) {
             case "hostPassthrough":
                 writer.writeAttributeString("mode", "host-passthrough");
                 writeCpuFlags(typeAndFlags);
@@ -503,7 +503,7 @@ public class LibvirtVmXmlBuilder {
     private void writeCpuFlags(String[] typeAndFlags) {
         Stream.of(typeAndFlags).skip(1).filter(StringUtils::isNotEmpty).forEach(flag -> {
             writer.writeStartElement("feature");
-            switch(flag.charAt(0)) {
+            switch (flag.charAt(0)) {
             case '+':
                 writer.writeAttributeString("name", flag.substring(1));
                 writer.writeAttributeString("policy", "require");
@@ -538,7 +538,7 @@ public class LibvirtVmXmlBuilder {
         if (ioEmulatorCpus != null) {
             for (int i = 0; i < vm.getNumOfIoThreads(); i++) {
                 writer.writeStartElement("iothreadpin");
-                writer.writeAttributeString("iothread", String.valueOf(i+1));
+                writer.writeAttributeString("iothread", String.valueOf(i + 1));
                 writer.writeAttributeString("cpuset", ioEmulatorCpus);
                 writer.writeEndElement();
             }
@@ -1066,7 +1066,7 @@ public class LibvirtVmXmlBuilder {
 
         writer.writeStartElement("devices");
 
-        switch(vm.getClusterArch().getFamily()) {
+        switch (vm.getClusterArch().getFamily()) {
         // No mouse or tablet for s390x and for headless HP VMS with ppc architecture type.
         case x86:
             writeInput();
@@ -1128,7 +1128,7 @@ public class LibvirtVmXmlBuilder {
                 writeVideo(device);
                 break;
             case CONTROLLER:
-                switch(device.getDevice()) {
+                switch (device.getDevice()) {
                 case "usb":
                     if ("qemu-xhci".equals(device.getSpecParams().get("model"))) {
                         device.getSpecParams().put("ports", 8);
@@ -1181,7 +1181,7 @@ public class LibvirtVmXmlBuilder {
                 }
                 break;
             case DISK:
-                switch(VmDeviceType.getByName(device.getDevice())) {
+                switch (VmDeviceType.getByName(device.getDevice())) {
                 case CDROM:
                     cdromDevices.add(device);
                     break;
@@ -1364,7 +1364,7 @@ public class LibvirtVmXmlBuilder {
             writer.writeEndElement();
 
             Map<String, String> metadata = new HashMap<>();
-            String mdevTypeMeta = (String)mdevSpecParams.get(MDevTypesUtils.MDEV_TYPE);
+            String mdevTypeMeta = (String) mdevSpecParams.get(MDevTypesUtils.MDEV_TYPE);
             if (FeatureSupported.isVgpuPlacementSupported(compatibilityVersion)) {
                 VgpuPlacement vgpuPlacement = hostVgpuPlacementSupplier.get();
                 String vgpuPlacementString;
@@ -1477,7 +1477,7 @@ public class LibvirtVmXmlBuilder {
             DiskInterface diskInterface = dve.getDiskInterface();
             int index = 0;
             int pinTo = 0;
-            switch(diskInterface) {
+            switch (diskInterface) {
             case IDE:
                 index = hdIndex = skipCdIndices(++hdIndex, diskInterface);
                 break;
@@ -1695,8 +1695,8 @@ public class LibvirtVmXmlBuilder {
         hostDevDisks.sort(Comparator
                 .comparing((Pair<VmDevice, HostDevice> p) -> Integer.parseInt(p.getSecond().getAddress().get("host")))
                 .thenComparing(p -> Integer.parseInt(p.getSecond().getAddress().get("bus")))
-                .thenComparing(p-> Integer.parseInt(p.getSecond().getAddress().get("target")))
-                .thenComparing(p-> Integer.parseInt(p.getSecond().getAddress().get("lun")))
+                .thenComparing(p -> Integer.parseInt(p.getSecond().getAddress().get("target")))
+                .thenComparing(p -> Integer.parseInt(p.getSecond().getAddress().get("lun")))
         );
 
         for (Pair<VmDevice, HostDevice> pair : hostDevDisks) {
@@ -1872,13 +1872,13 @@ public class LibvirtVmXmlBuilder {
 
     private void writeNvdimmHostDevice(VmHostDevice device, HostDevice hostDevice) {
         Map<String, Object> specParams = hostDevice.getSpecParams();
-        String numaNode = (String)specParams.get(VdsProperties.NUMA_NODE);
+        String numaNode = (String) specParams.get(VdsProperties.NUMA_NODE);
         String targetNode = vmInfoBuildUtils.getMatchingNumaNode(getNumaTuneSetting(), vmNumaNodesSupplier, numaNode);
         if (targetNode == null) {
             log.error("No NUMA node, cannot add NVDIMM devices");
             return;
         }
-        Long alignSize = (Long)specParams.get(VdsProperties.ALIGN_SIZE);
+        Long alignSize = (Long) specParams.get(VdsProperties.ALIGN_SIZE);
         if (alignSize == null) {
             // If we didn't specify alignsize, libvirt would select one based on memory page size.
             // Better to set it ourselves, to the memory block size.
@@ -1911,7 +1911,7 @@ public class LibvirtVmXmlBuilder {
         writer.writeAttributeString("access", "shared");
 
         writer.writeStartElement("source");
-        writer.writeElement("path", (String)specParams.get(VdsProperties.DEVICE_PATH));
+        writer.writeElement("path", (String) specParams.get(VdsProperties.DEVICE_PATH));
         writer.writeStartElement("alignsize");
         writer.writeAttributeString("unit", "KiB");
         writer.writeRaw(String.valueOf(alignSize / 1024));
@@ -1973,7 +1973,7 @@ public class LibvirtVmXmlBuilder {
 
         writer.writeStartElement("backend");
         writer.writeAttributeString("model", "random");
-        switch(specParams.get("source").toString()) {
+        switch (specParams.get("source").toString()) {
         case "random":
             writer.writeRaw("/dev/random");
             break;
@@ -2312,7 +2312,7 @@ public class LibvirtVmXmlBuilder {
         switch (disk.getDiskStorageType()) {
         case IMAGE:
             DiskImage diskImage = (DiskImage) disk;
-            nativeIO =  vmInfoBuildUtils.shouldUseNativeIO(vm, diskImage, device);
+            nativeIO = vmInfoBuildUtils.shouldUseNativeIO(vm, diskImage, device);
             writer.writeAttributeString("io", nativeIO ? "native" : "threads");
             writer.writeAttributeString("type", diskImage.getVolumeFormat() == VolumeFormat.COW ? "qcow2" : "raw");
             writer.writeAttributeString("error_policy", disk.getPropagateErrors() == PropagateErrors.On ? "enospace" : "stop");
@@ -2465,7 +2465,7 @@ public class LibvirtVmXmlBuilder {
             } else if (managedBlockStorageDisk.getCinderVolumeDriver() == CinderVolumeDriver.BLOCK) {
                 Map<String, Object> attachment =
                         (Map<String, Object>) managedBlockStorageDisk.getDevice().get(DeviceInfoReturn.ATTACHMENT);
-                metadata.put("GUID", (String)attachment.get(DeviceInfoReturn.SCSI_WWN));
+                metadata.put("GUID", (String) attachment.get(DeviceInfoReturn.SCSI_WWN));
             }
 
             metadata.put("managed", "true");
@@ -3094,7 +3094,7 @@ public class LibvirtVmXmlBuilder {
             writer.writeAttributeString("bus", "usb");
         } else {
             writer.writeAttributeString("type", "mouse");
-            writer.writeAttributeString("bus", vm.getClusterArch().getFamily() == ArchitectureType.x86 ? "ps2" :"usb");
+            writer.writeAttributeString("bus", vm.getClusterArch().getFamily() == ArchitectureType.x86 ? "ps2" : "usb");
         }
 
         writer.writeEndElement();

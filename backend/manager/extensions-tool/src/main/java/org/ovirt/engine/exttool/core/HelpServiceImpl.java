@@ -33,7 +33,7 @@ public class HelpServiceImpl implements ModuleService {
     @Override
     public void parseArguments(List<String> args) throws Exception {
         System.out.println("Available modules:");
-        for(Map.Entry<String, ModuleService> entry : new TreeMap<>(getContext().<Map<String, ModuleService>>get(ContextKeys.MODULES)).entrySet()) {
+        for (Map.Entry<String, ModuleService> entry : new TreeMap<>(getContext().<Map<String, ModuleService>>get(ContextKeys.MODULES)).entrySet()) {
             System.out.printf(
                 String.format("  %-10s - %s%n",
                 entry.getKey(),

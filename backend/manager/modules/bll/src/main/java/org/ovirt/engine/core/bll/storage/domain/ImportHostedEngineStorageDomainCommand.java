@@ -237,7 +237,7 @@ public class ImportHostedEngineStorageDomainCommand<T extends StorageDomainManag
                         null));
         if (allDomainsQuery.getSucceeded()) {
             for (StorageDomain sd : (List<StorageDomain>) allDomainsQuery.getReturnValue()) {
-                if(sd.getId().equals(getParameters().getStorageDomainId())){
+                if (sd.getId().equals(getParameters().getStorageDomainId())) {
                     heStorageDomain = sd;
                     return true;
                 }

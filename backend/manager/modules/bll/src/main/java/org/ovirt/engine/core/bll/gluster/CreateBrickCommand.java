@@ -153,7 +153,7 @@ public class CreateBrickCommand extends VdsCommand<CreateBrickParameters> {
         if (totalSize < MIN_VG_SIZE) {
             poolmetadatsize = MIN_METADATA_PERCENT * totalSize;
         } else {
-            poolmetadatsize =  Double.valueOf(DEFAULT_METADATA_SIZE_MB);
+            poolmetadatsize = Double.valueOf(DEFAULT_METADATA_SIZE_MB);
         }
         totalSize = totalSize - poolmetadatsize;
 

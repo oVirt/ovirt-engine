@@ -202,7 +202,7 @@ public class GlusterGeoRepDaoImpl extends MassOperationsGenericDao<GlusterGeoRep
 
     @Override
     public List<GlusterGeoRepSessionConfiguration> getGlusterGeoRepSessionUnSetConfig(Guid sessionId) {
-        ((GeoRepSessionConfigMasterRowMapper)geoRepSessionConfigMasterRowMapper).setSessionId(sessionId);
+        ((GeoRepSessionConfigMasterRowMapper) geoRepSessionConfigMasterRowMapper).setSessionId(sessionId);
         return getCallsHandler().executeReadList("GetGlusterGeoRepSessionUnSetConfig", geoRepSessionConfigMasterRowMapper, createIdParameterMapper(sessionId));
     }
 

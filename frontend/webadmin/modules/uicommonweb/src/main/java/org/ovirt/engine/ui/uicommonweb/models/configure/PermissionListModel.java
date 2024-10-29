@@ -319,7 +319,7 @@ public class PermissionListModel<E> extends SearchableListModel<E, Permission> {
         if (getEntity() instanceof Network) {
             return VdcObjectType.Network;
         }
-        if (getEntity() instanceof VnicProfile){
+        if (getEntity() instanceof VnicProfile) {
             return VdcObjectType.VnicProfile;
         }
         if (getEntity() instanceof DiskProfile) {

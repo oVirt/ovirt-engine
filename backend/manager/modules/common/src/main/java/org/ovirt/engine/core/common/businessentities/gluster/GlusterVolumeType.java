@@ -84,10 +84,10 @@ public enum GlusterVolumeType {
         return value().contains("DISPERSE");
     }
 
-    public boolean isSupported(){
-        if(this == GlusterVolumeType.UNKNOWN || this == GlusterVolumeType.TIER){
+    public boolean isSupported() {
+        if (this == GlusterVolumeType.UNKNOWN || this == GlusterVolumeType.TIER) {
             return false;
-        }else{
+        } else {
             return true;
         }
     }

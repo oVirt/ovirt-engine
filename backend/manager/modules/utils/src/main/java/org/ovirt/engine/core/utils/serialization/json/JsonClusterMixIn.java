@@ -14,5 +14,5 @@ public abstract class JsonClusterMixIn extends Cluster {
 
     @JsonIgnore
     @Override
-    public abstract  Set<VmRngDevice.Source> getRequiredRngSources();
+    public abstract Set<VmRngDevice.Source> getRequiredRngSources();
 }

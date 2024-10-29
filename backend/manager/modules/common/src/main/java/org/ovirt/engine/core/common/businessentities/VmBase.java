@@ -1360,7 +1360,7 @@ public class VmBase implements Queryable, BusinessEntity<Guid>, Nameable, Commen
     }
 
     public List<Guid> getDedicatedVmForVdsList() {
-        if (dedicatedVmForVdsList == null){
+        if (dedicatedVmForVdsList == null) {
             dedicatedVmForVdsList = new LinkedList<>();
         }
         return dedicatedVmForVdsList;
@@ -1537,7 +1537,7 @@ public class VmBase implements Queryable, BusinessEntity<Guid>, Nameable, Commen
     }
 
     public void setvNumaNodeList(List<VmNumaNode> vNumaNodeList) {
-        if (vNumaNodeList != null){
+        if (vNumaNodeList != null) {
             this.vNumaNodeList = vNumaNodeList;
         } else {
             this.vNumaNodeList = new ArrayList<>();
@@ -1623,7 +1623,7 @@ public class VmBase implements Queryable, BusinessEntity<Guid>, Nameable, Commen
     }
 
     public void setCustomCpuName(String customCpuName) {
-        this.customCpuName = customCpuName==null || customCpuName.trim().isEmpty() ? null : customCpuName;
+        this.customCpuName = customCpuName == null || customCpuName.trim().isEmpty() ? null : customCpuName;
     }
 
     public boolean isUseHostCpuFlags() {

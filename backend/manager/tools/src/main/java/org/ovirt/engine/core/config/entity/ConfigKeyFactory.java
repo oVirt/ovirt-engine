@@ -17,7 +17,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 public class ConfigKeyFactory {
     private static ConfigKeyFactory instance;
     private EngineConfigCLIParser parser;
-    private  Map<String, JsonNode> props;
+    private Map<String, JsonNode> props;
 
     static {
         instance = new ConfigKeyFactory();
@@ -74,7 +74,7 @@ public class ConfigKeyFactory {
             return Boolean.parseBoolean(node.asText());
         } catch (ClassCastException e) {
             throw new IllegalArgumentException("Configuration error;" +
-                    " Key \""+key+"\" should be either 'true' or 'false'. Value '"+node+"' is not valid.");
+                    " Key \"" + key + "\" should be either 'true' or 'false'. Value '" + node + "' is not valid.");
         }
     }
 

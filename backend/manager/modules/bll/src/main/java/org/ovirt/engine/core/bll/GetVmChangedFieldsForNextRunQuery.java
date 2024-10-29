@@ -14,7 +14,7 @@ import org.ovirt.engine.core.common.utils.VmCommonUtils;
 import org.ovirt.engine.core.common.utils.customprop.VmPropertiesUtils;
 
 public class GetVmChangedFieldsForNextRunQuery<P extends GetVmChangedFieldsForNextRunParameters>
-        extends QueriesCommandBase<P>{
+        extends QueriesCommandBase<P> {
 
     @Inject
     private VmHandler vmHandler;

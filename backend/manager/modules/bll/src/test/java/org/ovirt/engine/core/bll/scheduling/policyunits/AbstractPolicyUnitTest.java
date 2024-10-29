@@ -61,7 +61,7 @@ public class AbstractPolicyUnitTest {
             if (converter != null) {
                 return converter.invoke(type, value);
             }
-        } catch (NoSuchMethodException|InvocationTargetException|IllegalAccessException ex) {
+        } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException ex) {
             // ignore and try the next method
         }
 
@@ -74,7 +74,7 @@ public class AbstractPolicyUnitTest {
                 return null;
             }
             return constructor.newInstance(value);
-        } catch (NoSuchMethodException|InstantiationException|IllegalAccessException|InvocationTargetException ex) {
+        } catch (NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException ex) {
             // ignore and try the next method
         }
 
@@ -90,7 +90,7 @@ public class AbstractPolicyUnitTest {
         Object ptr = entity;
 
         /* Make sure all intermediate objects exist */
-        for (int i=0; i<components.length - 1; i++) {
+        for (int i = 0; i < components.length - 1; i++) {
             Field f = ptr.getClass().getField(components[i]);
             if (f.get(ptr) == null) {
                 Class<?> fieldType = f.getType();

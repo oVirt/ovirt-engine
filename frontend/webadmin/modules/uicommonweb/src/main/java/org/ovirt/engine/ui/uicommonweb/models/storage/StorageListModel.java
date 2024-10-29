@@ -325,7 +325,7 @@ public class StorageListModel extends ListWithSimpleDetailsModel<Void, StorageDo
 
         model.initialize();
 
-        UICommand  command = UICommand.createDefaultOkUiCommand("OnSave", this); //$NON-NLS-1$
+        UICommand command = UICommand.createDefaultOkUiCommand("OnSave", this); //$NON-NLS-1$
         model.getCommands().add(command);
 
         command = createCancelCommand("Cancel"); //$NON-NLS-1$
@@ -1069,7 +1069,7 @@ public class StorageListModel extends ListWithSimpleDetailsModel<Void, StorageDo
         } else if ("SaveNewPosixStorage".equals(command.getName())) { //$NON-NLS-1$
             saveNewPosixStorage();
             cancelConfirm();
-        } else if ("HandleISOForNFS".equals(command.getName())){ //$NON-NLS-1$
+        } else if ("HandleISOForNFS".equals(command.getName())) { //$NON-NLS-1$
             handleIsoDomain("SaveNewNfsStorage"); //$NON-NLS-1$
         } else if ("HandleISOForPosix".equals(command.getName())) { //$NON-NLS-1$
             handleIsoDomain("SaveNewPosixStorage"); //$NON-NLS-1$
@@ -1314,7 +1314,7 @@ public class StorageListModel extends ListWithSimpleDetailsModel<Void, StorageDo
                 if (storages != null && storages.size() > 0) {
                     nfsModel.getPath().setIsValid(false);
                     handleDomainAlreadyExists(storages.get(0).getStorageName());
-                } else if (storageDomain.getStorageDomainType() == StorageDomainType.ISO){
+                } else if (storageDomain.getStorageDomainType() == StorageDomainType.ISO) {
                     UICommand handleISOType = UICommand.createDefaultOkUiCommand("HandleISOForNFS", this); //$NON-NLS-1$
                     handleISOType.execute();
                 } else {
@@ -2032,7 +2032,7 @@ public class StorageListModel extends ListWithSimpleDetailsModel<Void, StorageDo
             saveSanStorage(context);
         } else if ("SaveManagedBlock".equals(key)) { //$NON-NLS-1$
             saveManagedBlockStorage(context);
-        }else if ("ImportFile".equals(key)) { //$NON-NLS-1$
+        } else if ("ImportFile".equals(key)) { //$NON-NLS-1$
             importFileStorage(context);
         } else if ("ImportSan".equals(key)) { //$NON-NLS-1$
             importSanStorage(context);

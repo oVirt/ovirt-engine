@@ -850,7 +850,7 @@ public class SyntaxChecker implements ISyntaxChecker {
             if (sortByElements != null) {
                 StringBuilder builder = new StringBuilder();
                 builder.append(" ORDER BY ");
-                for(SortByElement sortByElement: sortByElements) {
+                for (SortByElement sortByElement: sortByElements) {
                     builder.append(sortByElement.getExpression()).append(" ");
                     final boolean ascending = sortAscending == sortByElement.isAscending();
                     builder.append(ascending ? "ASC NULLS FIRST" : "DESC NULLS LAST").append(",");
@@ -1171,7 +1171,7 @@ public class SyntaxChecker implements ISyntaxChecker {
         if (conditionValueAC != null) {
             customizedValue = StringFormat.format("'%1$s'",
                     conditionValueAC.convertFieldEnumValueToActualValue(obj.getBody()));
-        } else if ("".equals(fieldName) /* search on all relevant fields */||
+        } else if ("".equals(fieldName) /* search on all relevant fields */ ||
                 String.class.equals(conditionFieldAC.getDbFieldType(fieldName))) {
             customizedValue = customizedValue.replace("*", conditionFieldAC.getWildcard(fieldName));
         }

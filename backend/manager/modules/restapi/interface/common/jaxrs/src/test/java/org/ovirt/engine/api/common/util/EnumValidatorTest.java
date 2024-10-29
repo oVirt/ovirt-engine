@@ -34,7 +34,7 @@ public class EnumValidatorTest {
 
     private void verifyInvalidValueException(WebApplicationException wae, String value, String typeName) {
         assertEquals(400, wae.getResponse().getStatus());
-        Fault fault = (Fault)wae.getResponse().getEntity();
+        Fault fault = (Fault) wae.getResponse().getEntity();
         assertNotNull(fault);
         assertEquals("Invalid value", fault.getReason());
         assertEquals(value + " is not a member of " + typeName

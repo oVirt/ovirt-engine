@@ -18,7 +18,7 @@ public class FenceConfigHelper {
     private static Map<String, String> keyValidatorExampleMap;
     private static Map<String, String> keySeparatorMap;
     private static Logger log = LoggerFactory.getLogger(FenceConfigHelper.class);
-    private static boolean initialized=false;
+    private static boolean initialized = false;
     private static final String FenceAgentMappingExpr = "((\\w)+[=](\\w)+[,]{0,1})+";
     private static final String GeneralAgentOptionsExpr = "([\\w]+[:]([\\w]*[=][\\w]*[,]{0,1}[;]{0,1}){0,3}[;]{0,1})+";
     private static final String CustomVdsFenceTypeExpr = "((\\w)+[,]{0,1})+";

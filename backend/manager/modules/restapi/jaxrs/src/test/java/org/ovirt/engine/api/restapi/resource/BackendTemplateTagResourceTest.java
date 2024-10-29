@@ -84,7 +84,7 @@ public class BackendTemplateTagResourceTest
             GetTagsByTemplateIdParameters.class,
             new String[] { "TemplateId" },
             new Object[] { TEMPLATE_ID.toString() },
-            succeed? setUpTagsExpectations(): Collections.emptyList()
+            succeed ? setUpTagsExpectations() : Collections.emptyList()
         );
     }
 

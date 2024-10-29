@@ -15,7 +15,7 @@ public class ExternalHostGroupMapper {
     @Mapping(from = org.ovirt.engine.core.common.businessentities.ExternalHostGroup.class, to = ExternalHostGroup.class)
     public static ExternalHostGroup map(org.ovirt.engine.core.common.businessentities.ExternalHostGroup entity,
             ExternalHostGroup template) {
-        ExternalHostGroup model = template != null? template: new ExternalHostGroup();
+        ExternalHostGroup model = template != null ? template : new ExternalHostGroup();
         String name = entity.getName();
         if (name != null) {
             model.setId(string2hex(name));
@@ -40,7 +40,7 @@ public class ExternalHostGroupMapper {
     public static org.ovirt.engine.core.common.businessentities.ExternalHostGroup map(ExternalHostGroup model,
             org.ovirt.engine.core.common.businessentities.ExternalHostGroup template) {
         org.ovirt.engine.core.common.businessentities.ExternalHostGroup entity =
-                template != null? template: new org.ovirt.engine.core.common.businessentities.ExternalHostGroup();
+                template != null ? template : new org.ovirt.engine.core.common.businessentities.ExternalHostGroup();
         if (model.isSetId()) {
             entity.setName(hex2string(model.getId()));
         }

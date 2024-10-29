@@ -23,7 +23,7 @@ public class VmNicFilterParameterDaoTest
         parameter.setName("IP");
         parameter.setValue("192.168.122.2");
         parameter.setVmInterfaceId(FixturesTool.VM_NETWORK_INTERFACE);
-        return  parameter;
+        return parameter;
     }
 
     @Override

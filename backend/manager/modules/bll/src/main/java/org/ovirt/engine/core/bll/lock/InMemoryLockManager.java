@@ -412,7 +412,7 @@ public class InMemoryLockManager implements LockManager, LockManagerMonitorMXBea
 
         @Override
         public String toString() {
-            if(exclusive) {
+            if (exclusive) {
                 return "The lock is exclusive";
             }
             return "The lock is shared and a number of shared locks is " + count;

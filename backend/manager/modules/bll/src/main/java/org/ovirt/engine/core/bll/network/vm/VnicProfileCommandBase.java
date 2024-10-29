@@ -35,15 +35,15 @@ public abstract class VnicProfileCommandBase<T extends VnicProfileParameters> ex
         return getParameters().getVnicProfile();
     }
 
-    protected void setNetworkFilterId(Guid networkFilterId){
+    protected void setNetworkFilterId(Guid networkFilterId) {
         getVnicProfile().setNetworkFilterId(networkFilterId);
     }
 
-    protected Guid getNetworkId(){
+    protected Guid getNetworkId() {
         return getNetwork().getId();
     }
 
-    protected Guid getNetworkFilterId(){
+    protected Guid getNetworkFilterId() {
         return getVnicProfile().getNetworkFilterId();
     }
 

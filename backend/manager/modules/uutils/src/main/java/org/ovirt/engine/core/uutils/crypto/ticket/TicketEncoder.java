@@ -78,7 +78,7 @@ public class TicketEncoder {
         Signature signature = Signature.getInstance("RSASSA-PSS");
         StringBuilder fields = new StringBuilder();
         signature.setParameter(new PSSParameterSpec("SHA-256", "MGF1", MGF1ParameterSpec.SHA256,
-                getSaltMaxLength((RSAKey)key), PSSParameterSpec.TRAILER_FIELD_BC));
+                getSaltMaxLength((RSAKey) key), PSSParameterSpec.TRAILER_FIELD_BC));
         signature.initSign(key);
         for (Map.Entry<String, String> entry : map.entrySet()) {
             if (fields.length() > 0) {
@@ -109,7 +109,7 @@ public class TicketEncoder {
 
     // Based on RFC3447 - https://tools.ietf.org/html/rfc3447#section-9.1.1
     public static int getSaltMaxLength(RSAKey privateKey) throws NoSuchAlgorithmException {
-        int keyLength = (int)Math.ceil((privateKey.getModulus().bitLength() -1) / 8.0);
+        int keyLength = (int) Math.ceil((privateKey.getModulus().bitLength() - 1) / 8.0);
         MessageDigest md = MessageDigest.getInstance("SHA-256");
         return keyLength - md.getDigestLength() - 2;
     }

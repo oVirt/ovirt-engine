@@ -879,7 +879,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
     protected boolean validateSpaceRequirements() {
         // update vm snapshots for storage free space check
         imagesHandler.fillImagesBySnapshots(getVm());
-        List<DiskImage>  disksList =  DisksFilter.filterImageDisks(getVm().getDiskMap().values(), ONLY_NOT_SHAREABLE,
+        List<DiskImage> disksList = DisksFilter.filterImageDisks(getVm().getDiskMap().values(), ONLY_NOT_SHAREABLE,
                 ONLY_ACTIVE);
         List<DiskImage> disksListForStorageChecks = createDiskDummiesForSpaceValidations(disksList);
         MultipleStorageDomainsValidator multipleSdValidator = getStorageDomainsValidator(
@@ -1040,7 +1040,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
         diskVmElementDao.save(newDve);
     }
 
-    private Guid getVmIdFromImageParameters(){
+    private Guid getVmIdFromImageParameters() {
         return getParameters().getMasterVm().getId();
     }
 
@@ -1298,7 +1298,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
         // If the DiskInfoDestinationMap is available and contains information about the disk
         if (getParameters().getDiskInfoDestinationMap() != null
                 && getParameters().getDiskInfoDestinationMap().get(diskImage.getId()) != null) {
-            return  getParameters().getDiskInfoDestinationMap().get(diskImage.getId()).getQuotaId();
+            return getParameters().getDiskInfoDestinationMap().get(diskImage.getId()).getQuotaId();
         }
         return diskImage.getQuotaId();
     }

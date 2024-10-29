@@ -64,7 +64,7 @@ public class RemovePermissionCommand<T extends PermissionsOperationsParameters> 
         ) {
             return failValidation(EngineMessage.SYSTEM_PERMISSIONS_CANT_BE_REMOVED_FROM_EVERYONE);
         }
-        if(!Objects.equals(p.getAdElementId(), getParameters().getTargetId())
+        if (!Objects.equals(p.getAdElementId(), getParameters().getTargetId())
             && dbUserDao.get(getParameters().getTargetId()) != null) {
             return failValidation(EngineMessage.INHERITED_PERMISSION_CANT_BE_REMOVED);
         }

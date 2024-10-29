@@ -156,7 +156,7 @@ public abstract class PatternflyListViewItem<T> extends Composite implements Cli
         event.stopPropagation();
         ExpandableListViewItem eventItem = null;
         if (event.getSource() instanceof ExpandableListViewItem) {
-            eventItem = (ExpandableListViewItem)event.getSource();
+            eventItem = (ExpandableListViewItem) event.getSource();
         }
         if (eventItem != null) {
             boolean active = eventItem.isActive();

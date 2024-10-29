@@ -139,7 +139,7 @@ public class SubTabClusterServiceView extends AbstractSubTabFormView<Cluster, Cl
         servicesTable.addColumn(new AbstractEnumColumn<EntityModel, GlusterServiceStatus>() {
             @Override
             protected GlusterServiceStatus getRawValue(EntityModel object) {
-                return ((GlusterServerService)object.getEntity()).getStatus();
+                return ((GlusterServerService) object.getEntity()).getStatus();
             }
         }, constants.statusService());
 

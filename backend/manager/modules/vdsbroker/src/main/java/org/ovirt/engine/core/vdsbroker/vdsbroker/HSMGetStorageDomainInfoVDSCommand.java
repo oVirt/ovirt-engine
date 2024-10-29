@@ -99,7 +99,7 @@ public class HSMGetStorageDomainInfoVDSCommand<P extends HSMGetStorageDomainInfo
                     false));
         }
         returnValue.setFirst(sdStatic);
-        Object[] poolUUIDs = (Object[])struct.get("pool");
+        Object[] poolUUIDs = (Object[]) struct.get("pool");
         if (poolUUIDs.length != 0) {
             returnValue.setSecond(Guid.createGuidFromString(poolUUIDs[0].toString()));
         }

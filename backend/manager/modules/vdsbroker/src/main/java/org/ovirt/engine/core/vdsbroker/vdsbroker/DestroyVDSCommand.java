@@ -36,7 +36,7 @@ public class DestroyVDSCommand<P extends DestroyVmVDSCommandParameters> extends 
             EngineError returnStatus = getReturnValueFromStatus(getReturnStatus());
             switch (returnStatus) {
                 case noVM:
-                    if (getParameters().isIgnoreNoVm()) {// do not log error
+                    if (getParameters().isIgnoreNoVm()) { // do not log error
                         log.info("Failed to destroy VM '{}' because VM does not exist, ignoring", getParameters().getVmId());
                         return;
                     }

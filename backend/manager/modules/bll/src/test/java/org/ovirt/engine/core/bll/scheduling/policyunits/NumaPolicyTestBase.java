@@ -52,7 +52,7 @@ public class NumaPolicyTestBase {
             node.setNumaNodeStatistics(new NumaNodeStatistics());
             node.getNumaNodeStatistics().setMemFree(nodeSize);
 
-            node.setCpuIds(IntStream.range(i * coresPerNode, (i+1) * coresPerNode)
+            node.setCpuIds(IntStream.range(i * coresPerNode, (i + 1) * coresPerNode)
                     .boxed()
                     .collect(Collectors.toList())
             );

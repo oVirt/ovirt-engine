@@ -18,7 +18,7 @@ import org.ovirt.engine.core.common.job.JobExecutionStatus;
 import org.ovirt.engine.core.common.utils.ExecutionMethod;
 import org.ovirt.engine.core.dao.JobDao;
 
-public class EndExternalJobCommand <T extends EndExternalJobParameters> extends CommandBase<T>{
+public class EndExternalJobCommand <T extends EndExternalJobParameters> extends CommandBase<T> {
 
     private Job job;
 
@@ -73,7 +73,7 @@ public class EndExternalJobCommand <T extends EndExternalJobParameters> extends 
 
     @Override
     public List<PermissionSubject> getPermissionCheckSubjects() {
-        List<PermissionSubject>  permissionList = new ArrayList<>();
+        List<PermissionSubject> permissionList = new ArrayList<>();
         permissionList.add(new PermissionSubject(MultiLevelAdministrationHandler.SYSTEM_OBJECT_ID,
                 VdcObjectType.System,
                 ActionGroup.INJECT_EXTERNAL_TASKS));

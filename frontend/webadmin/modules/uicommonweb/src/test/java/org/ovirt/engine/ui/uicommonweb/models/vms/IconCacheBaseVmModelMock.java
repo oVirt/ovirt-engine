@@ -19,7 +19,7 @@ public class IconCacheBaseVmModelMock extends IconCacheMockBase {
     @Override
     public void getOrFetchIcons(List<Guid> iconIds, IconsCallback callback) {
         Map<Guid, String> result = new HashMap<>();
-        for(Guid id : iconIds) {
+        for (Guid id : iconIds) {
             final String icon = map.get(id);
             if (icon == null) {
                 throw new RuntimeException("Icon not found, id=" + id.toString()); //$NON-NLS-1$

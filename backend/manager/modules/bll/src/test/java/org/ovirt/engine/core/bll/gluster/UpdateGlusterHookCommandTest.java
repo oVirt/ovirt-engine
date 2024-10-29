@@ -119,7 +119,7 @@ public class UpdateGlusterHookCommandTest extends GlusterHookCommandTest<UpdateG
         mockForReadContent(false, EngineError.GlusterHookNotFound);
         try {
             cmd.executeCommand();
-        }catch (EngineException e) {
+        } catch (EngineException e) {
             assertEquals(EngineError.GlusterHookNotFound, e.getErrorCode());
         }
         verify(hooksDao, never()).updateGlusterHook(any());

@@ -71,7 +71,7 @@ public class CpuProfileHelperTest {
         VmBase vmBase = createVmBase(cpuProfile1.getId());
         vmBase.setClusterId(null);
 
-        ValidationResult res =  cpuProfileHelper.setAndValidateCpuProfile(vmBase, USER_1_ID);
+        ValidationResult res = cpuProfileHelper.setAndValidateCpuProfile(vmBase, USER_1_ID);
         assertThat(res, failsWith(EngineMessage.ACTION_TYPE_CPU_PROFILE_CLUSTER_NOT_PROVIDED));
     }
 
@@ -79,7 +79,7 @@ public class CpuProfileHelperTest {
     public void testNonExistingCpuProfile() {
         VmBase vmBase = createVmBase(Guid.newGuid());
 
-        ValidationResult res =  cpuProfileHelper.setAndValidateCpuProfile(vmBase, USER_1_ID);
+        ValidationResult res = cpuProfileHelper.setAndValidateCpuProfile(vmBase, USER_1_ID);
         assertThat(res, failsWith(EngineMessage.ACTION_TYPE_FAILED_CPU_PROFILE_NOT_FOUND));
     }
 
@@ -88,7 +88,7 @@ public class CpuProfileHelperTest {
         VmBase vmBase = createVmBase(cpuProfile1.getId());
         vmBase.setClusterId(Guid.newGuid());
 
-        ValidationResult res =  cpuProfileHelper.setAndValidateCpuProfile(vmBase, USER_1_ID);
+        ValidationResult res = cpuProfileHelper.setAndValidateCpuProfile(vmBase, USER_1_ID);
         assertThat(res, failsWith(EngineMessage.ACTION_TYPE_CPU_PROFILE_NOT_MATCH_CLUSTER));
     }
 
@@ -96,7 +96,7 @@ public class CpuProfileHelperTest {
     public void testNoPermission() {
         VmBase vmBase = createVmBase(cpuProfile2.getId());
 
-        ValidationResult res =  cpuProfileHelper.setAndValidateCpuProfile(vmBase, USER_1_ID);
+        ValidationResult res = cpuProfileHelper.setAndValidateCpuProfile(vmBase, USER_1_ID);
         assertThat(res, failsWith(EngineMessage.ACTION_TYPE_NO_PERMISSION_TO_ASSIGN_CPU_PROFILE));
     }
 

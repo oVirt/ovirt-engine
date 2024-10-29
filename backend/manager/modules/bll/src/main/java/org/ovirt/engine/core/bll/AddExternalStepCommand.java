@@ -10,7 +10,7 @@ import org.ovirt.engine.core.common.action.AddExternalStepParameters;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 
-public class AddExternalStepCommand <T extends AddExternalStepParameters> extends AddStepCommand<T>{
+public class AddExternalStepCommand <T extends AddExternalStepParameters> extends AddStepCommand<T> {
 
 
     public AddExternalStepCommand(T parameters, CommandContext cmdContext) {
@@ -19,7 +19,7 @@ public class AddExternalStepCommand <T extends AddExternalStepParameters> extend
 
     @Override
     protected boolean validate() {
-        boolean retValue=super.validate();
+        boolean retValue = super.validate();
 
         if (job != null) {
             if (!job.isExternal()) {
@@ -37,7 +37,7 @@ public class AddExternalStepCommand <T extends AddExternalStepParameters> extend
 
     @Override
     public List<PermissionSubject> getPermissionCheckSubjects() {
-        List<PermissionSubject>  permissionList = new ArrayList<>();
+        List<PermissionSubject> permissionList = new ArrayList<>();
         permissionList.add(new PermissionSubject(MultiLevelAdministrationHandler.SYSTEM_OBJECT_ID,
                 VdcObjectType.System,
                 ActionGroup.INJECT_EXTERNAL_TASKS));

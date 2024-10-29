@@ -17,13 +17,13 @@ import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeTaskSt
 import org.ovirt.engine.core.compat.Guid;
 
 public class StepStatisticalQuery extends AbstractStatisticalQuery<Step, GlusterVolumeTaskStatusEntity> {
-    public static final Statistic FILES_MOVED   = create("files.moved", "Number of files moved", COUNTER, StatisticUnit.NONE, ValueType.INTEGER);
-    public static final Statistic SIZE_MOVED   = create("size.moved", "size of files moved", GAUGE, BYTES, ValueType.INTEGER);
-    public static final Statistic FILES_SKIPPED   = create("files.skipped", "Number of files skipped", COUNTER, StatisticUnit.NONE, ValueType.INTEGER);
-    public static final Statistic FILES_SCANNED   = create("files.scanned", "Number of files scanned", COUNTER, StatisticUnit.NONE, ValueType.INTEGER);
-    public static final Statistic FILES_FAILED   = create("files.failed", "Number of files failed", COUNTER, StatisticUnit.NONE, ValueType.INTEGER);
-    public static final Statistic RUN_TIME   = create("run.time", "Time for which task is running", COUNTER, StatisticUnit.SECONDS, ValueType.DECIMAL);
-    public static final Statistic STATUS   = create("status", "Status of task", GAUGE, StatisticUnit.NONE, ValueType.STRING);
+    public static final Statistic FILES_MOVED = create("files.moved", "Number of files moved", COUNTER, StatisticUnit.NONE, ValueType.INTEGER);
+    public static final Statistic SIZE_MOVED = create("size.moved", "size of files moved", GAUGE, BYTES, ValueType.INTEGER);
+    public static final Statistic FILES_SKIPPED = create("files.skipped", "Number of files skipped", COUNTER, StatisticUnit.NONE, ValueType.INTEGER);
+    public static final Statistic FILES_SCANNED = create("files.scanned", "Number of files scanned", COUNTER, StatisticUnit.NONE, ValueType.INTEGER);
+    public static final Statistic FILES_FAILED = create("files.failed", "Number of files failed", COUNTER, StatisticUnit.NONE, ValueType.INTEGER);
+    public static final Statistic RUN_TIME = create("run.time", "Time for which task is running", COUNTER, StatisticUnit.SECONDS, ValueType.DECIMAL);
+    public static final Statistic STATUS = create("status", "Status of task", GAUGE, StatisticUnit.NONE, ValueType.STRING);
 
 
     protected IResolver<Guid, GlusterVolumeTaskStatusEntity> taskStatusResolver;

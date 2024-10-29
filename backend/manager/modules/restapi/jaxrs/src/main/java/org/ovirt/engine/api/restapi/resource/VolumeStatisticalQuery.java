@@ -11,9 +11,9 @@ import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeSizeIn
 import org.ovirt.engine.core.compat.Guid;
 
 public class VolumeStatisticalQuery extends AbstractStatisticalQuery<GlusterVolume, GlusterVolumeEntity> {
-    private static final Statistic MEM_TOTAL_SIZE   = create("memory.total.size", "Total size", GAUGE, BYTES, ValueType.INTEGER);
-    private static final Statistic MEM_FREE_SIZE   = create("memory.free.size", "Free size", GAUGE, BYTES, ValueType.INTEGER);
-    private static final Statistic MEM_USED_SIZE   = create("memory.used.size", "Used size", GAUGE, BYTES, ValueType.INTEGER);
+    private static final Statistic MEM_TOTAL_SIZE = create("memory.total.size", "Total size", GAUGE, BYTES, ValueType.INTEGER);
+    private static final Statistic MEM_FREE_SIZE = create("memory.free.size", "Free size", GAUGE, BYTES, ValueType.INTEGER);
+    private static final Statistic MEM_USED_SIZE = create("memory.used.size", "Used size", GAUGE, BYTES, ValueType.INTEGER);
 
     public VolumeStatisticalQuery(GlusterVolume parent ) {
         this(null, parent);

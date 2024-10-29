@@ -62,7 +62,7 @@ public class SetGeoRepConfigCommand extends GeoRepSessionCommandBase<GlusterVolu
             geoRepSessionConfig.setValue(configValue);
             geoRepSessionConfig.setKey(configKey);
             geoRepSessionConfig.setId(session.getId());
-            if(glusterGeoRepDao.getGeoRepSessionConfigByKey(session.getId(), configKey) == null) {
+            if (glusterGeoRepDao.getGeoRepSessionConfigByKey(session.getId(), configKey) == null) {
                 glusterGeoRepDao.saveConfig(geoRepSessionConfig);
             } else {
                 glusterGeoRepDao.updateConfig(geoRepSessionConfig);

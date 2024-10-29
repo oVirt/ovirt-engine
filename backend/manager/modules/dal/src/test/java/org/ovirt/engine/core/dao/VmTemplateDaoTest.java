@@ -336,7 +336,7 @@ public class VmTemplateDaoTest extends BaseGenericDaoTestCase<Guid, VmTemplate, 
     private static void assertGetAllResult(List<VmTemplate> result) {
         assertNotNull(result);
         assertFalse(result.isEmpty());
-        for (VmTemplate template : result){
+        for (VmTemplate template : result) {
             assertEquals(1, template.getDbGeneration(), "Template generation wasn't loaded as expected");
         }
     }

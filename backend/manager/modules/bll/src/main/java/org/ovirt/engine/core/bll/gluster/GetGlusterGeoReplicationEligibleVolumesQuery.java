@@ -35,7 +35,7 @@ public class GetGlusterGeoReplicationEligibleVolumesQuery<P extends IdQueryParam
     public List<GlusterVolumeEntity> getEligibleVolumes(GlusterVolumeEntity masterVolume) {
         List<GlusterVolumeEntity> possiblyEligibleVolumes = getAllGlusterVolumesWithMasterCompatibleVersion(masterVolume.getId());
         Map<GlusterGeoRepNonEligibilityReason, Predicate<GlusterVolumeEntity>> eligibilityPredicateMap = getGeoRepUtilInstance().getEligibilityPredicates(masterVolume);
-        Predicate<GlusterVolumeEntity> andPredicate = eligibilityPredicateMap.values().stream().reduce(Predicate::and).orElse(t->true);
+        Predicate<GlusterVolumeEntity> andPredicate = eligibilityPredicateMap.values().stream().reduce(Predicate::and).orElse(t -> true);
         return possiblyEligibleVolumes.stream().filter(andPredicate).collect(Collectors.toList());
     }
 
@@ -44,9 +44,9 @@ public class GetGlusterGeoReplicationEligibleVolumesQuery<P extends IdQueryParam
         Cluster masterCluster = clusterDao.get(masterVolume.getClusterId());
         List<Cluster> clusters = clusterDao.getClustersByServiceAndCompatibilityVersion(true, false, masterCluster.getCompatibilityVersion().getValue());
         List<GlusterVolumeEntity> volumes = new ArrayList<>();
-        if(clusters != null) {
-            for(Cluster currentCluster : clusters) {
-                if(!currentCluster.getId().equals(masterCluster.getId())) {
+        if (clusters != null) {
+            for (Cluster currentCluster : clusters) {
+                if (!currentCluster.getId().equals(masterCluster.getId())) {
                     volumes.addAll(glusterVolumeDao.getByClusterId(currentCluster.getId()));
                 }
             }

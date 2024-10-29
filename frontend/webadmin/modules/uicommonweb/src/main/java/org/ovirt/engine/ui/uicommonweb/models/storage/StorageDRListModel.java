@@ -249,7 +249,7 @@ public class StorageDRListModel extends SearchableListModel<StorageDomain, Stora
             newDR();
         } else if (command == getEditCommand()) {
             editDR();
-        } else if (command.getName().equalsIgnoreCase("OnSave")) {//$NON-NLS-1$
+        } else if (command.getName().equalsIgnoreCase("OnSave")) { //$NON-NLS-1$
             onSave();
         } else if ("Cancel".equals(command.getName())) { //$NON-NLS-1$
             cancel();

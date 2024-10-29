@@ -70,7 +70,7 @@ public class EvenDistributionWeightPolicyUnitTest extends AbstractPolicyUnitTest
     private EvenDistributionCPUWeightPolicyUnit evenDistributionCPUWeightPolicyUnit = new EvenDistributionCPUWeightPolicyUnit(null, new PendingResourceManager());
 
     @InjectMocks
-    private EvenDistributionMemoryWeightPolicyUnit evenDistributionMemoryWeightPolicyUnit =  new EvenDistributionMemoryWeightPolicyUnit(null, new PendingResourceManager());
+    private EvenDistributionMemoryWeightPolicyUnit evenDistributionMemoryWeightPolicyUnit = new EvenDistributionMemoryWeightPolicyUnit(null, new PendingResourceManager());
 
     @BeforeEach
     public void setUp() {
@@ -106,7 +106,7 @@ public class EvenDistributionWeightPolicyUnitTest extends AbstractPolicyUnitTest
         }
     }
 
-    protected  <T extends PolicyUnitImpl> Guid selectedBestHost(T unit, VM vm, ArrayList<VDS> hosts) {
+    protected <T extends PolicyUnitImpl> Guid selectedBestHost(T unit, VM vm, ArrayList<VDS> hosts) {
         List<Pair<Guid, Integer>> scores = unit.score(
                 new SchedulingContext(new Cluster(), Collections.emptyMap()),
                 hosts,

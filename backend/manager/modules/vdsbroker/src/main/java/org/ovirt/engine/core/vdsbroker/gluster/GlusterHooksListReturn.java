@@ -34,7 +34,7 @@ public class GlusterHooksListReturn extends StatusReturn {
 
         if (hooksArr != null) {
             for (Object hookMap : hooksArr) {
-                hooks.add(getHook((Map<String, Object>)hookMap));
+                hooks.add(getHook((Map<String, Object>) hookMap));
             }
         }
     }

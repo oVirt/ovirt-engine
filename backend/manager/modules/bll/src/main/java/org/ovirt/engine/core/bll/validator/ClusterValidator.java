@@ -510,13 +510,13 @@ public class ClusterValidator {
 
     public List<String> getLowDeviceSpaceVolumes() {
         List<String> volumes = new ArrayList<>();
-        if(cluster.supportsGlusterService()) {
+        if (cluster.supportsGlusterService()) {
             List<GlusterVolumeEntity> glusterVolumeEntities = glusterVolumeDao.getByClusterId(cluster.getId());
-            if(glusterVolumeEntities != null && !glusterVolumeEntities.isEmpty()) {
-                for(GlusterVolumeEntity glusterVolumeEntity: glusterVolumeEntities) {
+            if (glusterVolumeEntities != null && !glusterVolumeEntities.isEmpty()) {
+                for (GlusterVolumeEntity glusterVolumeEntity: glusterVolumeEntities) {
                     if (((glusterVolumeEntity.getAdvancedDetails().getCapacityInfo().getUsedSize().doubleValue()
                             / glusterVolumeEntity.getAdvancedDetails().getCapacityInfo().getTotalSize().doubleValue())
-                            * 100) > (Integer)Config.getValue(ConfigValues.StorageDeviceSpaceLimit)) {
+                            * 100) > (Integer) Config.getValue(ConfigValues.StorageDeviceSpaceLimit)) {
                         volumes.add(glusterVolumeEntity.getName());
                     }
                 }

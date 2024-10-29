@@ -108,7 +108,7 @@ public class TimeSpan implements Comparable<TimeSpan>, Serializable {
             int[] data = new int[5];
 
             for (int x = 0; x < items.length; x++) {
-                data[x+1] = Integer.parseInt(items[x]) * multiplier;
+                data[x + 1] = Integer.parseInt(items[x]) * multiplier;
             }
 
             return new TimeSpan(data);

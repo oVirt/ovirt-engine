@@ -16,7 +16,7 @@ import org.ovirt.engine.api.utils.ArrayUtils;
 
 public class ActionsBuilder {
 
-    private static final String URL_SEPARATOR  = "/";
+    private static final String URL_SEPARATOR = "/";
     private Class<?> service;
     private Class<?> collection;
     private String base;
@@ -55,8 +55,8 @@ public class ActionsBuilder {
 
     private Method[] getInterfaceSignatures(Class<?> collection) {
         Method[] methods = new Method[0];
-        if (collection != null){
-            for (Class<?> inter : collection.getInterfaces()){
+        if (collection != null) {
+            for (Class<?> inter : collection.getInterfaces()) {
                 methods = ArrayUtils.concat(methods, inter.getMethods());
             }
         }

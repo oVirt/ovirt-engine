@@ -37,7 +37,7 @@ public class StoageDeviceDaoTest extends BaseDaoTestCase<StorageDeviceDao > {
     }
 
     @Test
-    public void testGetById(){
+    public void testGetById() {
         StorageDevice storageDevice = dao.get(EXISTING_STORAGE_DEVICE_ID_1);
         assertNotNull(storageDevice, "Failed to retrive storage device");
         assertEquals(EXISTING_STORAGE_DEVICE_ID_1, storageDevice.getId(), "Failed to retrive corrective storage device");

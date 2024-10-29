@@ -74,7 +74,7 @@ public class AddLocalStorageDomainCommand<T extends StorageDomainManagementParam
                     .runInternalAction(
                             ActionType.AttachStorageDomainToPool,
                             new AttachStorageDomainToPoolParameters(getStorageDomain().getId(), getStoragePool().getId()));
-            if(!returnValue.getSucceeded()) {
+            if (!returnValue.getSucceeded()) {
                 getReturnValue().setSucceeded(false);
                 getReturnValue().setFault(returnValue.getFault());
             }

@@ -412,7 +412,7 @@ public abstract class VmInitWidget extends AbstractModelBoundPopupWidget<VmInitM
         driver.initialize(this);
     }
 
-    private void showIgnitionFields(){
+    private void showIgnitionFields() {
         timeZoneEnabledEditor.setVisible(false);
         timeZoneEditor.setVisible(false);
         networkExpander.setVisible(false);
@@ -425,7 +425,7 @@ public abstract class VmInitWidget extends AbstractModelBoundPopupWidget<VmInitM
         customScriptExpander.setTitleWhenCollapsed(constants.ignitionScriptLabel());
     }
 
-    private void showCloudInitFields(){
+    private void showCloudInitFields() {
         timeZoneEnabledEditor.setVisible(true);
         timeZoneEditor.setVisible(true);
         networkExpander.setVisible(true);

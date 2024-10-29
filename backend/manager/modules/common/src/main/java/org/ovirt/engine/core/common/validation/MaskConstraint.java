@@ -25,7 +25,7 @@ public class MaskConstraint implements ConstraintValidator<Mask, String> {
                         maskFormatValidation ? isMaskValid(mask) : false,
                         EngineMessage.UPDATE_NETWORK_ADDR_IN_SUBNET_BAD_FORMAT.name(),
                         EngineMessage.UPDATE_NETWORK_ADDR_IN_SUBNET_BAD_VALUE.name());
-        return ValidatorConstraint.getInstance().isValid(args, context, "mask");//$NON-NLS-1$
+        return ValidatorConstraint.getInstance().isValid(args, context, "mask"); //$NON-NLS-1$
     }
 
     private boolean isMaskFormatValid(String mask) {

@@ -351,7 +351,7 @@ public class BackendStorageDomainResourceTest
                 true,
                 true));
         Action action = new Action();
-        LogicalUnits luns= new LogicalUnits();
+        LogicalUnits luns = new LogicalUnits();
         LogicalUnit lun = new LogicalUnit();
         lun.setId(GUIDS[2].toString());
         luns.getLogicalUnits().add(lun);
@@ -371,7 +371,7 @@ public class BackendStorageDomainResourceTest
                 true,
                 true));
         Action action = new Action();
-        LogicalUnits luns= new LogicalUnits();
+        LogicalUnits luns = new LogicalUnits();
 
         paramsLuns.forEach(s -> {
             LogicalUnit lun = new LogicalUnit();

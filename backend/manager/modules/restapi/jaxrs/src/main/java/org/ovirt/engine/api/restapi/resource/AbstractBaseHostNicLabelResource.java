@@ -50,7 +50,7 @@ public abstract class AbstractBaseHostNicLabelResource
         final String href = label.getHref();
         if (href != null) {
             final String[] hRefSegments = href.split("/");
-            if (hRefSegments.length>=2) {
+            if (hRefSegments.length >= 2) {
                 hRefSegments[hRefSegments.length - 2] = getUriPath();
                 final String fixedHref = StringUtils.join(hRefSegments, '/');
                 label.setHref(fixedHref);

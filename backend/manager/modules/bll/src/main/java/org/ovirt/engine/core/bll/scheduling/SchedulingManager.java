@@ -291,7 +291,7 @@ public class SchedulingManager implements BackendService {
             try {
                 PolicyUnitImpl unit = InternalPolicyUnits.instantiate(unitType, getPendingResourceManager());
                 policyUnits.put(unit.getGuid(), Injector.injectMembers(unit));
-            } catch (Exception e){
+            } catch (Exception e) {
                 log.error("Could not instantiate a policy unit {}.", unitType.getName(), e);
             }
         }
@@ -300,7 +300,7 @@ public class SchedulingManager implements BackendService {
             try {
                 PolicyUnitImpl unit = InternalPolicyUnits.instantiate(mandatoryUnitType, getPendingResourceManager());
                 mandatoryFilters.add(Injector.injectMembers(unit));
-            } catch (Exception e){
+            } catch (Exception e) {
                 log.error("Could not instantiate a policy unit {}.", mandatoryUnitType.getName(), e);
             }
         }
@@ -539,7 +539,7 @@ public class SchedulingManager implements BackendService {
         }
     }
 
-    private void addPendingResources(VM vm, VDS host, Map<Integer, NumaNodeMemoryConsumption> numaConsumption, List<VdsCpuUnit>  dedicatedCpus) {
+    private void addPendingResources(VM vm, VDS host, Map<Integer, NumaNodeMemoryConsumption> numaConsumption, List<VdsCpuUnit> dedicatedCpus) {
         int numOfCpus = VmCpuCountHelper.getRuntimeNumOfCpu(vm, host);
         int numOfCores = VmCpuCountHelper.getRuntimeNumOfCores(vm, host);
         Guid hostId = host.getId();
@@ -578,7 +578,7 @@ public class SchedulingManager implements BackendService {
         }
     }
 
-    private  Map<Guid, Map<Integer, NumaNodeMemoryConsumption>> vmNumaRequirements(List<VM> vmGroup, VDS host) {
+    private Map<Guid, Map<Integer, NumaNodeMemoryConsumption>> vmNumaRequirements(List<VM> vmGroup, VDS host) {
         List<VM> filteredVms = vmGroup.stream()
                 .filter(vm -> vm.getvNumaNodeList().stream().map(VmNumaNode::getNumaTuneMode)
                         .allMatch(tune -> tune != NumaTuneMode.PREFERRED))
@@ -786,7 +786,7 @@ public class SchedulingManager implements BackendService {
             runnableHosts = availableVdsList;
         }
 
-        switch (runnableHosts.size()){
+        switch (runnableHosts.size()) {
         case 0:
             // no runnable hosts found, nothing found
             return Optional.empty();
@@ -1182,10 +1182,10 @@ public class SchedulingManager implements BackendService {
     }
 
     public boolean isHostAffinityMoreImportantThanVmAffinity(Cluster cluster) {
-        Guid hostAffinityPolicyUnitId =  Guid.createGuidFromString(
+        Guid hostAffinityPolicyUnitId = Guid.createGuidFromString(
                 VmToHostAffinityWeightPolicyUnit.class.getAnnotation(SchedulingUnit.class).guid());
 
-        Guid vmAffinityPolicyUnitId =  Guid.createGuidFromString(
+        Guid vmAffinityPolicyUnitId = Guid.createGuidFromString(
                 VmAffinityWeightPolicyUnit.class.getAnnotation(SchedulingUnit.class).guid());
 
         ClusterPolicy policy = policyMap.get(cluster.getClusterPolicyId());

@@ -233,7 +233,7 @@ public class HostMapperTest extends AbstractInvertibleMappingTest<Host, VdsStati
     }
 
     @Test
-    public void testSshMapping(){
+    public void testSshMapping() {
         VDS vds = new VDS();
         vds.setId(Guid.Empty);
         String fingerprint = "SHA256:k8jEQ2H/h55LplHV5gZYYnySi9lwLWRCcAmdairOQNo";

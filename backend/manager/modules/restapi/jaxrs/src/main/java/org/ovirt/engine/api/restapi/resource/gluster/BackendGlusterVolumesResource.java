@@ -94,7 +94,7 @@ public class BackendGlusterVolumesResource
 
     private void mapBricks(GlusterVolume volume, GlusterVolumeEntity volumeEntity) {
         List<GlusterBrickEntity> bricks = new ArrayList<>();
-        for(GlusterBrick brick : volume.getBricks().getGlusterBricks()) {
+        for (GlusterBrick brick : volume.getBricks().getGlusterBricks()) {
             bricks.add(getMapper(GlusterBrick.class, GlusterBrickEntity.class).map(brick, null));
         }
         volumeEntity.setBricks(bricks);

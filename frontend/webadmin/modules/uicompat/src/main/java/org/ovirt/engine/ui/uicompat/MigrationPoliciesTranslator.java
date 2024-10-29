@@ -4,7 +4,7 @@ import java.util.MissingResourceException;
 
 import org.ovirt.engine.core.common.migration.MigrationPolicy;
 
-public class MigrationPoliciesTranslator  {
+public class MigrationPoliciesTranslator {
 
     private static final MigrationPoliciesTranslator INSTANCE = new MigrationPoliciesTranslator();
 
@@ -38,11 +38,11 @@ public class MigrationPoliciesTranslator  {
     }
 
     private String getNameKey(MigrationPolicy policy) {
-        return getKey("name_", policy);//$NON-NLS-1$
+        return getKey("name_", policy); //$NON-NLS-1$
     }
 
     private String getDescriptionKey(MigrationPolicy policy) {
-        return getKey("description_", policy);//$NON-NLS-1$
+        return getKey("description_", policy); //$NON-NLS-1$
     }
 
     private String getKey(String prefix, MigrationPolicy policy) {

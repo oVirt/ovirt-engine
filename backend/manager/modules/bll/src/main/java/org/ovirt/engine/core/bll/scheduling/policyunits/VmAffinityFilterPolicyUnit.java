@@ -148,7 +148,7 @@ public class VmAffinityFilterPolicyUnit extends PolicyUnitImpl {
                 .map(VM::getRunOnVds)
                 .collect(Collectors.toSet());
 
-        Supplier<String> vmNames = new MemoizingSupplier<>(() -> getVmNames(vmGroup));// Compute the intersection of hosts with positive and negative affinity and report that
+        Supplier<String> vmNames = new MemoizingSupplier<>(() -> getVmNames(vmGroup)); // Compute the intersection of hosts with positive and negative affinity and report that
         // contradicting rules to the log
         unacceptableHosts.retainAll(acceptableHosts);
 

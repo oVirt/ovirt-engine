@@ -22,7 +22,7 @@ public class RemoveBrickStatusPopupView extends VolumeRebalanceStatusPopupView i
     }
 
     @Override
-    public boolean isSkippedFileCountNeeded(){
+    public boolean isSkippedFileCountNeeded() {
         return false;
     }
 }

@@ -2,7 +2,7 @@ package org.ovirt.engine.core.common.vdscommands;
 
 import org.ovirt.engine.core.compat.Guid;
 
-public class ImageHttpAccessVDSCommandParameters extends VdsIdVDSCommandParametersBase{
+public class ImageHttpAccessVDSCommandParameters extends VdsIdVDSCommandParametersBase {
     private Guid storagePoolId;
     private Guid storageDomainId;
     private Guid imageGroupId;

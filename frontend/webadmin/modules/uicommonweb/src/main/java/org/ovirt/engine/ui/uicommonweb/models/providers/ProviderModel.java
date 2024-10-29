@@ -292,7 +292,7 @@ public class ProviderModel extends Model {
     private String getAuthUrl() {
         String scheme = getAuthProtocol().getSelectedItem() == OpenStackProtocolType.https ?
                 Uri.SCHEME_HTTPS : Uri.SCHEME_HTTP;
-        String authority = getAuthHostname().getEntity() + ":" +  getAuthPort().getEntity(); //$NON-NLS-1$
+        String authority = getAuthHostname().getEntity() + ":" + getAuthPort().getEntity(); //$NON-NLS-1$
         Uri uri = new Uri(scheme, authority, getAuthApiVersion().getSelectedItem().getPath());
         return uri.getStringRepresentation();
     }
@@ -330,7 +330,7 @@ public class ProviderModel extends Model {
         this.action = action;
         this.provider = provider;
 
-        setAuthApiVersion(new ListModel<OpenStackApiVersionType>(){
+        setAuthApiVersion(new ListModel<OpenStackApiVersionType>() {
             @Override
             protected void onSelectedItemChanging(OpenStackApiVersionType newValue, OpenStackApiVersionType oldValue) {
                 super.onSelectedItemChanging(newValue, oldValue);
@@ -536,7 +536,7 @@ public class ProviderModel extends Model {
             return getVmwarePropertiesModel();
         } else {
             // null object, to avoid null checks everywhere
-            return new ProxyHostPropertiesModel() {};
+            return new ProxyHostPropertiesModel() { };
         }
     }
 
@@ -648,7 +648,7 @@ public class ProviderModel extends Model {
         provider.setRequiringAuthentication(authenticationRequired);
         if (authenticationRequired) {
             provider.setUsername(getUsername().getEntity());
-            if(!getPassword().getEntity().equals("********")) { //$NON-NLS-1$
+            if (!getPassword().getEntity().equals("********")) { //$NON-NLS-1$
             provider.setPassword(getPassword().getEntity());
             }
             if (getTenantName().getIsAvailable()) {

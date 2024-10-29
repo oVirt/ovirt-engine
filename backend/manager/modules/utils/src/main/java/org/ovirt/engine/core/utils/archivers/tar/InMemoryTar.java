@@ -5,7 +5,7 @@ import java.io.OutputStream;
 import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
 import org.apache.commons.compress.archivers.tar.TarArchiveOutputStream;
 
-public class InMemoryTar implements AutoCloseable{
+public class InMemoryTar implements AutoCloseable {
     private TarArchiveOutputStream tarArchiveOutputStream;
 
     public InMemoryTar(OutputStream outputStream) {

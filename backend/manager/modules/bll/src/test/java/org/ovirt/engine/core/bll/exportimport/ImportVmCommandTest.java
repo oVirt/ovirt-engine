@@ -69,7 +69,7 @@ import org.ovirt.engine.core.common.utils.ValidationUtils;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.utils.MockConfigDescriptor;
-import  org.ovirt.engine.core.utils.MockedConfig;
+import org.ovirt.engine.core.utils.MockedConfig;
 import org.ovirt.engine.core.utils.RandomUtils;
 import org.ovirt.engine.core.utils.RandomUtilsSeedingExtension;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.CloudInitHandler;

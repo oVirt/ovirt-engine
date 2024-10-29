@@ -17,9 +17,9 @@ public class StorageDomainDwhDao extends BaseDao {
     private static final String USED = "used"; //$NON-NLS-1$
     private static final String DATE = "the_date"; //$NON-NLS-1$
     private static final String TOTAL = "total"; //$NON-NLS-1$
-    private static final String AVAILABLE="available"; //$NON-NLS-1$
-    private static final String PREVIOUS_USED="previous_used"; //$NON-NLS-1$
-    private static final String PREVIOUS_TOTAL="previous_total"; //$NON-NLS-1$
+    private static final String AVAILABLE = "available"; //$NON-NLS-1$
+    private static final String PREVIOUS_USED = "previous_used"; //$NON-NLS-1$
+    private static final String PREVIOUS_TOTAL = "previous_total"; //$NON-NLS-1$
 
     private static final String STORAGE_LAST24_AVERAGE = "storage.last24hours_average"; //$NON-NLS-1$
     private static final String HOURLY_STORAGE_HISTORY = "storage.hourly_history"; //$NON-NLS-1$

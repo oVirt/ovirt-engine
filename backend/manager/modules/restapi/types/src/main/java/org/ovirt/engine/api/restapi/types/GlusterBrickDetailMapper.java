@@ -16,7 +16,7 @@ import org.ovirt.engine.core.common.businessentities.gluster.Mempool;
 
 public class GlusterBrickDetailMapper {
 
-    @Mapping (from=GlusterBrick.class, to=GlusterVolumeAdvancedDetails.class)
+    @Mapping (from = GlusterBrick.class, to = GlusterVolumeAdvancedDetails.class)
     public static GlusterVolumeAdvancedDetails map(GlusterBrick model, GlusterVolumeAdvancedDetails toEntity) {
         //AdvancedDetails is a read only from server and no support for setting these.
         //Hence mapping from REST model to Business entity not required.
@@ -24,7 +24,7 @@ public class GlusterBrickDetailMapper {
         return entity;
     }
 
-    @Mapping (from=GlusterVolumeAdvancedDetails.class, to=GlusterBrick.class)
+    @Mapping (from = GlusterVolumeAdvancedDetails.class, to = GlusterBrick.class)
     public static GlusterBrick map(GlusterVolumeAdvancedDetails fromEntity, GlusterBrick toModel) {
         GlusterBrick model = (toModel == null) ? new GlusterBrick() : toModel;
 
@@ -40,7 +40,7 @@ public class GlusterBrickDetailMapper {
 
         model = mapBrickProperties(detail, model);
 
-        if (detail.getClients()!= null) {
+        if (detail.getClients() != null) {
             model.setGlusterClients(new GlusterClients());
             for (GlusterClientInfo clientEntity : detail.getClients()) {
                 model.getGlusterClients().getGlusterClients().add(map(clientEntity));
@@ -76,7 +76,7 @@ public class GlusterBrickDetailMapper {
     }
 
 
-    @Mapping (from=GlusterClientInfo.class, to=GlusterClient.class)
+    @Mapping (from = GlusterClientInfo.class, to = GlusterClient.class)
     public static GlusterClient map(GlusterClientInfo clientEntity) {
         GlusterClient clientModel = new GlusterClient();
         clientModel.setBytesRead(clientEntity.getBytesRead());
@@ -88,7 +88,7 @@ public class GlusterBrickDetailMapper {
         return clientModel;
     }
 
-    @Mapping (from=MemoryStatus.class, to=GlusterBrickMemoryInfo.class)
+    @Mapping (from = MemoryStatus.class, to = GlusterBrickMemoryInfo.class)
     public static GlusterBrickMemoryInfo map(MemoryStatus memoryStatusEntity) {
 
         GlusterBrickMemoryInfo memInfo = new GlusterBrickMemoryInfo();
@@ -103,7 +103,7 @@ public class GlusterBrickDetailMapper {
         return memInfo;
     }
 
-    @Mapping (from=Mempool.class, to=GlusterMemoryPool.class)
+    @Mapping (from = Mempool.class, to = GlusterMemoryPool.class)
     public static GlusterMemoryPool map(Mempool poolEntity) {
         GlusterMemoryPool poolModel = new GlusterMemoryPool();
 

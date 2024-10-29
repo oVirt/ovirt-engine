@@ -53,7 +53,7 @@ public class OAuthCallbackServlet extends HttpServlet {
     }
 
     private String getTokenForAuthCode(HttpServletRequest request, String authCode, String scope, String redirectUri) {
-        String token  = null;
+        String token = null;
         Map<String, Object> tokenMap = SsoOAuthServiceUtils.getToken(WelcomeUtils.AUTHORIZATION_CODE, authCode, scope, redirectUri);
         if (tokenMap.containsKey(WelcomeUtils.ERROR_DESCRIPTION)) {
             request.getSession(true).setAttribute(WelcomeUtils.ERROR_DESCRIPTION,

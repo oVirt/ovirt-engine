@@ -241,7 +241,7 @@ public class VmDynamicDaoImpl extends MassOperationsGenericDao<VmDynamic, Guid>
     private static String toGuestContainersString(VmDynamic vm) {
         try {
             return JSON_MAPPER.writeValueAsString(vm.getGuestContainers());
-        } catch(Exception e) {
+        } catch (Exception e) {
             return "[]";
         }
     }
@@ -249,8 +249,8 @@ public class VmDynamicDaoImpl extends MassOperationsGenericDao<VmDynamic, Guid>
     @SuppressWarnings("unchecked")
     private static List<GuestContainer> fromContainersString(String s) {
         try {
-            return (List<GuestContainer>) JSON_MAPPER.readValue(s, new TypeReference<List<GuestContainer>>() {});
-        } catch(Exception e) {
+            return (List<GuestContainer>) JSON_MAPPER.readValue(s, new TypeReference<List<GuestContainer>>() { });
+        } catch (Exception e) {
             return new ArrayList<>();
         }
     }

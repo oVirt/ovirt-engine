@@ -93,7 +93,7 @@ public class BackendExternalComputeResourceResourceTest
             ProviderQueryParameters.class,
             new String[] { "Provider.Id" },
             new Object[] { GUIDS[0] },
-            notFound? null: getResources()
+            notFound ? null : getResources()
         );
     }
 

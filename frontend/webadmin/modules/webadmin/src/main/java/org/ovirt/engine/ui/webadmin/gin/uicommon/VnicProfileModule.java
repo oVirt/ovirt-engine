@@ -78,19 +78,19 @@ public class VnicProfileModule extends AbstractGinModule {
         bind(VnicProfileListModel.class).in(Singleton.class);
         bind(VnicProfileVmListModel.class).in(Singleton.class);
         bind(VnicProfileTemplateListModel.class).in(Singleton.class);
-        bind(new TypeLiteral<PermissionListModel<VnicProfileView>>(){}).in(Singleton.class);
+        bind(new TypeLiteral<PermissionListModel<VnicProfileView>>() { }).in(Singleton.class);
         bind(VnicProfileMainSelectedItems.class).asEagerSingleton();
 
         // Search-able Detail Models
-        bind(new TypeLiteral<SearchableDetailModelProvider<VmTemplate, VnicProfileListModel, VnicProfileTemplateListModel>>(){})
-           .to(new TypeLiteral<SearchableDetailTabModelProvider<VmTemplate, VnicProfileListModel, VnicProfileTemplateListModel>>(){})
+        bind(new TypeLiteral<SearchableDetailModelProvider<VmTemplate, VnicProfileListModel, VnicProfileTemplateListModel>>() { })
+           .to(new TypeLiteral<SearchableDetailTabModelProvider<VmTemplate, VnicProfileListModel, VnicProfileTemplateListModel>>() { })
            .in(Singleton.class);
-        bind(new TypeLiteral<SearchableDetailModelProvider<VM, VnicProfileListModel, VnicProfileVmListModel>>(){})
-            .to(new TypeLiteral<SearchableDetailTabModelProvider<VM, VnicProfileListModel, VnicProfileVmListModel>>(){})
+        bind(new TypeLiteral<SearchableDetailModelProvider<VM, VnicProfileListModel, VnicProfileVmListModel>>() { })
+            .to(new TypeLiteral<SearchableDetailTabModelProvider<VM, VnicProfileListModel, VnicProfileVmListModel>>() { })
             .in(Singleton.class);
         // Permission Detail Model
-        bind(new TypeLiteral<SearchableDetailModelProvider<Permission, VnicProfileListModel, PermissionListModel<VnicProfileView>>>(){})
-           .to(new TypeLiteral<PermissionModelProvider<VnicProfileView, VnicProfileListModel>>(){}).in(Singleton.class);
+        bind(new TypeLiteral<SearchableDetailModelProvider<Permission, VnicProfileListModel, PermissionListModel<VnicProfileView>>>() { })
+           .to(new TypeLiteral<PermissionModelProvider<VnicProfileView, VnicProfileListModel>>() { }).in(Singleton.class);
     }
 
 }

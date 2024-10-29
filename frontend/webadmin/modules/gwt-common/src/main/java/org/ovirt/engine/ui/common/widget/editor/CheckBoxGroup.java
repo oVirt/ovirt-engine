@@ -117,7 +117,7 @@ public class CheckBoxGroup<T> extends Composite implements TakesValue<List<T>>, 
      *            boolean whether to enable/disable all checkboxes
      */
     public void setEnabled(boolean enabled) {
-        for(Entry<T, CheckBox> currentValue : checkBoxes.entrySet()) {
+        for (Entry<T, CheckBox> currentValue : checkBoxes.entrySet()) {
             currentValue.getValue().setEnabled(enabled);
         }
     }
@@ -145,7 +145,7 @@ public class CheckBoxGroup<T> extends Composite implements TakesValue<List<T>>, 
             return;
         }
         clearAllSelections();
-        if(value == null){
+        if (value == null) {
             return;
         }
         for (T currentvalue : value) {
@@ -174,11 +174,11 @@ public class CheckBoxGroup<T> extends Composite implements TakesValue<List<T>>, 
         wrapperPanel.clear();
         checkBoxes.clear();
         if (values.isEmpty()) {
-            throw new IllegalArgumentException("Widget has nothing to do");//$NON-NLS-1$
+            throw new IllegalArgumentException("Widget has nothing to do"); //$NON-NLS-1$
         }
         List<T> acceptableValues = (List<T>) values.toArray()[0];
-        for(T currentValue : acceptableValues) {
-            if(!checkBoxes.containsKey(currentValue)) {
+        for (T currentValue : acceptableValues) {
+            if (!checkBoxes.containsKey(currentValue)) {
                 addCheckBox(currentValue);
             }
         }

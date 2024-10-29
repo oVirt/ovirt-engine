@@ -130,7 +130,7 @@ public abstract class AbstractBackendCollectionResourceTest<R extends BaseResour
                 if (method.isAnnotationPresent(Path.class) && isSubResourceLocator(method)) {
                     Object rawSubResource = method.invoke(collection, getSubResourceId());
                     if (rawSubResource instanceof AbstractBackendResource) {
-                        AbstractBackendResource<R, Q> subResource = (AbstractBackendResource<R, Q>)rawSubResource;
+                        AbstractBackendResource<R, Q> subResource = (AbstractBackendResource<R, Q>) rawSubResource;
                         assertNotNull(subResource.getBackend());
                         assertNotNull(subResource.getMappingLocator());
                     }
@@ -187,7 +187,7 @@ public abstract class AbstractBackendCollectionResourceTest<R extends BaseResour
         } else {
             if (failure instanceof String) {
                 queryResult.setExceptionString((String) failure);
-                setUpL10nExpectations((String)failure);
+                setUpL10nExpectations((String) failure);
                 when(backend.runQuery(eq(QueryType.Search), eqSearchParams(params))).thenReturn(
                         queryResult);
             } else if (failure instanceof Exception) {

@@ -36,7 +36,7 @@ public class VNodeModel extends Model {
         this.vmNumaNode = vmNumaNode;
         this.editEnabled = editEnabled;
 
-        if (vmNumaNode.getVdsNumaNodeList() != null && !vmNumaNode.getVdsNumaNodeList().isEmpty()){
+        if (vmNumaNode.getVdsNumaNodeList() != null && !vmNumaNode.getVdsNumaNodeList().isEmpty()) {
             hostNodeIndex = vmNumaNode.getVdsNumaNodeList().get(0);
             pinned = true;
         }
@@ -97,7 +97,7 @@ public class VNodeModel extends Model {
         updateNumaTunes();
     }
 
-    public void unpin(){
+    public void unpin() {
         pinned = false;
         hostNodeIndex = null;
         updateNumaTunes();
@@ -111,7 +111,7 @@ public class VNodeModel extends Model {
      * Convert the model representation of a virtual numa node to a real virtual numa node
      * @return the numa node
      */
-    public VmNumaNode toVmNumaNode(){
+    public VmNumaNode toVmNumaNode() {
         final VmNumaNode newNode = new VmNumaNode();
         newNode.setIndex(vmNumaNode.getIndex());
         newNode.setId(vmNumaNode.getId());

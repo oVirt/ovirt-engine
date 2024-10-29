@@ -28,9 +28,9 @@ public class CryptMD5 {
 
     private static String encode(byte b1, byte b2, byte b3, int n) {
         StringBuilder result = new StringBuilder();
-        int w = ((b1&0xff) << 16) | ((b2&0xff) << 8) | (b3&0xff);
+        int w = ((b1 & 0xff) << 16) | ((b2 & 0xff) << 8) | (b3 & 0xff);
         while (n-- > 0) {
-            result.append(b64t[w&0x3f]);
+            result.append(b64t[w & 0x3f]);
             w = w >> 6;
         }
         return result.toString();
@@ -120,8 +120,8 @@ public class CryptMD5 {
         byte[] r = new byte[SALT_MAX_LENGTH];
         char[] salt = new char[r.length];
         SECURE_RANDOM.nextBytes(r);
-        for (int i=0;i<r.length;i++) {
-            salt[i] = b64t[(r[i]&0xff) % b64t.length];
+        for (int i = 0; i < r.length; i++) {
+            salt[i] = b64t[(r[i] & 0xff) % b64t.length];
         }
         return crypt(password, new String(salt));
     }

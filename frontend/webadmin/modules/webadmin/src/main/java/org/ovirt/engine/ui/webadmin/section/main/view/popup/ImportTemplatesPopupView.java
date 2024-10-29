@@ -156,7 +156,7 @@ public class ImportTemplatesPopupView extends AbstractModelBoundPopupView<Import
             @Override
             public String getValue(EntityModel<VmTemplate> externalVmModel) {
                 if (externalVmModel instanceof OvaTemplateModel && ((OvaTemplateModel) externalVmModel).getOvaFileName() != null) {
-                    return externalVmModel.getEntity().getName() + " (" + ((OvaTemplateModel) externalVmModel).getOvaFileName() + ")";//$NON-NLS-1$ //$NON-NLS-2$
+                    return externalVmModel.getEntity().getName() + " (" + ((OvaTemplateModel) externalVmModel).getOvaFileName() + ")"; //$NON-NLS-1$ //$NON-NLS-2$
                 }
                 return externalVmModel.getEntity().getName();
             }
@@ -166,7 +166,7 @@ public class ImportTemplatesPopupView extends AbstractModelBoundPopupView<Import
             @Override
             public String getValue(EntityModel<VmTemplate> externalVmModel) {
                 if (externalVmModel instanceof OvaTemplateModel && ((OvaTemplateModel) externalVmModel).getOvaFileName() != null) {
-                    return externalVmModel.getEntity().getName() + " (" + ((OvaTemplateModel) externalVmModel).getOvaFileName() + ")";//$NON-NLS-1$ //$NON-NLS-2$
+                    return externalVmModel.getEntity().getName() + " (" + ((OvaTemplateModel) externalVmModel).getOvaFileName() + ")"; //$NON-NLS-1$ //$NON-NLS-2$
                 }
                 return externalVmModel.getEntity().getName();
             }

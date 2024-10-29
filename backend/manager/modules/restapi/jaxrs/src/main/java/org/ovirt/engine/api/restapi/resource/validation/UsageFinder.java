@@ -36,7 +36,7 @@ public class UsageFinder {
             node = step(node, pathSegment);
         }
         //check whether the last step in the URL represent an 'action'.
-        PathSegment lastPathSegment = pathSegments.get(pathSegments.size()-1);
+        PathSegment lastPathSegment = pathSegments.get(pathSegments.size() - 1);
         //Get the prefix of the link, with or without 's' appended to the
         //entity name, according to whether this action is on a single entity
         //or on the collection context, e.g:
@@ -92,7 +92,7 @@ public class UsageFinder {
             builder.append(part.toLowerCase()).append("_");
         }
         String name = builder.toString();
-        return name.substring(0, name.length() -1);
+        return name.substring(0, name.length() - 1);
     }
 
     private String getMethodName(String httpMethod) {

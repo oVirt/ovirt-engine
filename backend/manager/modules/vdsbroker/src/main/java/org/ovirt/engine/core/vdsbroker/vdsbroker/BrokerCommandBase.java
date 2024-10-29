@@ -204,7 +204,7 @@ public abstract class BrokerCommandBase<P extends VDSParametersBase> extends VDS
         throw outEx;
     }
 
-    private void logToAuditIfNeeded(){
+    private void logToAuditIfNeeded() {
         if (shouldLogToAudit()) {
             logToAudit();
         }
@@ -215,7 +215,7 @@ public abstract class BrokerCommandBase<P extends VDSParametersBase> extends VDS
         return !getParameters().getExpectedEngineErrors().contains(getReturnValueFromStatus(getReturnStatus()));
     }
 
-    protected void logToAudit(){
+    protected void logToAudit() {
     }
 
     private VDSExceptionBase createException() {

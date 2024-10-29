@@ -17,7 +17,7 @@ public class DetailTabLayout {
      */
     public int addGroupedTabData(TabData tabData) {
         DetailTabInfo tabDetails = new DetailTabInfo();
-        tabDetails.setDetailPriority((int)tabData.getPriority());
+        tabDetails.setDetailPriority((int) tabData.getPriority());
         tabDetails.setDetailTitle(tabData.getLabel());
         if (!detailLayout.contains(tabDetails)) {
             detailLayout.add(tabDetails);

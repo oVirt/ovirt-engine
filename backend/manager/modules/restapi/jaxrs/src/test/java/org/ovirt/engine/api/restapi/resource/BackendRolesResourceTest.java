@@ -58,7 +58,7 @@ public class BackendRolesResourceTest
         model.setName(NAMES[0]);
         model.setPermits(new Permits());
         model.getPermits().getPermits().add(new Permit());
-        model.getPermits().getPermits().get(0).setId(""+ActionGroup.CREATE_VM.getId());
+        model.getPermits().getPermits().get(0).setId("" + ActionGroup.CREATE_VM.getId());
 
         Response response = collection.add(model);
         assertEquals(201, response.getStatus());

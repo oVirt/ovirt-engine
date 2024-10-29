@@ -61,7 +61,7 @@ public class ExternalSchedulerBrokerObjectBuilder {
 
         if (result.getResultCode() != RESULT_OK) {
             plugin_errors = (Map<String, Object[]>) castedResult.get("plugin_errors");
-            errors = (Object[])castedResult.get("errors");
+            errors = (Object[]) castedResult.get("errors");
 
             if (plugin_errors != null) {
                 for (Map.Entry<String, Object[]> entry: plugin_errors.entrySet()) {
@@ -74,8 +74,8 @@ public class ExternalSchedulerBrokerObjectBuilder {
 
             if (errors != null) {
                 for (Object msg: errors) {
-                    auditLogExternalSchedulerError((String)msg);
-                    result.addError((String)msg);
+                    auditLogExternalSchedulerError((String) msg);
+                    result.addError((String) msg);
                 }
             }
         }
