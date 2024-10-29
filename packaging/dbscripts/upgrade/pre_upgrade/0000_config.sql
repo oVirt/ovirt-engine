@@ -622,6 +622,7 @@ select fn_db_add_config_value('ServerCPUList',
     '4.8');
 
 select fn_db_add_config_value('ServerRebootTimeout','600','general');
+select fn_db_add_config_value('ServerRebootSleepTime','30','general');
 select fn_db_add_config_value('SetupNetworksPollingTimeout','3','general');
 select fn_db_add_config_value('SignCertTimeoutInSeconds','30','general');
 --Handling Script name for signing
