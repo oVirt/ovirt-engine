@@ -234,6 +234,8 @@ public enum ConfigValues {
     @Reloadable
     @TypeConverterAttribute(Integer.class)
     ServerRebootTimeout,
+    @TypeConverterAttribute(Integer.class)
+    ServerRebootSleepTime,
     @Reloadable
     @TypeConverterAttribute(Integer.class)
     VmGracefulShutdownTimeout,

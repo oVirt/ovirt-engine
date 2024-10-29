@@ -2,8 +2,13 @@ package org.ovirt.engine.core.bll;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.CancellationException;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
+import javax.enterprise.concurrent.ManagedScheduledExecutorService;
 import javax.inject.Inject;
 
 import org.apache.commons.lang.StringUtils;
@@ -37,14 +42,18 @@ import org.ovirt.engine.core.dao.VdsSpmIdMapDao;
 import org.ovirt.engine.core.dao.VdsStaticDao;
 import org.ovirt.engine.core.dao.gluster.GlusterDBUtils;
 import org.ovirt.engine.core.utils.EngineLocalConfig;
-import org.ovirt.engine.core.utils.ThreadUtils;
 import org.ovirt.engine.core.utils.lock.EngineLock;
 import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
+import org.ovirt.engine.core.utils.threadpool.ThreadPools;
 import org.ovirt.engine.core.vdsbroker.ResourceManager;
+import org.ovirt.engine.core.vdsbroker.vdsbroker.IVdsServer;
+import org.ovirt.engine.core.vdsbroker.vdsbroker.VDSInfoReturn;
+
 
 public abstract class VdsCommand<T extends VdsActionParameters> extends CommandBase<T> {
 
     protected String _failureMessage = null;
+    private ScheduledFuture<?> reachableFuture;
 
     @Inject
     protected AuditLogDirector auditLogDirector;
@@ -68,6 +77,9 @@ public abstract class VdsCommand<T extends VdsActionParameters> extends CommandB
     private AlertDirector alertDirector;
     @Inject
     private VdsStaticDao vdsStaticDao;
+    @Inject
+    @ThreadPools(ThreadPools.ThreadPoolType.EngineScheduledThreadPool)
+    private ManagedScheduledExecutorService executor;
 
     /**
      * Constructor for command creation when compensation is applied on startup
@@ -112,14 +124,46 @@ public abstract class VdsCommand<T extends VdsActionParameters> extends CommandB
         }
     }
 
+    /**
+     * Enables timeout on the thread until max timeout time is exceeded or a connection is made with the rebooting device
+     */
     private void sleepOnReboot(final VDSStatus status) {
-        int sleepTimeInSec = Config.<Integer> getValue(ConfigValues.ServerRebootTimeout);
-        log.info("Waiting {} seconds, for server to finish reboot process.",
-                sleepTimeInSec);
         resourceManager.getVdsManager(getVdsId()).setInServerRebootTimeout(true);
-        ThreadUtils.sleep(TimeUnit.SECONDS.toMillis(sleepTimeInSec));
-        resourceManager.getVdsManager(getVdsId()).setInServerRebootTimeout(false);
-        setVdsStatus(status);
+        int serverRebootMax = Config.<Integer> getValue(ConfigValues.ServerRebootTimeout);
+        int retryTime = Config.<Integer> getValue(ConfigValues.ServerRebootSleepTime);
+        try {
+            reachableFuture
+                = executor.scheduleAtFixedRate(() -> isReachable(), retryTime, retryTime, TimeUnit.SECONDS);
+            reachableFuture.get(serverRebootMax, TimeUnit.SECONDS);
+        } catch (InterruptedException e) {
+            log.info("Trying to reconnect with host {} after reboot failed due to {}", getVdsId(), e.toString());
+        } catch (ExecutionException e) {
+            log.info("Problem during execution of reconnection with host {} after reboot due to {}", getVdsId(), e.toString());
+        } catch (TimeoutException e) {
+            log.info("Unable to connect to host {} after {} seconds", getVdsId(), serverRebootMax);
+        } catch (CancellationException e) {
+            log.info("Future cancelled due to ability to connect to host {} after reboot.", getVdsId());
+        } finally {
+            resourceManager.getVdsManager(getVdsId()).setInServerRebootTimeout(false);
+            setVdsStatus(status);
+        }
+    }
+
+    /**
+     * Checks if the host is ready to reconnect
+     * if the status equals 0 it means the vds is done and ready to reconnect, so the thread can be interrupted
+     */
+    private void isReachable() {
+        try {
+            IVdsServer serv = resourceManager.getVdsManager(getVdsId()).getVdsProxy();
+            VDSInfoReturn info = serv.getVdsStats();
+            log.info("Status of host {} is {}", getVdsId(), info.status.toString());
+            if (info.status.code == 0) {
+                reachableFuture.cancel(false);
+            }
+        } catch (Throwable t) {
+            log.error("Error encountered {}", t.toString());
+        }
     }
 
     /**
