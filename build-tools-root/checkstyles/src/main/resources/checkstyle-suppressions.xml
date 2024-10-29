@@ -92,6 +92,9 @@
     <suppress checks="IllegalType" files="ConvergenceScheduleTest.java"/>
     <suppress checks="IllegalType" files="AbstractBackendBaseTest.java"/>
 
+    <!-- Visually better with multiple spaces -->
+    <suppress checks="SingleSpaceSeparator" files="NetworkStatisticsBuilderTest.java"/>
+
     <!-- Most of the classes in the authentication package aren't used in the
          GWT client, and those that are used have special versions or custom
          field serializers to overcome the GWT serialization limitations. All
