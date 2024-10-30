@@ -824,6 +824,16 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
         super.endSuccessfully();
     }
 
+    @Override
+    protected void endVmCommand() {
+        if (isFloatingDisk()) {
+            endActionOnDisks();
+            setSucceeded(true);
+        } else {
+            super.endVmCommand();
+        }
+    }
+
     private void plugDiskToVmIfNeeded() {
         if (Boolean.TRUE.equals(getParameters().getPlugDiskToVm()) && getVm() != null) {
             if (!getVm().getStatus().isUpOrPaused()) {
