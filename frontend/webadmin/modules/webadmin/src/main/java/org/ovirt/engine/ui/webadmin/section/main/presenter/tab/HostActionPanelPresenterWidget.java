@@ -200,7 +200,7 @@ public class HostActionPanelPresenterWidget extends ActionPanelPresenterWidget<V
         });
 
         // Assign tags
-        addMenuListItem(new WebAdminButtonDefinition<Void, VDS>(constants.assignTagsHost()) {
+        addMenuListItem(new WebAdminButtonDefinition<Void, VDS>(constants.assignTags()) {
             @Override
             protected UICommand resolveCommand() {
                 return getModel().getAssignTagsCommand();

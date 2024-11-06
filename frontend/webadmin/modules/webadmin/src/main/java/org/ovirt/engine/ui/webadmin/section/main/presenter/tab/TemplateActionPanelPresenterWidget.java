@@ -73,5 +73,11 @@ public class TemplateActionPanelPresenterWidget extends ActionPanelPresenterWidg
                 return getModel().getCreateVmFromTemplateCommand();
             }
         });
+        addMenuListItem(new WebAdminButtonDefinition<Void, VmTemplate>(constants.assignTags()) {
+            @Override
+            protected UICommand resolveCommand() {
+                return getModel().getAssignTagsCommand();
+            }
+        });
     }
 }

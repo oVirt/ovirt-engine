@@ -134,6 +134,7 @@ import org.ovirt.engine.core.common.queries.GetStorageDomainDefaultWipeAfterDele
 import org.ovirt.engine.core.common.queries.GetStorageDomainsByConnectionParameters;
 import org.ovirt.engine.core.common.queries.GetStoragePoolsByClusterServiceParameters;
 import org.ovirt.engine.core.common.queries.GetSupportedCpuListParameters;
+import org.ovirt.engine.core.common.queries.GetTagsByTemplateIdParameters;
 import org.ovirt.engine.core.common.queries.GetTagsByUserGroupIdParameters;
 import org.ovirt.engine.core.common.queries.GetTagsByUserIdParameters;
 import org.ovirt.engine.core.common.queries.GetTagsByVdsIdParameters;
@@ -1771,6 +1772,12 @@ public class AsyncDataProvider {
 
             return new ArrayList<>();
         };
+    }
+
+    public void getAttachedTagsToTemplate(AsyncQuery<List<Tags>> aQuery, Guid id) {
+        setAttachedTagsConverter(aQuery);
+
+        Frontend.getInstance().runQuery(QueryType.GetTagsByTemplateId, new GetTagsByTemplateIdParameters(id.toString()), aQuery);
     }
 
     public void getAttachedTagsToVm(AsyncQuery<List<Tags>> aQuery, Guid id) {

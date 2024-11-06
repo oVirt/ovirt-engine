@@ -36,6 +36,7 @@ import org.ovirt.engine.ui.uicommonweb.models.vms.DiskModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.EditVmDiskModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.NewDiskModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmHighPerformanceConfigurationModel;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.AssignTagsPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.ImportTemplatesPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.event.EventPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.ova.ExportOvaPopupPresenterWidget;
@@ -69,6 +70,7 @@ public class TemplateModule extends AbstractGinModule {
     @Singleton
     public MainModelProvider<VmTemplate, TemplateListModel> getTemplateListProvider(EventBus eventBus,
             final Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider,
+            final Provider<AssignTagsPopupPresenterWidget> assignTagsPopupProvider,
             final Provider<TemplateEditPresenterWidget> popupProvider,
             final Provider<VmExportPopupPresenterWidget> exportPopupProvider,
             final Provider<ExportOvaPopupPresenterWidget> exportOvaPopupProvider,
@@ -92,6 +94,8 @@ public class TemplateModule extends AbstractGinModule {
 
                         if (lastExecutedCommand == model.getEditCommand()) {
                             return popupProvider.get();
+                        } else if (lastExecutedCommand == getModel().getAssignTagsCommand()) {
+                            return assignTagsPopupProvider.get();
                         } else if (lastExecutedCommand == getModel().getExportCommand()) {
                             return exportPopupProvider.get();
                         } else if (lastExecutedCommand == getModel().getExportOvaCommand()) {

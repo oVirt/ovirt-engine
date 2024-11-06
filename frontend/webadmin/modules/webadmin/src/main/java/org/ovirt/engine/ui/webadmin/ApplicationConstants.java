@@ -1264,8 +1264,6 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     String pmHost();
 
-    String assignTagsHost();
-
     String refreshHostCapabilities();
 
     String enrollCertificate();
@@ -1552,8 +1550,6 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     String changeCdVm();
 
-    String assignTagsVm();
-
     String enableGlobalHaMaintenanceVm();
 
     String disableGlobalHaMaintenanceVm();
@@ -1669,8 +1665,6 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     String addUser();
 
     String removeUser();
-
-    String assignTagsUser();
 
     String userUser();
 
@@ -3618,4 +3612,6 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     String cleanupFinishedTasks();
 
     String accountSettings();
+
+    String assignTags();
 }
