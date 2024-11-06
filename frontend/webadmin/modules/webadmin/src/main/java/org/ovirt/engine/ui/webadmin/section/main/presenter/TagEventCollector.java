@@ -10,17 +10,18 @@ import com.google.web.bindery.event.shared.EventBus;
 import com.google.web.bindery.event.shared.HandlerRegistration;
 
 /**
- * Collects all tag activation changes until both VM and Hosts presenter are active.
+ * Collects all tag activation changes until both VM, Templates and Hosts presenter are active.
  */
 public class TagEventCollector {
     List<TagActivationChangeEvent> eventList = new ArrayList<>();
 
     HandlerRegistration handler;
 
-    // We only care about VMs and Hosts since those are the entities with tag events. So once both presenters
+    // We only care about VMs, Hosts and Templates since those are the entities with tag events. So once both presenters
     // are active we can disable collecting tag events in the TagEventCollector.
     boolean vmsActive = false;
     boolean hostsActive = false;
+    boolean templatesActive = false;
 
     @Inject
     public TagEventCollector(EventBus eventBus) {
@@ -37,7 +38,7 @@ public class TagEventCollector {
     }
 
     private void deactivateHandler() {
-        if (vmsActive && hostsActive) {
+        if (vmsActive && hostsActive && templatesActive) {
             handler.removeHandler();
             eventList.clear();
         }
@@ -45,6 +46,11 @@ public class TagEventCollector {
 
     public void activateHosts() {
         hostsActive = true;
+        deactivateHandler();
+    }
+
+    public void activateTemplates() {
+        templatesActive = true;
         deactivateHandler();
     }
 

@@ -54,6 +54,8 @@ public enum HelpTag {
 
     assign_tags_vms("assign_tags_vms", HelpTagType.WEBADMIN, "VMs Tab > Assign Tags"), //$NON-NLS-1$ //$NON-NLS-2$
 
+    assign_tags_template("assign_tags_template", HelpTagType.WEBADMIN, "Templates Tab > Assign Tags"), //$NON-NLS-1$ //$NON-NLS-2$
+
     assign_users_and_groups_to_quota("assign_users_and_groups_to_quota", HelpTagType.WEBADMIN, "Quota Tab > Users Sub-Tab > Assign Users/Groups to Quota"), //$NON-NLS-1$ //$NON-NLS-2$
 
     update_ovfs("update_ovfs", HelpTagType.WEBADMIN, "Storage Tab > Update OVFs"), //$NON-NLS-1$ //$NON-NLS-2$

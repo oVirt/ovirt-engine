@@ -166,9 +166,9 @@ public class SyntaxCheckerTest {
         testValidSql("Host: vm.name=\"vm1\"",
                 "SELECT * FROM ((SELECT  distinct  vds.* FROM  vds   LEFT OUTER JOIN vms_with_tags ON vds.vds_id=vms_with_tags.run_on_vds    WHERE  vms_with_tags.vm_name LIKE vm1 )  ORDER BY vds_name ASC ) as T1 OFFSET (1 -1) LIMIT 0");
         testValidSql("Vms: cluster = default and Templates.name = template_1 and Storage.name = storage_1",
-                "SELECT * FROM (SELECT * FROM vms WHERE ( vm_guid IN (SELECT distinct vms_with_tags.vm_guid FROM  vms_with_tags   LEFT OUTER JOIN vm_templates_storage_domain ON vms_with_tags.vmt_guid=vm_templates_storage_domain.vmt_guid    LEFT OUTER JOIN storage_domains_with_hosts_view ON vms_with_tags.storage_id=storage_domains_with_hosts_view.id    WHERE ( (  vms_with_tags.cluster_name LIKE default  AND  vm_templates_storage_domain.name LIKE template\\_1  ) AND  storage_domains_with_hosts_view.storage_name LIKE storage\\_1  )))  ORDER BY vm_name ASC ) as T1 OFFSET (1 -1) LIMIT 0");
+                "SELECT * FROM (SELECT * FROM vms WHERE ( vm_guid IN (SELECT distinct vms_with_tags.vm_guid FROM  vms_with_tags   LEFT OUTER JOIN vm_templates_storage_domain_with_tags ON vms_with_tags.vmt_guid=vm_templates_storage_domain_with_tags.vmt_guid    LEFT OUTER JOIN storage_domains_with_hosts_view ON vms_with_tags.storage_id=storage_domains_with_hosts_view.id    WHERE ( (  vms_with_tags.cluster_name LIKE default  AND  vm_templates_storage_domain_with_tags.name LIKE template\\_1  ) AND  storage_domains_with_hosts_view.storage_name LIKE storage\\_1  )))  ORDER BY vm_name ASC ) as T1 OFFSET (1 -1) LIMIT 0");
         testValidSql("Vms: cluster = default and Templates.name = template_1 and Storage.name = storage_1 and Vnic.network_name = vnic_1",
-                "SELECT * FROM (SELECT * FROM vms WHERE ( vm_guid IN (SELECT distinct vms_with_tags.vm_guid FROM  vms_with_tags   LEFT OUTER JOIN vm_templates_storage_domain ON vms_with_tags.vmt_guid=vm_templates_storage_domain.vmt_guid    LEFT OUTER JOIN storage_domains_with_hosts_view ON vms_with_tags.storage_id=storage_domains_with_hosts_view.id    LEFT OUTER JOIN vm_interface_view ON vms_with_tags.vm_guid=vm_interface_view.vm_guid    WHERE ( ( (  vms_with_tags.cluster_name LIKE default  AND  vm_templates_storage_domain.name LIKE template\\_1  ) AND  storage_domains_with_hosts_view.storage_name LIKE storage\\_1  ) AND  vm_interface_view.network_name LIKE vnic\\_1  )))  ORDER BY vm_name ASC ) as T1 OFFSET (1 -1) LIMIT 0");
+                "SELECT * FROM (SELECT * FROM vms WHERE ( vm_guid IN (SELECT distinct vms_with_tags.vm_guid FROM  vms_with_tags   LEFT OUTER JOIN vm_templates_storage_domain_with_tags ON vms_with_tags.vmt_guid=vm_templates_storage_domain_with_tags.vmt_guid    LEFT OUTER JOIN storage_domains_with_hosts_view ON vms_with_tags.storage_id=storage_domains_with_hosts_view.id    LEFT OUTER JOIN vm_interface_view ON vms_with_tags.vm_guid=vm_interface_view.vm_guid    WHERE ( ( (  vms_with_tags.cluster_name LIKE default  AND  vm_templates_storage_domain_with_tags.name LIKE template\\_1  ) AND  storage_domains_with_hosts_view.storage_name LIKE storage\\_1  ) AND  vm_interface_view.network_name LIKE vnic\\_1  )))  ORDER BY vm_name ASC ) as T1 OFFSET (1 -1) LIMIT 0");
     }
 
     @Test
@@ -216,7 +216,7 @@ public class SyntaxCheckerTest {
         testValidSql("Vms: storage.name = 111",
                 "SELECT * FROM (SELECT * FROM vms WHERE ( vm_guid IN (SELECT distinct vms_with_tags.vm_guid FROM  vms_with_tags   LEFT OUTER JOIN storage_domains_with_hosts_view ON vms_with_tags.storage_id=storage_domains_with_hosts_view.id    WHERE  storage_domains_with_hosts_view.storage_name LIKE 111 ))  ORDER BY vm_name ASC ) as T1 OFFSET (1 -1) LIMIT 0");
         testValidSql("Vm: template.name = temp1",
-                "SELECT * FROM ((SELECT  distinct  vms.* FROM  vms   LEFT OUTER JOIN vm_templates_storage_domain ON vms.vmt_guid=vm_templates_storage_domain.vmt_guid    WHERE  vm_templates_storage_domain.name LIKE temp1 )  ORDER BY vm_name ASC ) as T1 OFFSET (1 -1) LIMIT 0");
+                "SELECT * FROM ((SELECT  distinct  vms.* FROM  vms   LEFT OUTER JOIN vm_templates_storage_domain_with_tags ON vms.vmt_guid=vm_templates_storage_domain_with_tags.vmt_guid    WHERE  vm_templates_storage_domain_with_tags.name LIKE temp1 )  ORDER BY vm_name ASC ) as T1 OFFSET (1 -1) LIMIT 0");
     }
 
     @Test
@@ -239,7 +239,7 @@ public class SyntaxCheckerTest {
         testValidSql("Events: ",
                 "SELECT * FROM ((SELECT  audit_log.* FROM  audit_log   WHERE not deleted)  ORDER BY audit_log_id DESC ) as T1 OFFSET (1 -1) LIMIT 0");
         testValidSql("Events: Templates.name=Blank",
-                "SELECT * FROM (SELECT * FROM audit_log WHERE ( audit_log_id IN (SELECT distinct audit_log.audit_log_id FROM  audit_log   LEFT OUTER JOIN vms_with_tags ON audit_log.vm_id=vms_with_tags.vm_guid    LEFT OUTER JOIN vm_templates_storage_domain ON vms_with_tags.vmt_guid=vm_templates_storage_domain.vmt_guid    WHERE  vm_templates_storage_domain.name LIKE Blank  AND not deleted))  ORDER BY audit_log_id DESC ) as T1 OFFSET (1 -1) LIMIT 0");
+                "SELECT * FROM (SELECT * FROM audit_log WHERE ( audit_log_id IN (SELECT distinct audit_log.audit_log_id FROM  audit_log   LEFT OUTER JOIN vms_with_tags ON audit_log.vm_id=vms_with_tags.vm_guid    LEFT OUTER JOIN vm_templates_storage_domain_with_tags ON vms_with_tags.vmt_guid=vm_templates_storage_domain_with_tags.vmt_guid    WHERE  vm_templates_storage_domain_with_tags.name LIKE Blank  AND not deleted))  ORDER BY audit_log_id DESC ) as T1 OFFSET (1 -1) LIMIT 0");
 
     }
 
@@ -250,7 +250,7 @@ public class SyntaxCheckerTest {
         testValidSql("Template: hosts.name = fake1",
                 "SELECT * FROM ((SELECT distinct vm_templates_view.* FROM  vm_templates_view   LEFT OUTER JOIN vms_with_tags ON vm_templates_view.vmt_guid=vms_with_tags.vmt_guid    LEFT OUTER JOIN vds_with_tags ON vms_with_tags.run_on_vds=vds_with_tags.vds_id    WHERE  vds_with_tags.vds_name LIKE fake1 )  ORDER BY name ASC ) as T1 OFFSET (1 -1) LIMIT 0");
         testValidSql("Templates: storage.name = 111",
-                "SELECT * FROM (SELECT * FROM vm_templates_view WHERE ( vmt_guid IN (SELECT distinct vm_templates_storage_domain.vmt_guid FROM  vm_templates_storage_domain   LEFT OUTER JOIN vms_with_tags ON vm_templates_storage_domain.vmt_guid=vms_with_tags.vmt_guid    LEFT OUTER JOIN storage_domains_with_hosts_view ON vm_templates_storage_domain.storage_id=storage_domains_with_hosts_view.id    WHERE  storage_domains_with_hosts_view.storage_name LIKE 111 ))  ORDER BY name ASC ) as T1 OFFSET (1 -1) LIMIT 0");
+                "SELECT * FROM (SELECT * FROM vm_templates_view WHERE ( vmt_guid IN (SELECT distinct vm_templates_storage_domain_with_tags.vmt_guid FROM  vm_templates_storage_domain_with_tags   LEFT OUTER JOIN vms_with_tags ON vm_templates_storage_domain_with_tags.vmt_guid=vms_with_tags.vmt_guid    LEFT OUTER JOIN storage_domains_with_hosts_view ON vm_templates_storage_domain_with_tags.storage_id=storage_domains_with_hosts_view.id    WHERE  storage_domains_with_hosts_view.storage_name LIKE 111 ))  ORDER BY name ASC ) as T1 OFFSET (1 -1) LIMIT 0");
     }
 
     @Test
@@ -268,7 +268,7 @@ public class SyntaxCheckerTest {
     @Test
     public void testTemplateUsersAnyField() {
         testValidSql("Templates: Users = *",
-                "SELECT * FROM (SELECT * FROM vm_templates_view WHERE ( vmt_guid IN (SELECT distinct vm_templates_storage_domain.vmt_guid FROM  vm_templates_storage_domain   LEFT OUTER JOIN vms_with_tags ON vm_templates_storage_domain.vmt_guid=vms_with_tags.vmt_guid    LEFT OUTER JOIN vdc_users_with_tags ON vms_with_tags.vm_guid=vdc_users_with_tags.vm_guid    WHERE  (  vdc_users_with_tags.department LIKE '%%%' OR  vdc_users_with_tags.domain LIKE '%%%' OR  vdc_users_with_tags.name LIKE '%%%' OR  vdc_users_with_tags.surname LIKE '%%%' OR  vdc_users_with_tags.tag_name LIKE '%%%' OR  vdc_users_with_tags.user_and_domain LIKE '%%%' OR  vdc_users_with_tags.username LIKE '%%%' OR  vdc_users_with_tags.vm_pool_name LIKE '%%%' ) ))  ORDER BY name ASC ) as T1 OFFSET (1 -1) LIMIT 0");
+                "SELECT * FROM (SELECT * FROM vm_templates_view WHERE ( vmt_guid IN (SELECT distinct vm_templates_storage_domain_with_tags.vmt_guid FROM  vm_templates_storage_domain_with_tags   LEFT OUTER JOIN vms_with_tags ON vm_templates_storage_domain_with_tags.vmt_guid=vms_with_tags.vmt_guid    LEFT OUTER JOIN vdc_users_with_tags ON vms_with_tags.vm_guid=vdc_users_with_tags.vm_guid    WHERE  (  vdc_users_with_tags.department LIKE '%%%' OR  vdc_users_with_tags.domain LIKE '%%%' OR  vdc_users_with_tags.name LIKE '%%%' OR  vdc_users_with_tags.surname LIKE '%%%' OR  vdc_users_with_tags.tag_name LIKE '%%%' OR  vdc_users_with_tags.user_and_domain LIKE '%%%' OR  vdc_users_with_tags.username LIKE '%%%' OR  vdc_users_with_tags.vm_pool_name LIKE '%%%' ) ))  ORDER BY name ASC ) as T1 OFFSET (1 -1) LIMIT 0");
     }
 
     @Test

@@ -188,7 +188,7 @@ public class VirtualMachineActionPanelPresenterWidget extends ActionPanelPresent
             }
         });
         addDividerToKebab();
-        addMenuListItem(new WebAdminButtonDefinition<Void, VM>(constants.assignTagsVm()) {
+        addMenuListItem(new WebAdminButtonDefinition<Void, VM>(constants.assignTags()) {
             @Override
             protected UICommand resolveCommand() {
                 return getModel().getAssignTagsCommand();

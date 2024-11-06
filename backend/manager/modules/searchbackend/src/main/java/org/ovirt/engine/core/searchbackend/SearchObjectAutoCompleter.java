@@ -395,7 +395,7 @@ public class SearchObjectAutoCompleter extends SearchObjectsBaseAutoCompleter {
                     put(SearchObjects.TEMPLATE_OBJ_NAME, new EntitySearchInfo(new TemplateCrossRefAutoCompleter(),
                             new VmTemplateConditionFieldAutoCompleter(),
                             "vm_templates_view",
-                            "vm_templates_storage_domain",
+                            "vm_templates_storage_domain_with_tags",
                             "vmt_guid",
                             "name ASC ",
                             true));
