@@ -2,6 +2,8 @@ package org.ovirt.engine.api.restapi.resource;
 
 import java.lang.reflect.Method;
 import java.util.Arrays;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.ovirt.engine.api.rsdl.ServiceTreeCrawler;
 import org.ovirt.engine.api.rsdl.ServiceTreeNode;
@@ -12,6 +14,8 @@ import org.ovirt.engine.api.rsdl.ServiceTreeNode;
  * the API ServiceTree according to the provided hrefs.
  */
 public class ResourceLocator {
+
+    private static final Pattern ULR_VERSION_PART_PATTERN = Pattern.compile("/api/(v\\d+/)?");
 
     private static ResourceLocator instance;
 
@@ -58,12 +62,15 @@ public class ResourceLocator {
      *   http://localhost:8080/ovirt-engine/api/
      * Remain with:
      *   datacenters/1034e9ba-c1a4-442c-8bc9-f7c1c997652b
+     *
+     * Api definition with version also can be truncated (e.g. /api/v3/ or /api/v4/)
      */
-    private String removePrefix(String href) {
-        int index = href.indexOf("/api/");
-        if (index>0) {
-            href = href.substring(index+5);
+    static String removePrefix(String href) {
+        Matcher matcher = ULR_VERSION_PART_PATTERN.matcher(href);
+        if (matcher.find()) {
+            href = href.substring(matcher.end());
         }
+
         return href;
     }
 }
