@@ -6,7 +6,7 @@ import org.ovirt.engine.ui.common.view.popup.AbstractModelBoundPopupView;
 import org.ovirt.engine.ui.common.widget.AlertWithIcon;
 import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
 import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
-import org.ovirt.engine.ui.common.widget.renderer.NameRenderer;
+import org.ovirt.engine.ui.common.widget.renderer.StorageDomainFreeSpaceRenderer;
 import org.ovirt.engine.ui.common.widget.uicommon.storage.DisksAllocationView;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.DisksAllocationModel;
@@ -53,7 +53,7 @@ public class DisksAllocationPopupView extends AbstractModelBoundPopupView<DisksA
     public DisksAllocationPopupView(EventBus eventBus) {
         super(eventBus);
 
-        targetStorageListEditor = new ListModelListBoxEditor<>(new NameRenderer<>());
+        targetStorageListEditor = new ListModelListBoxEditor<>(new StorageDomainFreeSpaceRenderer<>());
         disksAllocationView = new DisksAllocationView();
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         disksAllocationView.setUsePatternFly(true);
