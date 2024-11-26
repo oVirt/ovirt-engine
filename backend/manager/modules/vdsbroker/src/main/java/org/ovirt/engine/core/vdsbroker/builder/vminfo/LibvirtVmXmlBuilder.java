@@ -133,6 +133,7 @@ public class LibvirtVmXmlBuilder {
     private Map<Guid, String> passthroughVnicToVfMap;
     private Map<String, String> vmCustomProperties;
     private boolean legacyVirtio;
+    private int pciEPortsInUse;
 
     private VM vm;
     private int vdsCpuThreads;
@@ -1100,12 +1101,12 @@ public class LibvirtVmXmlBuilder {
         boolean videoExists = false;
         boolean forceRefreshDevices = false;
         boolean pciERootExists = false;
-        int pciEPorts = 0;
+        pciEPortsInUse = 0;
+        int pciEPortsAvailable = 0;
         for (VmDevice device : devices) {
             if (!device.isPlugged()) {
                 continue;
             }
-
             switch (device.getType()) {
                 case BALLOON:
                     balloonExists = true;
@@ -1155,7 +1156,7 @@ public class LibvirtVmXmlBuilder {
                             if ("pcie-root".equals(model)) {
                                 pciERootExists = true;
                             } else if ("pcie-root-port".equals(model)) {
-                                pciEPorts++;
+                                pciEPortsAvailable++;
                             }
                             break;
                     }
@@ -1245,7 +1246,7 @@ public class LibvirtVmXmlBuilder {
 
         if (vm.getClusterArch().getFamily() == ArchitectureType.x86
                 && vm.getBiosType().getChipsetType() == ChipsetType.Q35) {
-            writePciEControllers(pciERootExists, pciEPorts);
+            writePciEControllers(pciERootExists, pciEPortsAvailable);
         }
 
         updateBootOrder(diskDevices, cdromDevices, interfaceDevices);
@@ -2117,16 +2118,15 @@ public class LibvirtVmXmlBuilder {
                 .filter(Objects::nonNull);
     }
 
-    private void writePciEControllers(boolean rootExists, int ports) {
+    private void writePciEControllers(boolean rootExists, int pciEPortsAvailable) {
         if (!rootExists) {
             writer.writeStartElement("controller");
             writer.writeAttributeString("type", "pci");
             writer.writeAttributeString("model", "pcie-root");
             writer.writeEndElement();
         }
-
-        int numOfPorts = Config.<Integer> getValue(ConfigValues.NumOfPciExpressPorts);
-        for (int i = ports; i < numOfPorts; i++) {
+        int requiredFreePorts = Config.<Integer> getValue(ConfigValues.NumOfPciExpressPorts);
+        for (int i = pciEPortsAvailable; i < requiredFreePorts + pciEPortsInUse; i++) {
             writer.writeStartElement("controller");
             writer.writeAttributeString("type", "pci");
             writer.writeAttributeString("model", "pcie-root-port");
@@ -3059,6 +3059,9 @@ public class LibvirtVmXmlBuilder {
     }
 
     private void writeAddress(VmDevice device) {
+        if (!device.getDevice().equals("pci")) {
+            pciEPortsInUse++;
+        }
         writeAddress(StringMapUtils.string2Map(device.getAddress()));
     }
 
