@@ -30,7 +30,7 @@ import org.slf4j.LoggerFactory;
  *     <li>Usage of {@code FenceAgentExecutor} to execute "simple" fence actions</li>
  * </ul>
  */
-public class SingleAgentFenceActionExecutor implements FenceActionExecutor{
+public class SingleAgentFenceActionExecutor implements FenceActionExecutor {
     private static final Logger log = LoggerFactory.getLogger(SingleAgentFenceActionExecutor.class);
 
     private AuditLogDirector auditLogDirector;

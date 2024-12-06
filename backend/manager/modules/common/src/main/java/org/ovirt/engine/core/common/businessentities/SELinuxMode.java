@@ -15,7 +15,7 @@ public enum SELinuxMode {
 
     public static SELinuxMode fromValue(Integer v) {
         try {
-            if (v==null) {
+            if (v == null) {
                 return null;
             }
             if (v.equals(1)) {

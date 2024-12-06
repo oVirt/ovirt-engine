@@ -41,7 +41,7 @@ public class RefreshGlusterHooksCommand<T extends GlusterClusterParameters> exte
             return false;
         }
 
-        if(!super.validate()) {
+        if (!super.validate()) {
             return false;
         }
 

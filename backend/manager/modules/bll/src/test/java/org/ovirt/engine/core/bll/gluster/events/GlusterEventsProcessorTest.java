@@ -11,7 +11,7 @@ public class GlusterEventsProcessorTest {
     @Test
     public void testEventsSerialize() {
         JsonObjectDeserializer deserializer = new JsonObjectDeserializer();
-        String jsonBody="{'event': 'BRICK_CONNECTED', 'message': "
+        String jsonBody = "{'event': 'BRICK_CONNECTED', 'message': "
                 + "{'peer': 'SERVER1', "
                 + "'volume': 'vmstore', 'brick': '/gluster_bricks/vmstore/vmstore'}, "
                 + "'nodeid': '82e53643-48ca-4808-a759-dfaaebc28914', 'ts': 1554962105}";

@@ -44,7 +44,7 @@ import com.google.inject.Inject;
 
 public class ProviderPopupView extends AbstractModelBoundPopupView<ProviderModel> implements ProviderPopupPresenterWidget.ViewDef {
 
-    interface Driver extends UiCommonEditorDriver<ProviderModel, ProviderPopupView> {}
+    interface Driver extends UiCommonEditorDriver<ProviderModel, ProviderPopupView> { }
 
     private final Driver driver = GWT.create(Driver.class);
 

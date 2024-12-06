@@ -30,7 +30,7 @@ public class StorageServerConnectionExtensionMapper {
 
     @Mapping(from = org.ovirt.engine.core.common.businessentities.storage.StorageServerConnectionExtension.class, to = StorageConnectionExtension.class)
     public static StorageConnectionExtension map(StorageServerConnectionExtension connectionExtension, StorageConnectionExtension template) {
-        StorageConnectionExtension  modelConnectionExt = template != null ? template : new StorageConnectionExtension();
+        StorageConnectionExtension modelConnectionExt = template != null ? template : new StorageConnectionExtension();
 
         modelConnectionExt.setId(connectionExtension.getId().toString());
         Host host = new Host();

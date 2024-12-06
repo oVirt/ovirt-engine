@@ -219,7 +219,7 @@ public class HostInstallPopupView extends AbstractModelBoundPopupView<InstallMod
         });
 
         boolean installedFailed = model.getVds().getStatus() == VDSStatus.InstallFailed;
-        model.setAuthenticationMethod(installedFailed ? AuthenticationMethod.Password: AuthenticationMethod.PublicKey);
+        model.setAuthenticationMethod(installedFailed ? AuthenticationMethod.Password : AuthenticationMethod.PublicKey);
         displayPasswordField(installedFailed);
         rbPassword.setValue(installedFailed);
         rbPublicKey.setValue(!installedFailed);

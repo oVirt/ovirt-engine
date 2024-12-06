@@ -18,7 +18,7 @@ public class SyntaxContainer implements Iterable<SyntaxObject> {
     private final int[] errorPos = new int[2];
     private int privateMaxCount;
     private long searchFrom = 0;
-    private boolean caseSensitive=true;
+    private boolean caseSensitive = true;
 
     /**
      * Some of the searches needs to combine view table which holds tags.

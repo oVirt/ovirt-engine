@@ -19,7 +19,7 @@ import org.ovirt.engine.core.compat.Guid;
 @MockitoSettings(strictness = Strictness.LENIENT)
 public class BackendLinkLayerDiscoveryProtocolResourceTest
         extends AbstractBackendCollectionResourceTest<LinkLayerDiscoveryProtocolElement, Tlv,
-        BackendLinkLayerDiscoveryProtocolResource>{
+        BackendLinkLayerDiscoveryProtocolResource> {
 
     private static final Guid NIC_ID = GUIDS[0];
     private static final String PROPERTY_NAME = "propertyName";
@@ -79,7 +79,7 @@ public class BackendLinkLayerDiscoveryProtocolResourceTest
 
     protected List<Tlv> getEntityList() {
         List<Tlv> entities = new ArrayList<>();
-        for(int index=0; index< NAMES.length; index++) {
+        for (int index = 0; index < NAMES.length; index++) {
             Tlv tlv = new Tlv();
             tlv.setName(NAMES[index]);
             tlv.setType(getType(index));
@@ -110,14 +110,14 @@ public class BackendLinkLayerDiscoveryProtocolResourceTest
     }
 
     private int getOui(int index) {
-        return 2*index;
+        return 2 * index;
     }
 
     private int getSubType(int index) {
-        return 3*index;
+        return 3 * index;
     }
 
     private String getPropertyValue(int index) {
-        return Integer.toString(4*index);
+        return Integer.toString(4 * index);
     }
 }

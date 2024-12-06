@@ -45,7 +45,7 @@ public class StopGlusterVolumeCommand extends GlusterVolumeCommandBase<GlusterVo
 
     @Override
     protected boolean validate() {
-        if(! super.validate()) {
+        if (! super.validate()) {
             return false;
         }
 

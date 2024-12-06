@@ -31,7 +31,7 @@ public abstract class ActivateDeactivateSingleAsyncOperationFactory implements I
         if (!(parameters.get(0) instanceof List)) {
             throw new IllegalArgumentException();
         }
-        List l = new ArrayList((List)parameters.get(0));
+        List l = new ArrayList((List) parameters.get(0));
         if (!l.isEmpty() && !(l.get(0) instanceof VDS)) {
             throw new IllegalArgumentException();
         }

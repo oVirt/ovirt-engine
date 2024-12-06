@@ -164,8 +164,8 @@ public class HostedEngineImporter {
 
     private StorageDomain getHEStorageDomain(VM vm, StoragePool storagePool, Guid storageDomainId) {
         StorageDomain storageDomain = storageDomainDao.getForStoragePool(storageDomainId, storagePool.getId());
-        if(storageDomain != null){
-            return  storageDomain;
+        if (storageDomain != null) {
+            return storageDomain;
         }
         StorageDomainManagementParameter importParams = new StorageDomainManagementParameter();
         importParams.setStorageDomainId(storageDomainId);

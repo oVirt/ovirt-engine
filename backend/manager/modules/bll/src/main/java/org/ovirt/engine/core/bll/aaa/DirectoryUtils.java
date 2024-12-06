@@ -36,7 +36,7 @@ public class DirectoryUtils {
     public DbUser mapPrincipalRecordToDbUser(String authz, ExtMap principal) {
         principal = principal.clone();
         flatGroups(principal);
-        DbUser dbUser = dbUserDao.getByExternalId(authz,  principal.get(PrincipalRecord.ID));
+        DbUser dbUser = dbUserDao.getByExternalId(authz, principal.get(PrincipalRecord.ID));
         Guid userId = dbUser != null ? dbUser.getId() : Guid.newGuid();
         dbUser = new DbUser(mapPrincipalRecordToDirectoryUser(authz, principal));
         dbUser.setId(userId);
@@ -105,7 +105,7 @@ public class DirectoryUtils {
             for (ExtMap memberOf : group.<Collection<ExtMap>> get(
                     Authz.GroupRecord.GROUPS,
                     Collections.<ExtMap>emptyList())) {
-                if(!loopPrevention.contains(memberOf.<String>get(GroupRecord.ID))) {
+                if (!loopPrevention.contains(memberOf.<String>get(GroupRecord.ID))) {
                     directoryGroup.getGroups().add(mapGroupRecordToDirectoryGroup(authzName, memberOf, loopPrevention));
                 }
             }
@@ -121,7 +121,7 @@ public class DirectoryUtils {
 
     private void flatGroups(ExtMap entity, ExtKey key, Map<String, ExtMap> accumulator) {
         for (ExtMap group : entity.<Collection<ExtMap>>get(key, Collections.<ExtMap> emptyList())) {
-            if(!accumulator.containsKey(group.<String>get(GroupRecord.ID))) {
+            if (!accumulator.containsKey(group.<String>get(GroupRecord.ID))) {
                 accumulator.put(group.get(GroupRecord.ID), group);
                 flatGroups(group, GroupRecord.GROUPS, accumulator);
             }

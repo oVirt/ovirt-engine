@@ -35,7 +35,7 @@ public class UnmanagedNetworkValidatorTest {
     private UnmanagedNetworkValidator validator = new UnmanagedNetworkValidator();
 
     @Test
-    public void testFilterNicsWithUnmanagedNetworks(){
+    public void testFilterNicsWithUnmanagedNetworks() {
         VdsNetworkInterface nicManaged = createNicWithNetworkImplementationDetails("eth0", true);
         VdsNetworkInterface nicUnmanaged = createNicWithNetworkImplementationDetails("eth1", false);
         List<VdsNetworkInterface> existingInterfaces = Arrays.asList(nicManaged, nicUnmanaged);
@@ -45,14 +45,14 @@ public class UnmanagedNetworkValidatorTest {
     }
 
     @Test
-    public void testFilterNicsWithUnmanagedNetworksNetworkImplementationDetailsIsNull(){
+    public void testFilterNicsWithUnmanagedNetworksNetworkImplementationDetailsIsNull() {
         VdsNetworkInterface nicWithNetworkImplementationsDetailsNull = createNic("eth1");
         List<VdsNetworkInterface> existingInterfaces = Collections.singletonList(nicWithNetworkImplementationsDetailsNull);
         Set<String> unmanagedNicsSet = validator.filterNicsWithUnmanagedNetworks(existingInterfaces, Collections.emptySet());
         assertTrue(unmanagedNicsSet.isEmpty());
     }
 
-    public void testFilterNicsWithUnmanagedNetworksUmngmtNetRemoved(){
+    public void testFilterNicsWithUnmanagedNetworksUmngmtNetRemoved() {
 
         VdsNetworkInterface nicWithUnmanagedToBeRemoved = createNicWithNetworkImplementationDetails("eth_unmanaged1_toBeRemoved", false);
         VdsNetworkInterface nicWithUnmanaged = createNicWithNetworkImplementationDetails("eth_unmanaged", false);
@@ -69,7 +69,7 @@ public class UnmanagedNetworkValidatorTest {
     }
 
     @Test
-    public void testValidateLabels(){
+    public void testValidateLabels() {
         String nicWithUnmanagedNetwork = "eth_unmanaged";
 
         NicLabel label = new NicLabel(null, "eth1", "label1");
@@ -91,7 +91,7 @@ public class UnmanagedNetworkValidatorTest {
     }
 
     @Test
-    public void testValidateLabelsForVlan(){
+    public void testValidateLabelsForVlan() {
         Nic nic = createNic("eth0");
 
         NicLabel label = new NicLabel(null, "eth1", "label1");
@@ -121,7 +121,7 @@ public class UnmanagedNetworkValidatorTest {
     }
 
     @Test
-    public void testValidateAttachements(){
+    public void testValidateAttachements() {
         String unmanagedNicName = "eth0";
         NetworkAttachment attachement1 = new NetworkAttachment();
         attachement1.setNetworkName("network1");
@@ -151,7 +151,7 @@ public class UnmanagedNetworkValidatorTest {
     }
 
     @Test
-    public void testValidateAttachementsForVlans(){
+    public void testValidateAttachementsForVlans() {
         String unmanagedBaseNicName = "eth0";
 
         NetworkAttachment attachement1 = new NetworkAttachment();
@@ -183,7 +183,7 @@ public class UnmanagedNetworkValidatorTest {
     }
 
     @Test
-    public void testValidateRemovedUnmanagedNetworks(){
+    public void testValidateRemovedUnmanagedNetworks() {
         String networkName = "networkName";
 
         Nic nic = createNicWithNetworkImplementationDetails("eth0", false);
@@ -218,7 +218,7 @@ public class UnmanagedNetworkValidatorTest {
                         ReplacementUtils.createSetVariableString(NETWORK, unmanagedNetworkNotPresentOnAnyNic)));
     }
 
-    private Nic createNic(String name){
+    private Nic createNic(String name) {
         Nic nic = new Nic();
         nic.setName(name);
         return nic;
@@ -236,7 +236,7 @@ public class UnmanagedNetworkValidatorTest {
         return vlanNic;
     }
 
-    private Nic createNicWithNetworkImplementationDetails(String name, boolean isManaged){
+    private Nic createNicWithNetworkImplementationDetails(String name, boolean isManaged) {
         Nic nic = createNic(name);
         NetworkImplementationDetails networkImplementationDetails1 = new NetworkImplementationDetails(true, isManaged);
         nic.setNetworkImplementationDetails(networkImplementationDetails1);

@@ -52,7 +52,7 @@ public class BackendOpenStackSubnetResourceTest
             GetExternalSubnetsOnProviderByExternalNetworkQueryParameters.class,
             new String[] { "ProviderId", "NetworkId" },
             new Object[] { GUIDS[0], string2hex(NAMES[1]) },
-            notFound? null: getSubnets()
+            notFound ? null : getSubnets()
         );
     }
 

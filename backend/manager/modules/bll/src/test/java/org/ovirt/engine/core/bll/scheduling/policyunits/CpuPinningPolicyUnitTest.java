@@ -90,7 +90,7 @@ public class CpuPinningPolicyUnitTest {
     @Test
     public void shouldHandleEmptyHostList() {
         vm.setCpuPinning("1#0_2#3");
-        final List<VDS> filteredHost = policyUnit.filter(new SchedulingContext(cluster, Collections.emptyMap()),  new ArrayList<>(), vm, mock(PerHostMessages.class));
+        final List<VDS> filteredHost = policyUnit.filter(new SchedulingContext(cluster, Collections.emptyMap()), new ArrayList<>(), vm, mock(PerHostMessages.class));
         assertThat(filteredHost, is(empty()));
         assertThat(messages(), is(empty()));
     }
@@ -132,13 +132,13 @@ public class CpuPinningPolicyUnitTest {
     }
 
     @Test
-    public void shouldExcludeHostWithoutCpuInformation(){
+    public void shouldExcludeHostWithoutCpuInformation() {
         vm.setCpuPinning("1#0_2#4");
         assertThat(filter(), not(hasItem(hostWithoutCpus)));
     }
 
     @Test
-    public void shouldHandleExcludedCpu(){
+    public void shouldHandleExcludedCpu() {
         vm.setCpuPinning("1#3-5,^4");
         assertThat(filter(), hasItem(hostWithCpus));
         assertThat(messages(), hasSize(1));

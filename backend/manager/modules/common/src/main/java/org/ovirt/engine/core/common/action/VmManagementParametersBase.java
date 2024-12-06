@@ -93,7 +93,7 @@ public class VmManagementParametersBase extends VmOperationParameterBase
     @EditableDeviceOnVmStatusField(generalType = VmDeviceGeneralType.WATCHDOG, type = VmDeviceType.WATCHDOG)
     private Optional<VmWatchdog> watchdog = new Optional<>();
 
-    @EditableDeviceOnVmStatusField(generalType = VmDeviceGeneralType.RNG, type = VmDeviceType.VIRTIO, name="rng")
+    @EditableDeviceOnVmStatusField(generalType = VmDeviceGeneralType.RNG, type = VmDeviceType.VIRTIO, name = "rng")
     private Optional<VmRngDevice> rngDevice = new Optional<>();
 
     /*
@@ -102,7 +102,7 @@ public class VmManagementParametersBase extends VmOperationParameterBase
      * for add vm legacy logic will be used: create device for desktop type
      * for update the current configuration will remain
      */
-    @EditableDeviceOnVmStatusField(generalType = VmDeviceGeneralType.SOUND, type = VmDeviceType.UNKNOWN, name="sound", isReadOnly = true)
+    @EditableDeviceOnVmStatusField(generalType = VmDeviceGeneralType.SOUND, type = VmDeviceType.UNKNOWN, name = "sound", isReadOnly = true)
     private Boolean soundDeviceEnabled;
 
     /*
@@ -111,7 +111,7 @@ public class VmManagementParametersBase extends VmOperationParameterBase
      * for unsupported configuration don't add TPM device
      * for other update the current configuration will remain
      */
-    @EditableDeviceOnVmStatusField(generalType = VmDeviceGeneralType.TPM, type = VmDeviceType.TPM, name="tpm")
+    @EditableDeviceOnVmStatusField(generalType = VmDeviceGeneralType.TPM, type = VmDeviceType.TPM, name = "tpm")
     private Boolean tpmEnabled;
 
     /*
@@ -127,7 +127,7 @@ public class VmManagementParametersBase extends VmOperationParameterBase
      * - Add VM - defaulted to true for cluster >= 3.3
      * - Update VM - preserve current configuration
      */
-    @EditableDeviceOnVmStatusField(generalType = VmDeviceGeneralType.CONTROLLER, type = VmDeviceType.VIRTIOSCSI, name="virtioscsi")
+    @EditableDeviceOnVmStatusField(generalType = VmDeviceGeneralType.CONTROLLER, type = VmDeviceType.VIRTIOSCSI, name = "virtioscsi")
     private Boolean virtioScsiEnabled;
 
     /**

@@ -67,7 +67,7 @@ public class CopyOnAccessMap<K, V> implements Map<K, V> {
             objectOut = new ObjectOutputStream(bufferOut);
             objectOut.writeObject(originalKey);
             buffer = bufferOut.toByteArray();
-        } catch(IOException exception) {
+        } catch (IOException exception) {
             throw new RuntimeException(exception);
         } finally {
             if (objectOut != null) {
@@ -98,7 +98,7 @@ public class CopyOnAccessMap<K, V> implements Map<K, V> {
                 }
             };
             return (O) objectIn.readObject();
-        } catch(IOException | ClassNotFoundException exception) {
+        } catch (IOException | ClassNotFoundException exception) {
             throw new RuntimeException(exception);
         } finally {
             if (objectIn != null) {

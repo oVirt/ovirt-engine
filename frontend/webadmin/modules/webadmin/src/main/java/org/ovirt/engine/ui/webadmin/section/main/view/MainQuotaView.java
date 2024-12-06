@@ -118,7 +118,7 @@ public class MainQuotaView extends AbstractMainWithDetailsTableView<Quota, Quota
                 if (allocated == 0) {
                     return 0;
                 }
-                value = (int)(((double)used/allocated) * 100);
+                value = (int) (((double) used / allocated) * 100);
                 return allocated < 0 ? -1 : value > 100 ? 100 : value;
             }
         },
@@ -144,16 +144,16 @@ public class MainQuotaView extends AbstractMainWithDetailsTableView<Quota, Quota
                         }
                     }
                 }
-                value = (int)(allocated-used);
+                value = (int) (allocated - used);
                 String returnVal;
                 if (allocated < 0) {
                     returnVal = constants.unlimited();
-                } else if (value <= 0){
+                } else if (value <= 0) {
                     returnVal = messages.mebibytes("0"); //$NON-NLS-1$
-                } else if (value <= 5*1024) {
+                } else if (value <= 5 * 1024) {
                     returnVal = messages.mebibytes(String.valueOf(value));
                 } else {
-                    returnVal = messages.gibibytes(decimalFormat.format((double)value/1024));
+                    returnVal = messages.gibibytes(decimalFormat.format((double) value / 1024));
                 }
                 return returnVal;
             }
@@ -184,7 +184,7 @@ public class MainQuotaView extends AbstractMainWithDetailsTableView<Quota, Quota
                 if (allocated == 0) {
                     return 0;
                 }
-                value = (int)(((double)used/allocated) * 100);
+                value = (int) (((double) used / allocated) * 100);
                 return allocated < 0 ? -1 : value > 100 ? 100 : value;
             }
         },
@@ -249,7 +249,7 @@ public class MainQuotaView extends AbstractMainWithDetailsTableView<Quota, Quota
                 if (allocated == 0) {
                     return 0;
                 }
-                value = (int)((used/allocated) * 100);
+                value = (int) ((used / allocated) * 100);
                 return allocated < 0 ? -1 : value > 100 ? 100 : value;
             }
         },

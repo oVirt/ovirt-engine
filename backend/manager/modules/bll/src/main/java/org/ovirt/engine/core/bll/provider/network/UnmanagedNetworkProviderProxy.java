@@ -40,7 +40,7 @@ public class UnmanagedNetworkProviderProxy implements NetworkProviderProxy {
     }
 
     @Override
-    public void remove(String id) {}
+    public void remove(String id) { }
 
     @Override
     public List<Network> getAll() {
@@ -85,10 +85,10 @@ public class UnmanagedNetworkProviderProxy implements NetworkProviderProxy {
     }
 
     @Override
-    public void deallocate(VmNic nic) {}
+    public void deallocate(VmNic nic) { }
 
     @Override
-    public void testConnection() {}
+    public void testConnection() { }
 
     @Override
     public ProviderValidator getProviderValidator() {

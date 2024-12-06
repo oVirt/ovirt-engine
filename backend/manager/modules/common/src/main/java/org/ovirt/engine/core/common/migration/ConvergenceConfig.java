@@ -21,7 +21,7 @@ public class ConvergenceConfig implements Serializable {
      */
     private List<ConvergenceItem> lastItems;
 
-    public ConvergenceConfig() {}
+    public ConvergenceConfig() { }
 
     public List<ConvergenceItemWithStallingLimit> getConvergenceItems() {
         return convergenceItems;

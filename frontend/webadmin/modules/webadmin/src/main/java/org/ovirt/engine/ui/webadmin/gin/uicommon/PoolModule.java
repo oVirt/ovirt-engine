@@ -112,15 +112,15 @@ public class PoolModule extends AbstractGinModule {
         bind(PoolListModel.class).in(Singleton.class);
         bind(PoolGeneralModel.class).in(Singleton.class);
         bind(PoolVmListModel.class).in(Singleton.class);
-        bind(new TypeLiteral<PermissionListModel<VmPool>>(){}).in(Singleton.class);
+        bind(new TypeLiteral<PermissionListModel<VmPool>>() { }).in(Singleton.class);
         bind(PoolMainSelectedItems.class).asEagerSingleton();
 
         // Form Detail Models
-        bind(new TypeLiteral<DetailModelProvider<PoolListModel, PoolGeneralModel>>(){})
-            .to(new TypeLiteral<DetailTabModelProvider<PoolListModel, PoolGeneralModel>>(){}).in(Singleton.class);
+        bind(new TypeLiteral<DetailModelProvider<PoolListModel, PoolGeneralModel>>() { })
+            .to(new TypeLiteral<DetailTabModelProvider<PoolListModel, PoolGeneralModel>>() { }).in(Singleton.class);
         // Permission Detail Model
-        bind(new TypeLiteral<SearchableDetailModelProvider<Permission, PoolListModel, PermissionListModel<VmPool>>>(){})
-           .to(new TypeLiteral<PermissionModelProvider<VmPool, PoolListModel>>(){}).in(Singleton.class);
+        bind(new TypeLiteral<SearchableDetailModelProvider<Permission, PoolListModel, PermissionListModel<VmPool>>>() { })
+           .to(new TypeLiteral<PermissionModelProvider<VmPool, PoolListModel>>() { }).in(Singleton.class);
     }
 
 }

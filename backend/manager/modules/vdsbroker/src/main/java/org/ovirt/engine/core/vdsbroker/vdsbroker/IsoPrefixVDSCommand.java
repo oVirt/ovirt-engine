@@ -30,7 +30,7 @@ public class IsoPrefixVDSCommand<T extends VdsAndPoolIDVDSParametersBase> extend
             return cachedIsoPrefix;
         }
 
-        synchronized(getLockObjForStoragePool(storagePoolId)) {
+        synchronized (getLockObjForStoragePool(storagePoolId)) {
             cachedIsoPrefix = storagePoolIdToIsoPrefix.get(storagePoolId);
             if (cachedIsoPrefix != null) {
                 return cachedIsoPrefix;

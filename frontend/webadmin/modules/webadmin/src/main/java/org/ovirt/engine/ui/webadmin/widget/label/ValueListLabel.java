@@ -20,7 +20,7 @@ public class ValueListLabel<T> extends ValueLabel<List<T>> {
             public String render(List<T> values) {
                 StringBuilder builder = new StringBuilder();
                 if (values != null) {
-                    for(T value: values) {
+                    for (T value: values) {
                         if (value != values.get(0)) {
                             builder.append(delimiter);
                         }

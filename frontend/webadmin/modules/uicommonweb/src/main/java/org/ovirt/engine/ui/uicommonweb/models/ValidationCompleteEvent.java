@@ -5,7 +5,7 @@ import com.google.gwt.event.shared.GwtEvent;
 import com.google.gwt.event.shared.HasHandlers;
 import com.google.web.bindery.event.shared.HandlerRegistration;
 
-public class ValidationCompleteEvent extends GwtEvent<ValidationCompleteEvent.ValidationCompleteEventHandler>{
+public class ValidationCompleteEvent extends GwtEvent<ValidationCompleteEvent.ValidationCompleteEventHandler> {
 
     Model model;
 

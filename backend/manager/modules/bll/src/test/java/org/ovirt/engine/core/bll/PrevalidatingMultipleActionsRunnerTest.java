@@ -17,7 +17,7 @@ import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.DiskProfileParameters;
 
-public class PrevalidatingMultipleActionsRunnerTest extends MultipleActionsRunnerBaseTest{
+public class PrevalidatingMultipleActionsRunnerTest extends MultipleActionsRunnerBaseTest {
 
     private static CommandContext commandContext = CommandContext.createContext(new
             DiskProfileParameters().getSessionId()).withCompensationContext(NoOpCompensationContext.getInstance());

@@ -76,7 +76,7 @@ public class VmSlaPolicyCommand<T extends VmSlaPolicyParameters> extends VmComma
         int logId = 0;
         if (getParameters().getCpuQos() != null) {
             Integer limit = getParameters().getCpuQos().getCpuLimit();
-            addCustomValue(LOGABLE_FIELD_CPU_LIMIT, (limit != null) ? String.valueOf(limit): "unlimited");
+            addCustomValue(LOGABLE_FIELD_CPU_LIMIT, (limit != null) ? String.valueOf(limit) : "unlimited");
             logId += 1;
         }
 

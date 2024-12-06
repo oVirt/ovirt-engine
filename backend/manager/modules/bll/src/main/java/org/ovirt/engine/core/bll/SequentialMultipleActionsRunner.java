@@ -51,7 +51,7 @@ public class SequentialMultipleActionsRunner implements MultipleActionsRunner {
     @Override
     public ArrayList<ActionReturnValue> execute() {
         for (ActionParametersBase parameter : parameters) {
-            if(!isInternal) {
+            if (!isInternal) {
                 logExecution(log, sessionDataContainer, parameter.getSessionId(), String.format("command %s", actionType));
             }
             CommandBase<?> command =

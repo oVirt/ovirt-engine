@@ -139,7 +139,7 @@ public class JsonImmutableSerializeDeserializeTest {
 
         String jsonFromDeserializedParams = serializer.serialize(deserializedParams);
         final TestCollectionsParams deserialized2run = new JsonObjectDeserializer().deserialize(jsonFromDeserializedParams, TestCollectionsParams.class);
-        String normalizedJsonFromSerialization  = serializer.serialize(deserialized2run);
+        String normalizedJsonFromSerialization = serializer.serialize(deserialized2run);
 
         assertEquals(jsonFromDeserializedParams, normalizedJsonFromSerialization);
     }

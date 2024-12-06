@@ -25,7 +25,7 @@ public class MigrationPolicy implements Serializable, Nameable {
 
     private ConvergenceConfig config;
 
-    public MigrationPolicy() {}
+    public MigrationPolicy() { }
 
     public MigrationPolicy(Guid id, String name, String description, ConvergenceConfig config) {
         this.id = id;

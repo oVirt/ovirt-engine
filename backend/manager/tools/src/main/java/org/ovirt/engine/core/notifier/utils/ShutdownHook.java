@@ -23,7 +23,7 @@ public class ShutdownHook extends Thread {
 
     public static ShutdownHook getInstance() {
         if (instance == null) {
-            synchronized(ShutdownHook.class) {
+            synchronized (ShutdownHook.class) {
                 if (instance == null) {
                     instance = new ShutdownHook();
                 }

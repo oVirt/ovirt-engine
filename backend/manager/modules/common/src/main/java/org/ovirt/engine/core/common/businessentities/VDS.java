@@ -457,7 +457,7 @@ public class VDS implements Queryable, BusinessEntityWithStatus<Guid, VDSStatus>
         return vdsDynamic.getExternalStatus();
     }
 
-    public  void setExternalStatus(ExternalStatus externalStatus) {
+    public void setExternalStatus(ExternalStatus externalStatus) {
         vdsDynamic.setExternalStatus(externalStatus);
     }
 

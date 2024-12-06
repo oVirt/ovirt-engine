@@ -7,7 +7,7 @@ import org.ovirt.engine.core.common.AuditLogSeverity;
 /**
  * Describes a message content
  */
-public class MessageBody{
+public class MessageBody {
     private String userInfo;
     private String vmInfo;
     private String hostInfo;

@@ -6,7 +6,7 @@ import org.ovirt.engine.ui.uicommonweb.models.gluster.GlusterVolumeGeoRepCreateM
 import com.google.gwt.event.shared.EventBus;
 import com.google.inject.Inject;
 
-public class GlusterVolumeGeoRepCreateSessionPopupPresenterWidget extends AbstractModelBoundPopupPresenterWidget<GlusterVolumeGeoRepCreateModel, GlusterVolumeGeoRepCreateSessionPopupPresenterWidget.ViewDef>{
+public class GlusterVolumeGeoRepCreateSessionPopupPresenterWidget extends AbstractModelBoundPopupPresenterWidget<GlusterVolumeGeoRepCreateModel, GlusterVolumeGeoRepCreateSessionPopupPresenterWidget.ViewDef> {
 
     @Inject
     public GlusterVolumeGeoRepCreateSessionPopupPresenterWidget(EventBus eventBus, ViewDef view) {
@@ -24,9 +24,9 @@ public class GlusterVolumeGeoRepCreateSessionPopupPresenterWidget extends Abstra
         super.init(model);
 
         model.getPropertyChangedEvent().addListener((ev, sender, args) -> {
-            if(args.propertyName.equalsIgnoreCase("RecommendationViolations")) {//$NON-NLS-1$
+            if (args.propertyName.equalsIgnoreCase("RecommendationViolations")) { //$NON-NLS-1$
                 getView().setSuggestedConfigViolations(model.getRecommendationViolations());
-            } else if (args.propertyName.equalsIgnoreCase("QueryFailed")) {//$NON-NLS-1$
+            } else if (args.propertyName.equalsIgnoreCase("QueryFailed")) { //$NON-NLS-1$
                 getView().setFailureMessage(model.getQueryFailureMessage());
             }
         });

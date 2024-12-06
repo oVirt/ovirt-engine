@@ -394,7 +394,7 @@ public class CreateSnapshotForVmCommand<T extends CreateSnapshotForVmParameters>
     }
 
     private CreateSnapshotForVmParameters createLiveSnapshotParameters(final Snapshot snapshot) {
-        CreateSnapshotForVmParameters params =  new CreateSnapshotForVmParameters();
+        CreateSnapshotForVmParameters params = new CreateSnapshotForVmParameters();
         params.setVmId(getParameters().getVmId());
         params.setSnapshot(snapshot);
         params.setSaveMemory(getParameters().isSaveMemory());

@@ -5,7 +5,7 @@ public class GetVmIconDefaultParameters extends QueryParametersBase {
 
     private int operatingSystemId;
 
-    private GetVmIconDefaultParameters() {}
+    private GetVmIconDefaultParameters() { }
 
     public GetVmIconDefaultParameters(int operatingSystemId) {
         this.operatingSystemId = operatingSystemId;

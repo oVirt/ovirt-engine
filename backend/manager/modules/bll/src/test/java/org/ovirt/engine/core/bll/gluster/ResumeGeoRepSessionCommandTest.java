@@ -21,7 +21,7 @@ public class ResumeGeoRepSessionCommandTest extends GeoRepSessionCommandTest<Res
     }
 
     protected GlusterGeoRepSession getGeoRepSession(Guid gSessionId, GeoRepSessionStatus status, Guid masterVolumeID) {
-        GlusterGeoRepSession session =  super.getGeoRepSession(gSessionId, status);
+        GlusterGeoRepSession session = super.getGeoRepSession(gSessionId, status);
         session.setMasterVolumeId(startedVolumeId);
         return session;
     }

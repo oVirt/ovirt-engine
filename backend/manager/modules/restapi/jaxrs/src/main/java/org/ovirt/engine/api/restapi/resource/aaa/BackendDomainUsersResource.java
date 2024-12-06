@@ -54,7 +54,7 @@ public class BackendDomainUsersResource
         String constraint = QueryHelper.getConstraint(httpHeaders, uriInfo, DirectoryUser.class, false);
         StringBuilder sb = new StringBuilder(128);
         sb.append(MessageFormat.format(ResourceConstants.AAA_PRINCIPALS_SEARCH_TEMPLATE, parent.getDirectory().getName(), ""));
-        sb.append(StringUtils.isEmpty(constraint)? "allnames=*": constraint);
+        sb.append(StringUtils.isEmpty(constraint) ? "allnames=*" : constraint);
         return sb.toString();
     }
 

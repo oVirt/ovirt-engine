@@ -106,7 +106,7 @@ public class InterfaceDaoImplTest extends BaseDaoTestCase<InterfaceDao> {
     }
 
     private void testQosAppendedToResultSet(List<VdsNetworkInterface> result) {
-        result.forEach(r-> {
+        result.forEach(r -> {
             if (r.getQos() == null) {
                 HostNetworkQos hostNetworkQos = new HostNetworkQos();
                 hostNetworkQos.setId(r.getId());

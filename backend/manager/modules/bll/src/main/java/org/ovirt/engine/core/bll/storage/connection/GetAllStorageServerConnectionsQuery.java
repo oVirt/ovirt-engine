@@ -7,7 +7,7 @@ import org.ovirt.engine.core.bll.context.EngineContext;
 import org.ovirt.engine.core.common.queries.QueryParametersBase;
 import org.ovirt.engine.core.dao.StorageServerConnectionDao;
 
-public class GetAllStorageServerConnectionsQuery <P extends QueryParametersBase> extends QueriesCommandBase<P>  {
+public class GetAllStorageServerConnectionsQuery <P extends QueryParametersBase> extends QueriesCommandBase<P> {
     @Inject
     private StorageServerConnectionDao storageServerConnectionDao;
 

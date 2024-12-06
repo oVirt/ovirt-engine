@@ -72,7 +72,7 @@ public class SetUpPasswordLessSSHInternalCommand extends GlusterCommandBase<SetU
         if (canProceed) {
             List<String> errors = new ArrayList<>();
             List<ActionReturnValue> updateKeyReturnValues = updatePubKeysToRemoteHosts(pubKeys, getParameters().getDestinationHostIds(), getParameters().getUserName());
-            for(ActionReturnValue currentReturnValue : updateKeyReturnValues) {
+            for (ActionReturnValue currentReturnValue : updateKeyReturnValues) {
                 if (!currentReturnValue.getSucceeded()) {
                     errors.addAll(currentReturnValue.getExecuteFailedMessages());
                 }

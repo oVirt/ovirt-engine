@@ -575,7 +575,7 @@ public class ColumnResizeCellTable<T> extends DataGrid<T> implements HasResizabl
 
     private void addToVisibleByUserRequest(Column<T, ?> column) {
         Set<Column<T, ?>> alreadyStored = getVisibleByUserRequestColumns();
-        if(!columnResizePersistenceEnabled || alreadyStored.contains(column)) {
+        if (!columnResizePersistenceEnabled || alreadyStored.contains(column)) {
             return;
         }
 
@@ -587,11 +587,11 @@ public class ColumnResizeCellTable<T> extends DataGrid<T> implements HasResizabl
 
     private void storeVisibleByUserRequestList(Set<Column<T, ?>> toBeStored) {
         String key = getVisibleByUserRequestListKey();
-        if( key == null) {
+        if ( key == null) {
             return;
         }
 
-        if(toBeStored.isEmpty()) {
+        if (toBeStored.isEmpty()) {
             clientStorage.removeRemoteItem(key);
             return;
         }
@@ -609,7 +609,7 @@ public class ColumnResizeCellTable<T> extends DataGrid<T> implements HasResizabl
 
     private void removeFromVisibleByUserRequest(Column<T, ?> column) {
         Set<Column<T, ?>> visibleColumns = getVisibleByUserRequestColumns();
-        if(!columnResizePersistenceEnabled || !visibleColumns.contains(column) || !isHiddenByDefault(column)) {
+        if (!columnResizePersistenceEnabled || !visibleColumns.contains(column) || !isHiddenByDefault(column)) {
             return;
         }
 
@@ -743,7 +743,7 @@ public class ColumnResizeCellTable<T> extends DataGrid<T> implements HasResizabl
 
     private int determineRealIndex(int originalIndex) {
         for (Map.Entry<Integer, Integer> entry: realToSwappedIndexes.entrySet()) {
-            if( entry.getValue().intValue() == originalIndex) {
+            if (entry.getValue().intValue() == originalIndex) {
                 return entry.getKey();
             }
         }
@@ -1065,7 +1065,7 @@ public class ColumnResizeCellTable<T> extends DataGrid<T> implements HasResizabl
         int contentHeight = height;
         if (clientAgentType.isFirefox()) {
             contentHeight += FF_HEIGHT_ADJUST;
-        } else if(clientAgentType.isIE()) {
+        } else if (clientAgentType.isIE()) {
             contentHeight += IE_HEIGHT_ADJUST;
         } else {
             contentHeight += CHROME_HEIGHT_ADJUST;
@@ -1122,7 +1122,7 @@ public class ColumnResizeCellTable<T> extends DataGrid<T> implements HasResizabl
         clientStorage.removeRemoteItem(getSwappedColumnListKey());
         clientStorage.removeRemoteItem(getVisibleByUserRequestListKey());
 
-        for(Column column : getAllColumns().values()) {
+        for (Column column : getAllColumns().values()) {
             clientStorage.removeLocalItem(getColumnWidthKey(column));
             clientStorage.removeRemoteItem(getHiddenColumnWidthKey(column));
         }
@@ -1170,11 +1170,11 @@ public class ColumnResizeCellTable<T> extends DataGrid<T> implements HasResizabl
 
         tuples.stream()
                 // sort columns by original index
-                .sorted(Comparator.comparingInt(tuple -> (Integer)tuple[0]))
+                .sorted(Comparator.comparingInt(tuple -> (Integer) tuple[0]))
                 .forEach(tuple -> {
-                    int originalIndex = (Integer)tuple[0];
-                    Header<?> header = (Header)tuple[1];
-                    Column column = (Column)tuple[2];
+                    int originalIndex = (Integer) tuple[0];
+                    Header<?> header = (Header) tuple[1];
+                    Column column = (Column) tuple[2];
 
                     insertColumn(originalIndex, column, header);
                     contextPopup.getContextMenu().addItem(column);

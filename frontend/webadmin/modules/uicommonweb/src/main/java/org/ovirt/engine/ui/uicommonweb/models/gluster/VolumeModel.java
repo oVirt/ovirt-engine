@@ -292,7 +292,7 @@ public class VolumeModel extends Model {
         getOptimizeForVirtStore().setEntity(isHCMode());
     }
 
-    public void addBricks(){
+    public void addBricks() {
         if (getWindow() != null || getCluster().getSelectedItem() == null) {
             return;
         }
@@ -503,7 +503,7 @@ public class VolumeModel extends Model {
                 StoragePool selectedDataCenter = getDataCenter().getSelectedItem();
 
                 Iterator<Cluster> iterator = clusters.iterator();
-                while(iterator.hasNext()) {
+                while (iterator.hasNext()) {
                     if (!iterator.next().supportsGlusterService()) {
                         iterator.remove();
                     }

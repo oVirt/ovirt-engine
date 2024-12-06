@@ -718,7 +718,7 @@ public abstract class RunOnceModel extends Model {
         getCommands().addAll(Arrays.asList(runOnceCommand, cancelCommand));
     }
 
-    public void updateOSs(){
+    public void updateOSs() {
         setIsWindowsOS(AsyncDataProvider.getInstance().isWindowsOsType(vm.getVmOsId()));
         setIsIgnition(AsyncDataProvider.getInstance().isIgnition(vm.getVmOsId()));
     }
@@ -1325,7 +1325,7 @@ public abstract class RunOnceModel extends Model {
                     if (emulatedSet != null) {
                         String oldVal = getEmulatedMachine().getSelectedItem();
                         List<String> items = new ArrayList<>(new TreeSet<>(emulatedSet));
-                        items.add(0, "");//$NON-NLS-1$
+                        items.add(0, ""); //$NON-NLS-1$
                         getEmulatedMachine().setItems(items);
                         getEmulatedMachine().setSelectedItem(oldVal);
                     }

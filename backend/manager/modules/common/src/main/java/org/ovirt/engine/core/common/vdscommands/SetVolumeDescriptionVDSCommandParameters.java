@@ -2,7 +2,7 @@ package org.ovirt.engine.core.common.vdscommands;
 
 import org.ovirt.engine.core.compat.Guid;
 
-public class SetVolumeDescriptionVDSCommandParameters extends AllStorageAndImageIdVDSCommandParametersBase{
+public class SetVolumeDescriptionVDSCommandParameters extends AllStorageAndImageIdVDSCommandParametersBase {
     private String description;
 
     public SetVolumeDescriptionVDSCommandParameters(Guid storagePoolId, Guid storageDomainId, Guid imageGroupId, Guid imageId, String description) {

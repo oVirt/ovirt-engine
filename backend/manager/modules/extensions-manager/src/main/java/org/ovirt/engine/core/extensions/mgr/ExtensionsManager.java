@@ -75,7 +75,7 @@ public class ExtensionsManager extends Observable {
             T serviceClass = null;
             for (Object service : module.loadService(serviceInterface)) {
                 if (service.getClass().getName().equals(serviceClassName)) {
-                    serviceClass = (T)service.getClass();
+                    serviceClass = (T) service.getClass();
                     break;
                 }
             }

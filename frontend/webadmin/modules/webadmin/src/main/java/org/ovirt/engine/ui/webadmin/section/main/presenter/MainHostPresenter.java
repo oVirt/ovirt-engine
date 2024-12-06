@@ -23,7 +23,7 @@ import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 
 public class MainHostPresenter extends AbstractMainWithDetailsPresenter<VDS, HostListModel<Void>,
     MainHostPresenter.ViewDef, MainHostPresenter.ProxyDef>
-        implements TagActivationChangeEvent.TagActivationChangeHandler{
+        implements TagActivationChangeEvent.TagActivationChangeHandler {
 
     @GenEvent
     public class HostSelectionChange {

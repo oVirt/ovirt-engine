@@ -228,7 +228,7 @@ public class SessionDataContainer {
 
     public final void cleanExpiredUsersSessionsImpl() {
         Date now = new Date();
-        Iterator<Entry<String, SessionInfo>>  iter = sessionInfoMap.entrySet().iterator();
+        Iterator<Entry<String, SessionInfo>> iter = sessionInfoMap.entrySet().iterator();
         Set<String> tokens = sessionInfoMap.values().stream()
                 .map(sessionInfo -> (String) sessionInfo.contentOfSession.get(SSO_ACCESS_TOKEN_PARAMETER_NAME))
                 .collect(Collectors.toSet());
@@ -402,7 +402,7 @@ public class SessionDataContainer {
 
     public boolean isSsoOvirtAppApiScope(String engineSessionId) {
         return isSessionExists(engineSessionId) ?
-                (boolean) getData(engineSessionId, SSO_IS_OVIRT_APP_API_SCOPE_PARAMETER_NAME, false):
+                (boolean) getData(engineSessionId, SSO_IS_OVIRT_APP_API_SCOPE_PARAMETER_NAME, false) :
                 false;
     }
 

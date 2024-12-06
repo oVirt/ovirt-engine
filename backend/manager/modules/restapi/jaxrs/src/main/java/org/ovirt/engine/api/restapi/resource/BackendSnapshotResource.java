@@ -48,7 +48,7 @@ public class BackendSnapshotResource
 
     protected org.ovirt.engine.core.common.businessentities.Snapshot getSnapshot() {
         org.ovirt.engine.core.common.businessentities.Snapshot entity = collection.getSnapshotById(guid);
-        if (entity==null) {
+        if (entity == null) {
             notFound();
         }
         return entity;
@@ -83,13 +83,13 @@ public class BackendSnapshotResource
                 tryBackParams,
                 action,
                 PollingType.JOB);
-        if (response.getStatus()==Response.Status.OK.getStatusCode()) {
+        if (response.getStatus() == Response.Status.OK.getStatusCode()) {
             RestoreAllSnapshotsParameters restoreParams = new RestoreAllSnapshotsParameters(parentId, SnapshotActionEnum.COMMIT);
             restoreParams.setCorrelationId(RESTORE_SNAPSHOT_CORRELATION_ID);
             Response response2 = doAction(ActionType.RestoreAllSnapshots,
                     restoreParams,
                     action);
-            if (response2.getStatus()!=Response.Status.OK.getStatusCode()) {
+            if (response2.getStatus() != Response.Status.OK.getStatusCode()) {
                 return response2;
             }
         }

@@ -12,7 +12,7 @@ public class NotEmptyQuotaValidation implements IValidation {
 
         if (value == null
                 || value instanceof Quota
-                && (((Quota)value).getId() == null || Guid.Empty.equals(((Quota)value).getId()))) {
+                && (((Quota) value).getId() == null || Guid.Empty.equals(((Quota) value).getId()))) {
             result.setSuccess(false);
             result.getReasons().add(ConstantsManager.getInstance().getConstants().thisFieldCantBeEmptyInvalidReason());
         }

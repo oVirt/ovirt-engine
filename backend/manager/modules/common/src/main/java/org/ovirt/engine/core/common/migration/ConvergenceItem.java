@@ -12,7 +12,7 @@ public class ConvergenceItem implements Serializable {
 
     private List<Object> params;
 
-    public ConvergenceItem() {}
+    public ConvergenceItem() { }
 
     public ConvergenceItem(String action, Object... params) {
         this(action, Arrays.asList(params));

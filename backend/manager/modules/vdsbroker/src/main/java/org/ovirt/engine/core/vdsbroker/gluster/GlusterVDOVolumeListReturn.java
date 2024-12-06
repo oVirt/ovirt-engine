@@ -22,18 +22,18 @@ public class GlusterVDOVolumeListReturn extends StatusReturn {
         super(innerMap);
 
         Object[] volumeInfo = (Object[]) innerMap.get(VDO_VOLUME_LIST);
-        for(Object volumeObject : volumeInfo) {
+        for (Object volumeObject : volumeInfo) {
             Map<String, Object> volumeData = (Map<String, Object>) volumeObject;
 
             GlusterVDOVolume volume = new GlusterVDOVolume();
-            volume.setName((String)volumeData.get(VDO_VOLUME_NAME));
-            volume.setDevice((String)volumeData.get(VDO_VOLUME_DEVICE));
-            volume.setSize((Number)volumeData.get(VDO_VOLUME_SIZE));
-            volume.setFree((Number)volumeData.get(VDO_VOLUME_FREE));
+            volume.setName((String) volumeData.get(VDO_VOLUME_NAME));
+            volume.setDevice((String) volumeData.get(VDO_VOLUME_DEVICE));
+            volume.setSize((Number) volumeData.get(VDO_VOLUME_SIZE));
+            volume.setFree((Number) volumeData.get(VDO_VOLUME_FREE));
 
             //This data may be missing, so some safe default values are needed.
-            volume.setLogicalBlocks((Number)volumeData.getOrDefault(VDO_VOLUME_LOGICAL_BLOCKS, 0));
-            volume.setPhysicalBlocks((Number)volumeData.getOrDefault(VDO_VOLUME_PHYSICAL_BLOCKS, 0));
+            volume.setLogicalBlocks((Number) volumeData.getOrDefault(VDO_VOLUME_LOGICAL_BLOCKS, 0));
+            volume.setPhysicalBlocks((Number) volumeData.getOrDefault(VDO_VOLUME_PHYSICAL_BLOCKS, 0));
 
             vdoVolumes.add(volume);
         }

@@ -18,7 +18,7 @@ public class RemoveVnicProfileModel extends ConfirmationModel {
 
     private final List<VnicProfileView> profiles;
     private final boolean fullMsg;
-    private final SearchableListModel<?, VnicProfileView>  sourceListModel;
+    private final SearchableListModel<?, VnicProfileView> sourceListModel;
 
     public RemoveVnicProfileModel(SearchableListModel<?, VnicProfileView> sourceListModel, List<VnicProfileView> profiles, boolean isFullMsg) {
         setTitle(ConstantsManager.getInstance().getConstants().removeVnicProfileTitle());

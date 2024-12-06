@@ -184,7 +184,7 @@ public abstract class BaseListModelSuggestBox<T> extends Composite implements
         HandlerRegistration handlerRegistration = asSuggestBox().addValueChangeHandler(event -> {
             try {
                 T value = asEntity(event.getValue());
-                handler.onValueChange(new ValueChangeEvent<T>(value) {});
+                handler.onValueChange(new ValueChangeEvent<T>(value) { });
             } catch (IllegalArgumentException e) {
                 // ignore - the user entered an incorrect string. Just do not notify the listeners
             }

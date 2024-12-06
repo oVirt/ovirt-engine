@@ -56,21 +56,21 @@ public class SizeConverterTest {
     @Test
     public void testConvertTiBToYiB() {
         double tib = 100 * Math.pow(1024, 4);
-        int yib = SizeConverter.convert((long)tib, SizeUnit.TiB, SizeUnit.YiB).intValue();
+        int yib = SizeConverter.convert((long) tib, SizeUnit.TiB, SizeUnit.YiB).intValue();
         assertEquals(100, yib);
     }
 
     @Test
     public void testConvertMiBToEiB() {
         double mib = 15 * Math.pow(1024, 4);
-        int eib = SizeConverter.convert((long)mib, SizeUnit.MiB, SizeUnit.EiB).intValue();
+        int eib = SizeConverter.convert((long) mib, SizeUnit.MiB, SizeUnit.EiB).intValue();
         assertEquals(15, eib);
     }
 
     @Test
     public void testConvertPiBToZiB() {
         double pib = 15 * Math.pow(1024, 2);
-        int zib = SizeConverter.convert((long)pib, SizeUnit.PiB, SizeUnit.ZiB).intValue();
+        int zib = SizeConverter.convert((long) pib, SizeUnit.PiB, SizeUnit.ZiB).intValue();
         assertEquals(15, zib);
     }
 

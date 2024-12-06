@@ -62,15 +62,15 @@ public class DataCenterMapper {
         if (!StringUtils.isEmpty(entity.getComment())) {
             model.setComment(entity.getComment());
         }
-        if (entity.getStatus()!=null) {
+        if (entity.getStatus() != null) {
             model.setStatus(mapDataCenterStatus(entity.getStatus()));
         }
         if (entity.getCompatibilityVersion() != null) {
             model.setVersion(VersionMapper.map(entity.getCompatibilityVersion()));
         }
-        if (entity.getStoragePoolFormatType()!=null) {
+        if (entity.getStoragePoolFormatType() != null) {
             StorageFormat storageFormat = StorageFormatMapper.map(entity.getStoragePoolFormatType(), null);
-            if (storageFormat!=null) {
+            if (storageFormat != null) {
                 model.setStorageFormat(storageFormat);
             }
         }

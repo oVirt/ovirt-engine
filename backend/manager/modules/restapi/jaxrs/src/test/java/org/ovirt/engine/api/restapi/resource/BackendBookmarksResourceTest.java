@@ -41,7 +41,7 @@ public class BackendBookmarksResourceTest extends AbstractBackendCollectionResou
         Response response = collection.add(getModel(0));
         assertEquals(201, response.getStatus());
         assertTrue(response.getEntity() instanceof Bookmark);
-        verifyModel((Bookmark)response.getEntity(), 0);
+        verifyModel((Bookmark) response.getEntity(), 0);
     }
 
     @Test

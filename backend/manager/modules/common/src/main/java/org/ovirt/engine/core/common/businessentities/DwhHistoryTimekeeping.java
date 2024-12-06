@@ -66,7 +66,7 @@ public class DwhHistoryTimekeeping implements Serializable {
         if (!(obj instanceof DwhHistoryTimekeeping)) {
             return false;
         }
-        return variable == ((DwhHistoryTimekeeping)obj).getVariable();
+        return variable == ((DwhHistoryTimekeeping) obj).getVariable();
     }
 
     @Override

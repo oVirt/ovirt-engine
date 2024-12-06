@@ -226,7 +226,7 @@ public abstract class BaseNetworkProviderProxy<P extends OpenstackNetworkProvide
         Network network, VnicProfile vnicProfile, VmNic nic, VDS host,
         boolean ignoreSecurityGroupsOnUpdate, String hostBindingId) {
 
-        if (hostBindingId==null) {
+        if (hostBindingId == null) {
             hostBindingId = host.getHostName();
             log.warn("Host binding id for external network {} on host {} is null, using host id {} to allocate vNIC " +
                     " {} instead. Please provide an after_get_caps hook for the plugin type {} on host {}",
@@ -374,7 +374,7 @@ public abstract class BaseNetworkProviderProxy<P extends OpenstackNetworkProvide
 
     @Override
     public Provider<P> getProvider() {
-        return (Provider<P>)super.getProvider();
+        return (Provider<P>) super.getProvider();
     }
 
     private <R> R execute(OpenStackRequest<R> request) {

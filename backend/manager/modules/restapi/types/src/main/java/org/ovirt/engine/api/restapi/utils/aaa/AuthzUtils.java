@@ -16,8 +16,8 @@ public class AuthzUtils {
 
     public static String getEntityNameWithoutAuthz(String entityName, String authzProviderName) {
         String result = entityName;
-       if (entityName != null && entityName.contains("@") && entityName.lastIndexOf('@') < entityName.length() -1) {
-           result = entityName.substring(entityName.lastIndexOf('@')+1).equals(authzProviderName) ? entityName.substring(0,  entityName.lastIndexOf('@')) : entityName;
+       if (entityName != null && entityName.contains("@") && entityName.lastIndexOf('@') < entityName.length() - 1) {
+           result = entityName.substring(entityName.lastIndexOf('@') + 1).equals(authzProviderName) ? entityName.substring(0, entityName.lastIndexOf('@')) : entityName;
        }
        return result;
     }

@@ -112,7 +112,7 @@ public class VmHandlerTest {
                     false,
                     "",
                     null,
-                    disk.getDiskStorageType() == DiskStorageType.IMAGE ? ((DiskImage)disk).getSnapshotId() : null,
+                    disk.getDiskStorageType() == DiskStorageType.IMAGE ? ((DiskImage) disk).getSnapshotId() : null,
                     null);
             vm.getManagedVmDeviceMap().put(disk.getId(), device);
         }

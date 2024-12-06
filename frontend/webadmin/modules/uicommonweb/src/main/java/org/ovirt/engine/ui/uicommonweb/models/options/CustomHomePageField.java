@@ -10,7 +10,7 @@ import com.google.gwt.json.client.JSONParser;
 import com.google.gwt.json.client.JSONString;
 
 public class CustomHomePageField implements Field<String> {
-    private static final String CUSTOM_HOME_PAGE = "webAdmin.customHomePage";//$NON-NLS-1$
+    private static final String CUSTOM_HOME_PAGE = "webAdmin.customHomePage"; //$NON-NLS-1$
     private final EntityModel<String> customHomePage;
     private final boolean resettable;
     private String originalCustomHomePage;

@@ -38,7 +38,7 @@ public class LinkFollowerTest {
         linkFollower = new LinkFollower(resourceLocator) {
             //override fetch() since it requires a real environment and would crash tests.
             protected ActionableResource fetch(String href) {
-                if (href.equals("/ovirt-engine/api/vms/63978315-2d17-4e67-b393-2ea60a8aeacb/nics")){
+                if (href.equals("/ovirt-engine/api/vms/63978315-2d17-4e67-b393-2ea60a8aeacb/nics")) {
                     return createNics();
                 } else if (href.equals("/ovirt-engine/api/vms/63978315-2d17-4e67-b393-2ea60a8aeacb/diskattachments")) {
                     return createDiskAttachments();

@@ -24,7 +24,7 @@ public class GetVmFromConfigurationQuery<P extends GetVmFromConfigurationQueryPa
             return;
         }
 
-        switch(getParameters().getConfigurationType()) {
+        switch (getParameters().getConfigurationType()) {
         case OVF:
             try {
                 getQueryReturnValue().setReturnValue(ovfHelper.readVmFromOvf(getParameters().getVmConfiguration()).getVm());

@@ -906,7 +906,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
 
     @Path(value = "minAllocatedMemory.entity")
     @WithElementId("minAllocatedMemory")
-    @UiField(provided=true)
+    @UiField(provided = true)
     public MemorySizeEntityModelTextBoxEditor minAllocatedMemoryEditor;
 
     @UiField(provided = true)
@@ -1146,7 +1146,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         isUsbEnabledEditor = new EntityModelCheckBoxEditor(Align.RIGHT, new ModeSwitchingVisibilityRenderer());
         isSoundcardEnabledEditor = new EntityModelCheckBoxEditor(Align.RIGHT, new ModeSwitchingVisibilityRenderer());
         ssoMethodNone = new EntityModelRadioButtonEditor("ssoMethod", new ModeSwitchingVisibilityRenderer()); //$NON-NLS-1$
-        ssoMethodGuestAgent = new EntityModelRadioButtonEditor("ssoMethod", new ModeSwitchingVisibilityRenderer());//$NON-NLS-1$
+        ssoMethodGuestAgent = new EntityModelRadioButtonEditor("ssoMethod", new ModeSwitchingVisibilityRenderer()); //$NON-NLS-1$
         copyTemplatePermissionsEditor = new EntityModelCheckBoxEditor(Align.RIGHT, new ModeSwitchingVisibilityRenderer());
         isMemoryBalloonEnabled = new EntityModelCheckBoxEditor(Align.RIGHT, new ModeSwitchingVisibilityRenderer());
         isIoThreadsEnabled = new EntityModelCheckBoxEditor(Align.RIGHT, new ModeSwitchingVisibilityRenderer());
@@ -1437,7 +1437,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
                 new ModeSwitchingVisibilityRenderer());
 
         templateWithVersionEditor = new ListModelTypeAheadListBoxEditor<>(
-                new ListModelTypeAheadListBoxEditor.NullSafeSuggestBoxRenderer<TemplateWithVersion>(){
+                new ListModelTypeAheadListBoxEditor.NullSafeSuggestBoxRenderer<TemplateWithVersion>() {
                     @Override
                     public String getReplacementStringNullSafe(TemplateWithVersion templateWithVersion) {
                         return getFirstColumn(templateWithVersion)
@@ -1822,7 +1822,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
             }
 
             boolean isWindows = AsyncDataProvider.getInstance().isWindowsOsType(osType);
-            if (isWindows){
+            if (isWindows) {
                 vmInitEnabledEditor.setLabel(constants.sysprep());
                 return;
             }
@@ -2503,6 +2503,6 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
     }
 
     private String getNullMigrationDowntimeString() {
-        return constants.systemDefaultOption() + " (" + AsyncDataProvider.getInstance().getMigrationDowntime() + ")";//$NON-NLS-1$ //$NON-NLS-2$
+        return constants.systemDefaultOption() + " (" + AsyncDataProvider.getInstance().getMigrationDowntime() + ")"; //$NON-NLS-1$ //$NON-NLS-2$
     }
 }

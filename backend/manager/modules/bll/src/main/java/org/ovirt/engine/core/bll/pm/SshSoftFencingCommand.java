@@ -104,7 +104,7 @@ public class SshSoftFencingCommand<T extends VdsActionParameters> extends VdsCom
                         cmdErr);
                 log.debug("Exception", ex);
             }
-        } catch(IOException e) {
+        } catch (IOException e) {
             log.error("IOException", e);
         }
         return ret;
@@ -124,10 +124,10 @@ public class SshSoftFencingCommand<T extends VdsActionParameters> extends VdsCom
         // and another host will be selected for the SPM role.
         long graceTime = TimeUnit.SECONDS.toMillis(
                 Config.<Integer>getValue(ConfigValues.TimeoutToResetVdsInSeconds));
-        long passedTime=0;
+        long passedTime = 0;
         log.info("Waiting to host {} {} seconds to become up after soft fencing execution",
                 vdsManager.getCopyVds().getHostName(),
-                graceTime/100);
+                graceTime / 100);
         while (passedTime <= graceTime) {
             if (vdsManager.getCopyVds().getStatus() == VDSStatus.Up) {
                 // host became Up during grace period

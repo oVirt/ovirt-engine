@@ -125,7 +125,7 @@ class MacsStorage {
 
     private Range findRangeWithAvailableMac(int startIndex,
             int endIndex, int numberOfRanges) {
-        for(int i = startIndex; i < endIndex; i++) {
+        for (int i = startIndex; i < endIndex; i++) {
             Range range = ranges.get(i);
             boolean hasAvailableMacs = range.getAvailableCount() > 0;
             if (hasAvailableMacs) {

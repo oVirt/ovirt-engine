@@ -26,8 +26,8 @@ public class CinderlibExecutor {
     private static final String CINDERLIB_DIR = "/cinderlib";
     private static final String CINDERLIB_DB_USER = "CINDERLIB_DB_USER";
     private static final String CINDERLIB_DB_PASSWORD = "CINDERLIB_DB_PASSWORD";
-    private static final String CINDERLIB_DB_HOST= "CINDERLIB_DB_HOST";
-    private static final String CINDERLIB_DB_PORT="CINDERLIB_DB_PORT";
+    private static final String CINDERLIB_DB_HOST = "CINDERLIB_DB_HOST";
+    private static final String CINDERLIB_DB_PORT = "CINDERLIB_DB_PORT";
     private static final String CINDERLIB_DB_DATABASE = "CINDERLIB_DB_DATABASE";
     private final String urlTemplate = "postgresql+psycopg2://%s:%s@%s:%s/%s";
     private String url;

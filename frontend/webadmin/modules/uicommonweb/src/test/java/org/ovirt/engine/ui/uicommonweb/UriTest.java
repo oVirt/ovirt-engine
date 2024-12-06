@@ -90,7 +90,7 @@ public class UriTest {
                 Arguments.of(HTTPS, WWW_REDHAT_COM_80, SLASH, "https://www.redhat.com:80/"), //$NON-NLS-1$
                 Arguments.of(HTTP, WWW_REDHAT_COM_80, MAIN, HTTP_WWW_REDHAT_COM_80_MAIN),
                 Arguments.of(HTTP, WWW_REDHAT_COM_80, MAIN_S, HTTP_WWW_REDHAT_COM_80_MAIN_S),
-                Arguments.of(null,  WWW_REDHAT_COM, MAIN_INDEX_HTML, WWW_REDHAT_COM_MAIN_INDEX_HTML),
+                Arguments.of(null, WWW_REDHAT_COM, MAIN_INDEX_HTML, WWW_REDHAT_COM_MAIN_INDEX_HTML),
                 Arguments.of(HTTP, null, MAIN_INDEX_HTML, null),
                 Arguments.of(HTTP, "www.redhat:80.com", MAIN_INDEX_HTML, null), //$NON-NLS-1$
                 Arguments.of(HTTP, WWW_REDHAT_COM, null, HTTP_WWW_REDHAT_COM)

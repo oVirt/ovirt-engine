@@ -9,7 +9,7 @@ import com.google.gwt.event.shared.EventBus;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 
-public class VolumeGeoRepSessionDetailsPopUpPresenterWidget extends AbstractModelBoundPopupPresenterWidget<VolumeGeoRepSessionDetailsModel, VolumeGeoRepSessionDetailsPopUpPresenterWidget.ViewDef>{
+public class VolumeGeoRepSessionDetailsPopUpPresenterWidget extends AbstractModelBoundPopupPresenterWidget<VolumeGeoRepSessionDetailsModel, VolumeGeoRepSessionDetailsPopUpPresenterWidget.ViewDef> {
     public interface ViewDef extends AbstractModelBoundPopupPresenterWidget.ViewDef<VolumeGeoRepSessionDetailsModel> {
         public void setCheckPointCompletedAtVisibility(boolean visible);
         public void updateSessionDetailProperties(GlusterGeoRepSessionDetails selectedSessionDetail);
@@ -24,7 +24,7 @@ public class VolumeGeoRepSessionDetailsPopUpPresenterWidget extends AbstractMode
     public void init(final VolumeGeoRepSessionDetailsModel model) {
         super.init(model);
         model.getPropertyChangedEvent().addListener((ev, sender, args) -> {
-            if(args.propertyName.equalsIgnoreCase("selectedSessionSummaryRow")) {//$NON-NLS-1$
+            if (args.propertyName.equalsIgnoreCase("selectedSessionSummaryRow")) { //$NON-NLS-1$
                 GlusterGeoRepSessionDetails selectedSessionDetail = model.getGeoRepSessionSummary().getSelectedItem().getEntity();
                 getView().setCheckPointCompletedAtVisibility(selectedSessionDetail.isCheckpointCompleted());
                 getView().updateSessionDetailProperties(selectedSessionDetail);

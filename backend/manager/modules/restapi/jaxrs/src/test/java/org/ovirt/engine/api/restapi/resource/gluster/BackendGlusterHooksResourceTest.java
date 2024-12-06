@@ -161,7 +161,7 @@ public class BackendGlusterHooksResourceTest extends AbstractBackendCollectionRe
         } else {
             if (failure instanceof String) {
                 queryResult.setExceptionString((String) failure);
-                setUpL10nExpectations((String)failure);
+                setUpL10nExpectations((String) failure);
             } else if (failure instanceof Exception) {
                 when(backend.runQuery(eq(QueryType.GetGlusterHooks), any())).thenThrow((Exception) failure);
                 return;

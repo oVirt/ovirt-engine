@@ -78,17 +78,17 @@ public class HostedEngineHelper {
         return storageDomainStatic;
     }
 
-    private void initHostedEngineStorageDomain(){
-        if(hostedEngineVm == null){
+    private void initHostedEngineStorageDomain() {
+        if (hostedEngineVm == null) {
             return;
         }
         List<DiskImage> diskList = hostedEngineVm.getDiskList();
-        if(diskList == null || diskList.isEmpty()){
+        if (diskList == null || diskList.isEmpty()) {
             return;
         }
         DiskImage disk = diskList.get(0);
         List<StorageDomain> allStorageDomainsByImageId = storageDomainDao.getAllStorageDomainsByImageId(disk.getImageId());
-        if(allStorageDomainsByImageId == null || allStorageDomainsByImageId.isEmpty()){
+        if (allStorageDomainsByImageId == null || allStorageDomainsByImageId.isEmpty()) {
             return;
         }
         StorageDomain storageDomain = allStorageDomainsByImageId.get(0);
@@ -120,7 +120,7 @@ public class HostedEngineHelper {
         return hostedEngineVm.getRunOnVds();
     }
 
-    public boolean updateHaLocalMaintenanceMode(VDS vds, boolean localMaintenance){
+    public boolean updateHaLocalMaintenanceMode(VDS vds, boolean localMaintenance) {
         SetHaMaintenanceModeVDSCommandParameters param
                 = new SetHaMaintenanceModeVDSCommandParameters(vds, HaMaintenanceMode.LOCAL, localMaintenance);
         return vdsBroker.runVdsCommand(VDSCommandType.SetHaMaintenanceMode, param).getSucceeded();

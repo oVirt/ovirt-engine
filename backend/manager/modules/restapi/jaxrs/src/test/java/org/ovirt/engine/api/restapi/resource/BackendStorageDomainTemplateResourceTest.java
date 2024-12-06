@@ -57,7 +57,7 @@ public class BackendStorageDomainTemplateResourceTest
 
     private static final Guid TEMPLATE_ID = GUIDS[1];
     private static final Guid DATA_CENTER_ID = GUIDS[0];
-    private static final Guid STORAGE_DOMAIN_ID = GUIDS[GUIDS.length-1];
+    private static final Guid STORAGE_DOMAIN_ID = GUIDS[GUIDS.length - 1];
 
     private static final String URL_BASE = "storagedomains/" + STORAGE_DOMAIN_ID + "/templates/" + TEMPLATE_ID;
 
@@ -248,7 +248,7 @@ public class BackendStorageDomainTemplateResourceTest
     }
 
     private void setUpGetDataCenterByStorageDomainExpectations(Guid id, int times) {
-        while (times-->0) {
+        while (times-- > 0) {
             setUpEntityQueryExpectations(QueryType.GetStoragePoolsByStorageDomainId,
                     IdQueryParameters.class,
                     new String[] { "Id" },
@@ -314,7 +314,7 @@ public class BackendStorageDomainTemplateResourceTest
 
         Response response = resource.doImport(action);
         verifyActionResponse(response, URL_BASE, true, null);
-        action = (Action)response.getEntity();
+        action = (Action) response.getEntity();
         assertTrue(action.isSetStatus());
         assertEquals(actionStatus.value(), action.getStatus());
     }

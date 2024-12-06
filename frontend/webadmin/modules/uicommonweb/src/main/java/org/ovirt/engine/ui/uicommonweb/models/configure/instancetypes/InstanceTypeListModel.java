@@ -249,7 +249,7 @@ public class InstanceTypeListModel extends ListWithSimpleDetailsModel<Void, Inst
         updateInstanceTypeParameters.setTpmEnabled(model.getTpmEnabled().getEntity());
         updateInstanceTypeParameters.setConsoleEnabled(model.getIsConsoleDeviceEnabled().getEntity());
         updateInstanceTypeParameters.setVirtioScsiEnabled(model.getIsVirtioScsiEnabled().getEntity());
-        if(model.getIsHeadlessModeEnabled().getEntity()) {
+        if (model.getIsHeadlessModeEnabled().getEntity()) {
             updateInstanceTypeParameters.getVmTemplateData().setDefaultDisplayType(DisplayType.none);
         }
 

@@ -22,7 +22,7 @@ import com.google.inject.Inject;
 import com.google.inject.Provider;
 
 public class AbstractVmBasedPopupPresenterWidget<V extends AbstractVmBasedPopupPresenterWidget.ViewDef> extends
-    AbstractModelBoundPopupPresenterWidget<UnitVmModel, V>  {
+    AbstractModelBoundPopupPresenterWidget<UnitVmModel, V> {
 
     public interface ViewDef extends AbstractModelBoundPopupPresenterWidget.ViewDef<UnitVmModel>, TabbedView {
         void switchMode(boolean isAdvanced);

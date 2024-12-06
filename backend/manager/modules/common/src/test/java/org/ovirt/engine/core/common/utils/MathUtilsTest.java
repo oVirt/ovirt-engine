@@ -10,10 +10,10 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
 public class MathUtilsTest {
-    private static long[] args1 = {5*3, 7*3, 3, 0, 10};
-    private static long[] args2 = {7*3, 5*3, 5, 10, 0};
+    private static long[] args1 = {5 * 3, 7 * 3, 3, 0, 10};
+    private static long[] args2 = {7 * 3, 5 * 3, 5, 10, 0};
     private static long[] gcds = {3, 3, 1, 10, 10};
-    private static long[] lcms = {5*7*3, 5*7*3, 3*5, 0, 0};
+    private static long[] lcms = {5 * 7 * 3, 5 * 7 * 3, 3 * 5, 0, 0};
 
     @ParameterizedTest
     @MethodSource

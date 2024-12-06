@@ -300,7 +300,7 @@ public class HostNetworkInterfaceListViewItem extends PatternflyListViewItem<Hos
         Container container = createItemContainerPanel(content);
 
         CellTable<HostVLan> logicalNetworkTable = new CellTable<>(MAX_LOGICAL_NETWORKS,
-                (Resources)GWT.create(CellTablePopupTableResources.class));
+                (Resources) GWT.create(CellTablePopupTableResources.class));
         logicalNetworkTable.getElement().addClassName(Styles.TABLE);
         logicalNetworkTable.getElement().addClassName(PatternflyConstants.PF_TABLE_STRIPED);
         logicalNetworkTable.getElement().addClassName(PatternflyConstants.PF_TABLE_BORDERED);

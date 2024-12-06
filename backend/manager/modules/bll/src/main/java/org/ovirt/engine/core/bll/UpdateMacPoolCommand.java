@@ -74,7 +74,7 @@ public class UpdateMacPoolCommand extends MacPoolCommandBase<MacPoolParameters> 
 
     @Override
     protected void executeCommand() {
-        registerRollbackHandler((TransactionRollbackListener)() ->
+        registerRollbackHandler((TransactionRollbackListener) () ->
             TransactionSupport.executeInNewTransaction(
                 (TransactionMethod<Void>) () -> {
                     // if the update failed before the removal of the pool need to

@@ -260,7 +260,7 @@ public class AnsibleCommandConfig implements LogFileConfig, PlaybookConfig {
             ansibleCommand.add(artifactsDir);
             ansibleCommand.add("-i");
             ansibleCommand.add(String.valueOf(this.uuid));
-        } catch(Exception e) {
+        } catch (Exception e) {
             throw new RuntimeException(e.getMessage(), e);
         }
         return ansibleCommand;
@@ -316,7 +316,7 @@ public class AnsibleCommandConfig implements LogFileConfig, PlaybookConfig {
         try {
             extraVars.createNewFile();
             Files.writeString(extraVars.toPath(), vars);
-        } catch(IOException ex) {
+        } catch (IOException ex) {
             throw new AnsibleRunnerCallException(
                 String.format("Failed to create host variables file '%s':", extraVars.toString()), ex);
         }

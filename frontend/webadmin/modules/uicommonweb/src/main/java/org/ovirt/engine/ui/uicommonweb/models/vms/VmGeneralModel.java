@@ -35,21 +35,21 @@ import org.ovirt.engine.ui.uicompat.UIMessages;
 
 public class VmGeneralModel extends AbstractGeneralModel<VM> {
 
-    public static final String HAS_HOST_PASSTHROUGH_PROPERTY_CHANGE = "HasHostPassthrough";//$NON-NLS-1$
+    public static final String HAS_HOST_PASSTHROUGH_PROPERTY_CHANGE = "HasHostPassthrough"; //$NON-NLS-1$
 
-    public static final String HAS_CUSTOM_CPU_PROPERTY_CHANGE = "HasCustomCpuType";//$NON-NLS-1$
+    public static final String HAS_CUSTOM_CPU_PROPERTY_CHANGE = "HasCustomCpuType"; //$NON-NLS-1$
 
-    public static final String GUEST_CPU_TYPE_PROPERTY_CHANGE = "GuestCpuType";//$NON-NLS-1$
+    public static final String GUEST_CPU_TYPE_PROPERTY_CHANGE = "GuestCpuType"; //$NON-NLS-1$
 
-    public static final String CONFIGURED_CPU_TYPE_PROPERTY_CHANGE = "ConfiguredCpuType";//$NON-NLS-1$
+    public static final String CONFIGURED_CPU_TYPE_PROPERTY_CHANGE = "ConfiguredCpuType"; //$NON-NLS-1$
 
-    public static final String IS_HOSTED_ENGINE = "IsHostedEngine";//$NON-NLS-1$
+    public static final String IS_HOSTED_ENGINE = "IsHostedEngine"; //$NON-NLS-1$
 
-    public static final String STATUS = "Status";//$NON-NLS-1$
+    public static final String STATUS = "Status"; //$NON-NLS-1$
 
-    public static final String ARCHITECTURE = "VmArchitecture";//$NON-NLS-1$
+    public static final String ARCHITECTURE = "VmArchitecture"; //$NON-NLS-1$
 
-    public static final String BIOS_TYPE = "VmBiosType";//$NON-NLS-1$
+    public static final String BIOS_TYPE = "VmBiosType"; //$NON-NLS-1$
 
     private static final VmTemplateNameRenderer vmTemplateNameRenderer = new VmTemplateNameRenderer();
 
@@ -692,12 +692,12 @@ public class VmGeneralModel extends AbstractGeneralModel<VM> {
         setDefinedMemory(vm.getVmMemSizeMb() + " MB"); //$NON-NLS-1$
         setMinAllocatedMemory(vm.getMinAllocatedMem() + " MB"); //$NON-NLS-1$
 
-        if(vm.isRunningOrPaused() && vm.getGuestMemoryFree() != null) {
+        if (vm.isRunningOrPaused() && vm.getGuestMemoryFree() != null) {
             // If old OGA guest memory reported. Zero checks is for windows OGA.
             if (vm.getGuestMemoryBuffered() != null && vm.getGuestMemoryCached() != null && vm.getGuestMemoryBuffered() != 0 && vm.getGuestMemoryCached() != 0) {
                 setGuestMemInfoUsingUnusedMem(false);
                 setGuestFreeCachedBufferedMemInfo((vm.getGuestMemoryFree() / 1024L) + " / " // $NON-NLS-1$
-                                                + (vm.getGuestMemoryBuffered() / 1024L)  + " / " // $NON-NLS-1$
+                                                + (vm.getGuestMemoryBuffered() / 1024L) + " / " // $NON-NLS-1$
                                                 + (vm.getGuestMemoryCached() / 1024L) + " MB"); //$NON-NLS-1$
             } else if (vm.getGuestMemoryUnused() != null && vm.getGuestMemoryUnused() != 0) {
                 setGuestMemInfoUsingUnusedMem(true);

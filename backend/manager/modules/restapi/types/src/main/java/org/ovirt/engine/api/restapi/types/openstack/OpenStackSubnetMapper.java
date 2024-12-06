@@ -17,7 +17,7 @@ import org.ovirt.engine.core.common.businessentities.network.ExternalSubnet;
 public class OpenStackSubnetMapper {
     @Mapping(from = ExternalSubnet.class, to = OpenStackSubnet.class)
     public static OpenStackSubnet map(ExternalSubnet entity, OpenStackSubnet template) {
-        OpenStackSubnet model = template != null? template: new OpenStackSubnet();
+        OpenStackSubnet model = template != null ? template : new OpenStackSubnet();
         if (entity.getId() != null) {
             model.setId(entity.getId());
         }
@@ -46,7 +46,7 @@ public class OpenStackSubnetMapper {
 
     @Mapping(from = OpenStackSubnet.class, to = ExternalSubnet.class)
     public static ExternalSubnet map(OpenStackSubnet model, ExternalSubnet template) {
-        ExternalSubnet entity = template != null? template: new ExternalSubnet();
+        ExternalSubnet entity = template != null ? template : new ExternalSubnet();
         if (model.isSetId()) {
             entity.setId(model.getId());
         }

@@ -46,7 +46,7 @@ public class UnmanagedNetworkValidator {
 
     public ValidationResult validate(HostSetupNetworksParameters params,
             List<VdsNetworkInterface> existingInterfaces,
-            BusinessEntityMap<Network> networkBusinessEntityMap){
+            BusinessEntityMap<Network> networkBusinessEntityMap) {
 
         ValidationResult result = validateRemovedUnmanagedNetworks(params.getRemovedUnmanagedNetworks(), existingInterfaces, networkBusinessEntityMap);
         if (!result.isValid()) {
@@ -55,7 +55,7 @@ public class UnmanagedNetworkValidator {
 
         Set<String> nicsWithUnmanagedNetworks = filterNicsWithUnmanagedNetworks(
                 existingInterfaces, params.getRemovedUnmanagedNetworks());
-        for (String nicWithUnmanagedNetwork : nicsWithUnmanagedNetworks){
+        for (String nicWithUnmanagedNetwork : nicsWithUnmanagedNetworks) {
             result = validateLabels(nicWithUnmanagedNetwork, params.getLabels());
             if (!result.isValid()) {
                 return result;
@@ -74,16 +74,16 @@ public class UnmanagedNetworkValidator {
             Collection<VdsNetworkInterface> existingInterfaces,
             BusinessEntityMap<Network> networkBusinessEntityMap) {
 
-       for (String removedUnmanagedNetworkName : removedUnmanagedNetworks){
+       for (String removedUnmanagedNetworkName : removedUnmanagedNetworks) {
 
             Network network = networkBusinessEntityMap.get(removedUnmanagedNetworkName);
-            if (network != null){
+            if (network != null) {
                 EngineMessage engineMessage = EngineMessage.REMOVED_UNMANAGED_NETWORK_IS_A_CLUSTER_NETWORK;
                 return new ValidationResult(engineMessage,
                         ReplacementUtils.createSetVariableString(NETWORK, removedUnmanagedNetworkName));
             }
             ValidationResult result = validateNetworkIsAnUnmanagedNetworkOnHost(removedUnmanagedNetworkName, existingInterfaces);
-            if (!result.isValid()){
+            if (!result.isValid()) {
                 return result;
             }
         }
@@ -95,10 +95,10 @@ public class UnmanagedNetworkValidator {
             String removedUnmanagedNetworkName,
             Collection<VdsNetworkInterface> existingInterfaces) {
 
-        for (VdsNetworkInterface existingInterface : existingInterfaces){
+        for (VdsNetworkInterface existingInterface : existingInterfaces) {
             if (removedUnmanagedNetworkName.equals(existingInterface.getNetworkName()) &&
                 existingInterface.getNetworkImplementationDetails() != null &&
-                !existingInterface.getNetworkImplementationDetails().isManaged()){
+                !existingInterface.getNetworkImplementationDetails().isManaged()) {
                 return ValidationResult.VALID;
             }
         }
@@ -107,7 +107,7 @@ public class UnmanagedNetworkValidator {
     }
 
     ValidationResult validateLabels(String nicWithUnmanagedNetwork, Collection<NicLabel> labels) {
-        for (NicLabel label : labels){
+        for (NicLabel label : labels) {
             if (label.getNicName().equals(nicWithUnmanagedNetwork)) {
                 return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_HOST_NETWORK_LABEL_ON_UNMANAGED_NETWORK,
                         ReplacementUtils.createSetVariableString(LABEL, label.getName()),
@@ -118,7 +118,7 @@ public class UnmanagedNetworkValidator {
     }
 
     ValidationResult validateAttachements(String nicWithUnmanagedNetwork, List<NetworkAttachment> networkAttachments) {
-        for (NetworkAttachment attachement:networkAttachments){
+        for (NetworkAttachment attachement:networkAttachments) {
             if (attachement.getNicName().equals(nicWithUnmanagedNetwork)) {
                 return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_HOST_NETWORK_ATTACHEMENT_ON_UNMANAGED_NETWORK,
                         ReplacementUtils.createSetVariableString(NETWORK, attachement.getNetworkName()),
@@ -128,10 +128,10 @@ public class UnmanagedNetworkValidator {
         return ValidationResult.VALID;
     }
 
-    Set<String> filterNicsWithUnmanagedNetworks( List<VdsNetworkInterface> existingInterfaces, Collection<String> removedUnmanagedNetworks){
+    Set<String> filterNicsWithUnmanagedNetworks( List<VdsNetworkInterface> existingInterfaces, Collection<String> removedUnmanagedNetworks) {
         Set<String> nicsWithUnmanagedNetworks = new HashSet<>();
-        for(VdsNetworkInterface nic : existingInterfaces){
-            if(nic.getNetworkImplementationDetails() != null && !nic.getNetworkImplementationDetails().isManaged()) {
+        for (VdsNetworkInterface nic : existingInterfaces) {
+            if (nic.getNetworkImplementationDetails() != null && !nic.getNetworkImplementationDetails().isManaged()) {
                 if (!removedUnmanagedNetworks.contains(nic.getNetworkName())) {
                     nicsWithUnmanagedNetworks.add(NetworkCommonUtils.stripVlan(nic));
                 }

@@ -29,15 +29,15 @@ public class VolumeActivityCompositeCell<T extends GlusterTaskSupport> extends C
         if (hasCells == null) {
             return set;
         }
-        for(HasCell<T, ?> currentHasCell : hasCells) {
-            if(currentHasCell instanceof Column) {
+        for (HasCell<T, ?> currentHasCell : hasCells) {
+            if (currentHasCell instanceof Column) {
                 Set<String> consumedEvents = ((Column) currentHasCell).getCell().getConsumedEvents();
-                if(consumedEvents != null) {
+                if (consumedEvents != null) {
                     set.addAll(consumedEvents);
                 }
             }
-            if(currentHasCell instanceof Cell) {
-                set.addAll(((Cell)currentHasCell).getConsumedEvents());
+            if (currentHasCell instanceof Cell) {
+                set.addAll(((Cell) currentHasCell).getConsumedEvents());
             }
         }
         return set;

@@ -12,7 +12,7 @@ public class OpenstackNetworkProviderProperties extends OpenStackProviderPropert
 
     private boolean readOnly = true;
 
-    public boolean getReadOnly(){
+    public boolean getReadOnly() {
         return readOnly;
     }
 

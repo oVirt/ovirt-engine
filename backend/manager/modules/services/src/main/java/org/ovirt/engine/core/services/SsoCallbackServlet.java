@@ -42,7 +42,7 @@ public class SsoCallbackServlet extends HttpServlet {
         String event = request.getParameter("event");
         String accessToken = request.getParameter("token");
 
-        switch(event) {
+        switch (event) {
             case "auditLog":
                 handleAuditLog(request, response);
                 break;

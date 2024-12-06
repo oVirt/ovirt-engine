@@ -240,7 +240,7 @@ public abstract class OvfOvirtWriter extends OvfWriter {
 
     @Override
     protected String adjustHardwareResourceType(String resourceType) {
-        switch(resourceType) {
+        switch (resourceType) {
         case OvfHardware.Graphics:
             return OvfHardware.OVIRT_Graphics;
         case OvfHardware.Monitor:

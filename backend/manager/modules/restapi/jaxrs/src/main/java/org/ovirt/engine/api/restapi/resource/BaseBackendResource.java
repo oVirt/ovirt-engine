@@ -255,7 +255,7 @@ public class BaseBackendResource {
     protected <T> List<T> asCollection(Class<T> clz, Object o) {
         List<T> collection = null;
         if (o instanceof List) {
-            collection = (List<T>)o;
+            collection = (List<T>) o;
         } else if (clz.isInstance(o)) {
             collection = new ArrayList<>();
             collection.add(clz.cast(o));
@@ -272,7 +272,7 @@ public class BaseBackendResource {
     protected Guid asGuid(String id) {
         try {
             return new Guid(id);
-        }catch (IllegalArgumentException e) {
+        } catch (IllegalArgumentException e) {
             throw new MalformedIdException(e);
         }
     }
@@ -288,7 +288,7 @@ public class BaseBackendResource {
     protected Long asLong(String id) {
         try {
             return Long.valueOf(id);
-        }catch (IllegalArgumentException e) {
+        } catch (IllegalArgumentException e) {
             throw new MalformedIdException(e);
         }
     }
@@ -421,7 +421,7 @@ public class BaseBackendResource {
      */
     public final void follow (ActionableResource entity) {
         String followValue = ParametersHelper.getParameter(getHttpHeaders(), getUriInfo(), FOLLOW);
-        if (followValue!=null && !followValue.equals("")) {
+        if (followValue != null && !followValue.equals("")) {
             ParametersHelper.removeParameter(FOLLOW);
             ParametersHelper.removeParameter(MAX);
             LinksTreeNode linksTree = linkFollower.createLinksTree(entity.getClass(), followValue);

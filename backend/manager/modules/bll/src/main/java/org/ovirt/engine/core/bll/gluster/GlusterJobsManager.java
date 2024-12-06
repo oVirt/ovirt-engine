@@ -33,7 +33,7 @@ public class GlusterJobsManager implements BackendService {
 
         log.debug("Initializing Gluster Jobs Manager");
 
-        jobs.forEach(j-> j.schedule());
+        jobs.forEach(j -> j.schedule());
         cronJobs.scheduleAllJobs();
     }
 

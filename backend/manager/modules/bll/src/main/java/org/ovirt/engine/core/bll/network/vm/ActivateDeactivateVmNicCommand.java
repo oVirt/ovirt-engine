@@ -405,27 +405,27 @@ public class ActivateDeactivateVmNicCommand<T extends ActivateDeactivateVmNicPar
     }
 
     private void clearAddressIfPciSlotIsDuplicated(VmDevice vmDeviceToHotplug) {
-        if (searchForDuplicatesWithExistingVmDevices(vmDeviceToHotplug)){
+        if (searchForDuplicatesWithExistingVmDevices(vmDeviceToHotplug)) {
             vmDeviceToHotplug.setAddress("");
         }
     }
 
-    private boolean searchForDuplicatesWithExistingVmDevices(VmDevice vmDeviceToHotplug){
+    private boolean searchForDuplicatesWithExistingVmDevices(VmDevice vmDeviceToHotplug) {
         String deviceAddress = vmDeviceToHotplug.getAddress();
-        if (StringUtils.isEmpty(deviceAddress)){
+        if (StringUtils.isEmpty(deviceAddress)) {
             return false;
         }
         Map<String, String> addressMapToHotplug = StringMapUtils.string2Map(deviceAddress);
         List<VmDevice> allVmDevices = vmDeviceDao.getVmDeviceByVmId(getVm().getId());
         for (VmDevice vmDevice : allVmDevices) {
-            if (!vmDeviceToHotplug.getId().equals(vmDevice.getId())){
+            if (!vmDeviceToHotplug.getId().equals(vmDevice.getId())) {
                 Map<String, String> deviceAddressMap = StringMapUtils.string2Map(vmDevice.getAddress());
                 boolean duplicatedAddress = deviceAddressMap.equals(addressMapToHotplug);
 
                 boolean ambiguousInterfaceState = StringUtils.isEmpty(vmDevice.getAddress()) && vmDevice.isPlugged()
                         && VmDeviceGeneralType.INTERFACE.equals(vmDevice.getType());
 
-                if(duplicatedAddress || ambiguousInterfaceState) {
+                if (duplicatedAddress || ambiguousInterfaceState) {
                     return true;
                 }
             }

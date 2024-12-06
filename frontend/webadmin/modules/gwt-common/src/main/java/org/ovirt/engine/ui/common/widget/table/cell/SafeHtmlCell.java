@@ -8,7 +8,7 @@ import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 /**
  * A Cell used to render SafeHtml. Supports tooltips.
  */
-public class SafeHtmlCell extends AbstractCell<SafeHtml>  {
+public class SafeHtmlCell extends AbstractCell<SafeHtml> {
 
     interface CellTemplate extends SafeHtmlTemplates {
         @Template("<div id=\"{0}\" style='display:block'>{1}</div>")

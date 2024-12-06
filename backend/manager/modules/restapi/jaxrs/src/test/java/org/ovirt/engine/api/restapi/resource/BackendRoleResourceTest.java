@@ -93,7 +93,7 @@ public class BackendRoleResourceTest extends AbstractBackendRoleResourceTest {
     }
 
     protected void setUpGetEntityExpectations(int times) {
-        for (int i=0; i<times; i++) {
+        for (int i = 0; i < times; i++) {
             setUpGetEntityExpectations(QueryType.GetRoleById,
                                        IdQueryParameters.class,
                                        new String[] { "Id" },

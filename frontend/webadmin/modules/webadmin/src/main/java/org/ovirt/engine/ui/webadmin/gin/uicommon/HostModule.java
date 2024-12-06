@@ -396,7 +396,7 @@ public class HostModule extends AbstractGinModule {
 
     @Override
     protected void configure() {
-        bind(new TypeLiteral<HostListModel<Void>>() {}).in(Singleton.class);
+        bind(new TypeLiteral<HostListModel<Void>>() { }).in(Singleton.class);
         bind(HostGeneralModel.class).in(Singleton.class);
         bind(HostHardwareGeneralModel.class).in(Singleton.class);
         bind(HostHooksListModel.class).in(Singleton.class);
@@ -407,7 +407,7 @@ public class HostModule extends AbstractGinModule {
         bind(HostGlusterSwiftListModel.class).in(Singleton.class);
         bind(HostEventListModel.class).in(Singleton.class);
         bind(HostDeviceListModel.class).in(Singleton.class);
-        bind(new TypeLiteral<PermissionListModel<VDS>>(){}).in(Singleton.class);
+        bind(new TypeLiteral<PermissionListModel<VDS>>() { }).in(Singleton.class);
         bind(FenceAgentModelProvider.class).in(Singleton.class);
         bind(FenceProxyModelProvider.class).in(Singleton.class);
         bind(HostErrataCountModel.class).in(Singleton.class);
@@ -417,24 +417,24 @@ public class HostModule extends AbstractGinModule {
 
 
         // Form Detail Models
-        bind(new TypeLiteral<DetailModelProvider<HostListModel<Void>, HostHardwareGeneralModel>>(){})
-            .to(new TypeLiteral<DetailTabModelProvider<HostListModel<Void>, HostHardwareGeneralModel>>(){}).in(Singleton.class);
+        bind(new TypeLiteral<DetailModelProvider<HostListModel<Void>, HostHardwareGeneralModel>>() { })
+            .to(new TypeLiteral<DetailTabModelProvider<HostListModel<Void>, HostHardwareGeneralModel>>() { }).in(Singleton.class);
         // Search-able Detail Models
-        bind(new TypeLiteral<SearchableDetailModelProvider<Map<String, String>, HostListModel<Void>, HostHooksListModel>>(){})
-            .to(new TypeLiteral<SearchableDetailTabModelProvider<Map<String, String>, HostListModel<Void>, HostHooksListModel>>(){})
+        bind(new TypeLiteral<SearchableDetailModelProvider<Map<String, String>, HostListModel<Void>, HostHooksListModel>>() { })
+            .to(new TypeLiteral<SearchableDetailTabModelProvider<Map<String, String>, HostListModel<Void>, HostHooksListModel>>() { })
             .in(Singleton.class);
-        bind(new TypeLiteral<SearchableDetailModelProvider<GlusterBrickEntity, HostListModel<Void>, HostBricksListModel>>(){})
-            .to(new TypeLiteral<SearchableDetailTabModelProvider<GlusterBrickEntity, HostListModel<Void>, HostBricksListModel>>(){})
+        bind(new TypeLiteral<SearchableDetailModelProvider<GlusterBrickEntity, HostListModel<Void>, HostBricksListModel>>() { })
+            .to(new TypeLiteral<SearchableDetailTabModelProvider<GlusterBrickEntity, HostListModel<Void>, HostBricksListModel>>() { })
             .in(Singleton.class);
-        bind(new TypeLiteral<SearchableDetailModelProvider<GlusterServerService, HostListModel<Void>, HostGlusterSwiftListModel>>(){})
-            .to(new TypeLiteral<SearchableDetailTabModelProvider<GlusterServerService, HostListModel<Void>, HostGlusterSwiftListModel>>(){})
+        bind(new TypeLiteral<SearchableDetailModelProvider<GlusterServerService, HostListModel<Void>, HostGlusterSwiftListModel>>() { })
+            .to(new TypeLiteral<SearchableDetailTabModelProvider<GlusterServerService, HostListModel<Void>, HostGlusterSwiftListModel>>() { })
             .in(Singleton.class);
-        bind(new TypeLiteral<SearchableDetailModelProvider<HostDeviceView, HostListModel<Void>, HostDeviceListModel>>(){})
-            .to(new TypeLiteral<SearchableDetailTabModelProvider<HostDeviceView, HostListModel<Void>, HostDeviceListModel>>(){})
+        bind(new TypeLiteral<SearchableDetailModelProvider<HostDeviceView, HostListModel<Void>, HostDeviceListModel>>() { })
+            .to(new TypeLiteral<SearchableDetailTabModelProvider<HostDeviceView, HostListModel<Void>, HostDeviceListModel>>() { })
             .in(Singleton.class);
         // Permission Detail Model
-        bind(new TypeLiteral<SearchableDetailModelProvider<Permission, HostListModel<Void>, PermissionListModel<VDS>>>(){})
-            .to(new TypeLiteral<PermissionModelProvider<VDS, HostListModel<Void>>>() {}).in(Singleton.class);
+        bind(new TypeLiteral<SearchableDetailModelProvider<Permission, HostListModel<Void>, PermissionListModel<VDS>>>() { })
+            .to(new TypeLiteral<PermissionModelProvider<VDS, HostListModel<Void>>>() { }).in(Singleton.class);
     }
 
 }

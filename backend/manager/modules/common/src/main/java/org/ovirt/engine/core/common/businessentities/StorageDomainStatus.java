@@ -5,7 +5,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public enum StorageDomainStatus implements Identifiable{
+public enum StorageDomainStatus implements Identifiable {
     Unknown(0),
     Uninitialized(1),
     Unattached(2),

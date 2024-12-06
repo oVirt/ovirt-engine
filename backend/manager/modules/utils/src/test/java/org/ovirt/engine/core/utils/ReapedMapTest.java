@@ -162,7 +162,7 @@ public class ReapedMapTest {
 
     private static class NumberMapper {
         public String getKey(Integer i) {
-            return i <= NUMBERS.length ? NUMBERS[i-1] : null;
+            return i <= NUMBERS.length ? NUMBERS[i - 1] : null;
         }
     }
 }

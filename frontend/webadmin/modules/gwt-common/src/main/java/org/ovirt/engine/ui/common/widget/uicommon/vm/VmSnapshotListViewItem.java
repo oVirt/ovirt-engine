@@ -152,7 +152,7 @@ public class VmSnapshotListViewItem extends PatternflyListViewItem<Snapshot> {
         Container container = createItemContainerPanel(content);
 
         CellTable<DiskImage> disksTable = new CellTable<>(1000,
-                (CellTable.Resources)GWT.create(CellTablePopupTableResources.class));
+                (CellTable.Resources) GWT.create(CellTablePopupTableResources.class));
 
         disksTable.setWidth("98%"); // $NON-NLS-1$
 

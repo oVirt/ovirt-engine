@@ -70,8 +70,8 @@ public class ProfilesInstanceTypeEditor extends AddRemoveRowWidget<VnicInstances
     public void setUsePatternFly(boolean use) {
         super.setUsePatternFly(use);
         if (use) {
-            mainPanel.removeStyleName(((ProfileWidgetStyle)style).mainPanelPadding());
-            mainPanel.addStyleName(((ProfileWidgetStyle)style).fullWidth());
+            mainPanel.removeStyleName(((ProfileWidgetStyle) style).mainPanelPadding());
+            mainPanel.addStyleName(((ProfileWidgetStyle) style).fullWidth());
         }
     }
 

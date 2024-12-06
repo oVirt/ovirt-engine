@@ -76,7 +76,7 @@ public interface CompensationContext {
      * @param status
      *            The status to snapshot.
      */
-    <T extends Enum<?>> void  snapshotEntityStatus(BusinessEntityWithStatus<?, T> entity, T status);
+    <T extends Enum<?>> void snapshotEntityStatus(BusinessEntityWithStatus<?, T> entity, T status);
 
     /**
      * Snapshot the entity status only, so that in case of compensation for the entity, the status will be updated to

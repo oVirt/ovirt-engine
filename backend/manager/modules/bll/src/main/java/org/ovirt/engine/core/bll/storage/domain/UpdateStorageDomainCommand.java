@@ -25,7 +25,7 @@ import org.ovirt.engine.core.dao.StorageDomainStaticDao;
 import org.ovirt.engine.core.utils.ObjectIdentityChecker;
 
 public class UpdateStorageDomainCommand<T extends StorageDomainManagementParameter> extends
-        StorageDomainManagementCommandBase<T>  implements RenamedEntityInfoProvider {
+        StorageDomainManagementCommandBase<T> implements RenamedEntityInfoProvider {
 
     @Inject
     private StorageDomainStaticDao storageDomainStaticDao;

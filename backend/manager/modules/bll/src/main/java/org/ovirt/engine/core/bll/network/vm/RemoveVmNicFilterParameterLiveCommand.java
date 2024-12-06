@@ -13,7 +13,7 @@ import org.ovirt.engine.core.dao.network.VmNetworkInterfaceDao;
 import org.ovirt.engine.core.dao.network.VmNicFilterParameterDao;
 
 public class RemoveVmNicFilterParameterLiveCommand<T extends RemoveVmNicFilterParameterParameters>
-        extends AbstractVmNicFilterParameterCommand<T>  {
+        extends AbstractVmNicFilterParameterCommand<T> {
 
     @Inject
     private VmNicFilterParameterDao vmNicFilterParameterDao;

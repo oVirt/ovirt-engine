@@ -16,7 +16,7 @@ public class ImageActionsVDSCommandParameters extends VdsIdVDSCommandParametersB
         setImageId(imgId);
     }
 
-    public ImageActionsVDSCommandParameters() {}
+    public ImageActionsVDSCommandParameters() { }
 
     public void setStoragePoolId(Guid storagePoolId) {
         this.storagePoolId = storagePoolId;

@@ -67,7 +67,7 @@ public class SetGlusterVolumeOptionCommand extends GlusterVolumeCommandBase<Glus
         // update the option value if it exists, else add it
         GlusterVolumeOptionEntity existingOption = getGlusterVolume().getOption(option.getKey());
         if (existingOption != null) {
-            if(option.getValue().equalsIgnoreCase(existingOption.getValue())) {
+            if (option.getValue().equalsIgnoreCase(existingOption.getValue())) {
                 return;
             }
 

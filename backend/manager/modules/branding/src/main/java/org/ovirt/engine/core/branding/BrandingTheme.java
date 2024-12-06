@@ -397,8 +397,8 @@ public class BrandingTheme {
             try (
                 InputStream in = new FileInputStream(templateFileName);
                 Reader reader = new InputStreamReader(in, StandardCharsets.UTF_8);
-                BufferedReader bufferedReader= new BufferedReader(reader);
-            ){
+                BufferedReader bufferedReader = new BufferedReader(reader);
+            ) {
                 String currentLine;
                 while ((currentLine = bufferedReader.readLine()) != null) {
                     if (!currentLine.startsWith("#")) { // # is comment.

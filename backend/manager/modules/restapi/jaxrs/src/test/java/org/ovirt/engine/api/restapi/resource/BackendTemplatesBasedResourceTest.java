@@ -45,7 +45,7 @@ public abstract class BackendTemplatesBasedResourceTest<R extends Template, Q, C
 
         Response response = doAdd(getRestModel(0));
         assertEquals(201, response.getStatus());
-        verifyModel((R)response.getEntity(), 0);
+        verifyModel((R) response.getEntity(), 0);
         assertNull(((R) response.getEntity()).getCreationStatus());
     }
 

@@ -522,13 +522,13 @@ public class FixturesTool {
      */
     protected static final String LUN_ID_OF_DOMAIN_VG_METADATA = "VG_DOMAIN_METADATA_LUN-1";
 
-    protected static final String LUN_ID1= "1IET_00180001";
+    protected static final String LUN_ID1 = "1IET_00180001";
 
-    protected static final String LUN_ID2= "1IET_00180003";
+    protected static final String LUN_ID2 = "1IET_00180003";
 
-    protected static final String ORPHAN_LUN_ID1= "1IET_00180005";
+    protected static final String ORPHAN_LUN_ID1 = "1IET_00180005";
 
-    protected static final String ORPHAN_LUN_ID2= "1IET_00180006";
+    protected static final String ORPHAN_LUN_ID2 = "1IET_00180006";
 
     /**
      * Predefined boot LUN disk attached to VM_RHEL5_POOL_57

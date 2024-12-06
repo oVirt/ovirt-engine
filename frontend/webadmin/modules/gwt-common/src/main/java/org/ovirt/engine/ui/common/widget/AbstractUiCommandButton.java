@@ -43,7 +43,7 @@ public abstract class AbstractUiCommandButton extends Composite
     public HandlerRegistration addClickHandler(ClickHandler handler) {
         Widget widget = getButtonWidget();
         if (widget instanceof HasClickHandlers) {
-            return ((HasClickHandlers)widget).addClickHandler(handler);
+            return ((HasClickHandlers) widget).addClickHandler(handler);
         } else {
             return null;
         }
@@ -68,7 +68,7 @@ public abstract class AbstractUiCommandButton extends Composite
         Widget widget = getButtonWidget();
         String result = null;
         if (widget instanceof HasText) {
-            result = ((HasText)widget).getText();
+            result = ((HasText) widget).getText();
         }
         return result;
     }
@@ -77,7 +77,7 @@ public abstract class AbstractUiCommandButton extends Composite
     public void setLabel(String label) {
         Widget widget = getButtonWidget();
         if (widget instanceof HasText) {
-            ((HasText)widget).setText(label);
+            ((HasText) widget).setText(label);
         }
     }
 
@@ -85,7 +85,7 @@ public abstract class AbstractUiCommandButton extends Composite
         Widget widget = getButtonWidget();
         widget.setVisible(command.getIsAvailable() && command.getIsVisible());
         if (widget instanceof HasEnabled) {
-            ((HasEnabled)widget).setEnabled(command.getIsExecutionAllowed());
+            ((HasEnabled) widget).setEnabled(command.getIsExecutionAllowed());
         }
         String label = getLabel();
 

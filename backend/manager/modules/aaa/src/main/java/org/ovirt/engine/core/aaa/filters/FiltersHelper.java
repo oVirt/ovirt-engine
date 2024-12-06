@@ -41,8 +41,8 @@ public class FiltersHelper {
         public static final String LOGOUT_INPROGRESS = "LOGOUT_INPROGRESS";
     }
 
-    public static final int PREFER_NEW_AUTH = 1<<0;
-    public static final int PREFER_PERSISTENCE_AUTH = 1<<1;
+    public static final int PREFER_NEW_AUTH = 1 << 0;
+    public static final int PREFER_PERSISTENCE_AUTH = 1 << 1;
 
     public static BackendLocal getBackend(Context context) {
 
@@ -137,7 +137,7 @@ public class FiltersHelper {
     }
 
     public static long copy(final InputStream input, final OutputStream output) throws IOException {
-        final byte[] buffer = new byte[8*1024];
+        final byte[] buffer = new byte[8 * 1024];
         long count = 0;
         int n;
         while ((n = input.read(buffer)) != -1) {

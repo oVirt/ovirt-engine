@@ -9,5 +9,5 @@ public class ExtendImageTicketVDSCommandParameters extends ImageTicketVDSCommand
         super(vdsId, ticketId, timeout);
     }
 
-    public ExtendImageTicketVDSCommandParameters() {}
+    public ExtendImageTicketVDSCommandParameters() { }
 }

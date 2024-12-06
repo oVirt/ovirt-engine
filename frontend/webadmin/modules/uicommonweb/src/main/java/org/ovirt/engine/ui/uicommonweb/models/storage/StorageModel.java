@@ -713,7 +713,7 @@ public class StorageModel extends Model {
         return behavior;
     }
 
-    private Integer  getWarningLowSpaceIndicatorValue() {
+    private Integer getWarningLowSpaceIndicatorValue() {
         if (isNewStorage()) {
             return (Integer) AsyncDataProvider.getInstance().getConfigValuePreConverted(ConfigValues.WarningLowSpaceIndicator);
         }

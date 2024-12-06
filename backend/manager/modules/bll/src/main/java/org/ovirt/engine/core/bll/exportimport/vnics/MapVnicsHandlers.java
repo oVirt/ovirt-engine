@@ -147,7 +147,7 @@ public class MapVnicsHandlers {
                 vnicsContext.trace(NEUTRAL, RunContextPerMatchedMapping.class);
                 return NEUTRAL;
             }
-            vnicsContext.getContexts().forEach(ctx ->  {
+            vnicsContext.getContexts().forEach(ctx -> {
                 ctx.getFlow().getHead().process(ctx);
                 vnicsContext.trace(SUCCESS, RunContextPerMatchedMapping.class, ctx);
             });

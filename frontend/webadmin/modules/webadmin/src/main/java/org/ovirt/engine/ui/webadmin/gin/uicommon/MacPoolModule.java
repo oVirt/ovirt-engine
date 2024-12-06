@@ -18,9 +18,9 @@ public class MacPoolModule extends AbstractGinModule {
         // SharedMacPoolListModel
         bind(SharedMacPoolModelProvider.class).in(Singleton.class);
 
-        bind(new TypeLiteral<PermissionListModel<MacPool>>(){}).in(Singleton.class);
+        bind(new TypeLiteral<PermissionListModel<MacPool>>() { }).in(Singleton.class);
 
         // Permission Model
-        bind(new TypeLiteral<PermissionModelProvider<MacPool, SharedMacPoolListModel>>(){}).in(Singleton.class);
+        bind(new TypeLiteral<PermissionModelProvider<MacPool, SharedMacPoolListModel>>() { }).in(Singleton.class);
     }
 }

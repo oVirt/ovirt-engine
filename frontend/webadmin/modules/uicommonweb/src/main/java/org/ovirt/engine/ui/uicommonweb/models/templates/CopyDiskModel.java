@@ -123,7 +123,7 @@ public class CopyDiskModel extends MoveOrCopyDiskModel {
         return super.allowedStorageDomain(sourceActiveStorageDomains, diskImage, templateDisk, sd);
     }
 
-    private boolean isTemplateDisk(DiskImage  diskImage) {
+    private boolean isTemplateDisk(DiskImage diskImage) {
         return diskImage.getVmEntityType() != null && diskImage.getVmEntityType().isTemplateType();
     }
 

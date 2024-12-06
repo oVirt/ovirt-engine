@@ -115,7 +115,7 @@ public class UploadImageHandler {
     }
 
     public void setBytesSent(double bytesSent) {
-        this.bytesSent = (long)bytesSent;
+        this.bytesSent = (long) bytesSent;
         setProgressStr("Sent " + bytesSent / SizeConverter.BYTES_IN_MB + "MB"); //$NON-NLS-1$ //$NON-NLS-2$
     }
 

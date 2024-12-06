@@ -195,7 +195,7 @@ public class ExportVmToOvaCommand<T extends ExportVmToOvaParameters> extends Exp
 
     @Override
     public boolean performNextOperation(int completedChildCount) {
-        switch(getParameters().getPhase()) {
+        switch (getParameters().getPhase()) {
         case CREATE_SNAPSHOT:
             getParameters().setPhase(Phase.CREATE_OVA);
             break;

@@ -249,7 +249,7 @@ public class GlusterUtil {
         Optional<Map.Entry<String, Network>> result =
               networkNameObjectMap.entrySet().stream().filter(v -> v.getValue().getCluster().isGluster()).findFirst();
 
-        if(result.isPresent()) {
+        if (result.isPresent()) {
             networkName = result.get().getKey();
 
         } else {
@@ -265,13 +265,13 @@ public class GlusterUtil {
         Optional<Map.Entry<VDS, String>> hostGlusterIpresult =
                 hostGlusterIpMap.entrySet().stream().filter(x -> x.getValue().equals(null)).findAny();
 
-        if(hostGlusterIpresult.isPresent()) {
+        if (hostGlusterIpresult.isPresent()) {
             return null;
         }
         return hostGlusterIpMap;
     }
 
-    public List<VdsNetworkInterface> getGlusterIpaddressUtil(Guid hostId){
+    public List<VdsNetworkInterface> getGlusterIpaddressUtil(Guid hostId) {
         return interfaceDao.getAllInterfacesForVds(hostId);
     }
 

@@ -50,7 +50,7 @@ public class ClusterNetworkManageModel extends ListModel<ClusterNetworkModel> {
     }
 
     private ClusterNetworkModel getDisplayNetwork() {
-        if (!isMultiCluster()){
+        if (!isMultiCluster()) {
             for (ClusterNetworkModel clusterNetworkManageModel : getItems()) {
                 if (clusterNetworkManageModel.isDisplayNetwork()) {
                    return clusterNetworkManageModel;

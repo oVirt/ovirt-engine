@@ -31,7 +31,7 @@ public enum GlusterServiceStatus {
     public GlusterServiceStatus getCompositeStatus(GlusterServiceStatus otherStatus) {
         int compositeStatusCode = this.getStatusCode() | otherStatus.getStatusCode();
 
-        switch(compositeStatusCode) {
+        switch (compositeStatusCode) {
             case 8 : // 1000
                 return GlusterServiceStatus.RUNNING;
             case 12 : // 1100

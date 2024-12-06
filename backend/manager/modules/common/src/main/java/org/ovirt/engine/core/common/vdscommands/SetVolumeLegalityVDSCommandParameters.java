@@ -10,7 +10,7 @@ public class SetVolumeLegalityVDSCommandParameters extends AllStorageAndImageIdV
         super(spId, sdId, imgGroupId, imgId);
         setLegality(legal);
     }
-    public SetVolumeLegalityVDSCommandParameters() {};
+    public SetVolumeLegalityVDSCommandParameters() { };
 
     public void setLegality(boolean legal) {
         this.legal = legal;

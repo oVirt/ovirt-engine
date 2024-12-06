@@ -62,18 +62,18 @@ public class AffinityGroupPopupView extends AbstractModelBoundPopupView<Affinity
     EntityModelWidgetWithInfo priorityEditorWithInfo;
 
     @Path(value = "vmAffinityRule.selectedItem")
-    @UiField(provided=true)
+    @UiField(provided = true)
     ListModelListBoxEditor<EntityAffinityRule> vmAffinityRuleEditor;
 
-    @UiField(provided=true)
+    @UiField(provided = true)
     InfoIcon vmAffinityRuleEditorInfoIcon;
 
     @Path(value = "vmAffinityEnforcing.entity")
     @WithElementId("vmAffinityEnforcing")
-    @UiField(provided=true)
+    @UiField(provided = true)
     EntityModelCheckBoxEditor vmAffinityEnforcingEditor;
 
-    @UiField(provided=true)
+    @UiField(provided = true)
     InfoIcon vmAffinityEnforcingEditorInfoIcon;
 
     @UiField
@@ -81,18 +81,18 @@ public class AffinityGroupPopupView extends AbstractModelBoundPopupView<Affinity
     EnableableFormLabel vmAffinityEnforcingEditorLabel;
 
     @Path(value = "hostAffinityRule.selectedItem")
-    @UiField(provided=true)
+    @UiField(provided = true)
     ListModelListBoxEditor<EntityAffinityRule> hostAffinityRuleEditor;
 
-    @UiField(provided=true)
+    @UiField(provided = true)
     InfoIcon hostAffinityRuleEditorInfoIcon;
 
     @Path(value = "hostAffinityEnforcing.entity")
     @WithElementId("hostAffinityEnforcing")
-    @UiField(provided=true)
+    @UiField(provided = true)
     EntityModelCheckBoxEditor hostAffinityEnforcingEditor;
 
-    @UiField(provided=true)
+    @UiField(provided = true)
     InfoIcon hostAffinityEnforcingEditorInfoIcon;
 
     @UiField

@@ -245,7 +245,7 @@ public class BackendApiResource
     public Response head() {
         appMode = getCurrent().getApplicationMode();
         Api api;
-        if(appMode == ApplicationMode.GlusterOnly) {
+        if (appMode == ApplicationMode.GlusterOnly) {
             api = getGlusterApi();
         } else {
             api = getApi();
@@ -297,7 +297,7 @@ public class BackendApiResource
      */
     private void setAuthenticatedUser(Api api) {
         QueryReturnValue returnValue = runQuery(QueryType.GetUserBySessionId, new QueryParametersBase());
-        DbUser authenticatedUser = (DbUser)returnValue.getReturnValue();
+        DbUser authenticatedUser = (DbUser) returnValue.getReturnValue();
         User user = new User();
         user.setId(authenticatedUser.getId().toString());
         LinkHelper.addLinks(user);
@@ -312,7 +312,7 @@ public class BackendApiResource
         String version = getCurrent().getVersion();
         String resourcePath = String.format("/v%s/%s", version, API_SCHEMA);
         try (ByteArrayOutputStream baos = new ByteArrayOutputStream();
-             InputStream is = Thread.currentThread().getContextClassLoader().getResourceAsStream(resourcePath);){
+             InputStream is = Thread.currentThread().getContextClassLoader().getResourceAsStream(resourcePath);) {
             int count;
             while ((count = is.read(buffer)) != -1) {
                 baos.write(buffer, 0, count);
@@ -371,7 +371,7 @@ public class BackendApiResource
 
     @SuppressWarnings("unchecked")
     private Map<String, Integer> asStatisticsMap(Object result) {
-        return (Map<String, Integer>)result;
+        return (Map<String, Integer>) result;
     }
 
     private Api addSummary(Api api) {

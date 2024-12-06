@@ -42,7 +42,7 @@ public class RdpNativeImpl extends AbstractRdp implements IRdpNative {
         "gatewaycredentialssource:i:4\n" + //$NON-NLS-1$
         "gatewayprofileusagemethod:i:0\n" + //$NON-NLS-1$
         "promptcredentialonce:i:1\n" + //$NON-NLS-1$
-        "use redirection server name:i:0";//$NON-NLS-1$
+        "use redirection server name:i:0"; //$NON-NLS-1$
 
     private int getScreenMode() {
         if (getFullScreen()) {
@@ -79,12 +79,12 @@ public class RdpNativeImpl extends AbstractRdp implements IRdpNative {
         configBuilder.append("\nfull address:s:").append(getAddress()); //$NON-NLS-1$
         configBuilder.append("\nenablecredsspsupport:i:").append(booleanToInt(getEnableCredSspSupport())); //$NON-NLS-1$
         configBuilder.append(getredirectDrivesLines());
-        configBuilder.append("\nredirectprinters:i:").append(booleanToInt(getRedirectPrinters()));//$NON-NLS-1$
-        configBuilder.append("\nredirectsmartcards:i:").append(booleanToInt(getRedirectSmartCards()));//$NON-NLS-1$
-        configBuilder.append("\nredirectclipboard:i:").append(booleanToInt(getRedirectClipboard()));//$NON-NLS-1$
-        configBuilder.append("\nusername:s:").append(getUserNameAndDomain());//$NON-NLS-1$
+        configBuilder.append("\nredirectprinters:i:").append(booleanToInt(getRedirectPrinters())); //$NON-NLS-1$
+        configBuilder.append("\nredirectsmartcards:i:").append(booleanToInt(getRedirectSmartCards())); //$NON-NLS-1$
+        configBuilder.append("\nredirectclipboard:i:").append(booleanToInt(getRedirectClipboard())); //$NON-NLS-1$
+        configBuilder.append("\nusername:s:").append(getUserNameAndDomain()); //$NON-NLS-1$
 
-        ConsoleModel.makeConsoleConfigRequest("console.rdp", "application/rdp; charset=UTF-8", configBuilder.toString());//$NON-NLS-1$$NON-NLS-2$
+        ConsoleModel.makeConsoleConfigRequest("console.rdp", "application/rdp; charset=UTF-8", configBuilder.toString()); //$NON-NLS-1$$NON-NLS-2$
     }
 
     @Override

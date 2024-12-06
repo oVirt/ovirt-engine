@@ -110,7 +110,7 @@ public class RemoveNetworkCommand<T extends RemoveNetworkParameters> extends Net
     }
 
     private Guid getProviderId() {
-        return (getNetwork()==null || !getNetwork().isExternal()) ?
+        return (getNetwork() == null || !getNetwork().isExternal()) ?
                 null : getNetwork().getProvidedBy().getProviderId();
     }
 
@@ -190,7 +190,7 @@ public class RemoveNetworkCommand<T extends RemoveNetworkParameters> extends Net
 
     private ValidationResult getRemoveExternalNetworkValidationResult() {
         ProviderNetwork providerNetwork = getNetwork().getProvidedBy();
-        if (providerNetwork == null || !getParameters().isRemoveFromNetworkProvider()){
+        if (providerNetwork == null || !getParameters().isRemoveFromNetworkProvider()) {
             return ValidationResult.VALID;
         }
         ProviderValidator providerValidator = new ProviderValidator(getProvider());

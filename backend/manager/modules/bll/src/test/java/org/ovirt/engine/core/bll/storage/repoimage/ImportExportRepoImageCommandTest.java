@@ -40,7 +40,7 @@ public class ImportExportRepoImageCommandTest extends BaseCommandTest {
         diskStorageDomain.setStoragePoolId(storagePoolId);
         diskStorageDomain.setStatus(StorageDomainStatus.Active);
 
-        storagePool  = new StoragePool();
+        storagePool = new StoragePool();
         storagePool.setId(storagePoolId);
         storagePool.setStatus(StoragePoolStatus.Up);
 

@@ -211,7 +211,7 @@ public class ImagesHandlerTest {
 
     @Test
     public void testAggregateDiskImagesSnapshotsWithEmptyList() {
-        Collection<DiskImage> result =  imagesHandler.aggregateDiskImagesSnapshots(Collections.emptyList());
+        Collection<DiskImage> result = imagesHandler.aggregateDiskImagesSnapshots(Collections.emptyList());
         assertTrue(result.isEmpty(), "should return an empty list");
     }
 

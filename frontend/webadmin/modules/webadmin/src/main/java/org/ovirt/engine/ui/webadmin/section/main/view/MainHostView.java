@@ -252,7 +252,7 @@ public class MainHostView extends AbstractMainWithDetailsTableView<VDS, HostList
                     int lowValue = defaultSpmPriority / 2;
                     int highValue = defaultSpmPriority + (maxSpmPriority - defaultSpmPriority) / 2;
 
-                    if (object.getSpmStatus() != VdsSpmStatus.None){
+                    if (object.getSpmStatus() != VdsSpmStatus.None) {
                         return object.getSpmStatus().name();
                     }
 

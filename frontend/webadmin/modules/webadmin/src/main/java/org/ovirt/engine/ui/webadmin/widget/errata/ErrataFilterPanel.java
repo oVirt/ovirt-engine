@@ -73,7 +73,7 @@ public class ErrataFilterPanel extends Composite {
                 ErrataFilterValue value = new ErrataFilterValue(securityCheckbox.isActive(),
                         bugCheckbox.isActive(), enhancementCheckbox.isActive());
 
-                handler.onValueChange(new ValueChangeEvent<ErrataFilterValue>(value) {});
+                handler.onValueChange(new ValueChangeEvent<ErrataFilterValue>(value) { });
             });
         };
 

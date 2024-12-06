@@ -152,7 +152,7 @@ public class LiveMigrateDiskCommand<T extends LiveMigrateDiskParameters> extends
         getParameters().setImageGroupID(getImageGroupId());
         getParameters().setCommandType(getActionType());
 
-        getParameters().setDestinationImageId(((DiskImage)getDiskImageByDiskId(getParameters().getImageGroupID()))
+        getParameters().setDestinationImageId(((DiskImage) getDiskImageByDiskId(getParameters().getImageGroupID()))
                 .getImageId());
     }
 

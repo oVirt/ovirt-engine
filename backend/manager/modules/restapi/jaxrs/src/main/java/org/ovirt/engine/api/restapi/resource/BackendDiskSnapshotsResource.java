@@ -54,11 +54,11 @@ public class BackendDiskSnapshotsResource
     }
 
     protected String buildHref(String diskId, String snapshotId) {
-        return  "/ovirt-engine/api/disks/" + diskId + "/disksnapshots/" + snapshotId;
+        return "/ovirt-engine/api/disks/" + diskId + "/disksnapshots/" + snapshotId;
     }
 
     protected String buildParentHref(String diskId, boolean addDiskSnapshots) {
-        return  "/ovirt-engine/api/disks/" + diskId + (addDiskSnapshots ? "/disksnapshots" :"");
+        return "/ovirt-engine/api/disks/" + diskId + (addDiskSnapshots ? "/disksnapshots" : "");
     }
 
     @Override

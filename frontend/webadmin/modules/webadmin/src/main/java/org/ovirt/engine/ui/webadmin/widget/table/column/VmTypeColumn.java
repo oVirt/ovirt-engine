@@ -87,7 +87,7 @@ public class VmTypeColumn extends AbstractSafeHtmlColumn<VM> {
 
         if (configurationWillChangeAfterRestart(vm)) {
             Set<String> nextRunFields = vm.getNextRunChangedFields() != null ? vm.getNextRunChangedFields() : new HashSet<>();
-            if (clusterCpuChanged(vm) && !nextRunFields.contains("customCpuName")){ //$NON-NLS-1$
+            if (clusterCpuChanged(vm) && !nextRunFields.contains("customCpuName")) { //$NON-NLS-1$
                 nextRunFields.add("clusterCpuChange"); //$NON-NLS-1$
             }
             if (vm.isVnicsOutOfSync()) {
@@ -98,7 +98,7 @@ public class VmTypeColumn extends AbstractSafeHtmlColumn<VM> {
         return res;
     }
 
-    private static boolean clusterCpuChanged(VM vm){
+    private static boolean clusterCpuChanged(VM vm) {
         return vm.isManaged()
                 && !vm.isHostedEngine()
                 && vm.isRunningOrPaused()
@@ -107,7 +107,7 @@ public class VmTypeColumn extends AbstractSafeHtmlColumn<VM> {
                 && !Objects.equals(vm.getCpuName(), vm.getClusterCpuVerb());
     }
 
-    private static boolean configurationWillChangeAfterRestart(VM vm){
+    private static boolean configurationWillChangeAfterRestart(VM vm) {
         return clusterCpuChanged(vm) || vm.isNextRunConfigurationExists() || vm.isVnicsOutOfSync();
     }
 

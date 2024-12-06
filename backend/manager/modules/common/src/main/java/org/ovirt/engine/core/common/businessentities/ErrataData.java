@@ -11,7 +11,7 @@ public class ErrataData implements Serializable {
     private List<Erratum> errata;
     private ErrataCounts errataCounts;
 
-    public ErrataData(){
+    public ErrataData() {
     }
 
     public List<Erratum> getErrata() {

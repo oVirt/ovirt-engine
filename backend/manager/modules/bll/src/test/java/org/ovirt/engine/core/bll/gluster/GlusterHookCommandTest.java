@@ -123,7 +123,7 @@ public abstract class GlusterHookCommandTest<T extends GlusterHookCommandBase<? 
     }
 
     protected VDS getServer(Guid id, String name, Guid clusterId, VDSStatus status) {
-        VDS server =  new VDS();
+        VDS server = new VDS();
         server.setId(id);
         server.setVdsName(name);
         server.setStatus(status);

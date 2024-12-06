@@ -32,17 +32,17 @@ public abstract class AddStepCommand<T extends AddStepParameters> extends Comman
 
     @Override
     protected boolean validate() {
-        boolean retValue=true;
+        boolean retValue = true;
         job = jobDao.get(getParameters().getParentId());
         if (job == null) {
             parentStep = stepDao.get(getParameters().getParentId());
         }
         if (job == null && parentStep == null) {
-            retValue=false;
+            retValue = false;
             addValidationMessage(EngineMessage.ACTION_TYPE_NO_PARENT);
         }
         if (StringUtils.isBlank(getParameters().getDescription())) {
-            retValue=false;
+            retValue = false;
             addValidationMessage(EngineMessage.ACTION_TYPE_EMPTY_DESCRIPTION);
         }
 

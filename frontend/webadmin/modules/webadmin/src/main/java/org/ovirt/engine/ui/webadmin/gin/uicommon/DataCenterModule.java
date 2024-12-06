@@ -480,15 +480,15 @@ public class DataCenterModule extends AbstractGinModule {
         bind(DataCenterIscsiBondListModel.class).in(Singleton.class);
         bind(DataCenterStorageQosListModel.class).in(Singleton.class);
         bind(DataCenterCpuQosListModel.class).in(Singleton.class);
-        bind(new TypeLiteral<PermissionListModel<StoragePool>>(){}).in(Singleton.class);
+        bind(new TypeLiteral<PermissionListModel<StoragePool>>() { }).in(Singleton.class);
         bind(DataCenterMainSelectedItems.class).asEagerSingleton();
 
         // Search-able Detail Models
-        bind(new TypeLiteral<SearchableDetailModelProvider<Cluster, DataCenterListModel, DataCenterClusterListModel>>(){})
-            .to(new TypeLiteral<SearchableDetailTabModelProvider<Cluster, DataCenterListModel, DataCenterClusterListModel>>(){})
+        bind(new TypeLiteral<SearchableDetailModelProvider<Cluster, DataCenterListModel, DataCenterClusterListModel>>() { })
+            .to(new TypeLiteral<SearchableDetailTabModelProvider<Cluster, DataCenterListModel, DataCenterClusterListModel>>() { })
             .in(Singleton.class);
         // Permission Detail Model
-        bind(new TypeLiteral<SearchableDetailModelProvider<Permission, DataCenterListModel, PermissionListModel<StoragePool>>>(){})
-            .to(new TypeLiteral<PermissionModelProvider<StoragePool, DataCenterListModel>>(){}).in(Singleton.class);
+        bind(new TypeLiteral<SearchableDetailModelProvider<Permission, DataCenterListModel, PermissionListModel<StoragePool>>>() { })
+            .to(new TypeLiteral<PermissionModelProvider<StoragePool, DataCenterListModel>>() { }).in(Singleton.class);
     }
 }

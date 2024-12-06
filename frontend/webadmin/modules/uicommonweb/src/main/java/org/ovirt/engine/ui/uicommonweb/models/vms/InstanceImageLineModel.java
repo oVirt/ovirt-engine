@@ -334,7 +334,7 @@ public class InstanceImageLineModel extends EntityModel {
 
         if (getVm() != null) {
             model.setVm(getVm());
-            ((NewDiskModel)model).updateSuggestedDiskAliasFromServer();
+            ((NewDiskModel) model).updateSuggestedDiskAliasFromServer();
         } else {
             String currentVmName = parentModel.getUnitVmModel().getName().getEntity();
             if (StringHelper.isNotNullOrEmpty(currentVmName)) {

@@ -85,7 +85,7 @@ public class FenceVdsManualyCommand<T extends FenceVdsManualyParameters> extends
         // check problematic vds status
         if (isLegalStatus(problematicVds.getStatus())) {
             if (problematicVds.getSpmStatus() == VdsSpmStatus.SPM) {
-                if(!getStoragePool().isLocal()) {
+                if (!getStoragePool().isLocal()) {
                     if (!initializeVds()) {
                         return false;
                     }

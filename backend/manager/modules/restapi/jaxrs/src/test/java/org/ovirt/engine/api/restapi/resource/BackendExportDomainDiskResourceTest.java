@@ -45,7 +45,7 @@ public class BackendExportDomainDiskResourceTest
     private static final Guid TEMPLATE_ID = GUIDS[1];
     private static final Guid DISK_ID = GUIDS[2];
     private static final Guid DATA_CENTER_ID = GUIDS[0];
-    private static final Guid STORAGE_DOMAIN_ID = GUIDS[GUIDS.length-1];
+    private static final Guid STORAGE_DOMAIN_ID = GUIDS[GUIDS.length - 1];
 
     public static Stream<MockConfigDescriptor<?>> mockConfiguration() {
         return Stream.of(MockConfigDescriptor.of(ConfigValues.PropagateDiskErrors, false));

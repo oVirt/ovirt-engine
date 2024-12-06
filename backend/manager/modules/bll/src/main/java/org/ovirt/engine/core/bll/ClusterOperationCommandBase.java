@@ -204,7 +204,7 @@ public abstract class ClusterOperationCommandBase<T extends ClusterOperationPara
 
     private ClusterPolicy getClusterPolicy(final Cluster cluster) {
         ClusterPolicy clusterPolicy = null;
-        if (cluster == null){
+        if (cluster == null) {
             return null;
         }
         if (cluster.getClusterPolicyId() != null) {

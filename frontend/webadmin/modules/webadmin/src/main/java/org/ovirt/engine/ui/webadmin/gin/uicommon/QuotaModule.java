@@ -202,17 +202,17 @@ public class QuotaModule extends AbstractGinModule {
 
         // Search-able Detail Models
         bind(new TypeLiteral<SearchableDetailModelProvider<QuotaCluster, QuotaListModel,
-                QuotaClusterListModel>>(){}).to(new TypeLiteral<SearchableDetailTabModelProvider<QuotaCluster,
-                        QuotaListModel, QuotaClusterListModel>>(){}).in(Singleton.class);
+                QuotaClusterListModel>>() { }).to(new TypeLiteral<SearchableDetailTabModelProvider<QuotaCluster,
+                        QuotaListModel, QuotaClusterListModel>>() { }).in(Singleton.class);
         bind(new TypeLiteral<SearchableDetailModelProvider<QuotaStorage, QuotaListModel,
-                QuotaStorageListModel>>(){}).to(new TypeLiteral<SearchableDetailTabModelProvider<QuotaStorage,
-                        QuotaListModel, QuotaStorageListModel>>(){}).in(Singleton.class);
-        bind(new TypeLiteral<SearchableDetailModelProvider<VM, QuotaListModel, QuotaVmListModel>>(){})
-            .to(new TypeLiteral<SearchableDetailTabModelProvider<VM, QuotaListModel, QuotaVmListModel>>(){})
+                QuotaStorageListModel>>() { }).to(new TypeLiteral<SearchableDetailTabModelProvider<QuotaStorage,
+                        QuotaListModel, QuotaStorageListModel>>() { }).in(Singleton.class);
+        bind(new TypeLiteral<SearchableDetailModelProvider<VM, QuotaListModel, QuotaVmListModel>>() { })
+            .to(new TypeLiteral<SearchableDetailTabModelProvider<VM, QuotaListModel, QuotaVmListModel>>() { })
             .in(Singleton.class);
         bind(new TypeLiteral<SearchableDetailModelProvider<VmTemplate, QuotaListModel,
-                QuotaTemplateListModel>>(){}).to(new TypeLiteral<SearchableDetailTabModelProvider<VmTemplate,
-                        QuotaListModel, QuotaTemplateListModel>>(){}).in(Singleton.class);
+                QuotaTemplateListModel>>() { }).to(new TypeLiteral<SearchableDetailTabModelProvider<VmTemplate,
+                        QuotaListModel, QuotaTemplateListModel>>() { }).in(Singleton.class);
     }
 
 }

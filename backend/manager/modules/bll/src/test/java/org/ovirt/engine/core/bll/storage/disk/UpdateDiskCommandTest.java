@@ -526,7 +526,7 @@ public class UpdateDiskCommandTest extends BaseCommandTest {
         initializeCommand();
         command.executeVmCommand();
         List<UpdateDiskParameters.Phase> phaseList = command.getParameters().getDiskUpdatePhases();
-        UpdateDiskParameters.Phase phase = phaseList.get(phaseList.size()-1);
+        UpdateDiskParameters.Phase phase = phaseList.get(phaseList.size() - 1);
         assertEquals(UpdateDiskParameters.Phase.UPDATE_DISK, phase);
     }
 
@@ -544,7 +544,7 @@ public class UpdateDiskCommandTest extends BaseCommandTest {
         initializeCommand();
         command.executeVmCommand();
         List<UpdateDiskParameters.Phase> phaseList = command.getParameters().getDiskUpdatePhases();
-        UpdateDiskParameters.Phase phase = phaseList.get(phaseList.size()-1);
+        UpdateDiskParameters.Phase phase = phaseList.get(phaseList.size() - 1);
         assertEquals(UpdateDiskParameters.Phase.UPDATE_DISK, phase);
     }
 

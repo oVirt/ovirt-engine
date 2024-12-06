@@ -468,7 +468,7 @@ public class NetworkInSyncWithVdsNetworkInterfaceTest {
     }
 
     @Test
-    public void testIsNetworkInSyncWhenIpv4GatewayEqual(){
+    public void testIsNetworkInSyncWhenIpv4GatewayEqual() {
         initIpv4ConfigurationBootProtocolGateway(Ipv4BootProtocol.STATIC_IP, true);
         assertThat(createTestedInstance().isNetworkInSync(), is(true));
     }
@@ -482,7 +482,7 @@ public class NetworkInSyncWithVdsNetworkInterfaceTest {
     }
 
     @Test
-    public void testIsNetworkInSyncWhenIpv4GatewayDifferent(){
+    public void testIsNetworkInSyncWhenIpv4GatewayDifferent() {
         initIpv4ConfigurationBootProtocolGateway(Ipv4BootProtocol.STATIC_IP, false);
         assertThat(createTestedInstance().isNetworkInSync(), is(false));
     }
@@ -599,7 +599,7 @@ public class NetworkInSyncWithVdsNetworkInterfaceTest {
     }
 
     @Test
-    public void testIsNetworkInSyncWhenIpv6GatewayEqual(){
+    public void testIsNetworkInSyncWhenIpv6GatewayEqual() {
         initIpv6ConfigurationBootProtocolGateway(Ipv6BootProtocol.STATIC_IP, true);
         assertThat(createTestedInstance(true, sampleDnsResolverConfiguration).isNetworkInSync(), is(true));
     }
@@ -621,7 +621,7 @@ public class NetworkInSyncWithVdsNetworkInterfaceTest {
      * null value on the vds interface.
      */
     @Test
-    public void testIsNetworkInSyncWhenIpv6GatewayNone(){
+    public void testIsNetworkInSyncWhenIpv6GatewayNone() {
         List<Object[]> tests = Arrays.asList(
                 // array of [network attachment address, interface address, expected sync]
                 new Object[] { null, "::" , Boolean.TRUE},
@@ -640,7 +640,7 @@ public class NetworkInSyncWithVdsNetworkInterfaceTest {
      * User configuration of a 0.0.0.0 gateway is saved on the attachment as is.
      */
     @Test
-    public void testIsNetworkInSyncWhenIpv4GatewayNone(){
+    public void testIsNetworkInSyncWhenIpv4GatewayNone() {
         List<Object[]> tests = Arrays.asList(
                 // array of [network attachment address, interface address, expected sync]
                 new Object[] { null, "0.0.0.0" , Boolean.FALSE},
@@ -701,7 +701,7 @@ public class NetworkInSyncWithVdsNetworkInterfaceTest {
 
     @ParameterizedTest
     @MethodSource
-    void testIsNetworkInSyncForIpv6GatewayDifferent(String address1, String address2){
+    void testIsNetworkInSyncForIpv6GatewayDifferent(String address1, String address2) {
         initIpv6ConfigurationStaticBootProtocol(Ipv6BootProtocol.STATIC_IP);
         ipv6Address.setGateway(address1);
         iface.setIpv6Gateway(address2);
@@ -737,7 +737,7 @@ public class NetworkInSyncWithVdsNetworkInterfaceTest {
     }
 
     @Test
-    public void testIsNetworkInSyncWhenIpv6GatewayDifferent(){
+    public void testIsNetworkInSyncWhenIpv6GatewayDifferent() {
         initIpv6ConfigurationBootProtocolGateway(Ipv6BootProtocol.STATIC_IP, false);
         assertThat(createTestedInstance().isNetworkInSync(), is(false));
     }

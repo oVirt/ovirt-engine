@@ -60,7 +60,7 @@ public class LunSelectionCell extends AbstractCell<LunModel> {
         } else if (!value.getIsAccessible()) {
             // ImageResourceCell sets the id
             imageCell.render(context, resources.logWarningImage(), sb, id);
-        }  else if (!multiSelection){
+        } else if (!multiSelection) {
             boolean checked = value.getIsSelected();
             boolean disabled = value.getIsGrayedOut();
             String inputId = id + "_input"; //$NON-NLS-1$

@@ -58,7 +58,7 @@ public class RemoveGroupCommand<T extends IdParameters> extends AdGroupsHandling
 
     @Override
     public AuditLogType getAuditLogTypeValue() {
-        return getSucceeded()? AuditLogType.USER_REMOVE_AD_GROUP : AuditLogType.USER_REMOVE_AD_GROUP_FAILED;
+        return getSucceeded() ? AuditLogType.USER_REMOVE_AD_GROUP : AuditLogType.USER_REMOVE_AD_GROUP_FAILED;
     }
 
     @Override

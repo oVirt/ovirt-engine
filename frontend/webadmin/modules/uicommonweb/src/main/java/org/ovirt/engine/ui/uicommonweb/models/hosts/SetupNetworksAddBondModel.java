@@ -6,7 +6,7 @@ import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
 public class SetupNetworksAddBondModel extends SetupNetworksBondModel {
 
-    public SetupNetworksAddBondModel(List<String> freeBonds, String defaultBondName, boolean doesBondHaveVmNetworkAttached){
+    public SetupNetworksAddBondModel(List<String> freeBonds, String defaultBondName, boolean doesBondHaveVmNetworkAttached) {
         super(doesBondHaveVmNetworkAttached);
         setTitle(ConstantsManager.getInstance().getConstants().createNewBondTitle());
         getBond().setItems(freeBonds);

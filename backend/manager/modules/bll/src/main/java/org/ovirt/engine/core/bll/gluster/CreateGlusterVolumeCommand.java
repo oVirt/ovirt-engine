@@ -124,8 +124,8 @@ public class CreateGlusterVolumeCommand extends GlusterCommandBase<CreateGluster
             return false;
         }
 
-        if (getVolume().getIsArbiter()){
-            if(!getVolume().getVolumeType().isReplicatedType() || getVolume().getReplicaCount() != 3){
+        if (getVolume().getIsArbiter()) {
+            if (!getVolume().getVolumeType().isReplicatedType() || getVolume().getReplicaCount() != 3) {
                 return failValidation(EngineMessage.ACTION_TYPE_FAILED_GLUSTER_ARBITER_VOLUME_SHOULD_BE_REPLICA_3_VOLUME);
             }
         }
@@ -146,7 +146,7 @@ public class CreateGlusterVolumeCommand extends GlusterCommandBase<CreateGluster
         // set the gluster volume name for audit purpose
         setGlusterVolumeName(getVolume().getName());
 
-        if(getVolume().getTransportTypes() == null || getVolume().getTransportTypes().isEmpty()) {
+        if (getVolume().getTransportTypes() == null || getVolume().getTransportTypes().isEmpty()) {
             getVolume().addTransportType(TransportType.TCP);
         }
 
@@ -168,7 +168,7 @@ public class CreateGlusterVolumeCommand extends GlusterCommandBase<CreateGluster
                                 getParameters().isForce()));
         setSucceeded(returnValue.getSucceeded());
 
-        if(!getSucceeded()) {
+        if (!getSucceeded()) {
             handleVdsError(AuditLogType.GLUSTER_VOLUME_CREATE_FAILED, returnValue.getVdsError().getMessage());
             return;
         }
@@ -177,7 +177,7 @@ public class CreateGlusterVolumeCommand extends GlusterCommandBase<CreateGluster
         GlusterVolumeEntity createdVolume = (GlusterVolumeEntity) returnValue.getReturnValue();
         setVolumeType(createdVolume);
         setBrickOrder(createdVolume.getBricks());
-        if(createdVolume.getIsArbiter()){
+        if (createdVolume.getIsArbiter()) {
             setArbiterFlag(createdVolume);
         }
         addVolumeToDb(createdVolume);
@@ -200,7 +200,7 @@ public class CreateGlusterVolumeCommand extends GlusterCommandBase<CreateGluster
      * Sets every third brick as arbiter brick if GlusterVolume is an arbiter volume
      */
     private void setArbiterFlag(GlusterVolumeEntity volume) {
-       for(int i=2;i<volume.getBricks().size();i+=3){
+       for (int i = 2; i < volume.getBricks().size(); i += 3) {
            volume.getBricks().get(i).setIsArbiter(volume.getIsArbiter());
        }
     }

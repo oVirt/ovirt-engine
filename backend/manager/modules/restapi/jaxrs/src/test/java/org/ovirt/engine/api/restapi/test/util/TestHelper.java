@@ -38,8 +38,8 @@ public class TestHelper {
     protected static boolean matches(Object lhs, Object rhs) {
         boolean matches = true;
         if (lhs instanceof List && rhs instanceof Iterable) {
-            List<?> llhs = (List<?>)lhs;
-            Iterator<?> irhs = ((Iterable<?>)rhs).iterator();
+            List<?> llhs = (List<?>) lhs;
+            Iterator<?> irhs = ((Iterable<?>) rhs).iterator();
             int count = 0;
             while (irhs.hasNext()) {
                 count++;

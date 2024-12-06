@@ -74,7 +74,7 @@ public class PowerSavingWeightPolicyUnitTest extends AbstractPolicyUnitTest {
     private VdsManager vdsManager;
 
     @InjectMocks
-    private PowerSavingCPUWeightPolicyUnit powerSavingCPUWeightPolicyUnit =  new PowerSavingCPUWeightPolicyUnit(null, new PendingResourceManager());
+    private PowerSavingCPUWeightPolicyUnit powerSavingCPUWeightPolicyUnit = new PowerSavingCPUWeightPolicyUnit(null, new PendingResourceManager());
 
     @InjectMocks
     private PowerSavingMemoryWeightPolicyUnit powerSavingMemoryWeightPolicyUnit = new PowerSavingMemoryWeightPolicyUnit(null, new PendingResourceManager());

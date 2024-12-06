@@ -15,7 +15,7 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 public class ExternalHostMapper {
     @Mapping(from = VDS.class, to = ExternalHost.class)
     public static ExternalHost map(VDS entity, ExternalHost template) {
-        ExternalHost model = template != null? template: new ExternalHost();
+        ExternalHost model = template != null ? template : new ExternalHost();
         String name = entity.getName();
         if (name != null) {
             model.setId(string2hex(name));
@@ -29,7 +29,7 @@ public class ExternalHostMapper {
 
     @Mapping(from = ExternalHost.class, to = VDS.class)
     public static VDS map(ExternalHost model, VDS template) {
-        VDS entity = template != null? template: new VDS();
+        VDS entity = template != null ? template : new VDS();
         if (model.isSetId()) {
             entity.setVdsName(hex2string(model.getId()));
         } else if (model.isSetName()) {

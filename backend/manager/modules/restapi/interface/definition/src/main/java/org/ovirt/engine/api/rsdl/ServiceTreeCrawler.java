@@ -16,7 +16,7 @@ import java.util.List;
  * 3) next() returns BackendVmNicsResource (initialized with
  *           58cfb470-03b9-01d0-03b9-0000000001e7 as the Vm ID)
  */
-public class ServiceTreeCrawler implements Iterator<ServiceTreeNode>{
+public class ServiceTreeCrawler implements Iterator<ServiceTreeNode> {
 
     private Iterator<String> pathIterator;
     private ServiceTreeNode node;

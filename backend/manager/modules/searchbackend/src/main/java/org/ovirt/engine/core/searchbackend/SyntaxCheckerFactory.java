@@ -17,7 +17,7 @@ public class SyntaxCheckerFactory {
 
     public static ISyntaxChecker createBackendSyntaxChecker(String AuthenticationMethod) {
         ConfigAuthenticationMethod = AuthenticationMethod;
-        if(backendSyntaxChecker == null) {
+        if (backendSyntaxChecker == null) {
             backendSyntaxChecker = new SyntaxChecker();
         }
         return backendSyntaxChecker;

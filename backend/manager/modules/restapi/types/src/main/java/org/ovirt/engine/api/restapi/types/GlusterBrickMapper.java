@@ -19,15 +19,15 @@ public class GlusterBrickMapper {
     public static GlusterBrickEntity map(GlusterBrick fromBrick, GlusterBrickEntity toBrick) {
         GlusterBrickEntity brick = (toBrick == null) ? new GlusterBrickEntity() : toBrick;
 
-        if(fromBrick.isSetId()) {
+        if (fromBrick.isSetId()) {
             brick.setId(Guid.createGuidFromStringDefaultEmpty(fromBrick.getId()));
         }
 
-        if(fromBrick.isSetServerId()) {
+        if (fromBrick.isSetServerId()) {
             brick.setServerId(Guid.createGuidFromStringDefaultEmpty(fromBrick.getServerId()));
         }
 
-        if(fromBrick.isSetBrickDir()) {
+        if (fromBrick.isSetBrickDir()) {
             brick.setBrickDirectory(fromBrick.getBrickDir());
         }
         return brick;
@@ -37,27 +37,27 @@ public class GlusterBrickMapper {
     public static GlusterBrick map(GlusterBrickEntity fromBrick, GlusterBrick toBrick) {
         GlusterBrick brick = (toBrick == null) ? new GlusterBrick() : toBrick;
 
-        if(fromBrick.getId() != null) {
+        if (fromBrick.getId() != null) {
             brick.setId(fromBrick.getId().toString());
         }
 
-        if(fromBrick.getServerId() != null) {
+        if (fromBrick.getServerId() != null) {
             brick.setServerId(fromBrick.getServerId().toString());
         }
 
-        if(StringUtils.isNotEmpty(fromBrick.getQualifiedName())) {
+        if (StringUtils.isNotEmpty(fromBrick.getQualifiedName())) {
            brick.setName(fromBrick.getQualifiedName());
         }
 
-        if(fromBrick.getBrickDirectory() != null) {
+        if (fromBrick.getBrickDirectory() != null) {
             brick.setBrickDir(fromBrick.getBrickDirectory());
         }
 
-        if(fromBrick.getStatus() != null) {
+        if (fromBrick.getStatus() != null) {
             brick.setStatus(mapBrickStatus(fromBrick.getStatus()));
         }
 
-        if(fromBrick.getVolumeId() != null) {
+        if (fromBrick.getVolumeId() != null) {
             brick.setGlusterVolume(new GlusterVolume());
             brick.getGlusterVolume().setId(fromBrick.getVolumeId().toString());
         }

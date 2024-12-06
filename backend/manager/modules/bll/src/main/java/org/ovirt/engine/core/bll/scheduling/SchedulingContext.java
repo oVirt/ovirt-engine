@@ -47,7 +47,7 @@ public class SchedulingContext {
         this(cluster, policyParameters, false, false);
     }
 
-    public Cluster  getCluster() {
+    public Cluster getCluster() {
         return cluster;
     }
 

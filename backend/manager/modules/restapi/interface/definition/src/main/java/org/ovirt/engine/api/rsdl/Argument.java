@@ -6,7 +6,7 @@ public class Argument {
         this.name = name;
         this.type = type;
     }
-    public Argument() {}
+    public Argument() { }
 
     private String name;
     private String type;

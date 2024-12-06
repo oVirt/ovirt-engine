@@ -47,7 +47,7 @@ public class TemplateVmListModel extends VmListModel<VmTemplate> {
         super(vmGeneralModel, vmInterfaceListModel, vmDiskListModel,
                 vmSnapshotListModel, vmEventListModel, vmAppListModel,
                 permissionListModel, vmAffinityGroupListModel, vmGuestInfoModel,
-                importVmsModelProvider, vmHostDeviceListModel,  vmDevicesListModel,
+                importVmsModelProvider, vmHostDeviceListModel, vmDevicesListModel,
                 vmAffinityLabelListModel, vmErrataCountModel, vmGuestContainerListModel,
                 confirmationModelSettingsManager);
         setTitle(ConstantsManager.getInstance().getConstants().virtualMachinesTitle());

@@ -18,7 +18,7 @@ public class VmSnapshotListModelTest extends BaseVmListModelTest {
     UnitVmModel model;
 
     @BeforeEach
-    public void setUp()  {
+    public void setUp() {
         setUpUnitVmModelExpectations(model);
     }
 

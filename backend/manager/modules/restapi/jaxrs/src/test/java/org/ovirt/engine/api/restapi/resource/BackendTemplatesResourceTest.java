@@ -104,8 +104,8 @@ public class BackendTemplatesResourceTest
         Response response = collection.add(model);
         assertEquals(201, response.getStatus());
         assertTrue(response.getEntity() instanceof Template);
-        verifyModel((Template)response.getEntity(), 0);
-        assertNull(((Template)response.getEntity()).getCreationStatus());
+        verifyModel((Template) response.getEntity(), 0);
+        assertNull(((Template) response.getEntity()).getCreationStatus());
     }
 
     protected Cluster getClusterEntity() {
@@ -161,7 +161,7 @@ public class BackendTemplatesResourceTest
         assertEquals(202, response.getStatus());
         assertTrue(response.getEntity() instanceof Template);
         verifyModel((Template) response.getEntity(), 0);
-        Template created = (Template)response.getEntity();
+        Template created = (Template) response.getEntity();
         assertNotNull(created.getCreationStatus());
         assertEquals(creationStatus.value(), created.getCreationStatus());
     }
@@ -252,7 +252,7 @@ public class BackendTemplatesResourceTest
             assertTrue(response.getEntity() instanceof Template);
             assertEquals(VERSION_NAME, ((Template) response.getEntity()).getVersion().getVersionName());
             assertEquals(((Template) response.getEntity()).getVersion().getBaseTemplate().getId(), GUIDS[1].toString());
-            verifyModel((Template)response.getEntity(), 2);
+            verifyModel((Template) response.getEntity(), 2);
     }
 
     @Test
@@ -297,8 +297,8 @@ public class BackendTemplatesResourceTest
         Response response = collection.add(model);
         assertEquals(201, response.getStatus());
         assertTrue(response.getEntity() instanceof Template);
-        verifyModel((Template)response.getEntity(), 0);
-        assertNull(((Template)response.getEntity()).getCreationStatus());
+        verifyModel((Template) response.getEntity(), 0);
+        assertNull(((Template) response.getEntity()).getCreationStatus());
     }
 
     @Test
@@ -344,8 +344,8 @@ public class BackendTemplatesResourceTest
         Response response = collection.add(model);
         assertEquals(201, response.getStatus());
         assertTrue(response.getEntity() instanceof Template);
-        verifyModel((Template)response.getEntity(), 0);
-        assertNull(((Template)response.getEntity()).getCreationStatus());
+        verifyModel((Template) response.getEntity(), 0);
+        assertNull(((Template) response.getEntity()).getCreationStatus());
     }
 
     @Test
@@ -389,8 +389,8 @@ public class BackendTemplatesResourceTest
         Response response = collection.add(model);
         assertEquals(201, response.getStatus());
         assertTrue(response.getEntity() instanceof Template);
-        verifyModel((Template)response.getEntity(), 0);
-        assertNull(((Template)response.getEntity()).getCreationStatus());
+        verifyModel((Template) response.getEntity(), 0);
+        assertNull(((Template) response.getEntity()).getCreationStatus());
     }
 
     @Test
@@ -445,8 +445,8 @@ public class BackendTemplatesResourceTest
         Response response = collection.add(model);
         assertEquals(201, response.getStatus());
         assertTrue(response.getEntity() instanceof Template);
-        verifyModel((Template)response.getEntity(), 0);
-        assertNull(((Template)response.getEntity()).getCreationStatus());
+        verifyModel((Template) response.getEntity(), 0);
+        assertNull(((Template) response.getEntity()).getCreationStatus());
     }
 
     @Test
@@ -515,7 +515,7 @@ public class BackendTemplatesResourceTest
         restModel.setLargeIcon(IconTestHelpler.createIconWithData());
         Response response = doAdd(restModel);
         assertEquals(201, response.getStatus());
-        verifyModel((Template)response.getEntity(), 0);
+        verifyModel((Template) response.getEntity(), 0);
         assertNull(((Template) response.getEntity()).getCreationStatus());
     }
 
@@ -554,7 +554,7 @@ public class BackendTemplatesResourceTest
         restModel.setLargeIcon(IconTestHelpler.createIcon(GUIDS[3]));
         Response response = doAdd(restModel);
         assertEquals(201, response.getStatus());
-        verifyModel((Template)response.getEntity(), 0);
+        verifyModel((Template) response.getEntity(), 0);
         assertNull(((Template) response.getEntity()).getCreationStatus());
     }
 
@@ -590,7 +590,7 @@ public class BackendTemplatesResourceTest
         when(entity.getNumOfSockets()).thenReturn(2);
         when(entity.getThreadsPerCpu()).thenReturn(1);
         when(entity.getCpuPerSocket()).thenReturn(4);
-        if(index == 2) {
+        if (index == 2) {
            when(entity.getTemplateVersionName()).thenReturn(VERSION_NAME);
            when(entity.getTemplateVersionNumber()).thenReturn(2);
            when(entity.getBaseTemplateId()).thenReturn(GUIDS[1]);
@@ -615,7 +615,7 @@ public class BackendTemplatesResourceTest
         model.getVm().setId(GUIDS[1].toString());
         model.setCluster(new org.ovirt.engine.api.model.Cluster());
         model.getCluster().setId(GUIDS[2].toString());
-        if(index == 2) {
+        if (index == 2) {
             populateVersion(model);
         }
         return model;
@@ -641,7 +641,7 @@ public class BackendTemplatesResourceTest
         super.verifyCollection(collection);
 
         for (Template template : collection) {
-            if(template.getId().equals(GUIDS[2].toString())) {
+            if (template.getId().equals(GUIDS[2].toString())) {
                  assertEquals(VERSION_NAME, template.getVersion().getVersionName());
                  assertEquals(new Integer(2), template.getVersion().getVersionNumber());
                  assertEquals(template.getVersion().getBaseTemplate().getId(), GUIDS[1].toString());
@@ -667,7 +667,7 @@ public class BackendTemplatesResourceTest
         assertEquals(4, model.getCpu().getTopology().getCores().intValue());
         assertEquals(2, model.getCpu().getTopology().getSockets().intValue());
         assertEquals(1, model.getCpu().getTopology().getThreads().intValue());
-        if(index == 2) {
+        if (index == 2) {
             assertNotNull(model.getVersion());
             assertNotSame(model.getVersion().getBaseTemplate().getId(), model.getId());
         }

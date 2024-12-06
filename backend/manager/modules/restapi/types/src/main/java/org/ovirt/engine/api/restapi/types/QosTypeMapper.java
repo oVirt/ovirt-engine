@@ -4,7 +4,7 @@ import org.ovirt.engine.api.model.QosType;
 
 public class QosTypeMapper {
 
-    @Mapping(from=org.ovirt.engine.core.common.businessentities.qos.QosType.class, to=QosType.class)
+    @Mapping(from = org.ovirt.engine.core.common.businessentities.qos.QosType.class, to = QosType.class)
     public static QosType map(org.ovirt.engine.core.common.businessentities.qos.QosType qosType, QosType template) {
         switch (qosType) {
 

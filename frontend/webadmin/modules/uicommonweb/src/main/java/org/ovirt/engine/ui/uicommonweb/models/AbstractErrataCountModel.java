@@ -109,7 +109,7 @@ public abstract class AbstractErrataCountModel extends EntityModel<HasErrata> {
                 setErrataCounts(resultEntity);
             } else {
                 setMessage(
-                        constants.katelloProblemRetrievingErrata()  + " " + returnValue.getExceptionMessage()); //$NON-NLS-1$
+                        constants.katelloProblemRetrievingErrata() + " " + returnValue.getExceptionMessage()); //$NON-NLS-1$
             }
         });
         asyncQuery.setHandleFailure(true);

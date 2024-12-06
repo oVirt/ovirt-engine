@@ -337,12 +337,12 @@ public class NetworkModule extends AbstractGinModule {
         bind(NetworkHostListModel.class).in(Singleton.class);
         bind(NetworkVmListModel.class).in(Singleton.class);
         bind(NetworkTemplateListModel.class).in(Singleton.class);
-        bind(new TypeLiteral<PermissionListModel<NetworkView>>(){}).in(Singleton.class);
+        bind(new TypeLiteral<PermissionListModel<NetworkView>>() { }).in(Singleton.class);
         bind(NetworkMainSelectedItems.class).asEagerSingleton();
 
         // Permission Detail Model
-        bind(new TypeLiteral<SearchableDetailModelProvider<Permission, NetworkListModel, PermissionListModel<NetworkView>>>(){})
-           .to(new TypeLiteral<PermissionModelProvider<NetworkView, NetworkListModel>>(){}).in(Singleton.class);
+        bind(new TypeLiteral<SearchableDetailModelProvider<Permission, NetworkListModel, PermissionListModel<NetworkView>>>() { })
+           .to(new TypeLiteral<PermissionModelProvider<NetworkView, NetworkListModel>>() { }).in(Singleton.class);
     }
 
 }

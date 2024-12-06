@@ -11,7 +11,7 @@ import org.ovirt.engine.core.common.action.AddStepParameters;
  * BLL command to create a Step for Jobs that are internal
  */
 @InternalCommandAttribute
-public class AddInternalStepCommand <T extends AddStepParameters> extends AddStepCommand<T>{
+public class AddInternalStepCommand <T extends AddStepParameters> extends AddStepCommand<T> {
 
     public AddInternalStepCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);

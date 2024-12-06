@@ -44,7 +44,7 @@ public class GetLunsByVgIdQueryTest extends AbstractQueryTest<GetLunsByVgIdParam
     private static final String PORT = "123456";
     private static final String[] IQNS = { ADDRESS + ":1", ADDRESS + ":2", ADDRESS + ":3" };
     private static final String PHYSICAL_DEVICE_FIELD = "sda";
-    private static final String DUMMY_LUN_ID = BusinessEntitiesDefinitions.DUMMY_LUN_ID_PREFIX+"89871115-e64d-4754-bacd-556cc249761b";
+    private static final String DUMMY_LUN_ID = BusinessEntitiesDefinitions.DUMMY_LUN_ID_PREFIX + "89871115-e64d-4754-bacd-556cc249761b";
     @Mock
     private VDSBrokerFrontend vdsBrokerFrontendMock;
     @Mock

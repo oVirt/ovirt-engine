@@ -10,7 +10,7 @@ public class ConvergenceItemWithStallingLimit implements Serializable {
 
     private ConvergenceItem convergenceItem;
 
-    public ConvergenceItemWithStallingLimit() {}
+    public ConvergenceItemWithStallingLimit() { }
 
     public ConvergenceItemWithStallingLimit(int stallingLimit, String action, Object... params) {
         this(stallingLimit, new ConvergenceItem(action, params));

@@ -127,7 +127,7 @@ public class OvfManagerTest {
         when(osRepository.getArchitectureFromOS(anyInt())).thenReturn(ArchitectureType.x86_64);
         when(osRepository.getUniqueOsNames()).thenReturn(osIdsToNames);
         when(osRepository.getOsIdByUniqueName(any())).thenAnswer(
-                invocation-> osIdsToNames.entrySet()
+                invocation -> osIdsToNames.entrySet()
                         .stream()
                         .filter(k -> invocation.getArguments()[0].equals(k.getValue()))
                         .map(Map.Entry::getKey)
@@ -180,7 +180,7 @@ public class OvfManagerTest {
         VM vm = createVM();
         vm.setDefaultDisplayType(DisplayType.qxl);
         vm.setVmOs(EXISTING_OS_ID);
-        String xml = manager.exportVm(vm,  new FullEntityOvfData(vm), Version.getLast());
+        String xml = manager.exportVm(vm, new FullEntityOvfData(vm), Version.getLast());
         assertNotNull(xml);
         final VM newVm = new VM();
         FullEntityOvfData fullEntityOvfData = new FullEntityOvfData(newVm);

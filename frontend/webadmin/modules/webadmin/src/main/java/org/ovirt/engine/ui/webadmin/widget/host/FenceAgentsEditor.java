@@ -117,7 +117,7 @@ public class FenceAgentsEditor extends AddRemoveRowWidget<FenceAgentListModel, F
             if (sender instanceof ListModel) {
                 @SuppressWarnings("unchecked")
                 ListModel<String> sourceListModel = (ListModel<String>) sender;
-                if(sourceListModel.getItems() != null && !sourceListModel.getItems().isEmpty()
+                if (sourceListModel.getItems() != null && !sourceListModel.getItems().isEmpty()
                         && sourceListModel.getItems() instanceof List) {
                     List<String> options = (List<String>) sourceListModel.getItems();
                     if (!options.get(0).equals(sourceListModel.getSelectedItem())) {

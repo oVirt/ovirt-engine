@@ -54,7 +54,7 @@ public class BackendPermitsResourceTest extends AbstractBackendCollectionResourc
         Response response = collection.add(model);
         assertEquals(201, response.getStatus());
         assertTrue(response.getEntity() instanceof Permit);
-        verifyModel((Permit)response.getEntity(), 0);
+        verifyModel((Permit) response.getEntity(), 0);
     }
 
     @Override

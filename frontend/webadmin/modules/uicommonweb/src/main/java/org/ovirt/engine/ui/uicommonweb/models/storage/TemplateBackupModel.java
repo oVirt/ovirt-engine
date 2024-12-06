@@ -166,7 +166,7 @@ public class TemplateBackupModel extends ManageBackupModel<VmTemplate> {
     }
 
     private void removeTemplateBackup() {
-        List<ActionParametersBase> prms =  getSelectedItems()
+        List<ActionParametersBase> prms = getSelectedItems()
                 .stream()
                 .map(item -> new VmTemplateImportExportParameters(item.getId(), getEntity().getId(), pool.getId()))
                 .collect(Collectors.toList());

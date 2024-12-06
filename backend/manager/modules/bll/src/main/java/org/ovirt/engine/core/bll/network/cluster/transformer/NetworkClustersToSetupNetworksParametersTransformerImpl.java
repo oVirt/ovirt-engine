@@ -133,7 +133,7 @@ final class NetworkClustersToSetupNetworksParametersTransformerImpl
         for (Guid clusterId : updatesByClusterId.keySet()) {
             Map<String, Network> clusterNetworksByName = networkDao.getAllForCluster(clusterId)
                     .stream()
-                    .filter(network->idsOfUpdatedNetworks.contains(network.getId()))
+                    .filter(network -> idsOfUpdatedNetworks.contains(network.getId()))
                     .collect(Collectors.toMap(Network::getName, Function.identity()));
 
             List<VdsNetworkInterface> interfacesOfCluster = interfaceDao.getAllInterfacesByClusterId(clusterId);

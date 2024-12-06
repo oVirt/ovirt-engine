@@ -16,7 +16,7 @@ public class GlusterHostsPubKeyReturn extends StatusReturn {
     @SuppressWarnings("unchecked")
     public GlusterHostsPubKeyReturn(Map<String, Object> innerMap) {
         super(innerMap);
-        if(innerMap.containsKey("info")) {
+        if (innerMap.containsKey("info")) {
             innerMap = (Map<String, Object>) innerMap.get(INFO);
         }
         if (innerMap.containsKey(GEO_REP_PUB_KEYS)) {

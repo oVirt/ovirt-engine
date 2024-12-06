@@ -9,7 +9,7 @@ import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.core.client.JsArray;
 
 public final class TagObject extends JsMutableObjectWithProperties {
-    protected TagObject() {}
+    protected TagObject() { }
 
     /**
      * Generate a Javascript TagObject from a GWT TagModel object, including the child nodes.

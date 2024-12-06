@@ -255,7 +255,7 @@ public class NotificationListWidget extends Composite implements ActionWidget {
     }
 
     public void setContainerHeight(int height) {
-        this.containerHeight  = height;
+        this.containerHeight = height;
         eventPanelBody.getElement().getStyle().setProperty(MAX_HEIGHT, containerHeight + Unit.PX.getType());
         eventPanelBody.getElement().getStyle().setOverflowY(Overflow.AUTO);
     }

@@ -7,7 +7,7 @@ import com.google.gwt.user.client.ui.AbstractImagePrototype;
 /**
  * Cell that renders an ImageResource. Supports setting a style / class. Supports tooltips.
  */
-public class ImageResourceCell extends AbstractImageCell<ImageResource>  {
+public class ImageResourceCell extends AbstractImageCell<ImageResource> {
 
     @Override
     protected SafeHtml getRenderedImage(ImageResource value) {

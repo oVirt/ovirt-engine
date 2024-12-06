@@ -23,7 +23,7 @@ public class HexUtils {
     public static String hex2string(String hex) {
         try {
             return new String(Hex.decodeHex(hex.toCharArray()), StandardCharsets.UTF_8);
-        } catch(DecoderException exception) {
+        } catch (DecoderException exception) {
             throw notValidHex(hex, exception);
         }
     }

@@ -121,7 +121,7 @@ public class BackendVmsResourceTest
             vmStatistics.setUsageNetworkPercent(0);
             vm.setStatisticsData(vmStatistics);
             vm.setMigrationProgressPercent(50);
-            for (int i=0; i<GUIDS.length-1; i++) {
+            for (int i = 0; i < GUIDS.length - 1; i++) {
                 setUpGetEntityExpectations(QueryType.GetVmByVmId,
                         IdQueryParameters.class,
                         new String[] { "Id" },
@@ -204,7 +204,7 @@ public class BackendVmsResourceTest
         assertEquals(202, response.getStatus());
         assertTrue(response.getEntity() instanceof Vm);
         verifyModel((Vm) response.getEntity(), 0);
-        Vm created = (Vm)response.getEntity();
+        Vm created = (Vm) response.getEntity();
         assertNotNull(created.getCreationStatus());
         assertEquals(creationStatus.value(), created.getCreationStatus());
     }
@@ -885,7 +885,7 @@ public class BackendVmsResourceTest
         Vm model = createModel(null);
         model.setPlacementPolicy(new VmPlacementPolicy());
         Hosts hosts = new Hosts();
-        for (int i =0; i < GUIDS.length; i++){
+        for (int i = 0; i < GUIDS.length; i++) {
             Host newHost = new Host();
             newHost.setId(GUIDS[i].toString());
             hosts.getHosts().add(newHost);
@@ -900,7 +900,7 @@ public class BackendVmsResourceTest
     @Test
     public void testAddWithPlacementPolicyHostsNames() {
         setUpAddVm();
-        for (int i =0; i < NAMES.length; i++){
+        for (int i = 0; i < NAMES.length; i++) {
             setUpGetHostByNameExpectations(i);
         }
         setUpCreationExpectations(ActionType.AddVm,
@@ -920,7 +920,7 @@ public class BackendVmsResourceTest
         Vm model = createModel(null);
         model.setPlacementPolicy(new VmPlacementPolicy());
         Hosts hosts = new Hosts();
-        for (int i =0; i < NAMES.length; i++){
+        for (int i = 0; i < NAMES.length; i++) {
             Host newHost = new Host();
             newHost.setName(NAMES[i]);
             hosts.getHosts().add(newHost);
@@ -1224,7 +1224,7 @@ public class BackendVmsResourceTest
         verifyCollection(getCollection(), true);
     }
 
-    private void setUpAllContentExpectations() throws Exception{
+    private void setUpAllContentExpectations() throws Exception {
         setUpGetPayloadExpectations(3);
         setUpGetGraphicsMultipleExpectations(3);
         setUpGetConsoleExpectations(0, 1, 2);
@@ -1544,7 +1544,7 @@ public class BackendVmsResourceTest
         model.getTemplate().setId(GUIDS[1].toString());
         model.setCluster(new org.ovirt.engine.api.model.Cluster());
         model.getCluster().setId(GUIDS[2].toString());
-        if (diskAttachments != null){
+        if (diskAttachments != null) {
             model.setDiskAttachments(diskAttachments);
         }
         model.setTpmEnabled(false);

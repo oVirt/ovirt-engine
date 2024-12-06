@@ -37,7 +37,7 @@ public abstract class AbstractBackendStorageDomainContentsResource<C extends Bas
     }
 
     public Guid getStoragePoolId(Action action) {
-        if(action.getStorageDomain().isSetId()){
+        if (action.getStorageDomain().isSetId()) {
             return getDataCenterId(Guid.createGuidFromStringDefaultEmpty(action.getStorageDomain().getId()));
         } else {
             return getDataCenterId(lookupStorageDomainIdByName(action.getStorageDomain().getName()));

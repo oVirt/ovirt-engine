@@ -112,7 +112,7 @@ public class InitBackendServicesOnStartupBean implements InitBackendServicesOnSt
             serviceLoader.load(CommandCallbacksPoller.class);
             serviceLoader.load(CommandEntityCleanupManager.class);
 
-            if(Config.<Boolean> getValue(ConfigValues.AffinityRulesEnforcementManagerEnabled)) {
+            if (Config.<Boolean> getValue(ConfigValues.AffinityRulesEnforcementManagerEnabled)) {
                 serviceLoader.load(AffinityRulesEnforcementManager.class);
             }
 

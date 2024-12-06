@@ -6,7 +6,7 @@ import org.ovirt.engine.core.common.businessentities.UserProfileProperty;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 
 public class UseCustomHomePageField implements Field<Boolean> {
-    private static final String USE_CUSTOM_HOME_PAGE = "webAdmin.useCustomHomePage";//$NON-NLS-1$
+    private static final String USE_CUSTOM_HOME_PAGE = "webAdmin.useCustomHomePage"; //$NON-NLS-1$
     private final EntityModel<Boolean> isCustom;
     private final boolean resettable;
     private boolean originalIsCustom;

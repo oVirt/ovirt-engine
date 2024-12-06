@@ -165,7 +165,7 @@ public class VmDevicesMonitoring {
          */
         public void updateVm(Guid vmId, String vdsmHash) {
             DevicesChange devicesChange = isVmDevicesChanged(vmId, vdsmHash, fetchTime);
-            switch(devicesChange) {
+            switch (devicesChange) {
             case CHANGED:
                 if (!tryLockVmDevices(vmId)) {
                     break;

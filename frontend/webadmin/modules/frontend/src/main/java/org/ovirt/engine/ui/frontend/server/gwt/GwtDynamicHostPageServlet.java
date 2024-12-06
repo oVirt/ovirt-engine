@@ -86,9 +86,9 @@ public abstract class GwtDynamicHostPageServlet extends HttpServlet {
 
     private static final String HOST_JSP = "/GwtHostPage.jsp"; //$NON-NLS-1$
     private static final String UTF_CONTENT_TYPE = "text/html; charset=UTF-8"; //$NON-NLS-1$
-    private  static  final String USER_OPTION_WEBADMIN = "webAdmin"; //$NON-NLS-1$
-    private  static  final String USER_OPTION_USE_CUSTOM_HOME_PAGE = "webAdmin.useCustomHomePage"; //$NON-NLS-1$
-    private  static  final String USER_OPTION_CUSTOM_HOME_PAGE = "webAdmin.customHomePage"; //$NON-NLS-1$
+    private static final String USER_OPTION_WEBADMIN = "webAdmin"; //$NON-NLS-1$
+    private static final String USER_OPTION_USE_CUSTOM_HOME_PAGE = "webAdmin.useCustomHomePage"; //$NON-NLS-1$
+    private static final String USER_OPTION_CUSTOM_HOME_PAGE = "webAdmin.customHomePage"; //$NON-NLS-1$
 
     private BackendLocal backend;
     private ObjectMapper mapper;
@@ -192,7 +192,7 @@ public abstract class GwtDynamicHostPageServlet extends HttpServlet {
     }
 
     private UserProfileProperty getUserOption(final Guid userId, final String engineSessionId, String name) {
-        return (UserProfileProperty)runQuery(
+        return (UserProfileProperty) runQuery(
                 QueryType.GetUserProfilePropertyByNameAndUserId,
                 new IdAndNameQueryParameters(userId, name),
                 engineSessionId);

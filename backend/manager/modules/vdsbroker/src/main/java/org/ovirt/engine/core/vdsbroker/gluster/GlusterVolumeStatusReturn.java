@@ -150,15 +150,15 @@ public class GlusterVolumeStatusReturn extends StatusReturn {
             if (brickStatus.toUpperCase().equals(ONLINE)) {
                 serviceInfo.setStatus(GlusterServiceStatus.RUNNING);
                 // parse the port and pid only if the service is running.
-                if (volumeServiceInfo.containsKey(PORT) && StringUtils.isNumeric((String)volumeServiceInfo.get(PORT))) {
+                if (volumeServiceInfo.containsKey(PORT) && StringUtils.isNumeric((String) volumeServiceInfo.get(PORT))) {
                     serviceInfo.setPort(Integer.parseInt((String) volumeServiceInfo.get(PORT)));
                 }
 
-                if (volumeServiceInfo.containsKey(RDMA_PORT) && StringUtils.isNumeric((String)volumeServiceInfo.get(RDMA_PORT))) {
+                if (volumeServiceInfo.containsKey(RDMA_PORT) && StringUtils.isNumeric((String) volumeServiceInfo.get(RDMA_PORT))) {
                     serviceInfo.setRdmaPort(Integer.parseInt((String) volumeServiceInfo.get(RDMA_PORT)));
                 }
 
-                if (volumeServiceInfo.containsKey(PID) && StringUtils.isNumeric((String)volumeServiceInfo.get(PID))) {
+                if (volumeServiceInfo.containsKey(PID) && StringUtils.isNumeric((String) volumeServiceInfo.get(PID))) {
                     serviceInfo.setPid(Integer.parseInt((String) volumeServiceInfo.get(PID)));
                 }
             } else {
@@ -208,11 +208,11 @@ public class GlusterVolumeStatusReturn extends StatusReturn {
             if (brickStatus.toUpperCase().equals(ONLINE)) {
                 brickProperties.setStatus(GlusterStatus.UP);
                 boolean portPresent = false;
-                if (brick.containsKey(PORT) && StringUtils.isNumeric((String)brick.get(PORT))) {
+                if (brick.containsKey(PORT) && StringUtils.isNumeric((String) brick.get(PORT))) {
                     brickProperties.setPort(Integer.parseInt((String) brick.get(PORT)));
                     portPresent = true;
                 }
-                if (brick.containsKey(RDMA_PORT) && StringUtils.isNumeric((String)brick.get(RDMA_PORT))) {
+                if (brick.containsKey(RDMA_PORT) && StringUtils.isNumeric((String) brick.get(RDMA_PORT))) {
                     brickProperties.setRdmaPort(Integer.parseInt((String) brick.get(RDMA_PORT)));
                     portPresent = true;
                 }
@@ -221,7 +221,7 @@ public class GlusterVolumeStatusReturn extends StatusReturn {
                     brickProperties.setStatus(GlusterStatus.DOWN);
                 }
 
-                if (brick.containsKey(PID) && StringUtils.isNumeric((String)brick.get(PID))) {
+                if (brick.containsKey(PID) && StringUtils.isNumeric((String) brick.get(PID))) {
                     brickProperties.setPid(Integer.parseInt((String) brick.get(PID)));
                 }
             } else {

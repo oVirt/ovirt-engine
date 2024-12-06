@@ -68,7 +68,7 @@ public class BackendVmPoolsResource
     private boolean isSortedAndMaxResults() {
         String searchConstraint = QueryHelper.getConstraint(httpHeaders, uriInfo, "", modelType);
         int max = ParametersHelper.getIntegerParameter(httpHeaders, uriInfo, "max", -1, -1);
-        return searchConstraint!=null
+        return searchConstraint != null
                 && !searchConstraint.isEmpty()
                 && searchConstraint.toLowerCase().contains("sortby name asc")
                 && max != -1;

@@ -125,7 +125,7 @@ public class OvirtSelectionModel<T> implements SelectionModel<T> {
      * Call this if {@link #isSingleSelectionOnly()} is {@code true}.
      */
     public SingleSelectionModel<T> asSingleSelectionModel() {
-        assert isSingleSelectionOnly(): "singleSelectionOnly value mismatch"; //$NON-NLS-1$
+        assert isSingleSelectionOnly() : "singleSelectionOnly value mismatch"; //$NON-NLS-1$
         return (SingleSelectionModel<T>) delegate;
     }
 

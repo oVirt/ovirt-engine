@@ -68,7 +68,7 @@ public class BackendUsersResource
      * operation.
      */
     private String getSearchPattern() {
-        String user_defined_pattern = QueryHelper.getConstraint(httpHeaders, uriInfo, "",  modelType);
+        String user_defined_pattern = QueryHelper.getConstraint(httpHeaders, uriInfo, "", modelType);
         return user_defined_pattern.equals("Users : ") ?
                user_defined_pattern + USERS_SEARCH_PATTERN
                :
@@ -105,7 +105,7 @@ public class BackendUsersResource
         final StringBuilder sb = new StringBuilder(128);
 
         sb.append(MessageFormat.format(ResourceConstants.AAA_PRINCIPALS_SEARCH_TEMPLATE,
-                  parent!=null?
+                  parent != null ?
                         parent.getDirectory().getName()
                         :
                         domain,
@@ -132,7 +132,7 @@ public class BackendUsersResource
 
     @Override
     protected User addParents(User user) {
-        if(parent!=null){
+        if (parent != null) {
             assignChildModel(user, User.class).setId(parent.get().getId());
         }
         return user;
@@ -157,7 +157,7 @@ public class BackendUsersResource
                 String.class,
                 QueryType.GetDomainList,
                 new QueryParametersBase());
-        if (AuthzUtils.getAuthzNameFromEntityName(user.getUserName(), authzProvidersNames) == null) {// user-name may contain the domain (e.g: oliel@xxx.yyy)
+        if (AuthzUtils.getAuthzNameFromEntityName(user.getUserName(), authzProvidersNames) == null) { // user-name may contain the domain (e.g: oliel@xxx.yyy)
             validateParameters(user, "domain.id|name");
         }
         String domain = getAuthzProviderName(user, authzProvidersNames);
@@ -186,7 +186,7 @@ public class BackendUsersResource
             result = getUserById(directoryName, namespace, user.getDomainEntryId());
         } else if (user.isSetId()) {
             result = getUserById(directoryName, namespace, user.getId());
-        } else  if (user.isSetPrincipal()) {
+        } else if (user.isSetPrincipal()) {
             result = getEntity(DirectoryUser.class, QueryType.GetDirectoryUserByPrincipal, new GetDirectoryUserByPrincipalParameters(directoryName, user.getPrincipal()), user.getPrincipal());
         } else if (user.isSetUserName()) {
                 result = getEntity(
@@ -205,7 +205,7 @@ public class BackendUsersResource
         DirectoryUser result;
         try {
             userId = DirectoryEntryIdUtils.decode(userId);
-        } catch(IllegalArgumentException exception) {
+        } catch (IllegalArgumentException exception) {
             return null;
         }
         result = getEntity(

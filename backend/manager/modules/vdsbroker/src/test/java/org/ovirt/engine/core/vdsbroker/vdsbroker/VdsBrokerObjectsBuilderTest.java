@@ -208,14 +208,14 @@ public class VdsBrokerObjectsBuilderTest {
     }
 
     @Test
-    public void testAddNicWithId(){
+    public void testAddNicWithId() {
         String nicId = Guid.newGuid().toString();
         Map<String, Object> vmStruct = createNicDeviceStruct(nicId);
         validateVmNetworkInterfaceId(nicId, vmStruct);
     }
 
     @Test
-    public void testAddNicWithNullId(){
+    public void testAddNicWithNullId() {
         String nicId = null;
         Map<String, Object> vmStruct = createNicDeviceStruct(nicId);
         validateVmNetworkInterfaceId(nicId, vmStruct);
@@ -285,7 +285,7 @@ public class VdsBrokerObjectsBuilderTest {
         return map;
     }
 
-    private static Map<String, Object>  setDisksUsage(Object[] disksUsageData) {
+    private static Map<String, Object> setDisksUsage(Object[] disksUsageData) {
         Map<String, Object> map = new HashMap<>();
         map.put(VdsProperties.VM_DISKS_USAGE, disksUsageData);
         return map;

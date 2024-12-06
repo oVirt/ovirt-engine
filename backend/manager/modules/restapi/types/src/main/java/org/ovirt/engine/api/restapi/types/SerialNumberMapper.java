@@ -49,7 +49,7 @@ public class SerialNumberMapper {
         }
         switch (serialNumberPolicy) {
         case HOST_ID:
-            return  SerialNumberPolicy.HOST;
+            return SerialNumberPolicy.HOST;
         case VM_ID:
             return SerialNumberPolicy.VM;
         case CUSTOM:

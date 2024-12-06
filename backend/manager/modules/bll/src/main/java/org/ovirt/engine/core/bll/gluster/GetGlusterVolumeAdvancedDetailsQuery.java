@@ -177,7 +177,7 @@ public class GetGlusterVolumeAdvancedDetailsQuery<P extends GlusterVolumeAdvance
                 }
             });
         }
-        return  advancedDetails;
+        return advancedDetails;
     }
 
     private GlusterVolumeEntity getReplicateVolume(Guid clusterId) {

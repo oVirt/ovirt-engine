@@ -12,7 +12,7 @@ public class SecureDocumentBuilderFactory {
             documentBuilderFactory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
             documentBuilderFactory.setFeature("http://xml.org/sax/features/external-general-entities", false);
             documentBuilderFactory.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
-        } catch(ParserConfigurationException e) {
+        } catch (ParserConfigurationException e) {
             throw new RuntimeException(e);
         }
         return documentBuilderFactory;

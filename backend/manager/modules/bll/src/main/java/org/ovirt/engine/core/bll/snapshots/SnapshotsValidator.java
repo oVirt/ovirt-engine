@@ -153,7 +153,7 @@ public class SnapshotsValidator {
      *
      * @return Snapshot is in the required status or not
      */
-    private ValidationResult isSnapshotInStatus(Guid snapshotId, SnapshotStatus status,  EngineMessage msg) {
+    private ValidationResult isSnapshotInStatus(Guid snapshotId, SnapshotStatus status, EngineMessage msg) {
         Snapshot snap = snapshotDao.get(snapshotId);
         if (snap != null && snap.getStatus() != status) {
             return new ValidationResult(msg, String.format("$SnapshotStatus %1$s", snap.getStatus()));

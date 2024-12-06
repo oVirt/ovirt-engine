@@ -1788,7 +1788,7 @@ public class VmDeviceUtils {
 
         if (isSoundEnabled) {
             if (hasSound) {
-                updateSoundDevice(srcVmBase, dstVmBase, CompatibilityVersionUtils.getEffective(dstVmBase,  dstCluster), isSoundEnabled);
+                updateSoundDevice(srcVmBase, dstVmBase, CompatibilityVersionUtils.getEffective(dstVmBase, dstCluster), isSoundEnabled);
             } else {
                 addSoundDevice(dstVmBase, () -> dstCluster);
             }
@@ -2116,7 +2116,7 @@ public class VmDeviceUtils {
     public boolean vmDeviceChanged(Guid vmId, VmDeviceGeneralType deviceGeneralType, String deviceTypeName,
                                           boolean deviceEnabled) {
         List<VmDevice> vmDevices = deviceTypeName != null ?
-                vmDeviceDao.getVmDeviceByVmIdTypeAndDevice(vmId, deviceGeneralType, deviceTypeName):
+                vmDeviceDao.getVmDeviceByVmIdTypeAndDevice(vmId, deviceGeneralType, deviceTypeName) :
                 vmDeviceDao.getVmDeviceByVmIdAndType(vmId, deviceGeneralType);
 
         return deviceEnabled == vmDevices.isEmpty();
@@ -2133,7 +2133,7 @@ public class VmDeviceUtils {
     public boolean vmDeviceChanged(Guid vmId, VmDeviceGeneralType deviceGeneralType, String deviceTypeName,
                                           VmDevice device) {
         List<VmDevice> vmDevices = deviceTypeName != null ?
-                vmDeviceDao.getVmDeviceByVmIdTypeAndDevice(vmId, deviceGeneralType, deviceTypeName):
+                vmDeviceDao.getVmDeviceByVmIdTypeAndDevice(vmId, deviceGeneralType, deviceTypeName) :
                 vmDeviceDao.getVmDeviceByVmIdAndType(vmId, deviceGeneralType);
 
         if (device == null) {

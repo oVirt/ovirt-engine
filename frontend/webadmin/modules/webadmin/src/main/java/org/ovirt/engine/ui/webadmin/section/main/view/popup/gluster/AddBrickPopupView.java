@@ -159,7 +159,7 @@ public class AddBrickPopupView extends AbstractModelBoundPopupView<VolumeBrickMo
 
     }
 
-    protected void initTableColumns(){
+    protected void initTableColumns() {
         // Table Entity Columns
         bricksTable.addColumn(new AbstractEntityModelTextColumn<GlusterBrickEntity>() {
             @Override

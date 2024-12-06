@@ -23,7 +23,7 @@ public class UnitToAddVmTemplateParametersBuilder<T extends AddVmTemplateParamet
         }
 
         destination.setVirtioScsiEnabled(source.getIsVirtioScsiEnabled().getEntity());
-        if(source.getIsHeadlessModeEnabled().getEntity()) {
+        if (source.getIsHeadlessModeEnabled().getEntity()) {
             destination.getMasterVm().setDefaultDisplayType(DisplayType.none);
         }
     }

@@ -6,7 +6,7 @@ import com.google.gwt.editor.client.IsEditor;
 
 public class GroupedListModelListBoxEditor<T>
     extends AbstractValidatedWidgetWithLabel<T, GroupedListModelListBox<T>>
-    implements IsEditor<WidgetWithLabelEditor<T, GroupedListModelListBoxEditor<T>>>{
+    implements IsEditor<WidgetWithLabelEditor<T, GroupedListModelListBoxEditor<T>>> {
 
     private final WidgetWithLabelEditor<T, GroupedListModelListBoxEditor<T>> editor;
 

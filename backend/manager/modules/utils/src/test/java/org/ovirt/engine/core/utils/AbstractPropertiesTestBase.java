@@ -23,7 +23,7 @@ public class AbstractPropertiesTestBase<E extends Enum<E>> {
 
     @BeforeEach
     public void loadFileFromPath() {
-        String baseDir =  System.getProperty("basedir");
+        String baseDir = System.getProperty("basedir");
         assumeTrue(baseDir != null);
 
         file = new File(baseDir, relativePath);

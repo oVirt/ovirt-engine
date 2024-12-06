@@ -40,7 +40,7 @@ public class StorageDiskListModel extends SearchableListModel<StorageDomain, Dis
     }
 
     private void setUploadCommand(UICommand value) {
-        privateUploadCommand= value;
+        privateUploadCommand = value;
     }
 
     private UICommand privateCancelUploadCommand;

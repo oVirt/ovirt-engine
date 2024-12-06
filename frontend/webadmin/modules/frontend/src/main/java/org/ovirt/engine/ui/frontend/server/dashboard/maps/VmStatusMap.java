@@ -18,7 +18,7 @@ public enum VmStatusMap {
 
     private VMStatus[] values;
 
-    private VmStatusMap(VMStatus ...values) {
+    private VmStatusMap(VMStatus ... values) {
         this.values = values.clone();
     }
 

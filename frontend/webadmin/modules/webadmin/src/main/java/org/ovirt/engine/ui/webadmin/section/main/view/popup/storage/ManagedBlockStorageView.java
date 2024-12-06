@@ -81,6 +81,6 @@ public class ManagedBlockStorageView extends AbstractStorageView<ManagedBlockSto
     }
 
     @Override
-    public void focus() {}
+    public void focus() { }
 
 }

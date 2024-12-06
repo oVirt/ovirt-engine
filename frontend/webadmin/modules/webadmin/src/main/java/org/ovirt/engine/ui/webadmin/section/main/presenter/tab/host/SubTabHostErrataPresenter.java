@@ -53,7 +53,7 @@ public class SubTabHostErrataPresenter
 
     @Inject
     public SubTabHostErrataPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
-            PlaceManager placeManager,  HostMainSelectedItems selectedItems,
+            PlaceManager placeManager, HostMainSelectedItems selectedItems,
             DetailTabModelProvider<HostListModel<Void>, HostErrataCountModel> modelProvider) {
         // No action panel on errata view, can pass null.
         super(eventBus, view, proxy, placeManager, modelProvider, selectedItems, null,

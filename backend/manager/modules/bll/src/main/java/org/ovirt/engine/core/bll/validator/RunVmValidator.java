@@ -206,7 +206,7 @@ public class RunVmValidator {
                 validate(snapshotsValidator.vmNotDuringSnapshot(vm.getId()), messages) &&
                 (runInUnknownStatus && vm.getStatus() == VMStatus.Unknown || validate(validateVmStatusUsingMatrix(vm), messages)) &&
                 validate(validateStoragePoolUp(vm, storagePool, getVmImageDisks()), messages) &&
-                validate(validateIsoPath(vm, runVmParam.getDiskPath(), runVmParam.getFloppyPath(), activeIsoDomainId), messages)  &&
+                validate(validateIsoPath(vm, runVmParam.getDiskPath(), runVmParam.getFloppyPath(), activeIsoDomainId), messages) &&
                 validate(vmDuringInitialization(vm), messages) &&
                 validate(validateStatelessVm(vm, runVmParam.getRunAsStateless()), messages) &&
                 validate(validateFloppy(), messages) &&
@@ -700,7 +700,7 @@ public class RunVmValidator {
 
     private List<Network> getClusterNetworks() {
         if (cachedClusterNetworks == null) {
-            cachedClusterNetworks =  networkDao.getAllForCluster(vm.getClusterId());
+            cachedClusterNetworks = networkDao.getAllForCluster(vm.getClusterId());
         }
 
         return cachedClusterNetworks;

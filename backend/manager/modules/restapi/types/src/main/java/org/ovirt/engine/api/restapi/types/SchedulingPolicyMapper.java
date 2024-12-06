@@ -82,7 +82,7 @@ public class SchedulingPolicyMapper {
             ClusterPolicy template) {
         ClusterPolicy entity =
                 template != null ? template : new ClusterPolicy();
-        if(model.isSetSchedulingPolicyUnit() && model.getSchedulingPolicyUnit().isSetId()){
+        if (model.isSetSchedulingPolicyUnit() && model.getSchedulingPolicyUnit().isSetId()) {
             Guid guid = GuidUtils.asGuid(model.getSchedulingPolicyUnit().getId());
             if (entity.getFilters() == null) {
                 entity.setFilters(new ArrayList<>());

@@ -791,7 +791,7 @@ public class ClusterListModel<E> extends ListWithSimpleDetailsModel<E, Cluster> 
                 onEmptyGlusterHosts(clusterModel);
                 return;
             }
-            if (hostMap.containsValue(null) || hostMap.containsValue("")){ //$NON-NLS-1$
+            if (hostMap.containsValue(null) || hostMap.containsValue("")) { //$NON-NLS-1$
                 onGlusterHostsWithoutPublicKey(hostMap, clusterModel);
                 return;
             }
@@ -800,7 +800,7 @@ public class ClusterListModel<E> extends ListWithSimpleDetailsModel<E, Cluster> 
                 String sshPublicKey = host.getValue();
                 HostDetailModel hostModel = new HostDetailModel(host.getKey(), sshPublicKey);
                 hostModel.setName(host.getKey());
-                hostModel.setPassword("");//$NON-NLS-1$
+                hostModel.setPassword(""); //$NON-NLS-1$
                 EntityModel<HostDetailModel> entityModel = new EntityModel<>(hostModel);
                 list.add(entityModel);
             }
@@ -850,7 +850,7 @@ public class ClusterListModel<E> extends ListWithSimpleDetailsModel<E, Cluster> 
 
     private void onSaveHosts() {
         MultipleHostsModel hostsModel = (MultipleHostsModel) getWindow();
-        if(hostsModel == null) {
+        if (hostsModel == null) {
             return;
         }
         if (!hostsModel.validate()) {

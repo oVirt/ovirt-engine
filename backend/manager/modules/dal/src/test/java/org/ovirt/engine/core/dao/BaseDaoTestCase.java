@@ -58,7 +58,7 @@ public abstract class BaseDaoTestCase<D extends Dao> {
 
     @BeforeAll
     public static void initTestCase() {
-        if(dataSource == null) {
+        if (dataSource == null) {
             try {
                 dataSource = createDataSource();
 

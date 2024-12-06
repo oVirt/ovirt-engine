@@ -58,7 +58,7 @@ public class HostedEngineOvfWriter extends OvfVmWriter {
     @Override
     protected void writeGeneralData() {
         super.writeGeneralData();
-        if (engineXml != null){
+        if (engineXml != null) {
             _writer.writeElement(ENGINE_XML, engineXml);
         }
     }

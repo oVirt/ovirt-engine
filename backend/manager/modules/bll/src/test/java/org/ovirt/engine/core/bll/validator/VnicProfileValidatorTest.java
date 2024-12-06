@@ -429,7 +429,7 @@ public class VnicProfileValidatorTest {
     }
 
     @Test
-    public void testValidNetworkFilterIdUseDefaultNoFilterId(){
+    public void testValidNetworkFilterIdUseDefaultNoFilterId() {
         assertThat(validator.validUseDefaultNetworkFilterFlag(true), isValid());
     }
 
@@ -445,12 +445,12 @@ public class VnicProfileValidatorTest {
     }
 
     @Test
-    public void testValidNetworkFilterIdNoDefaultNoFilterId(){
+    public void testValidNetworkFilterIdNoDefaultNoFilterId() {
         assertThat(validator.validUseDefaultNetworkFilterFlag(false), isValid());
     }
 
     @Test
-    public void testValidNetworkFilterIdNoDefaultWithFilterId(){
+    public void testValidNetworkFilterIdNoDefaultWithFilterId() {
         when(vnicProfile.getNetworkFilterId()).thenReturn(Guid.newGuid());
         assertThat(validator.validUseDefaultNetworkFilterFlag(false), isValid());
     }

@@ -68,7 +68,7 @@ public class BackendDomainUserResourceTest
             DirectoryIdQueryParameters.class,
             new String[] { "Domain", "Id" },
                 new Object[] { DOMAIN, DirectoryEntryIdUtils.decode(EXTERNAL_IDS[index]) },
-            notFound? null: getEntity(index)
+            notFound ? null : getEntity(index)
         );
     }
 

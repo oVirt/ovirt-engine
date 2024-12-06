@@ -364,9 +364,9 @@ public class DataCenterGuideModel extends GuideModel<StoragePool> implements ITa
         }
     }
 
-    private boolean doesHostSupportAnyCluster(List<Cluster> clusterList, VDS host){
-        for (Cluster cluster : clusterList){
-            if (host.getSupportedClusterVersionsSet().contains(cluster.getCompatibilityVersion())){
+    private boolean doesHostSupportAnyCluster(List<Cluster> clusterList, VDS host) {
+        for (Cluster cluster : clusterList) {
+            if (host.getSupportedClusterVersionsSet().contains(cluster.getCompatibilityVersion())) {
                 return true;
             }
         }

@@ -9,7 +9,7 @@ import org.ovirt.engine.core.dao.LabelDao;
 import org.ovirt.engine.core.dao.scheduling.AffinityGroupDao;
 
 public class AddVmLabelToAffinityGroupCommand <T extends AffinityGroupMemberChangeParameters>
-        extends EditAffinityGroupCommand<T>{
+        extends EditAffinityGroupCommand<T> {
     @Inject
     private AffinityGroupDao affinityGroupDao;
 

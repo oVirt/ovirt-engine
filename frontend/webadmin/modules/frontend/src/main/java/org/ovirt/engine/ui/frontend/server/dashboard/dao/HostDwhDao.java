@@ -21,7 +21,7 @@ public class HostDwhDao extends BaseDao {
     private static final String TOTAL = "total"; //$NON-NLS-1$
     private static final String MEM_TOTAL = MEM + TOTAL;
     private static final String CPU_TOTAL = CPU + TOTAL;
-    private static final String NAME="name"; //$NON-NLS-1$
+    private static final String NAME = "name"; //$NON-NLS-1$
     private static final String CPU_USAGE_PERCENT = "cpu_usage_percent"; //$NON-NLS-1$
     private static final String CORES_HOST = "number_of_cores"; //$NON-NLS-1$
     private static final String PREVIOUS_CPU_PERCENT = "previous_cpu_percent"; //$NON-NLS-1$

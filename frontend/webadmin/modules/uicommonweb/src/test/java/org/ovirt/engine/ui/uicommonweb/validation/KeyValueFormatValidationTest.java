@@ -27,9 +27,9 @@ public class KeyValueFormatValidationTest {
     private UIMessages mockUiMessages;
 
     private static final String NOT_VALID = "a"; //$NON-NLS-1$
-    private static final String ERROR_MESSAGE_EMPTY_NOT_ALLOWED = "ERROR_MESSAGE_EMPTY_NOT_ALLOWED";//$NON-NLS-1$
-    private static final String ERROR_MESSAGE_EMPTY_ALLOWED = "ERROR_MESSAGE_EMPTY_ALLOWED";//$NON-NLS-1$
-    private static final String FORMAT = "FORMAT";//$NON-NLS-1$
+    private static final String ERROR_MESSAGE_EMPTY_NOT_ALLOWED = "ERROR_MESSAGE_EMPTY_NOT_ALLOWED"; //$NON-NLS-1$
+    private static final String ERROR_MESSAGE_EMPTY_ALLOWED = "ERROR_MESSAGE_EMPTY_ALLOWED"; //$NON-NLS-1$
+    private static final String FORMAT = "FORMAT"; //$NON-NLS-1$
     private static final ValidationResult failureValidationResultEmptyNotAllowed = new ValidationResult(false,
             Collections.singletonList(ERROR_MESSAGE_EMPTY_NOT_ALLOWED));
     private static final ValidationResult failureValidationResultEmptyAllowed = new ValidationResult(false,
@@ -55,7 +55,7 @@ public class KeyValueFormatValidationTest {
 
     @Test
     public void checkEmptyString() {
-        ValidationResult validationResult = underTest.validate("");//$NON-NLS-1$
+        ValidationResult validationResult = underTest.validate(""); //$NON-NLS-1$
         assertEquals(failureValidationResultEmptyNotAllowed, validationResult);
     }
 
@@ -67,64 +67,64 @@ public class KeyValueFormatValidationTest {
 
     @Test
     public void checkKeyValuePairBadSeparator() {
-        ValidationResult validationResult = underTest.validate("a-a");//$NON-NLS-1$
+        ValidationResult validationResult = underTest.validate("a-a"); //$NON-NLS-1$
         assertEquals(failureValidationResultEmptyNotAllowed, validationResult);
     }
 
     @Test
     public void checkKeyValuePairExtraEqualSign() {
-        ValidationResult validationResult = underTest.validate("a=a=");//$NON-NLS-1$
+        ValidationResult validationResult = underTest.validate("a=a="); //$NON-NLS-1$
         assertEquals(failureValidationResultEmptyNotAllowed, validationResult);
     }
 
     @Test
     public void checkKeyValueKey() {
-        ValidationResult validationResult = underTest.validate("a=a=a");//$NON-NLS-1$
+        ValidationResult validationResult = underTest.validate("a=a=a"); //$NON-NLS-1$
         assertEquals(failureValidationResultEmptyNotAllowed, validationResult);
     }
 
     @Test
     public void checkValidKeyValuePair() {
-        ValidationResult validationResult = underTest.validate("a=a");//$NON-NLS-1$
+        ValidationResult validationResult = underTest.validate("a=a"); //$NON-NLS-1$
         assertEquals(successfulValidationResult, validationResult);
     }
 
     @Test
     public void checkValidKeyValueTwoPairs() {
-        ValidationResult validationResult = underTest.validate("a=a a=a");//$NON-NLS-1$
+        ValidationResult validationResult = underTest.validate("a=a a=a"); //$NON-NLS-1$
         assertEquals(successfulValidationResult, validationResult);
     }
 
     @Test
     public void checkKeyValueTwoPairsFollowingWithKey() {
-        ValidationResult validationResult = underTest.validate("a=a a=a a");//$NON-NLS-1$
+        ValidationResult validationResult = underTest.validate("a=a a=a a"); //$NON-NLS-1$
         assertEquals(failureValidationResultEmptyNotAllowed, validationResult);
     }
 
     @Test
     public void checkKeyValueTwoPairsFollowingWithMissingValue() {
-        ValidationResult validationResult = underTest.validate("a=a a=a a=");//$NON-NLS-1$
+        ValidationResult validationResult = underTest.validate("a=a a=a a="); //$NON-NLS-1$
         assertEquals(failureValidationResultEmptyNotAllowed, validationResult);
     }
 
     @Test
     public void checkEmptyStringAllowed() {
         underTest = new KeyValueFormatValidation(mockConstantsManager, true);
-        ValidationResult validationResult = underTest.validate("");//$NON-NLS-1$
+        ValidationResult validationResult = underTest.validate(""); //$NON-NLS-1$
         assertEquals(successfulValidationResult, validationResult);
     }
 
     @Test
     public void checkNotValidEmptyStringAllowed() {
         underTest = new KeyValueFormatValidation(mockConstantsManager, true);
-        ValidationResult validationResult = underTest.validate(NOT_VALID);//$NON-NLS-1$
+        ValidationResult validationResult = underTest.validate(NOT_VALID); //$NON-NLS-1$
         assertEquals(failureValidationResultEmptyAllowed, validationResult);
     }
 
     @Test
     public void checkEmptyStringNotAllowedFromConstructor() {
         underTest = new KeyValueFormatValidation(mockConstantsManager, false);
-        ValidationResult validationResult = underTest.validate("");//$NON-NLS-1$
+        ValidationResult validationResult = underTest.validate(""); //$NON-NLS-1$
         assertEquals(failureValidationResultEmptyNotAllowed, validationResult);
     }
 }

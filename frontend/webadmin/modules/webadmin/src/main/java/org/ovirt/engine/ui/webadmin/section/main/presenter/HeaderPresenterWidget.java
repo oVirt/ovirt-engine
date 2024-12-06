@@ -176,7 +176,7 @@ public class HeaderPresenterWidget extends PresenterWidget<HeaderPresenterWidget
                 Collection<Job> jobs = taskModelProvider.getModel().getItems();
                 long count = jobs.stream().filter(job -> JobExecutionStatus.STARTED.equals(job.getStatus())).count();
                 // I know I will never have more than 100 items, so I can cast to int.
-                getView().setRunningTaskCount((int)count);
+                getView().setRunningTaskCount((int) count);
             }
 
         });

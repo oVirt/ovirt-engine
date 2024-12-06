@@ -89,14 +89,14 @@ public final class TransactionalMacPoolDecorator extends DelegatingMacPoolDecora
     @Override
     public String allocateNewMac() {
         String allocatedMacAddress = super.allocateNewMac();
-        getStrategyForMacAllocation().forEach(e->e.releaseMacsInCaseOfRollback(Collections.singletonList(allocatedMacAddress)));
+        getStrategyForMacAllocation().forEach(e -> e.releaseMacsInCaseOfRollback(Collections.singletonList(allocatedMacAddress)));
         return allocatedMacAddress;
     }
 
     @Override
     public final List<String> allocateMacAddresses(int numberOfAddresses) {
         List<String> allocatedMacAddresses = super.allocateMacAddresses(numberOfAddresses);
-        getStrategyForMacAllocation().forEach(e->e.releaseMacsInCaseOfRollback(allocatedMacAddresses));
+        getStrategyForMacAllocation().forEach(e -> e.releaseMacsInCaseOfRollback(allocatedMacAddresses));
         return allocatedMacAddresses;
     }
 
@@ -104,7 +104,7 @@ public final class TransactionalMacPoolDecorator extends DelegatingMacPoolDecora
     public final boolean addMac(String mac) {
         boolean added = super.addMac(mac);
         if (added) {
-            getStrategyForMacAllocation().forEach(e->e.releaseMacsInCaseOfRollback(Collections.singletonList(mac)));
+            getStrategyForMacAllocation().forEach(e -> e.releaseMacsInCaseOfRollback(Collections.singletonList(mac)));
         }
 
         return added;
@@ -116,8 +116,8 @@ public final class TransactionalMacPoolDecorator extends DelegatingMacPoolDecora
 
         boolean atLeastOneAddedMac = notAddedMacs.size() < macs.size();
         if (atLeastOneAddedMac) {
-            List<String> addedMacs = macs.stream().filter(e->!notAddedMacs.contains(e)).collect(toList());
-            getStrategyForMacAllocation().forEach(e->e.releaseMacsInCaseOfRollback(addedMacs));
+            List<String> addedMacs = macs.stream().filter(e -> !notAddedMacs.contains(e)).collect(toList());
+            getStrategyForMacAllocation().forEach(e -> e.releaseMacsInCaseOfRollback(addedMacs));
         }
 
         return notAddedMacs;
@@ -214,7 +214,7 @@ public final class TransactionalMacPoolDecorator extends DelegatingMacPoolDecora
 
         @Override
         public void releaseMacsInCaseOfRollback(List<String> macs) {
-            registerRollbackHandler((TransactionRollbackListener)() -> {
+            registerRollbackHandler((TransactionRollbackListener) () -> {
                 log.debug("Rollback occurred, releasing macs {}.", macs);
                 macPool.freeMacs(macs);
             });
@@ -222,7 +222,7 @@ public final class TransactionalMacPoolDecorator extends DelegatingMacPoolDecora
 
         @Override
         public void releaseMacsOnCommit(List<String> macs) {
-            registerRollbackHandler((TransactionSuccessListener)() -> {
+            registerRollbackHandler((TransactionSuccessListener) () -> {
                 log.debug("Command succeeded, releasing macs {}.", macs);
                 macPool.freeMacs(macs);
             });

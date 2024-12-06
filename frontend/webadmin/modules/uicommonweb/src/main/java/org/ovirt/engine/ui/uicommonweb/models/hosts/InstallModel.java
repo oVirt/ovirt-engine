@@ -67,13 +67,13 @@ public class InstallModel extends Model {
         rebootHostAfterInstall = value;
     }
 
-    private  EntityModel<Boolean> reconfigureGluster;
+    private EntityModel<Boolean> reconfigureGluster;
 
     private void setReconfigureGluster(EntityModel<Boolean> value) {
         reconfigureGluster = value;
     }
 
-    public EntityModel<Boolean> getReconfigureGluster(){
+    public EntityModel<Boolean> getReconfigureGluster() {
         return reconfigureGluster;
     }
 
@@ -87,9 +87,9 @@ public class InstallModel extends Model {
         hostVersion = value;
     }
 
-    private  EntityModel<String> fqdnBox;
+    private EntityModel<String> fqdnBox;
 
-    public  EntityModel<String> getFqdnBox() {
+    public EntityModel<String> getFqdnBox() {
         return fqdnBox;
     }
 
@@ -201,7 +201,7 @@ public class InstallModel extends Model {
         ReplaceHostConfiguration.Action replaceHostOption =
                 getReplaceHostModel().getSelectedItem();
         getFqdnBox().setIsChangeable(replaceHostOption == ReplaceHostConfiguration.Action.DIFFERENTFQDN);
-        if(replaceHostOption != ReplaceHostConfiguration.Action.DIFFERENTFQDN) {
+        if (replaceHostOption != ReplaceHostConfiguration.Action.DIFFERENTFQDN) {
             getFqdnBox().setEntity(null);
         }
     }

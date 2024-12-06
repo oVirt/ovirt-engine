@@ -54,7 +54,7 @@ public class SysprepHandler {
 
         Integer nameLength = Config.getValue(ConfigValues.MaxVmNameLengthSysprep);
         if (hostName != null && hostName.length() > nameLength) {
-            hostName  = hostName.substring(0, nameLength);
+            hostName = hostName.substring(0, nameLength);
         }
 
         if (sysPrepContent.length() > 0) {

@@ -105,7 +105,7 @@ public class ClusterServiceModel extends EntityModel<Cluster> {
         boolean refreshNeeded = false;
         List<VDS> hostList = (List<VDS>) getHostList().getItems();
         if (hostList != null && hostList.size() > 1) {
-            for(VDS vds : hostList) {
+            for (VDS vds : hostList) {
                 if (vds != null && !vds.getClusterName().equals(getEntity().getName())) {
                     refreshNeeded = true;
                     break;

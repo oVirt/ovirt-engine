@@ -280,7 +280,7 @@ public class MaintenanceNumberOfVdssCommand<T extends MaintenanceNumberOfVdssPar
                 continue;
             }
             //TODO make a more efficient call but normally the command just loads one cluster anyway
-            if (!clusters.containsKey(vds.getClusterId())){
+            if (!clusters.containsKey(vds.getClusterId())) {
                 final Cluster cluster = clusterDao.get(vds.getClusterId());
                 clusters.put(cluster.getId(), cluster);
             }

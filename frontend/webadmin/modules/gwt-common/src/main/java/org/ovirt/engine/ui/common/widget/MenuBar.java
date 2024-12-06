@@ -42,7 +42,7 @@ public class MenuBar extends com.google.gwt.user.client.ui.MenuBar {
         case Event.ONCLICK:
             MenuItem item = findItem(DOM.eventGetTarget(event));
 
-            if (item !=null){
+            if (item != null) {
                 PopupPanel subMenuPopup = getSubMenuPopup();
                 if (subMenuPopup != null) {
                     PopupUtils.adjustPopupLocationToFitScreenAndShow(subMenuPopup,
@@ -56,7 +56,7 @@ public class MenuBar extends com.google.gwt.user.client.ui.MenuBar {
         }
     }
 
-    public boolean isEmpty(){
+    public boolean isEmpty() {
         return getItems() == null || getItems().isEmpty();
     }
 

@@ -76,9 +76,9 @@ public class SyncAllClusterNetworksCommand extends ClusterCommandBase<ClusterPar
     public AuditLogType getAuditLogTypeValue() {
         switch (getActionState()) {
             case EXECUTE:
-                if (!getSucceeded()){
+                if (!getSucceeded()) {
                     return CLUSTER_SYNC_ALL_NETWORKS_START_ERROR;
-                } else if (!outOfSyncHostsExist()){
+                } else if (!outOfSyncHostsExist()) {
                     return CLUSTER_SYNC_NOTHING_TO_DO;
                 } else {
                     return CLUSTER_SYNC_ALL_NETWORKS_STARTED;

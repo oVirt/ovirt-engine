@@ -8,7 +8,7 @@ import org.ovirt.engine.core.compat.Guid;
 
 public class IconHelper {
 
-    private IconHelper() {}
+    private IconHelper() { }
 
     public static boolean validateIconParameters(VmBase incoming) {
         final boolean isLargeIconUpload = incoming.isSetLargeIcon()

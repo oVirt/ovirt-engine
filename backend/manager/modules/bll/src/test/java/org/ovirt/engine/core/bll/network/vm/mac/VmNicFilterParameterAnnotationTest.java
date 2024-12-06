@@ -61,7 +61,7 @@ public class VmNicFilterParameterAnnotationTest {
                 validator.validate(vmNicFilterParameter, VALIDATE_GROUPS);
 
         boolean expectViolations = expectedErrorMessage != null;
-        assertTrue(expectViolations !=  violations.isEmpty());
+        assertTrue(expectViolations != violations.isEmpty());
         if (expectViolations) {
             assertEquals(expectedErrorMessage, violations.iterator().next().getMessage());
         }

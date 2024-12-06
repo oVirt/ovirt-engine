@@ -403,7 +403,7 @@ public abstract class AddVmAndCloneImageCommand<T extends AddVmParameters> exten
                             // Create a disk to reflect the fact the disk existed during snapshot
                             saveIllegalDisk(diskImage);
                         }
-                    } else {// Only legal images can be copied
+                    } else { // Only legal images can be copied
                         switch (diskImage.getDiskStorageType()) {
                             case CINDER:
                                 CinderDisk cinder = (CinderDisk) diskImage;
@@ -482,7 +482,7 @@ public abstract class AddVmAndCloneImageCommand<T extends AddVmParameters> exten
 
     protected abstract VM getVmFromConfiguration();
 
-    protected Guid getDestStorageDomain(Guid diskImageID){
+    protected Guid getDestStorageDomain(Guid diskImageID) {
         return diskInfoDestinationMap.get(diskImageID).getStorageIds().get(0);
     }
 

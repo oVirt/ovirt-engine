@@ -82,12 +82,12 @@ public class PKIResources {
                 '\n',
                 new Base64(
                     76,
-                    new byte[] { (byte)'\n' }
+                    new byte[] { (byte) '\n' }
                 ).encodeToString(
                     cert.getEncoded()
                 )
             );
-        } catch(CertificateEncodingException e) {
+        } catch (CertificateEncodingException e) {
             throw new RuntimeException(e);
         }
     };

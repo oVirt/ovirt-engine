@@ -195,7 +195,7 @@ public class HostStatusCell extends AbstractCell<VDS> {
         if (cpuFlagsMissing(vds)) {
             appendLine(sb,
                     messages.hostHasMissingCpuFlagsTooltipAlert(
-                            String.join(", ", vds.getCpuFlagsMissing())));//$NON-NLS-1$);
+                            String.join(", ", vds.getCpuFlagsMissing()))); //$NON-NLS-1$);
         }
 
         return sb.toSafeHtml();

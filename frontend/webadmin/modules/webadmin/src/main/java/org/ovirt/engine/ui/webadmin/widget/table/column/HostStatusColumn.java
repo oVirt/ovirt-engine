@@ -16,11 +16,11 @@ public class HostStatusColumn<S> extends AbstractColumn<S, VDS> {
 
     @Override
     public VDS getValue(S object) {
-        if (object instanceof VDS){
+        if (object instanceof VDS) {
             return (VDS) object;
         }
-        if (object instanceof PairQueryable){
-            if (((PairQueryable) object).getSecond() instanceof VDS){
+        if (object instanceof PairQueryable) {
+            if (((PairQueryable) object).getSecond() instanceof VDS) {
                 return (VDS) ((PairQueryable) object).getSecond();
             }
         }

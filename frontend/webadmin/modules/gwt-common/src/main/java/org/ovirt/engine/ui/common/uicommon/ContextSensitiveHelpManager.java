@@ -35,7 +35,7 @@ public class ContextSensitiveHelpManager {
     // GWT overlay for the JSON object
     private static class Mapping extends JavaScriptObject {
         @SuppressWarnings("unused")
-        protected Mapping() {} // required for GWT
+        protected Mapping() { } // required for GWT
     }
 
     /**

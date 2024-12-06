@@ -122,7 +122,7 @@ public class VolumeProfileStatisticsModel extends Model {
 
     public void setSuccessfulProfileStatsFetch(boolean successfulProfileStatsFetch) {
         this.successfulProfileStatsFetch = successfulProfileStatsFetch;
-        onPropertyChanged(new PropertyChangedEventArgs("statusOfFetchingProfileStats"));//$NON-NLS-1$
+        onPropertyChanged(new PropertyChangedEventArgs("statusOfFetchingProfileStats")); //$NON-NLS-1$
     }
 
     public VolumeProfileStatisticsModel(Guid clusterId, Guid volumeId, String volumeName) {
@@ -137,20 +137,20 @@ public class VolumeProfileStatisticsModel extends Model {
         final UIMessages messages = ConstantsManager.getInstance().getMessages();
         getBricks().getSelectedItemChangedEvent().addListener((ev, sender, args) -> onBrickSelectionChange(messages));
         getNfsServers().getSelectedItemChangedEvent().addListener((ev, sender, args) -> onNfsServerSelectionChange(messages));
-        setProfileRunTime("");//$NON-NLS-1$
-        setNfsProfileRunTime("");//$NON-NLS-1$
-        setBytesRead("");//$NON-NLS-1$
-        setNfsBytesRead("");//$NON-NLS-1$
-        setBytesWritten("");//$NON-NLS-1$
-        setNfsBytesWritten("");//$NON-NLS-1$
+        setProfileRunTime(""); //$NON-NLS-1$
+        setNfsProfileRunTime(""); //$NON-NLS-1$
+        setBytesRead(""); //$NON-NLS-1$
+        setNfsBytesRead(""); //$NON-NLS-1$
+        setBytesWritten(""); //$NON-NLS-1$
+        setNfsBytesWritten(""); //$NON-NLS-1$
     }
 
     private void onNfsServerSelectionChange(UIMessages messages) {
-        if(getNfsServers().getSelectedItem() == null) {
+        if (getNfsServers().getSelectedItem() == null) {
             return;
         }
         int index = getProfileInfo().getNfsProfileDetails().indexOf(getNfsServers().getSelectedItem());
-        if(index < 0) {
+        if (index < 0) {
             return;
         }
         List<GlusterVolumeProfileStats> nfsProfileStats = getProfileInfo().getNfsProfileDetails();
@@ -159,21 +159,21 @@ public class VolumeProfileStatisticsModel extends Model {
         populateCummulativeStatistics(selectedNfsServerCummulativeProfile.getFopStats(), getNfsServerProfileStats());
 
         nfsProfileRunTime = formatRunTime(messages, selectedNfsServerCummulativeProfile.getDurationFormatted(), selectedNfsServerIntervalProfile.getDurationFormatted());
-        onPropertyChanged(new PropertyChangedEventArgs("nfsProfileRunTimeChanged"));//$NON-NLS-1$
+        onPropertyChanged(new PropertyChangedEventArgs("nfsProfileRunTimeChanged")); //$NON-NLS-1$
 
         nfsBytesRead = formatDataRead(messages, selectedNfsServerCummulativeProfile.getTotalRead(), selectedNfsServerIntervalProfile.getTotalRead());
-        onPropertyChanged(new PropertyChangedEventArgs("nfsProfileDataRead"));//$NON-NLS-1$
+        onPropertyChanged(new PropertyChangedEventArgs("nfsProfileDataRead")); //$NON-NLS-1$
 
         nfsBytesWritten = formatDataWritten(messages, selectedNfsServerCummulativeProfile.getTotalWrite(), selectedNfsServerIntervalProfile.getTotalWrite());
-        onPropertyChanged(new PropertyChangedEventArgs("nfsProfileDataWritten"));//$NON-NLS-1$
+        onPropertyChanged(new PropertyChangedEventArgs("nfsProfileDataWritten")); //$NON-NLS-1$
     }
 
     private void onBrickSelectionChange(UIMessages messages) {
-        if(getBricks().getSelectedItem() == null) {
+        if (getBricks().getSelectedItem() == null) {
             return;
         }
         int index = getProfileInfo().getBrickProfileDetails().indexOf(getBricks().getSelectedItem());
-        if(index < 0) {
+        if (index < 0) {
             return;
         }
         List<BrickProfileDetails> profileStats = getProfileInfo().getBrickProfileDetails();
@@ -183,13 +183,13 @@ public class VolumeProfileStatisticsModel extends Model {
         populateCummulativeStatistics(selectedBrickProfileCummulativeStats.getFopStats(), getCumulativeStatistics());
 
         profileRunTime = formatRunTime(messages, selectedBrickProfileCummulativeStats.getDurationFormatted(), selectedBrickProfileIntervalStats.getDurationFormatted());
-        onPropertyChanged(new PropertyChangedEventArgs("brickProfileRunTimeChanged"));//$NON-NLS-1$
+        onPropertyChanged(new PropertyChangedEventArgs("brickProfileRunTimeChanged")); //$NON-NLS-1$
 
         bytesRead = formatDataRead(messages, selectedBrickProfileCummulativeStats.getTotalRead(), selectedBrickProfileIntervalStats.getTotalRead());
-        onPropertyChanged(new PropertyChangedEventArgs("brickProfileDataRead"));//$NON-NLS-1$
+        onPropertyChanged(new PropertyChangedEventArgs("brickProfileDataRead")); //$NON-NLS-1$
 
         bytesWritten = formatDataWritten(messages, selectedBrickProfileCummulativeStats.getTotalWrite(), selectedBrickProfileIntervalStats.getTotalWrite());
-        onPropertyChanged(new PropertyChangedEventArgs("brickProfileDataWritten"));//$NON-NLS-1$
+        onPropertyChanged(new PropertyChangedEventArgs("brickProfileDataWritten")); //$NON-NLS-1$
     }
 
     public void queryBackend(final boolean isNfs) {
@@ -197,8 +197,8 @@ public class VolumeProfileStatisticsModel extends Model {
 
         AsyncDataProvider.getInstance().getGlusterVolumeProfilingStatistics(new AsyncQuery<>(returnValue -> {
             stopProgress();
-            GlusterVolumeProfileInfo profileInfoEntity =returnValue.getReturnValue();
-            if(profileInfoEntity == null || !returnValue.getSucceeded()) {
+            GlusterVolumeProfileInfo profileInfoEntity = returnValue.getReturnValue();
+            if (profileInfoEntity == null || !returnValue.getSucceeded()) {
                 setSuccessfulProfileStatsFetch(false);
                 if (isNfs) {
                     showNfsProfileStats(profileInfoEntity);
@@ -226,7 +226,7 @@ public class VolumeProfileStatisticsModel extends Model {
         if (entity != null) {
             final List<BrickProfileDetails> brickProfileDetails = entity.getBrickProfileDetails();
             getBricks().setItems(brickProfileDetails);
-            if(brickProfileDetails.size() > 0) {
+            if (brickProfileDetails.size() > 0) {
                 getBricks().setSelectedItem(brickProfileDetails.get(0));
             }
         }
@@ -234,7 +234,7 @@ public class VolumeProfileStatisticsModel extends Model {
 
     private void populateCummulativeStatistics(List<FopStats> fopStats, ListModel profileStats) {
         List<EntityModel<FopStats>> fopStatsEntities = new ArrayList<>();
-        for(int i = 0;i < fopStats.size();i++) {
+        for (int i = 0; i < fopStats.size(); i++) {
             EntityModel<FopStats> fopStatEntity = new EntityModel<>(fopStats.get(i));
             fopStatsEntities.add(fopStatEntity);
         }
@@ -242,10 +242,10 @@ public class VolumeProfileStatisticsModel extends Model {
     }
 
     public void showNfsProfileStats(GlusterVolumeProfileInfo entity) {
-        if(entity != null) {
+        if (entity != null) {
             List<GlusterVolumeProfileStats> nfsProfileDetails = entity.getNfsProfileDetails();
             getNfsServers().setItems(nfsProfileDetails);
-            if(nfsProfileDetails.size() > 0) {
+            if (nfsProfileDetails.size() > 0) {
                 getNfsServers().setSelectedItem(nfsProfileDetails.get(0));
             }
         }
@@ -268,8 +268,8 @@ public class VolumeProfileStatisticsModel extends Model {
     }
 
     private String formProfileUrl(String clusterId, String volumeId, boolean isBrickProfileSelected) {
-        String apiMatrixParam = !isBrickProfileSelected ? ";nfsStatistics=true" : "";//$NON-NLS-1$//$NON-NLS-2$
-        return StringFormat.format("/ovirt-engine/api/clusters/%s/glustervolumes/%s/profilestatistics%s?accept=application/json", clusterId, volumeId, apiMatrixParam);//$NON-NLS-1$
+        String apiMatrixParam = !isBrickProfileSelected ? ";nfsStatistics=true" : ""; //$NON-NLS-1$//$NON-NLS-2$
+        return StringFormat.format("/ovirt-engine/api/clusters/%s/glustervolumes/%s/profilestatistics%s?accept=application/json", clusterId, volumeId, apiMatrixParam); //$NON-NLS-1$
     }
 
     public String getProfileExportUrl() {
@@ -281,6 +281,6 @@ public class VolumeProfileStatisticsModel extends Model {
     }
 
     public String formatSize(double size) {
-        return NumberFormat.getFormat("#.##").format(size);//$NON-NLS-1$
+        return NumberFormat.getFormat("#.##").format(size); //$NON-NLS-1$
     }
 }

@@ -36,7 +36,7 @@ public class RemoveCinderSnapshotDiskCommand<T extends ImagesContainterParameter
 
     @Override
     protected void executeCommand() {
-        registerRollbackHandler((TransactionRollbackListener)() -> {
+        registerRollbackHandler((TransactionRollbackListener) () -> {
             TransactionSupport.executeInNewTransaction(() -> {
                 if (!getParameters().isLeaveLocked()) {
                     DiskImage diskImage = getImage();

@@ -16,7 +16,7 @@ import org.ovirt.engine.core.compat.Guid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@NonTransactiveCommandAttribute(forceCompensation=true)
+@NonTransactiveCommandAttribute(forceCompensation = true)
 public class ShutdownVmCommand<T extends ShutdownVmParameters> extends StopVmCommandBase<T> {
     private static final Logger log = LoggerFactory.getLogger(ShutdownVmCommand.class);
 

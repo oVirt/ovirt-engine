@@ -200,7 +200,7 @@ public abstract class VnicProfileModel extends Model {
             getPassthrough().setIsChangeable(passthroughAndPortMirroringAllowed,
                     constants.passthroughNotSupportedExternalNetworks());
 
-            if(passthroughAndPortMirroringAllowed) {
+            if (passthroughAndPortMirroringAllowed) {
                 updateChangeabilityIfVmsUsingTheProfile();
             }
         });

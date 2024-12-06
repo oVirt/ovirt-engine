@@ -51,13 +51,13 @@ public class CertificateChain {
             try {
                 KeyStore.Entry entry = keystore.getEntry(alias, null);
                 if (entry instanceof KeyStore.TrustedCertificateEntry) {
-                    Certificate c = ((KeyStore.TrustedCertificateEntry)entry).getTrustedCertificate();
+                    Certificate c = ((KeyStore.TrustedCertificateEntry) entry).getTrustedCertificate();
                     if (c instanceof X509Certificate) {
                         c.verify(c.getPublicKey());
-                        ret.add(new TrustAnchor((X509Certificate)c, null));
+                        ret.add(new TrustAnchor((X509Certificate) c, null));
                     }
                 }
-            } catch(Exception e) {
+            } catch (Exception e) {
                 // ignore
             }
         }
@@ -112,7 +112,7 @@ public class CertificateChain {
         Set<TrustAnchor> trustAnchors
     ) throws GeneralSecurityException {
         X509CertSelector selector = new X509CertSelector();
-        selector.setCertificate((X509Certificate)chain.get(0));
+        selector.setCertificate((X509Certificate) chain.get(0));
         PKIXBuilderParameters pkixParams = new PKIXBuilderParameters(
             trustAnchors,
             selector
@@ -141,12 +141,12 @@ public class CertificateChain {
         List<Certificate> ret = chain;
 
         if (ret != null) {
-            Certificate top = ret.get(ret.size()-1);
+            Certificate top = ret.get(ret.size() - 1);
             boolean topIsRoot = false;
             try {
                 top.verify(top.getPublicKey());
                 topIsRoot = true;
-            } catch(Exception e) {
+            } catch (Exception e) {
                 // ignore
             }
 
@@ -157,10 +157,10 @@ public class CertificateChain {
                         trustAnchors.addAll(extraTrustAnchors);
                     }
                     ret = new ArrayList<>(buildCertPath(ret, trustAnchors).getCertificates());
-                    top = ret.get(ret.size()-1);
+                    top = ret.get(ret.size() - 1);
                     for (TrustAnchor t : trustAnchors) {
                         try {
-                            Certificate c= t.getTrustedCert();
+                            Certificate c = t.getTrustedCert();
                             top.verify(c.getPublicKey());
                             ret.add(c);
                             break;
@@ -221,12 +221,12 @@ public class CertificateChain {
             );
 
             try (
-                SSLSocket sock = (SSLSocket)ctx.getSocketFactory().createSocket(
+                SSLSocket sock = (SSLSocket) ctx.getSocketFactory().createSocket(
                     url.getHost(),
                     url.getPort() != -1 ? url.getPort() : url.getDefaultPort()
                 )
             ) {
-                sock.setSoTimeout(60*1000);
+                sock.setSoTimeout(60 * 1000);
                 try {
                     sock.startHandshake();
                 } catch (Exception e) {

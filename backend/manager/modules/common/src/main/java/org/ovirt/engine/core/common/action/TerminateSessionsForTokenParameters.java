@@ -8,7 +8,7 @@ public class TerminateSessionsForTokenParameters extends ActionParametersBase {
      */
     private String ssoAccessToken;
 
-    public TerminateSessionsForTokenParameters() {}
+    public TerminateSessionsForTokenParameters() { }
 
     public TerminateSessionsForTokenParameters(String ssoAccessToken) {
         this.ssoAccessToken = ssoAccessToken;

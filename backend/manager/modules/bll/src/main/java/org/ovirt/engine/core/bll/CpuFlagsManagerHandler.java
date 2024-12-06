@@ -386,7 +386,7 @@ public class CpuFlagsManagerHandler implements BackendService {
             }
 
             if (ibmCpuByNameDictionary.containsKey(cpuName1)) {
-                return  ibmCpuByNameDictionary.containsKey(cpuName2);
+                return ibmCpuByNameDictionary.containsKey(cpuName2);
             }
 
             if (s390CpuByNameDictionary.containsKey(cpuName1)) {
@@ -462,13 +462,13 @@ public class CpuFlagsManagerHandler implements BackendService {
                 }
             } else if (ibmCpuByNameDictionary.containsKey(maxCpuName)) {
                     ServerCpu selected = ibmCpuByNameDictionary.get(maxCpuName);
-                    int selectedCpuIndex =ibmCpuList.indexOf(selected);
+                    int selectedCpuIndex = ibmCpuList.indexOf(selected);
                     for (int i = 0; i <= selectedCpuIndex; i++) {
                         supportedCpus.add(ibmCpuList.get(i));
                     }
             } else if (amdCpuByNameDictionary.containsKey(maxCpuName)) {
                 ServerCpu selected = amdCpuByNameDictionary.get(maxCpuName);
-                int selectedCpuIndex =amdCpuList.indexOf(selected);
+                int selectedCpuIndex = amdCpuList.indexOf(selected);
                 for (int i = 0; i <= selectedCpuIndex; i++) {
                     supportedCpus.add(amdCpuList.get(i));
                 }

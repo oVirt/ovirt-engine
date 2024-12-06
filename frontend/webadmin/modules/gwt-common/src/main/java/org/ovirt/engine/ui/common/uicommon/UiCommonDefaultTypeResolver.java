@@ -40,7 +40,7 @@ public class UiCommonDefaultTypeResolver implements ITypeResolver {
 
     @Inject
     public UiCommonDefaultTypeResolver(Configurator configurator, ILogger logger,
-            ConsoleUtils consoleUtils,  ErrorPopupManager errorPopupManager,
+            ConsoleUtils consoleUtils, ErrorPopupManager errorPopupManager,
             ConsoleOptionsFrontendPersister consoleOptionsFrontendPersister,
             CurrentUserRole currentUserRole,
             Provider<ISpiceNative> spiceNativeProvider,

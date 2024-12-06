@@ -17,7 +17,7 @@ public class DomainXmlUtils {
     private static final List<String> ADDRESS_PROPERTIES = Arrays.asList(
             "type", "slot", "bus", "domain", "function", "controller", "target", "unit", "port", "multifunction", "base");
 
-    public static  String parseMacAddress(XmlNode node) {
+    public static String parseMacAddress(XmlNode node) {
         XmlNode macNode = node.selectSingleNode("mac");
         return macNode.attributes.get("address").getValue();
     }

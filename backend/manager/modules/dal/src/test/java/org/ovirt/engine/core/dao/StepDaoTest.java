@@ -116,7 +116,7 @@ public class StepDaoTest extends BaseGenericDaoTestCase<Guid, Step, StepDao> {
     }
 
     @Test
-    public void getStepsByExternalId(){
+    public void getStepsByExternalId() {
         List<Step> steps = dao.getStepsByExternalId(IN_PROGRESS_REBALANCING_GLUSTER_VOLUME_TASK_ID);
         assertEquals(TOTAL_STEPS_OF_REBALANCING_GLUSTER_VOLUME, steps.size(), "Verify Rebalancing Gluster Volume Job has steps");
         Step step = steps.get(0);
@@ -126,14 +126,14 @@ public class StepDaoTest extends BaseGenericDaoTestCase<Guid, Step, StepDao> {
     }
 
     @Test
-    public void getExternalIdsForRunningSteps(){
+    public void getExternalIdsForRunningSteps() {
         List<Guid> externalIds = dao.getExternalIdsForRunningSteps(ExternalSystemType.GLUSTER);
         assertEquals(1, externalIds.size(), "Verify external ids present");
         assertEquals(IN_PROGRESS_REBALANCING_GLUSTER_VOLUME_TASK_ID, externalIds.get(0), "Invalid TaskId");
     }
 
     @Test
-    public void updateStepProgress(){
+    public void updateStepProgress() {
         Integer newProgress = 74;
         Step s = dao.get(FixturesTool.STEP_ID);
         assertNotEquals(newProgress, s.getProgress(), "New progress should be different than the current");

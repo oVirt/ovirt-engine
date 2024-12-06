@@ -74,8 +74,8 @@ public class BackendAssignedPermissionsResource
     }
 
     private List<org.ovirt.engine.core.common.businessentities.Permission> getInheritedPermissions() {
-        ((GetPermissionsForObjectParameters)queryParams).setVdcObjectType(objectType);
-        ((GetPermissionsForObjectParameters)queryParams).setDirectOnly(false);
+        ((GetPermissionsForObjectParameters) queryParams).setVdcObjectType(objectType);
+        ((GetPermissionsForObjectParameters) queryParams).setDirectOnly(false);
         List<org.ovirt.engine.core.common.businessentities.Permission> inheritedPermissions =
                 getBackendCollection(queryType, queryParams);
         for (org.ovirt.engine.core.common.businessentities.Permission entity : inheritedPermissions) {

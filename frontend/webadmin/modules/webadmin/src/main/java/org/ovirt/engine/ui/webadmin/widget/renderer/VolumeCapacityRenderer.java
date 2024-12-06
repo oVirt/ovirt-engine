@@ -32,6 +32,6 @@ public class VolumeCapacityRenderer<T extends Number> extends AbstractRenderer<T
     }
 
     public String formatSize(double size) {
-        return NumberFormat.getFormat("#.##").format(size);//$NON-NLS-1$
+        return NumberFormat.getFormat("#.##").format(size); //$NON-NLS-1$
     }
 }

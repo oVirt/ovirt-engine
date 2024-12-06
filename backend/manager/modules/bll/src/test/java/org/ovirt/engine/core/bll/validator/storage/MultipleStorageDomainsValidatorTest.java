@@ -116,7 +116,7 @@ public class MultipleStorageDomainsValidatorTest {
 
     @Test
     public void testAllDomainsWithinThresholdAllOk() {
-        domain1.getStorageDynamicData().setAvailableDiskSize(CRITICAL_SPACE_THRESHOLD +1);
+        domain1.getStorageDynamicData().setAvailableDiskSize(CRITICAL_SPACE_THRESHOLD + 1);
         domain2.getStorageDynamicData().setAvailableDiskSize(CRITICAL_SPACE_THRESHOLD);
         domain1.setCriticalSpaceActionBlocker(CRITICAL_SPACE_THRESHOLD);
         domain2.setCriticalSpaceActionBlocker(CRITICAL_SPACE_THRESHOLD);
@@ -134,7 +134,7 @@ public class MultipleStorageDomainsValidatorTest {
     }
 
     @Test
-    public void testAllDomainsHaveSpaceForNewDisksSuccess(){
+    public void testAllDomainsHaveSpaceForNewDisksSuccess() {
         List<Guid> sdIds = Arrays.asList(sdId1, sdId2);
         List<DiskImage> disksList = generateDisksList(NUM_DISKS, sdIds);
 
@@ -146,7 +146,7 @@ public class MultipleStorageDomainsValidatorTest {
     }
 
     @Test
-    public void testAllDomainsHaveSpaceForNewDisksFail(){
+    public void testAllDomainsHaveSpaceForNewDisksFail() {
         List<Guid> sdIds = Arrays.asList(sdId1, sdId2);
         List<DiskImage> disksList = generateDisksList(NUM_DISKS, sdIds);
 
@@ -160,7 +160,7 @@ public class MultipleStorageDomainsValidatorTest {
     }
 
     @Test
-    public void testAllDomainsHaveSpaceForClonedDisksSuccess(){
+    public void testAllDomainsHaveSpaceForClonedDisksSuccess() {
         List<Guid> sdIds = Arrays.asList(sdId1, sdId2);
         List<DiskImage> disksList = generateDisksList(NUM_DISKS, sdIds);
 
@@ -172,7 +172,7 @@ public class MultipleStorageDomainsValidatorTest {
     }
 
     @Test
-    public void testAllDomainsHaveSpaceForClonedDisksFail(){
+    public void testAllDomainsHaveSpaceForClonedDisksFail() {
         List<Guid> sdIds = Arrays.asList(sdId1, sdId2);
         List<DiskImage> disksList = generateDisksList(NUM_DISKS, sdIds);
 
@@ -186,7 +186,7 @@ public class MultipleStorageDomainsValidatorTest {
     }
 
     @Test
-    public void testAllDomainsHaveSpaceForAllDisksSuccess(){
+    public void testAllDomainsHaveSpaceForAllDisksSuccess() {
         List<Guid> sdIdsForNew = Arrays.asList(sdId1, sdId2);
         List<Guid> sdIdsForCloned = Arrays.asList(sdId2, sdId3);
         List<DiskImage> disksListForNew = generateDisksList(NUM_DISKS, sdIdsForNew);
@@ -200,7 +200,7 @@ public class MultipleStorageDomainsValidatorTest {
     }
 
     @Test
-    public void testAllDomainsHaveSpaceForAllDisksFail(){
+    public void testAllDomainsHaveSpaceForAllDisksFail() {
         List<Guid> sdIdsForNew = Arrays.asList(sdId1, sdId2);
         List<Guid> sdIdsForCloned = Arrays.asList(sdId2, sdId3);
         List<DiskImage> disksListForNew = generateDisksList(NUM_DISKS, sdIdsForNew);
@@ -216,7 +216,7 @@ public class MultipleStorageDomainsValidatorTest {
     }
 
     @Test
-    public void testAllDomainsHaveSpaceForMergeSuccess(){
+    public void testAllDomainsHaveSpaceForMergeSuccess() {
         StorageDomainValidator storageDomainValidator = mock(StorageDomainValidator.class);
         List<SubchainInfo> subchain = createSubchain(Collections.singletonList(sdId1));
         doReturn(storageDomainValidator).when(validator).getStorageDomainValidator(any());
@@ -226,7 +226,7 @@ public class MultipleStorageDomainsValidatorTest {
     }
 
     @Test
-    public void testAllDomainsHaveSpaceForMergeFail(){
+    public void testAllDomainsHaveSpaceForMergeFail() {
         StorageDomainValidator storageDomainValidator = mock(StorageDomainValidator.class);
         List<SubchainInfo> subchain = createSubchain(Collections.singletonList(sdId1));
         doReturn(new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN)).
@@ -238,7 +238,7 @@ public class MultipleStorageDomainsValidatorTest {
     }
 
     @Test
-    public void testAllDomainsHaveSpaceForMergeBrokenSubchainFail(){
+    public void testAllDomainsHaveSpaceForMergeBrokenSubchainFail() {
         StorageDomainValidator storageDomainValidator = mock(StorageDomainValidator.class);
         List<SubchainInfo> subchain = new ArrayList<>();
         doReturn(new ValidationResult(EngineMessage.ERROR_CANNOT_REMOVE_SNAPSHOT_ILLEGAL_IMAGE)).

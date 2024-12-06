@@ -38,7 +38,7 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.utils.MockConfigDescriptor;
 import org.ovirt.engine.core.utils.MockConfigExtension;
-import  org.ovirt.engine.core.utils.MockedConfig;
+import org.ovirt.engine.core.utils.MockedConfig;
 
 
 @ExtendWith(MockConfigExtension.class)

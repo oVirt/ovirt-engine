@@ -7,7 +7,7 @@ import org.ovirt.engine.core.common.businessentities.BusinessEntityWithStatus;
 import org.ovirt.engine.core.common.businessentities.Queryable;
 import org.ovirt.engine.core.compat.Guid;
 
-public class GlusterGeoRepSession implements Queryable, BusinessEntityWithStatus<Guid, GeoRepSessionStatus>{
+public class GlusterGeoRepSession implements Queryable, BusinessEntityWithStatus<Guid, GeoRepSessionStatus> {
 
     private static final long serialVersionUID = 1L;
 
@@ -115,7 +115,7 @@ public class GlusterGeoRepSession implements Queryable, BusinessEntityWithStatus
         this.sessionDetails = sessionDetails;
     }
 
-    public boolean isCheckPointCompleted(){
+    public boolean isCheckPointCompleted() {
         for (GlusterGeoRepSessionDetails details : getSessionDetails()) {
             if (details.getStatus() == GeoRepSessionStatus.ACTIVE && !details.isCheckpointCompleted()) {
                 return false;

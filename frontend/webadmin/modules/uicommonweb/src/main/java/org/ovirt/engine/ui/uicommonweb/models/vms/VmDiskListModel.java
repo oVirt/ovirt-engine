@@ -578,7 +578,7 @@ public class VmDiskListModel extends VmDiskListModelBase<VM> {
     }
 
     private boolean isSparsifyCommandAvailable() {
-        List<Disk> disks = getSelectedItems() != null ?getSelectedItems() : new ArrayList<Disk>();
+        List<Disk> disks = getSelectedItems() != null ? getSelectedItems() : new ArrayList<Disk>();
 
         for (Disk disk : disks) {
             if (!isImageDiskOK(disk) || isImageDiskPreallocated(disk) || !isVmDown() && disk.getPlugged()) {

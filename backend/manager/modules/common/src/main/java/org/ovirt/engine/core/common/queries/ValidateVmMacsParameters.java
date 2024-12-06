@@ -11,7 +11,7 @@ public class ValidateVmMacsParameters extends QueryParametersBase {
     private Map<Guid, List<VM>> vmsByCluster;
 
     // Hide me. Exists in order to please serialization framework we use.
-    private ValidateVmMacsParameters() {}
+    private ValidateVmMacsParameters() { }
 
     public ValidateVmMacsParameters(Map<Guid, List<VM>> vmsByCluster) {
         // As long as the default constructor exists, calling it is to be on the safe side for the case it'd contain

@@ -20,7 +20,7 @@ public class PDIVMapBuilder {
     }
 
     public Map<String, String> build() {
-        if (poolId == null || domainId == null || imageGroupId == null || volumeId== null) {
+        if (poolId == null || domainId == null || imageGroupId == null || volumeId == null) {
             throw new IllegalArgumentException("One or more of the PDIV IDs is null");
         }
         Map<String, String> pdivMap = new HashMap<>(8);

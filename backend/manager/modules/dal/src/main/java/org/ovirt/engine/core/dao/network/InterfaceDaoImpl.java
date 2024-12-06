@@ -152,7 +152,7 @@ public class InterfaceDaoImpl extends BaseDao implements InterfaceDao {
                 .addValue("labels", SerializationFactory.getSerializer().serialize(nic.getLabels()))
                 .addValue("ad_partner_mac", nic.getAdPartnerMac())
                 .addValue("ad_aggregator_id", nic.getAdAggregatorId())
-                .addValue("bond_active_slave", nic.isBond() ? ((Bond)nic).getActiveSlave() : null)
+                .addValue("bond_active_slave", nic.isBond() ? ((Bond) nic).getActiveSlave() : null)
                 .addValue("reported_switch_type", nic.getReportedSwitchType() == null ? null : nic.getReportedSwitchType().getOptionValue());
     }
 
@@ -318,7 +318,7 @@ public class InterfaceDaoImpl extends BaseDao implements InterfaceDao {
 
     private final VdsNetworkInterfaceRowMapper interfaceWithQosMapper = new VdsNetworkInterfaceRowMapper(qosResultSetMapper);
 
-    private static final class VdsNetworkInterfaceRowMapper  implements RowMapper<VdsNetworkInterface> {
+    private static final class VdsNetworkInterfaceRowMapper implements RowMapper<VdsNetworkInterface> {
 
         private final RowMapper<HostNetworkQos> hostNetworkQosMapper;
 

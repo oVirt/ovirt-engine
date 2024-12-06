@@ -103,7 +103,7 @@ public class MapVnicHandlers {
 
         @Override
         public HandlerOutcome handle(MapVnicContext ctx) {
-            if(ctx.getProfileMapping() != null) {
+            if (ctx.getProfileMapping() != null) {
                 ctx.trace(SUCCESS, ProfileMappingSpecified.class);
                 return SUCCESS;
             }
@@ -172,7 +172,7 @@ public class MapVnicHandlers {
 
         @Override
         public HandlerOutcome handle(MapVnicContext ctx) {
-            if(ctx.getProfileMapping().hasTargetId()) {
+            if (ctx.getProfileMapping().hasTargetId()) {
                 ctx.trace(SUCCESS, TargetIdSpecified.class);
                 return SUCCESS;
             }
@@ -215,7 +215,7 @@ public class MapVnicHandlers {
 
         @Override
         public HandlerOutcome handle(MapVnicContext ctx) {
-            if(ctx.getProfileMapping().targetNamesAreEmptyString()) {
+            if (ctx.getProfileMapping().targetNamesAreEmptyString()) {
                 ctx.trace(SUCCESS, TargetNamesAreEmptyString.class);
                 return SUCCESS;
             }
@@ -228,7 +228,7 @@ public class MapVnicHandlers {
 
         @Override
         public HandlerOutcome handle(MapVnicContext ctx) {
-            if(ctx.getProfileMapping().hasTargetNames()) {
+            if (ctx.getProfileMapping().hasTargetNames()) {
                 ctx.trace(SUCCESS, TargetNamesSpecified.class);
                 return SUCCESS;
             }
@@ -263,7 +263,7 @@ public class MapVnicHandlers {
 
         @Override
         public HandlerOutcome handle(MapVnicContext ctx) {
-            if(ctx.getProfileMapping().hasTarget()) {
+            if (ctx.getProfileMapping().hasTarget()) {
                 ctx.trace(SUCCESS, TargetProfileSpecified.class);
                 return SUCCESS;
             }

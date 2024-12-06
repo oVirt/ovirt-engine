@@ -42,11 +42,11 @@ import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
 public class ClusterGeneralModel extends EntityModel<Cluster> {
 
-    public static final String CPU_VERB_PROPERTY_CHANGE = "cpuVerb";//$NON-NLS-1$
+    public static final String CPU_VERB_PROPERTY_CHANGE = "cpuVerb"; //$NON-NLS-1$
 
-    public static final String CONFIGURED_CPU_VERB_PROPERTY_CHANGE = "configuredCpuVerb";//$NON-NLS-1$
+    public static final String CONFIGURED_CPU_VERB_PROPERTY_CHANGE = "configuredCpuVerb"; //$NON-NLS-1$
 
-    public static final String ARCHITECTURE_PROPERTY_CHANGE = "architecture";//$NON-NLS-1$
+    public static final String ARCHITECTURE_PROPERTY_CHANGE = "architecture"; //$NON-NLS-1$
 
     private Integer noOfVolumesTotal;
     private Integer noOfVolumesUp;
@@ -431,7 +431,7 @@ public class ClusterGeneralModel extends EntityModel<Cluster> {
 
                     HostDetailModel hostModel = new HostDetailModel(host.getKey(), sshPublicKey);
                     hostModel.setName(host.getKey());
-                    hostModel.setPassword("");//$NON-NLS-1$
+                    hostModel.setPassword(""); //$NON-NLS-1$
                     EntityModel<HostDetailModel> entityModel = new EntityModel<>(hostModel);
                     list.add(entityModel);
                 }
@@ -573,7 +573,7 @@ public class ClusterGeneralModel extends EntityModel<Cluster> {
         getManageGlusterSwiftCommand().setIsExecutionAllowed(getGlusterSwiftStatus() != GlusterServiceStatus.NOT_AVAILABLE);
 
         AsyncDataProvider.getInstance().getClusterGlusterSwiftService(new AsyncQuery<>(swiftService -> {
-            if(swiftService != null) {
+            if (swiftService != null) {
                 setGlusterSwiftStatus(swiftService.getStatus());
             } else {
                 setGlusterSwiftStatus(GlusterServiceStatus.UNKNOWN);

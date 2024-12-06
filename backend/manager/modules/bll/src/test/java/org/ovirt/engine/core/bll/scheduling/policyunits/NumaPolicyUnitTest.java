@@ -24,7 +24,7 @@ import org.ovirt.engine.core.compat.Guid;
 
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.LENIENT)
-public class NumaPolicyUnitTest extends NumaPolicyTestBase{
+public class NumaPolicyUnitTest extends NumaPolicyTestBase {
 
     private static final long NODE_SIZE = 1024;
 

@@ -20,19 +20,19 @@ public class GlusterVolumeMapper {
     public static GlusterVolumeEntity map(GlusterVolume fromVolume, GlusterVolumeEntity toVolume) {
         GlusterVolumeEntity volume = toVolume != null ? toVolume : new GlusterVolumeEntity();
 
-        if(fromVolume.isSetId()) {
+        if (fromVolume.isSetId()) {
             volume.setId(Guid.createGuidFromStringDefaultEmpty(fromVolume.getId()));
         }
 
-        if(fromVolume.isSetName()) {
+        if (fromVolume.isSetName()) {
             volume.setName(fromVolume.getName());
         }
 
-        if(fromVolume.isSetVolumeType()) {
+        if (fromVolume.isSetVolumeType()) {
             volume.setVolumeType(map(fromVolume.getVolumeType(), null));
         }
 
-        if(fromVolume.isSetTransportTypes()) {
+        if (fromVolume.isSetTransportTypes()) {
             for (TransportType transportType : fromVolume.getTransportTypes().getTransportTypes()) {
                 if (transportType != null) {
                     volume.addTransportType(map(transportType, null));
@@ -40,19 +40,19 @@ public class GlusterVolumeMapper {
             }
         }
 
-        if(fromVolume.isSetReplicaCount()) {
+        if (fromVolume.isSetReplicaCount()) {
             volume.setReplicaCount(fromVolume.getReplicaCount());
         }
 
-        if(fromVolume.isSetStripeCount()) {
+        if (fromVolume.isSetStripeCount()) {
             volume.setStripeCount(fromVolume.getStripeCount());
         }
 
-        if(fromVolume.isSetDisperseCount()) {
+        if (fromVolume.isSetDisperseCount()) {
             volume.setDisperseCount(fromVolume.getDisperseCount());
         }
 
-        if(fromVolume.isSetRedundancyCount()) {
+        if (fromVolume.isSetRedundancyCount()) {
             volume.setRedundancyCount(fromVolume.getRedundancyCount());
         }
 
@@ -74,15 +74,15 @@ public class GlusterVolumeMapper {
     public static GlusterVolume map(GlusterVolumeEntity fromVolume, GlusterVolume toVolume) {
         GlusterVolume volume = toVolume != null ? toVolume : new GlusterVolume();
 
-        if(fromVolume.getId() != null) {
+        if (fromVolume.getId() != null) {
             volume.setId(fromVolume.getId().toString());
         }
 
-        if(fromVolume.getName() != null) {
+        if (fromVolume.getName() != null) {
             volume.setName(fromVolume.getName());
         }
 
-        if(fromVolume.getVolumeType() != null) {
+        if (fromVolume.getVolumeType() != null) {
             volume.setVolumeType(map(fromVolume.getVolumeType(), null));
         }
 
@@ -102,7 +102,7 @@ public class GlusterVolumeMapper {
         volume.setDisperseCount(fromVolume.getDisperseCount());
         volume.setRedundancyCount(fromVolume.getRedundancyCount());
 
-        if(fromVolume.getStatus() != null) {
+        if (fromVolume.getStatus() != null) {
             volume.setStatus(mapVolumeStatus(fromVolume.getStatus()));
         }
 

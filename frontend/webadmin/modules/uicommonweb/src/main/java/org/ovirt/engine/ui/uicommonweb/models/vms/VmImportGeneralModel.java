@@ -106,7 +106,7 @@ public class VmImportGeneralModel extends AbstractGeneralModel<ImportVmData> {
     public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
         super.eventRaised(ev, sender, args);
         if (sender instanceof ClusterListModel) {
-            cluster = (Cluster)((ClusterListModel) sender).getSelectedItem();
+            cluster = (Cluster) ((ClusterListModel) sender).getSelectedItem();
             updateOsList();
         }
     }

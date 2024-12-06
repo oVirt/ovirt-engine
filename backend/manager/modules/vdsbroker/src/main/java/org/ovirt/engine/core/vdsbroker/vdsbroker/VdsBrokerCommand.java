@@ -181,7 +181,7 @@ public abstract class VdsBrokerCommand<P extends VdsIdVDSCommandParametersBase> 
     }
 
     @Override
-    protected void logToAudit(){
+    protected void logToAudit() {
         if (isPolicyResetMessage(getReturnStatus().message)) {
             return;
         }

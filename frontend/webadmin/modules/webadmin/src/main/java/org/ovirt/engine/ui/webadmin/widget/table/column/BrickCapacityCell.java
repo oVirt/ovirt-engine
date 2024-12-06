@@ -9,7 +9,7 @@ public class BrickCapacityCell<P extends BrickProperties> extends GlusterCapacit
 
     @Override
     public void render(Context context, BrickProperties value, SafeHtmlBuilder sb, String id) {
-        if(value != null) {
+        if (value != null) {
             setFreeSize(value.getFreeSize());
             setTotalSize(value.getTotalSize());
             setUsedSize(value.getTotalSize() - value.getFreeSize());

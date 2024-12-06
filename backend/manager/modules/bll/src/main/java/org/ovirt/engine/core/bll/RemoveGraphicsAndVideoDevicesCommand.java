@@ -38,7 +38,7 @@ public class RemoveGraphicsAndVideoDevicesCommand extends RemoveGraphicsDeviceCo
         if (noGraphicsDevicesLeft()) {
             vmDeviceUtils.removeVideoDevices(getVmBaseId());
             //Since getParameters().isVm() isn't set by REST api, try to set VM and if failed then try to set Template
-            if(!setVmToHeadlessMode()) {
+            if (!setVmToHeadlessMode()) {
                 setTemplateToHeadlessMode();
             }
         }

@@ -175,7 +175,7 @@ public class GlusterThinDeviceService {
                 while (!bricks.isEmpty()) {
                     int replicaCounter = 0;
                     List<GlusterBrickEntity> set = new ArrayList<>();
-                    while(replicaCounter < volume.getReplicaCount() && !bricks.isEmpty()) {
+                    while (replicaCounter < volume.getReplicaCount() && !bricks.isEmpty()) {
                         set.add(bricks.get(0));
                         bricks.remove(0);
                         replicaCounter++;
@@ -199,7 +199,7 @@ public class GlusterThinDeviceService {
                     return data.stream()
                             .map(b -> b.map(v -> v * SizeConverter.BYTES_IN_MB).map(Double::longValue).min(Long::compare).orElse(null))
                             .filter(Objects::nonNull)
-                            .mapToLong(s-> s)
+                            .mapToLong(s -> s)
                             .sum();
                 case DISTRIBUTE:
                 case STRIPE:

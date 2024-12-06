@@ -119,7 +119,7 @@ public class NumaSettingFactoryTest {
 
         List<VdsNumaNode> newVdsNodes = new ArrayList<>();
 
-        VdsNumaNode newVdsNumaNode= new VdsNumaNode();
+        VdsNumaNode newVdsNumaNode = new VdsNumaNode();
         newVdsNumaNode.setCpuIds(generateCpuList(0, 4));
         newVdsNumaNode.setId(Guid.newGuid());
         newVdsNumaNode.setIndex(0);
@@ -127,7 +127,7 @@ public class NumaSettingFactoryTest {
         newVdsNumaNode.setNumaNodeStatistics(newNodeStatistics);
         newVdsNodes.add(newVdsNumaNode);
 
-        newVdsNumaNode= new VdsNumaNode();
+        newVdsNumaNode = new VdsNumaNode();
         newVdsNumaNode.setCpuIds(generateCpuList(4, 4));
         newVdsNumaNode.setId(Guid.newGuid());
         newVdsNumaNode.setIndex(1);

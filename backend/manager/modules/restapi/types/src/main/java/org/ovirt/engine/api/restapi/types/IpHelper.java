@@ -40,6 +40,6 @@ public class IpHelper {
         // This isn't a complete validation, as the API doesn't currently perform validations, but assuming that the
         // address is valid, checking if it contains a colon is enough to determine if it is IPv4 or IPv6, as no valid
         // IPv4 address can contain a colon, and all valid IPv6 addresses must contain at least one colon.
-        return address.contains(":")? IpVersion.V6: IpVersion.V4;
+        return address.contains(":") ? IpVersion.V6 : IpVersion.V4;
     }
 }

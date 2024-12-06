@@ -884,7 +884,7 @@ public class VmInfoBuildUtils {
     }
 
     public String getEmulatedMachineByClusterArch(ArchitectureType arch) {
-        switch(arch) {
+        switch (arch) {
         case ppc64:
         case ppc64le:
             return "pseries";
@@ -963,14 +963,14 @@ public class VmInfoBuildUtils {
     public String makeDiskName(String diskInterface, int index) {
         String devIndex = "";
         while (index > 0) {
-            devIndex = (char)('a' + (index % 26)) + devIndex;
+            devIndex = (char) ('a' + (index % 26)) + devIndex;
             index /= 26;
         }
         return diskInterfaceToDevName(diskInterface) + (devIndex.isEmpty() ? 'a' : devIndex);
     }
 
     public String diskInterfaceToDevName(String iface) {
-        switch(iface) {
+        switch (iface) {
         case "virtio":
             return "vd";
         case "fdc":
@@ -1095,9 +1095,9 @@ public class VmInfoBuildUtils {
         Optional<VmNumaNode> pinnedVmNumaNode = vmNumaNodes.stream().filter(d -> !d.getVdsNumaNodeList().isEmpty()).findAny();
 
         if (MapUtils.isEmpty(cpuPinning) || !pinnedVmNumaNode.isPresent() || vm.getNumOfIoThreads() == 0) {
-            String msgReason1 = MapUtils.isEmpty(cpuPinning) ? "CPU Pinning topology is not set": null;
-            String msgReason2 = vm.getNumOfIoThreads() == 0 ? "IO Threads is not enabled": null;
-            String msgReason3 = !pinnedVmNumaNode.isPresent() ? "vm's virtual NUMA nodes are not pinned to host's NUMA nodes": null;
+            String msgReason1 = MapUtils.isEmpty(cpuPinning) ? "CPU Pinning topology is not set" : null;
+            String msgReason2 = vm.getNumOfIoThreads() == 0 ? "IO Threads is not enabled" : null;
+            String msgReason3 = !pinnedVmNumaNode.isPresent() ? "vm's virtual NUMA nodes are not pinned to host's NUMA nodes" : null;
             String finalMsgReason = Stream.of(msgReason1, msgReason2, msgReason3)
                     .filter(Objects::nonNull).collect(Collectors.joining(", ")) + ".";
 
@@ -1182,7 +1182,7 @@ public class VmInfoBuildUtils {
     private static Set<Integer> getAllPinnedPCpus(Map<String, Object> cpuPinning) {
         final Set<Integer> pinnedCpus = new LinkedHashSet<>();
         cpuPinning.forEach((vcpu, cpuSet) -> {
-            pinnedCpus.addAll(parsePCpuPinningNumbers((String)cpuSet));
+            pinnedCpus.addAll(parsePCpuPinningNumbers((String) cpuSet));
         });
         return pinnedCpus;
     }
@@ -1232,7 +1232,7 @@ public class VmInfoBuildUtils {
 
     // Get list of pCPUs used both for CPU pinning and IO/emulator pinning
     private String getOverriddenPinnedCpusList(Set<Integer> vdsPinnedCpus, List<Integer> ioEmulatorPinnedCpus) {
-        List<Integer> overriddenCpus = (List<Integer>)CollectionUtils.intersection(vdsPinnedCpus, ioEmulatorPinnedCpus);
+        List<Integer> overriddenCpus = (List<Integer>) CollectionUtils.intersection(vdsPinnedCpus, ioEmulatorPinnedCpus);
 
         if (overriddenCpus.isEmpty()) {
             return "";
@@ -1245,7 +1245,7 @@ public class VmInfoBuildUtils {
 
     private static VdsNumaNode getNumaNodeWithLowerCpuIds(VdsNumaNode mostPinnedPnumaNode, VdsNumaNode currNode) {
         return Objects.compare(currNode.getCpuIds(), mostPinnedPnumaNode.getCpuIds(), Comparator.comparing(Collections::min)) < 0 ?
-                currNode: mostPinnedPnumaNode;
+                currNode : mostPinnedPnumaNode;
     }
 
 
@@ -1274,7 +1274,7 @@ public class VmInfoBuildUtils {
     public List<VmNumaNode> getVmNumaNodes(VM vm) {
         int onlineCpus = VmCpuCountHelper.getDynamicNumOfCpu(vm);
         int vcpus = FeatureSupported.hotPlugCpu(vm.getCompatibilityVersion(), vm.getClusterArch(), vm.getCpuPinningPolicy()) ?
-                VmCpuCountHelper.calcMaxVCpu(vm, vm.getCompatibilityVersion()): onlineCpus;
+                VmCpuCountHelper.calcMaxVCpu(vm, vm.getCompatibilityVersion()) : onlineCpus;
         int offlineCpus = vcpus - onlineCpus;
         List<VmNumaNode> vmNumaNodes = vmNumaNodeDao.getAllVmNumaNodeByVmId(vm.getId());
         if (!vmNumaNodes.isEmpty()) {
@@ -1294,9 +1294,9 @@ public class VmInfoBuildUtils {
                         Comparator.comparingInt(o -> o.getCpuIds().size());
                 Collections.sort(vmNumaNodes, compareBySize);
                 int numaCount = vmNumaNodes.size();
-                int start = totalCpusInNodes-1;
+                int start = totalCpusInNodes - 1;
                 for (VmNumaNode vmNode : vmNumaNodes) {
-                    int index = start = start+1;
+                    int index = start = start + 1;
                     while (index < vcpus) {
                         vmNode.getCpuIds().add(index);
                         index += numaCount;
@@ -1408,7 +1408,7 @@ public class VmInfoBuildUtils {
         return osRepository.isLinux(osId) && Config.<Boolean> getValue(ConfigValues.EnableKASLRDump);
     }
 
-    public List<VmNicFilterParameter> getAllNetworkFiltersForVmNic(Guid nicId)  {
+    public List<VmNicFilterParameter> getAllNetworkFiltersForVmNic(Guid nicId) {
         return vmNicFilterParameterDao.getAllForVmNic(nicId);
     }
 
@@ -1529,7 +1529,7 @@ public class VmInfoBuildUtils {
     }
 
     public int getDefaultHugepageSize(VM vm) {
-        switch(vm.getClusterArch().getFamily()) {
+        switch (vm.getClusterArch().getFamily()) {
         case ppc:
             return DEFAULT_HUGEPAGESIZE_PPC64LE;
         default:
@@ -1636,10 +1636,10 @@ public class VmInfoBuildUtils {
         // Beware: The sizes computed here cannot be changed otherwise data corruption/loss may happen!
         Map<String, Object> specParams = hostDevice.getSpecParams();
         final Long hotplugAlignment = new Long(vm.getClusterArch().getHotplugMemorySizeFactorMb() * 1024 * 1024);
-        final Long nvdimmAlignment = (Long)specParams.getOrDefault(VdsProperties.ALIGN_SIZE, hotplugAlignment);
+        final Long nvdimmAlignment = (Long) specParams.getOrDefault(VdsProperties.ALIGN_SIZE, hotplugAlignment);
         // Libvirt performs size alignments, sometimes up rather than down, let's make an initial alignment down
         // here to be safe.
-        Long size = alignDown((Long)specParams.get(VdsProperties.DEVICE_SIZE), hotplugAlignment);
+        Long size = alignDown((Long) specParams.get(VdsProperties.DEVICE_SIZE), hotplugAlignment);
         // Libvirt subtracts label size on POWER before checking for alignments.
         if (vm.getClusterArch().getFamily() == ArchitectureType.ppc) {
             size += NVDIMM_LABEL_SIZE;

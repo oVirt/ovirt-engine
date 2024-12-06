@@ -52,7 +52,7 @@ public class ApplySearchStringEvent extends GwtEvent<ApplySearchStringEvent.Appl
     handler.onApplySearchString(this);
   }
 
-  public String getSearchString(){
+  public String getSearchString() {
     return searchString;
   }
 

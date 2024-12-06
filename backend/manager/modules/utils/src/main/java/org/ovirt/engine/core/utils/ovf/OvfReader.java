@@ -846,7 +846,7 @@ public abstract class OvfReader implements IOvfBuilder {
         if (StringUtils.isNotEmpty(resourceSubType)) {
             try {
                 return Integer.parseInt(resourceSubType);
-            } catch(NumberFormatException ex) {
+            } catch (NumberFormatException ex) {
                 for (VmInterfaceType vmInterfaceType : VmInterfaceType.values()) {
                     if (vmInterfaceType.getInternalName().equalsIgnoreCase(resourceSubType)) {
                         return vmInterfaceType.getValue();

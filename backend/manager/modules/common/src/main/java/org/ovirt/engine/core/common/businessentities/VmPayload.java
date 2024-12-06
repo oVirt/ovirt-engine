@@ -42,9 +42,9 @@ public class VmPayload extends VmDevice implements Serializable {
                 dev.getLogicalName());
 
         if (dev.getSpecParams() != null) {
-            Map<String, Object> payload = (Map<String, Object>)dev.getSpecParams().get(SpecParamsPayload);
-            this.volumeId = (String)payload.get(SpecParamsVolumeIdType);
-            this.files = (HashMap<String, String>)payload.get(SpecParamsFileType);
+            Map<String, Object> payload = (Map<String, Object>) dev.getSpecParams().get(SpecParamsPayload);
+            this.volumeId = (String) payload.get(SpecParamsVolumeIdType);
+            this.files = (HashMap<String, String>) payload.get(SpecParamsFileType);
         }
     }
 

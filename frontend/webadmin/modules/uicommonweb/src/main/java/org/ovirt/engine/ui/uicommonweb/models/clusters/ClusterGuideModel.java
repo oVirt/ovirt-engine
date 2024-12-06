@@ -356,7 +356,7 @@ public class ClusterGuideModel extends GuideModel<Cluster> {
                         int i = 0;
 
                         for (MoveHostData selectedHostData : hosts) {
-                            VDS selectedHost= selectedHostData.getEntity();
+                            VDS selectedHost = selectedHostData.getEntity();
                             if (selectedHost.getStatus() == VDSStatus.PendingApproval && retVals.get(i) != null
                                     && retVals.get(i).getSucceeded()) {
                                 Frontend.getInstance().runAction(ActionType.ApproveVds,
@@ -504,7 +504,7 @@ public class ClusterGuideModel extends GuideModel<Cluster> {
     public void onAddDataCenter() {
 
         @SuppressWarnings("unchecked")
-        ListModel<EntityModel<StoragePool>> dataCentersModel = (ListModel<EntityModel<StoragePool>>)getWindow();
+        ListModel<EntityModel<StoragePool>> dataCentersModel = (ListModel<EntityModel<StoragePool>>) getWindow();
         EntityModel<StoragePool> dataCenter = dataCentersModel.getSelectedItem();
 
         if (dataCenter != null) {

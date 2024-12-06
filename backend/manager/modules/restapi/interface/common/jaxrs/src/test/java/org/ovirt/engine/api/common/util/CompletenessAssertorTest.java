@@ -299,21 +299,21 @@ public class CompletenessAssertorTest {
         }
     }
 
-    private void verifyIncompleteException(WebApplicationException wae, String type,  String... fields) {
+    private void verifyIncompleteException(WebApplicationException wae, String type, String... fields) {
         assertEquals(400, wae.getResponse().getStatus());
-        Fault fault = (Fault)wae.getResponse().getEntity();
+        Fault fault = (Fault) wae.getResponse().getEntity();
         assertNotNull(fault);
         assertEquals("Incomplete parameters", fault.getReason());
         String method = new Throwable().getStackTrace()[1].getMethodName();
-        assertEquals(type + " " +  Arrays.asList(fields) + " required for " + method, fault.getDetail());
+        assertEquals(type + " " + Arrays.asList(fields) + " required for " + method, fault.getDetail());
     }
 
-    private void verifyIncompleteException(String reason, WebApplicationException wae, String type,  String... fields) {
+    private void verifyIncompleteException(String reason, WebApplicationException wae, String type, String... fields) {
         assertEquals(400, wae.getResponse().getStatus());
-        Fault fault = (Fault)wae.getResponse().getEntity();
+        Fault fault = (Fault) wae.getResponse().getEntity();
         assertNotNull(fault);
         assertEquals(reason, fault.getReason());
         String method = new Throwable().getStackTrace()[1].getMethodName();
-        assertEquals(type + " " +  Arrays.asList(fields) + " required for " + method, fault.getDetail());
+        assertEquals(type + " " + Arrays.asList(fields) + " required for " + method, fault.getDetail());
     }
 }

@@ -66,7 +66,7 @@ public class AddExternalEventCommand<T extends AddExternalEventParameters> exten
         String message =
                 StringUtils.abbreviate(getEvent().getMessage(), Config.getValue(ConfigValues.MaxAuditLogMessageLength));
 
-        switch (getEvent().getSeverity()){
+        switch (getEvent().getSeverity()) {
             case NORMAL:
                 auditLogDirector.log(event, AuditLogType.EXTERNAL_EVENT_NORMAL, message);
                 break;

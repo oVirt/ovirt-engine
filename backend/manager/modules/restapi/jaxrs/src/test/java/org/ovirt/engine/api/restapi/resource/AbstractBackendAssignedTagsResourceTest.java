@@ -73,7 +73,7 @@ public abstract class AbstractBackendAssignedTagsResourceTest<C extends Abstract
         Response response = collection.add(model);
         assertEquals(201, response.getStatus());
         assertTrue(response.getEntity() instanceof Tag);
-        verifyModel((Tag)response.getEntity(), 0);
+        verifyModel((Tag) response.getEntity(), 0);
     }
 
     @Test
@@ -105,7 +105,7 @@ public abstract class AbstractBackendAssignedTagsResourceTest<C extends Abstract
         Response response = collection.add(model);
         assertEquals(201, response.getStatus());
         assertTrue(response.getEntity() instanceof Tag);
-        verifyModel((Tag)response.getEntity(), 0);
+        verifyModel((Tag) response.getEntity(), 0);
     }
 
     @Test

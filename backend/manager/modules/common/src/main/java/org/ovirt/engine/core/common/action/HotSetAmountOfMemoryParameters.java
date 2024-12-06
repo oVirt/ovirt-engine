@@ -2,7 +2,7 @@ package org.ovirt.engine.core.common.action;
 
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 
-public class HotSetAmountOfMemoryParameters extends VmManagementParametersBase  {
+public class HotSetAmountOfMemoryParameters extends VmManagementParametersBase {
 
     private PlugAction plugAction;
     private int numaNode;

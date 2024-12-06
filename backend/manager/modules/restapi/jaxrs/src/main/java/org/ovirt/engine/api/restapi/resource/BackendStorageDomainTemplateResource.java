@@ -110,9 +110,9 @@ public class BackendStorageDomainTemplateResource
         params.setImageToDestinationDomainMap(getDiskToDestinationMap(action));
         params.setForceOverride(action.isSetExclusive() ? action.isExclusive() : false);
 
-        if (action.isSetClone()){
+        if (action.isSetClone()) {
             params.setImportAsNewEntity(action.isClone());
-            if(action.isSetTemplate() && action.getTemplate().isSetName()) {
+            if (action.isSetTemplate() && action.getTemplate().isSetName()) {
                 params.getVmTemplate().setName(action.getTemplate().getName());
             }
         }

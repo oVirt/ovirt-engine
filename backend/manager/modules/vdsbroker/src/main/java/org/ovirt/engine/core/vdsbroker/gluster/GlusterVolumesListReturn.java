@@ -60,7 +60,7 @@ public final class GlusterVolumesListReturn extends StatusReturn {
         super(innerMap);
         this.clusterId = clusterId;
 
-        if(getStatus().code != 0) {
+        if (getStatus().code != 0) {
             return;
         }
 
@@ -69,7 +69,7 @@ public final class GlusterVolumesListReturn extends StatusReturn {
         for (Entry<String, Object> entry : volumesMap.entrySet()) {
             log.debug("received volume '{}'", entry.getKey());
 
-            GlusterVolumeEntity volume = getVolume((Map<String, Object>)entry.getValue());
+            GlusterVolumeEntity volume = getVolume((Map<String, Object>) entry.getValue());
             volumes.put(volume.getId(), volume);
         }
     }
@@ -79,11 +79,11 @@ public final class GlusterVolumesListReturn extends StatusReturn {
         GlusterVolumeEntity volume = new GlusterVolumeEntity();
 
         volume.setClusterId(clusterId);
-        volume.setId(Guid.createGuidFromStringDefaultEmpty((String)map.get(UUID)));
-        volume.setName((String)map.get(VOLUME_NAME));
-        volume.setVolumeType((String)map.get(VOLUME_TYPE));
+        volume.setId(Guid.createGuidFromStringDefaultEmpty((String) map.get(UUID)));
+        volume.setName((String) map.get(VOLUME_NAME));
+        volume.setVolumeType((String) map.get(VOLUME_TYPE));
 
-        if (volume.getVolumeType() !=null) {
+        if (volume.getVolumeType() != null) {
             if (volume.getVolumeType().isReplicatedType()) {
                 volume.setReplicaCount(Integer.valueOf((String) map.get(REPLICA_COUNT)));
                 boolean isArbiter = map.containsKey(IS_ARBITER)
@@ -98,36 +98,36 @@ public final class GlusterVolumesListReturn extends StatusReturn {
                 volume.setRedundancyCount(Integer.valueOf((String) map.get(REDUNDANCY_COUNT)));
             }
         }
-        for(Object transportType : (Object[])map.get(TRANSPORT_TYPE)) {
-            volume.addTransportType(TransportType.valueOf((String)transportType));
+        for (Object transportType : (Object[]) map.get(TRANSPORT_TYPE)) {
+            volume.addTransportType(TransportType.valueOf((String) transportType));
         }
 
-        String volStatus = (String)map.get(VOLUME_STATUS);
-        if(volStatus.toUpperCase().equals(VOLUME_STATUS_ONLINE)) {
+        String volStatus = (String) map.get(VOLUME_STATUS);
+        if (volStatus.toUpperCase().equals(VOLUME_STATUS_ONLINE)) {
             volume.setStatus(GlusterStatus.UP);
         } else {
             volume.setStatus(GlusterStatus.DOWN);
         }
 
         try {
-            if (map.get(BRICKS_INFO) != null && ((Object[])map.get(BRICKS_INFO)).length > 0) {
-                volume.setBricks(getBricks(volume.getId(), (Object[])map.get(BRICKS_INFO), true));
+            if (map.get(BRICKS_INFO) != null && ((Object[]) map.get(BRICKS_INFO)).length > 0) {
+                volume.setBricks(getBricks(volume.getId(), (Object[]) map.get(BRICKS_INFO), true));
             } else {
-                volume.setBricks(getBricks(volume.getId(), (Object[])map.get(BRICKS), false));
+                volume.setBricks(getBricks(volume.getId(), (Object[]) map.get(BRICKS), false));
             }
         } catch (Exception e) {
             log.error("Could not populate bricks of volume '{}' on cluster '{}': {}", volume.getName(), clusterId, e.getMessage());
             log.debug("Exception", e);
         }
-        volume.setOptions(getOptions((Map<String, Object>)map.get(OPTIONS)));
+        volume.setOptions(getOptions((Map<String, Object>) map.get(OPTIONS)));
 
         return volume;
     }
 
     private Map<String, String> getOptions(Map<String, Object> map) {
         Map<String, String> options = new HashMap<>();
-        for(Entry<String, Object> entry : map.entrySet()) {
-            options.put(entry.getKey(), (String)entry.getValue());
+        for (Entry<String, Object> entry : map.entrySet()) {
+            options.put(entry.getKey(), (String) entry.getValue());
         }
         return options;
     }

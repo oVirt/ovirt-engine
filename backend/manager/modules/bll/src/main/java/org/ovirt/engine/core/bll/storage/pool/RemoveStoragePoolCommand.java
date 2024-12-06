@@ -86,7 +86,7 @@ public class RemoveStoragePoolCommand<T extends StoragePoolParametersBase> exten
 
         if (!storageDomains.isEmpty()) {
             if (!getParameters().isForceDelete() && !getAllRunningVdssInPool().isEmpty()) {
-                if(!regularRemoveStorageDomains(storageDomains)) {
+                if (!regularRemoveStorageDomains(storageDomains)) {
                     setSucceeded(false);
                     return;
                 }
@@ -158,7 +158,7 @@ public class RemoveStoragePoolCommand<T extends StoragePoolParametersBase> exten
     private boolean regularRemoveStorageDomains(List<StorageDomain> storageDomains) {
         boolean retVal = true;
         final StorageDomain masterDomain =
-                storageDomains.stream().filter(s ->  s.getStorageDomainType() == StorageDomainType.Master).findFirst().orElse(null);
+                storageDomains.stream().filter(s -> s.getStorageDomainType() == StorageDomainType.Master).findFirst().orElse(null);
         lockStorageDomain(masterDomain);
         // destroying a pool is an SPM action. We need to connect all hosts
         // to the pool. Later on, during spm election, one of the hosts will
@@ -280,7 +280,7 @@ public class RemoveStoragePoolCommand<T extends StoragePoolParametersBase> exten
             return false;
         }
         if (!getParameters().isForceDelete()) {
-            if(poolDomains.size() > 1) {
+            if (poolDomains.size() > 1) {
                 return failValidation(EngineMessage.ERROR_CANNOT_REMOVE_STORAGE_POOL_WITH_NONMASTER_DOMAINS);
             }
             if (!poolDomains.isEmpty() && !canDetachStorageDomainWithVmsAndDisks(poolDomains.get(0))) {
@@ -322,7 +322,7 @@ public class RemoveStoragePoolCommand<T extends StoragePoolParametersBase> exten
 
     @Override
     public AuditLogType getAuditLogTypeValue() {
-        if (getParameters().isForceDelete()){
+        if (getParameters().isForceDelete()) {
             return getSucceeded() ? AuditLogType.USER_FORCE_REMOVE_STORAGE_POOL : AuditLogType.USER_FORCE_REMOVE_STORAGE_POOL_FAILED;
         }
         return getSucceeded() ? AuditLogType.USER_REMOVE_STORAGE_POOL : AuditLogType.USER_REMOVE_STORAGE_POOL_FAILED;

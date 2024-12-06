@@ -39,7 +39,7 @@ public abstract class AbstractItemSelectionWidget<T extends Nameable> extends Co
     @UiField
     WidgetTooltip filterListLabelTooltip;
 
-    @UiField(provided=true)
+    @UiField(provided = true)
     protected ListModelTypeAheadListBoxEditor<T> filterListEditor;
 
     @UiField

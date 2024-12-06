@@ -359,19 +359,19 @@ public class BackendApiResourceTest {
         assertNotNull(api.getProductInfo());
         assertNotNull(api.getProductInfo().getVersion());
         assertNotNull(api.getProductInfo().getVersion().getFullVersion());
-        assertEquals(MAJOR,    api.getProductInfo().getVersion().getMajor().intValue());
-        assertEquals(MINOR,    api.getProductInfo().getVersion().getMinor().intValue());
-        assertEquals(BUILD,    api.getProductInfo().getVersion().getBuild().intValue());
+        assertEquals(MAJOR, api.getProductInfo().getVersion().getMajor().intValue());
+        assertEquals(MINOR, api.getProductInfo().getVersion().getMinor().intValue());
+        assertEquals(BUILD, api.getProductInfo().getVersion().getBuild().intValue());
         assertEquals(REVISION, api.getProductInfo().getVersion().getRevision().intValue());
 
         assertNotNull(api.getSummary());
-        assertEquals(TOTAL_VMS,              api.getSummary().getVms().getTotal().intValue());
-        assertEquals(ACTIVE_VMS,             api.getSummary().getVms().getActive().intValue());
-        assertEquals(TOTAL_HOSTS,            api.getSummary().getHosts().getTotal().intValue());
-        assertEquals(ACTIVE_HOSTS,           api.getSummary().getHosts().getActive().intValue());
-        assertEquals(TOTAL_USERS,            api.getSummary().getUsers().getTotal().intValue());
-        assertEquals(ACTIVE_USERS,           api.getSummary().getUsers().getActive().intValue());
-        assertEquals(TOTAL_STORAGE_DOMAINS,  api.getSummary().getStorageDomains().getTotal().intValue());
+        assertEquals(TOTAL_VMS, api.getSummary().getVms().getTotal().intValue());
+        assertEquals(ACTIVE_VMS, api.getSummary().getVms().getActive().intValue());
+        assertEquals(TOTAL_HOSTS, api.getSummary().getHosts().getTotal().intValue());
+        assertEquals(ACTIVE_HOSTS, api.getSummary().getHosts().getActive().intValue());
+        assertEquals(TOTAL_USERS, api.getSummary().getUsers().getTotal().intValue());
+        assertEquals(ACTIVE_USERS, api.getSummary().getUsers().getActive().intValue());
+        assertEquals(TOTAL_STORAGE_DOMAINS, api.getSummary().getStorageDomains().getTotal().intValue());
         assertEquals(ACTIVE_STORAGE_DOMAINS, api.getSummary().getStorageDomains().getActive().intValue());
     }
 

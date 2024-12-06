@@ -33,7 +33,7 @@ public class PinToHostPolicyUnit extends PolicyUnitImpl {
     public List<VDS> filter(SchedulingContext context, List<VDS> hosts, VM vm, PerHostMessages messages) {
         if (vm.getMigrationSupport() == MigrationSupport.PINNED_TO_HOST) {
             // host has been specified for pin to host.
-            if(vm.getDedicatedVmForVdsList().size() > 0) {
+            if (vm.getDedicatedVmForVdsList().size() > 0) {
                 List<VDS> dedicatedHostsList = new LinkedList<>();
                 for (VDS host : hosts) {
                     if (vm.getDedicatedVmForVdsList().contains(host.getId())) {

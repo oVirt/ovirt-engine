@@ -98,7 +98,7 @@ public class ServiceTreeNode {
      * action (purposely ignores case when comparing action names).
      */
     public boolean containsAction(String actionName) {
-        if (actions!=null) {
+        if (actions != null) {
             for (String action : actions) {
                 if (action.toLowerCase().equals(actionName.toLowerCase())) {
                     return true;
@@ -109,7 +109,7 @@ public class ServiceTreeNode {
     }
 
     public boolean containsSubService(String path) {
-        if (subServices!=null) {
+        if (subServices != null) {
             for (ServiceTreeNode node : subServices) {
                 if (node.getPath().equals(path)) {
                     return true;
@@ -120,7 +120,7 @@ public class ServiceTreeNode {
     }
 
     public ServiceTreeNode getSubService(String path) {
-        if (subServices!=null) {
+        if (subServices != null) {
             for (ServiceTreeNode node : subServices) {
                 if (node.getPath().equals(path)) {
                     return node;
@@ -131,7 +131,7 @@ public class ServiceTreeNode {
     }
 
     public boolean isCollection() {
-        return getSon()!=null;
+        return getSon() != null;
     }
 
     public static class Builder {
@@ -186,10 +186,10 @@ public class ServiceTreeNode {
         String tabs = getTabs(tabNum);
         builder.append(tabs).append("name: ").append(name).append("\n")
         .append(tabs).append("path: ").append(path).append("\n")
-        .append(tabs).append("type: ").append(type==null ? "" : type.getSimpleName()).append("\n")
+        .append(tabs).append("type: ").append(type == null ? "" : type.getSimpleName()).append("\n")
         .append(tabs).append("getter: ").append(getter).append("\n")
-        .append(tabs).append("parent: ").append(parent==null ? "" : parent.getName()).append("\n")
-        .append(tabs).append("son: ").append(son==null ? "" : son.getName()).append("\n")
+        .append(tabs).append("parent: ").append(parent == null ? "" : parent.getName()).append("\n")
+        .append(tabs).append("son: ").append(son == null ? "" : son.getName()).append("\n")
         .append(tabs).append("actions: ").append(printActions()).append("\n")
         .append(tabs).append("sub-services:\n").append(printSubServices(++tabNum)).append("\n");
         return builder.toString();
@@ -197,7 +197,7 @@ public class ServiceTreeNode {
 
     private String getTabs(int tabNum) {
         StringBuilder builder = new StringBuilder("");
-        for (int i=0; i<tabNum; i++) {
+        for (int i = 0; i < tabNum; i++) {
             builder.append("\t");
         }
         return builder.toString();
@@ -213,12 +213,12 @@ public class ServiceTreeNode {
 
     private Object printActions() {
         StringBuilder builder = new StringBuilder();
-        for (int i=0; i<actions.size(); i++) {
+        for (int i = 0; i < actions.size(); i++) {
             builder.append(actions.get(i)).append(",");
         }
         String actions = builder.toString();
-        if (actions.length()>0) {
-            actions = actions.substring(0, actions.length()-1);
+        if (actions.length() > 0) {
+            actions = actions.substring(0, actions.length() - 1);
         }
         return actions;
     }

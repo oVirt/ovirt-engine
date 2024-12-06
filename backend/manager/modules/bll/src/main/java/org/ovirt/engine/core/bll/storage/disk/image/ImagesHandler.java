@@ -215,7 +215,7 @@ public class ImagesHandler {
             return false;
         }
 
-        String vmName =  nullSafeGetVmName(vm);
+        String vmName = nullSafeGetVmName(vm);
         disk.setDiskAlias(getSuggestedDiskAlias(disk, vmName, count));
         return true;
     }
@@ -565,7 +565,7 @@ public class ImagesHandler {
      *            List of Disk objects to aggregate their snapshots
      * @return List of active DiskImages objects which related to their snapshots
      */
-    public Collection<DiskImage> aggregateDiskImagesSnapshots(Collection<DiskImage> images){
+    public Collection<DiskImage> aggregateDiskImagesSnapshots(Collection<DiskImage> images) {
         Map<Guid, DiskImage> diskImagesMap = new HashMap<>();
 
         // Get active diskImages

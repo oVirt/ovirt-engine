@@ -235,17 +235,17 @@ public class AddVmTemplateCommandTest extends BaseCommandTest {
     }
 
     @Test
-    public void testPermissionsForAddingTemplateDedicatedHostNotChanged(){
+    public void testPermissionsForAddingTemplateDedicatedHostNotChanged() {
         setupDedicatedHostForVmAndTemplate(true);
 
         List<PermissionSubject> permissionCheckSubjects = cmd.getPermissionCheckSubjects();
-        for(PermissionSubject permissionSubject : permissionCheckSubjects){
+        for (PermissionSubject permissionSubject : permissionCheckSubjects) {
             assertNotEquals(ActionGroup.EDIT_ADMIN_TEMPLATE_PROPERTIES, permissionSubject.getActionGroup());
         }
     }
 
     @Test
-    public void testPermissionsForAddingTemplateDedicatedHostChanged(){
+    public void testPermissionsForAddingTemplateDedicatedHostChanged() {
         setupDedicatedHostForVmAndTemplate(false);
 
         PermissionSubject editDefaultHostPermission = new PermissionSubject(vm.getStoragePoolId(),
@@ -265,7 +265,7 @@ public class AddVmTemplateCommandTest extends BaseCommandTest {
         assertEquals(permissionSubject.getObjectType(), editDefaultHostPermission.getObjectType());
     }
 
-    private void setupDedicatedHostForVmAndTemplate(boolean setDefaultHostForTemplate){
+    private void setupDedicatedHostForVmAndTemplate(boolean setDefaultHostForTemplate) {
         Guid hostId = Guid.newGuid();
         vm.setDedicatedVmForVdsList(Collections.singletonList(hostId));
 

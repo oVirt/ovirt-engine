@@ -95,10 +95,10 @@ public class ClusterMapper {
         if (model.isSetErrorHandling() && model.getErrorHandling().isSetOnError()) {
             entity.setMigrateOnError(map(model.getErrorHandling().getOnError(), null));
         }
-        if(model.isSetVirtService()) {
+        if (model.isSetVirtService()) {
             entity.setVirtService(model.isVirtService());
         }
-        if(model.isSetGlusterService()) {
+        if (model.isSetGlusterService()) {
             entity.setGlusterService(model.isGlusterService());
         }
         if (model.isSetThreadsAsCores()) {
@@ -107,7 +107,7 @@ public class ClusterMapper {
         if (model.isSetTunnelMigration()) {
             entity.setTunnelMigration(model.isTunnelMigration());
         }
-        if (model.isSetTrustedService()){
+        if (model.isSetTrustedService()) {
             entity.setTrustedService(model.isTrustedService());
         }
         if (model.isSetHaReservation()) {
@@ -221,7 +221,7 @@ public class ClusterMapper {
         if (entity.getCompatibilityVersion() != null) {
             model.setVersion(VersionMapper.map(entity.getCompatibilityVersion()));
         }
-        model.setMemoryPolicy(map(entity, (MemoryPolicy)null));
+        model.setMemoryPolicy(map(entity, (MemoryPolicy) null));
         Guid clusterPolicyId = entity.getClusterPolicyId();
         if (clusterPolicyId != null) {
             SchedulingPolicy schedulingPolicy = model.getSchedulingPolicy();
@@ -231,7 +231,7 @@ public class ClusterMapper {
             }
             schedulingPolicy.setId(clusterPolicyId.toString());
         }
-        model.setErrorHandling(map(entity.getMigrateOnError(), (ErrorHandling)null));
+        model.setErrorHandling(map(entity.getMigrateOnError(), (ErrorHandling) null));
         model.setVirtService(entity.supportsVirtService());
         model.setGlusterService(entity.supportsGlusterService());
         model.setThreadsAsCores(entity.getCountThreadsAsCores());
@@ -301,13 +301,13 @@ public class ClusterMapper {
     @Mapping(from = MemoryPolicy.class, to = Cluster.class)
     public static Cluster map(MemoryPolicy model, Cluster template) {
         Cluster entity = template != null ? template : new Cluster();
-        if (model.isSetOverCommit() && model.getOverCommit().getPercent()!=null) {
+        if (model.isSetOverCommit() && model.getOverCommit().getPercent() != null) {
             entity.setMaxVdsMemoryOverCommit(model.getOverCommit().getPercent());
         }
         if (model.isSetTransparentHugepages() &&
             model.getTransparentHugepages().isSetEnabled()) {
             entity.setTransparentHugepages(model.getTransparentHugepages().isEnabled());
-        } else if (template != null && greaterOrEqual(template.getCompatibilityVersion(), min_thp_version)){
+        } else if (template != null && greaterOrEqual(template.getCompatibilityVersion(), min_thp_version)) {
             entity.setTransparentHugepages(true);
         }
         return entity;
@@ -334,7 +334,7 @@ public class ClusterMapper {
 
     @Mapping(from = MigrateOnError.class, to = MigrateOnErrorOptions.class)
     public static MigrateOnErrorOptions map(MigrateOnError model, MigrateOnErrorOptions template) {
-        if (model==null) {
+        if (model == null) {
             return null;
         }
         switch (model) {
@@ -352,7 +352,7 @@ public class ClusterMapper {
 
     @Mapping(from = MigrateOnErrorOptions.class, to = MigrateOnError.class)
     public static MigrateOnError map(MigrateOnErrorOptions model, MigrateOnError template) {
-        if (model==null) {
+        if (model == null) {
             return null;
         }
         switch (model) {
@@ -370,11 +370,11 @@ public class ClusterMapper {
 
     @Mapping(from = MigrateOnErrorOptions.class, to = ErrorHandling.class)
     private static ErrorHandling map(MigrateOnErrorOptions migrateOnError, ErrorHandling template) {
-        MigrateOnError value = map(migrateOnError, (MigrateOnError)null);
-        if (value==null) {
+        MigrateOnError value = map(migrateOnError, (MigrateOnError) null);
+        if (value == null) {
             return null;
         } else {
-            template = template==null ? new ErrorHandling() : template;
+            template = template == null ? new ErrorHandling() : template;
             template.setOnError(value);
             return template;
         }

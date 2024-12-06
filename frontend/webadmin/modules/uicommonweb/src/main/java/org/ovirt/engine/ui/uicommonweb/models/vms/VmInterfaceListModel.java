@@ -269,7 +269,7 @@ public class VmInterfaceListModel extends SearchableListModel<VM, VmNetworkInter
     }
 
     private void initSelectionGuestAgentData(VmNetworkInterface selectedItem) {
-        if (selectedItem == null || getGuestAgentData() == null){
+        if (selectedItem == null || getGuestAgentData() == null) {
             setSelectionGuestAgentData(null);
             return;
         }

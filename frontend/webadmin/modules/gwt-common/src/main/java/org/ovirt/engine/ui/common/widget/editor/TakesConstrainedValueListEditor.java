@@ -40,6 +40,6 @@ public class TakesConstrainedValueListEditor<T> extends TakesConstrainedValueEdi
     public void setListValue(List<T> value) {
         //Make sure to send a copy so we don't accidentally wipe out the original values.
         List<T> listValue = value == null ? Collections.emptyList() : new ArrayList<>(value);
-        ((TakesListValue<T>)peer).setListValue(listValue);
+        ((TakesListValue<T>) peer).setListValue(listValue);
     }
 }

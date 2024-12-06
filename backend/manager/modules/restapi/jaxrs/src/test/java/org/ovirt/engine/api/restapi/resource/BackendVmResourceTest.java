@@ -393,7 +393,7 @@ public class BackendVmResourceTest
         Vm model = getModel(0);
         model.setPlacementPolicy(new VmPlacementPolicy());
         Hosts hosts = new Hosts();
-        for (int i =0; i < GUIDS.length; i++){
+        for (int i = 0; i < GUIDS.length; i++) {
             Host newHost = new Host();
             newHost.setId(GUIDS[i].toString());
             hosts.getHosts().add(newHost);
@@ -405,7 +405,7 @@ public class BackendVmResourceTest
     @Test
     public void testUpdateVmPolicyHostsNames() {
         setUpUdpateVm();
-        for (int i =0; i < NAMES.length; i++){
+        for (int i = 0; i < NAMES.length; i++) {
             setUpGetHostByNameExpectations(i);
         }
         setUriInfo(setUpActionExpectations(ActionType.UpdateVm,
@@ -418,7 +418,7 @@ public class BackendVmResourceTest
         Vm model = getModel(0);
         model.setPlacementPolicy(new VmPlacementPolicy());
         Hosts hosts = new Hosts();
-        for (int i =0; i < NAMES.length; i++){
+        for (int i = 0; i < NAMES.length; i++) {
             Host newHost = new Host();
             newHost.setName(NAMES[i]);
             hosts.getHosts().add(newHost);
@@ -716,7 +716,7 @@ public class BackendVmResourceTest
 
         Response response = resource.suspend(new Action());
         verifyActionResponse(response, "vms/" + GUIDS[0], true, null);
-        Action action = (Action)response.getEntity();
+        Action action = (Action) response.getEntity();
         assertTrue(action.isSetStatus());
         assertEquals(actionStatus.value(), action.getStatus());
 
@@ -871,7 +871,7 @@ public class BackendVmResourceTest
         action.setSnapshot(snapshot);
         Response response = resource.previewSnapshot(action);
         verifyActionResponse(response);
-        Action actionResponse = (Action)response.getEntity();
+        Action actionResponse = (Action) response.getEntity();
         assertTrue(actionResponse.isSetStatus());
         assertEquals(CreationStatus.COMPLETE.value(), actionResponse.getStatus());
     }
@@ -884,7 +884,7 @@ public class BackendVmResourceTest
                                            new Object[] { GUIDS[0], SnapshotActionEnum.UNDO }));
         Response response = resource.undoSnapshot(new Action());
         verifyActionResponse(response);
-        Action action = (Action)response.getEntity();
+        Action action = (Action) response.getEntity();
         assertTrue(action.isSetStatus());
         assertEquals(CreationStatus.COMPLETE.value(), action.getStatus());
     }
@@ -897,7 +897,7 @@ public class BackendVmResourceTest
                                            new Object[] { GUIDS[0], SnapshotActionEnum.COMMIT }));
         Response response = resource.commitSnapshot(new Action());
         verifyActionResponse(response);
-        Action action = (Action)response.getEntity();
+        Action action = (Action) response.getEntity();
         assertTrue(action.isSetStatus());
         assertEquals(CreationStatus.COMPLETE.value(), action.getStatus());
     }
@@ -922,7 +922,7 @@ public class BackendVmResourceTest
 
         Response response = resource.doClone(action);
         verifyActionResponse(response);
-        Action actionResponse = (Action)response.getEntity();
+        Action actionResponse = (Action) response.getEntity();
         assertTrue(actionResponse.isSetStatus());
     }
 
@@ -1021,7 +1021,7 @@ public class BackendVmResourceTest
 
         @SuppressWarnings("unchecked")
         BackendStatisticsResource<Vm, org.ovirt.engine.core.common.businessentities.VM> statisticsResource =
-            (BackendStatisticsResource<Vm, org.ovirt.engine.core.common.businessentities.VM>)resource.getStatisticsResource();
+            (BackendStatisticsResource<Vm, org.ovirt.engine.core.common.businessentities.VM>) resource.getStatisticsResource();
         assertNotNull(statisticsResource);
 
         verifyQuery(statisticsResource.getQuery(), entity);

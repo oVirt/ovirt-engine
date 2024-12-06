@@ -60,7 +60,7 @@ public class HostInterfaceValidator {
                 .when(iface.getName() == null);
     }
 
-    public  ValidationResult interfaceAlreadyLabeledWith(String label) {
+    public ValidationResult interfaceAlreadyLabeledWith(String label) {
         return ValidationResult.failWith(EngineMessage.INTERFACE_ALREADY_LABELED,
             ReplacementUtils.createSetVariableString(VAR_LABELED_NIC, iface.getName()),
             ReplacementUtils.createSetVariableString(VAR_NIC_LABEL, label))

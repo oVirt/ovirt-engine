@@ -14,8 +14,8 @@ public class GlusterVolumeEngineDao extends BaseDao {
 
     private static final String STATUS = "status"; //$NON-NLS-1$
     private static final String BRICKS_NOT_UP = "bricks_not_up"; //$NON-NLS-1$
-    private static final String VDO_SAVINGS = "vdo_savings";//$NON-NLS-1$
-    private static final String VOLUME_NAME = "vol_name";//$NON-NLS-1$
+    private static final String VDO_SAVINGS = "vdo_savings"; //$NON-NLS-1$
+    private static final String VOLUME_NAME = "vol_name"; //$NON-NLS-1$
 
     private static final String GLUSTER_VOLUME_INVENTORY = "glusterVolume.inventory"; //$NON-NLS-1$
     private static final String GLUSTER_VOLUME_VDO_SAVINGS = "glusterVolume.vdoSavings"; //$NON-NLS-1$

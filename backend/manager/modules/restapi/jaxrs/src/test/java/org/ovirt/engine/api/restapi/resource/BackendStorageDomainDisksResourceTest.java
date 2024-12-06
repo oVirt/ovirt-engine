@@ -61,7 +61,7 @@ public class BackendStorageDomainDisksResourceTest extends AbstractBackendCollec
         entity.setVolumeType(VolumeType.Sparse);
         entity.setShareable(false);
         entity.setPropagateErrors(PropagateErrors.On);
-        return setUpStatisticalEntityExpectations(entity);    }
+        return setUpStatisticalEntityExpectations(entity); }
 
     static org.ovirt.engine.core.common.businessentities.storage.Disk setUpStatisticalEntityExpectations(DiskImage entity) {
         entity.setReadRate(1L);
@@ -101,8 +101,8 @@ public class BackendStorageDomainDisksResourceTest extends AbstractBackendCollec
         Response response = collection.add(model);
         assertEquals(201, response.getStatus());
         assertTrue(response.getEntity() instanceof Disk);
-        verifyModel((Disk)response.getEntity(), 0);
-        assertNull(((Disk)response.getEntity()).getCreationStatus());
+        verifyModel((Disk) response.getEntity(), 0);
+        assertNull(((Disk) response.getEntity()).getCreationStatus());
     }
 
     @Test
@@ -141,8 +141,8 @@ public class BackendStorageDomainDisksResourceTest extends AbstractBackendCollec
         Response response = collection.add(model);
         assertEquals(201, response.getStatus());
         assertTrue(response.getEntity() instanceof Disk);
-        verifyModel((Disk)response.getEntity(), 0);
-        assertNull(((Disk)response.getEntity()).getCreationStatus());
+        verifyModel((Disk) response.getEntity(), 0);
+        assertNull(((Disk) response.getEntity()).getCreationStatus());
     }
 
     @Test
@@ -174,8 +174,8 @@ public class BackendStorageDomainDisksResourceTest extends AbstractBackendCollec
         Response response = collection.add(model);
         assertEquals(201, response.getStatus());
         assertTrue(response.getEntity() instanceof Disk);
-        verifyModel((Disk)response.getEntity(), 0);
-        assertNull(((Disk)response.getEntity()).getCreationStatus());
+        verifyModel((Disk) response.getEntity(), 0);
+        assertNull(((Disk) response.getEntity()).getCreationStatus());
     }
 
     @Override

@@ -26,7 +26,7 @@ public final class ErrorTranslatorImpl implements ErrorTranslator {
 
     // Will assume these are property files, not ResxFiles.
     public ErrorTranslatorImpl(String... errorFileNames) {
-        log.info("Start initializing {}",  getClass().getSimpleName());
+        log.info("Start initializing {}", getClass().getSimpleName());
         messageSources = asList(errorFileNames);
         standardLocale = Locale.getDefault();
         standardMessages = retrieveByLocale(standardLocale);

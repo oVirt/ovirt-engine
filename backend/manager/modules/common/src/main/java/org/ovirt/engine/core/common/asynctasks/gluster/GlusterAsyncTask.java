@@ -7,7 +7,7 @@ import org.ovirt.engine.core.common.job.JobExecutionStatus;
 import org.ovirt.engine.core.common.utils.ToStringBuilder;
 import org.ovirt.engine.core.compat.Guid;
 
-public class GlusterAsyncTask implements Serializable{
+public class GlusterAsyncTask implements Serializable {
 
     private static final long serialVersionUID = 5165089908032934194L;
 
@@ -20,7 +20,7 @@ public class GlusterAsyncTask implements Serializable{
     private Guid jobId;
     private JobExecutionStatus jobStatus;
 
-    public GlusterAsyncTask(){
+    public GlusterAsyncTask() {
 
     }
 

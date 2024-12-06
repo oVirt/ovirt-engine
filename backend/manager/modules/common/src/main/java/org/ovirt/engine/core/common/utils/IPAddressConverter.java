@@ -162,8 +162,8 @@ public class IPAddressConverter {
         return stringBuilder.substring(1);
     }
 
-    private String removeLeadingSlashFromNetmaskIfPresent(String prefix){
-        if (prefix != null && prefix.startsWith("/")){
+    private String removeLeadingSlashFromNetmaskIfPresent(String prefix) {
+        if (prefix != null && prefix.startsWith("/")) {
             return prefix.substring(1);
         }
         return prefix;

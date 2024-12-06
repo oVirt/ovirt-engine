@@ -203,7 +203,7 @@ public class ManageGlusterServiceCommand extends GlusterCommandBase<GlusterServi
                 glusterServerDao.updatePeerStatus(getParameters().getServerId(), PeerStatus.CONNECTED);
                 //only if cluster supports only gluster service
                 if (!getCluster().supportsVirtService()) {
-                    runVdsCommand(VDSCommandType.SetVdsStatus,  new SetVdsStatusVDSCommandParameters(getVdsId(), VDSStatus.Initializing));
+                    runVdsCommand(VDSCommandType.SetVdsStatus, new SetVdsStatusVDSCommandParameters(getVdsId(), VDSStatus.Initializing));
                 }
             }
         }

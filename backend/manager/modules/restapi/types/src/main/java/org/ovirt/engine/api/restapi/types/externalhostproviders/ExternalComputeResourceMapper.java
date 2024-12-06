@@ -41,7 +41,7 @@ public class ExternalComputeResourceMapper {
             ExternalComputeResource model,
             org.ovirt.engine.core.common.businessentities.ExternalComputeResource template) {
         org.ovirt.engine.core.common.businessentities.ExternalComputeResource entity =
-                template != null? template: new org.ovirt.engine.core.common.businessentities.ExternalComputeResource();
+                template != null ? template : new org.ovirt.engine.core.common.businessentities.ExternalComputeResource();
         if (model.isSetId()) {
             entity.setName(hex2string(model.getId()));
         }

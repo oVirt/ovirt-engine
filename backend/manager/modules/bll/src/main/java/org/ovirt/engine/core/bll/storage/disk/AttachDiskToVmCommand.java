@@ -99,7 +99,7 @@ public class AttachDiskToVmCommand<T extends AttachDetachVmDiskParameters> exten
     @Override
     protected boolean validate() {
         DiskValidator oldDiskValidator = new DiskValidator(disk);
-        if (!validate(oldDiskValidator.isDiskExists())){
+        if (!validate(oldDiskValidator.isDiskExists())) {
             return false;
         }
 

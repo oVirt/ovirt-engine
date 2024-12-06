@@ -30,19 +30,19 @@ public class ConfigurePopupView extends AbstractPopupView<SimpleDialogPanel> imp
     @UiField
     DialogTab clusterPoliciesTab;
 
-    @UiField(provided=true)
+    @UiField(provided = true)
     RoleView roleView;
 
-    @UiField(provided=true)
+    @UiField(provided = true)
     SystemPermissionView systemPermissionView;
 
-    @UiField(provided=true)
+    @UiField(provided = true)
     ClusterPolicyView clusterPolicyView;
 
-    @UiField(provided=true)
+    @UiField(provided = true)
     InstanceTypesView instanceTypesView;
 
-    @UiField(provided=true)
+    @UiField(provided = true)
     SharedMacPoolView sharedMacPoolView;
 
     @Inject

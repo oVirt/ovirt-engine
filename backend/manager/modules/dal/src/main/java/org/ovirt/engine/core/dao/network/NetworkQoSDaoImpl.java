@@ -18,7 +18,7 @@ public class NetworkQoSDaoImpl extends QosBaseDaoImpl<NetworkQoS> implements Net
 
     protected final RowMapper<NetworkQoS> mapper = createEntityRowMapper();
 
-    public NetworkQoSDaoImpl(){
+    public NetworkQoSDaoImpl() {
         super(QosType.NETWORK);
     }
 

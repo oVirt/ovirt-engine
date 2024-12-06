@@ -201,7 +201,7 @@ public class StorageRegisterDiskImageListModel extends SearchableListModel<Stora
             remove();
         } else if ("OnRemove".equals(command.getName())) { //$NON-NLS-1$
             onRemove();
-        }else if ("Cancel".equals(command.getName())) { //$NON-NLS-1$
+        } else if ("Cancel".equals(command.getName())) { //$NON-NLS-1$
             cancel();
         }
     }

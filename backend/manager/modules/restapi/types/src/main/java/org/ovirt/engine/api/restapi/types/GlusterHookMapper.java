@@ -103,15 +103,15 @@ public class GlusterHookMapper {
             sb.append(GlusterHookConflictFlags.MISSING_HOOK.toString());
         }
         if (hook.isContentConflict()) {
-            sb.append(sb.length() > 0 ? ",":"").append(GlusterHookConflictFlags.CONTENT_CONFLICT.toString());
+            sb.append(sb.length() > 0 ? "," : "" ).append(GlusterHookConflictFlags.CONTENT_CONFLICT.toString());
         }
         if (hook.isStatusConflict()) {
-            sb.append(sb.length() > 0 ? ",":"").append(GlusterHookConflictFlags.STATUS_CONFLICT.toString());
+            sb.append(sb.length() > 0 ? "," : "").append(GlusterHookConflictFlags.STATUS_CONFLICT.toString());
         }
         return sb.toString();
     }
 
-    @Mapping (from=org.ovirt.engine.core.common.businessentities.gluster.GlusterServerHook.class, to=org.ovirt.engine.api.model.GlusterServerHook.class)
+    @Mapping (from = org.ovirt.engine.core.common.businessentities.gluster.GlusterServerHook.class, to = org.ovirt.engine.api.model.GlusterServerHook.class)
     public static org.ovirt.engine.api.model.GlusterServerHook map(GlusterServerHook serverHookEntity) {
         org.ovirt.engine.api.model.GlusterServerHook serverHookModel = new org.ovirt.engine.api.model.GlusterServerHook();
         if (serverHookEntity.getServerId() != null) {

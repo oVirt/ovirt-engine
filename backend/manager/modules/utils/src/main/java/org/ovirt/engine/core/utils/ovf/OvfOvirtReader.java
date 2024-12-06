@@ -359,7 +359,7 @@ public abstract class OvfOvirtReader extends OvfReader {
 
     @Override
     protected String adjustHardwareResourceType(String resourceType) {
-        switch(resourceType) {
+        switch (resourceType) {
         case OvfHardware.OVIRT_Monitor:
             return OvfHardware.Monitor;
         case OvfHardware.OVIRT_Graphics:

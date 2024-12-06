@@ -44,7 +44,7 @@ public class ErrorPopupView extends AbstractPopupView<SimpleDialogPanel> impleme
 
     @Override
     public void setErrorMessage(String errorMessage) {
-        messageLabel.setHTML(errorMessage.replace("\n", "<br/>"));//$NON-NLS-1$ //$NON-NLS-2$
+        messageLabel.setHTML(errorMessage.replace("\n", "<br/>")); //$NON-NLS-1$ //$NON-NLS-2$
     }
 
     @Override

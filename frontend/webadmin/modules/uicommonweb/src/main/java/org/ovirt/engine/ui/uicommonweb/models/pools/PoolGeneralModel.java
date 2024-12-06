@@ -29,9 +29,9 @@ import org.ovirt.engine.ui.uicompat.Translator;
 
 public class PoolGeneralModel extends AbstractGeneralModel<VmPool> {
 
-    public static final String ARCHITECTURE = "VmPoolArchitecture";//$NON-NLS-1$
+    public static final String ARCHITECTURE = "VmPoolArchitecture"; //$NON-NLS-1$
 
-    public static final String BIOS_TYPE = "VmPoolBiosType";//$NON-NLS-1$
+    public static final String BIOS_TYPE = "VmPoolBiosType"; //$NON-NLS-1$
 
     public static final EventDefinition updateCompleteEventDefinition;
     private Event<EventArgs> privateUpdateCompleteEvent;

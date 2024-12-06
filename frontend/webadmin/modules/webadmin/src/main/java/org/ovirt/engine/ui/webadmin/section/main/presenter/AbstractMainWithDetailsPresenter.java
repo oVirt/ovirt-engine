@@ -194,7 +194,7 @@ public abstract class AbstractMainWithDetailsPresenter<T, M extends ListWithDeta
         PlaceRequest currentPlace = placeManager.getCurrentPlaceRequest();
         Set<FragmentParams> params = FragmentParams.getParams(currentPlace);
         params.forEach(param -> {
-            switch(param) {
+            switch (param) {
             case SEARCH:
                 String search = currentPlace.getParameter(FragmentParams.SEARCH.getName(), "");
                 if (!"".equals(search)) {

@@ -17,7 +17,7 @@ public class NicLabel implements Serializable, Nameable {
     private Guid nicId;
     private String nicName;
 
-    @NotNull(message="LABEL_ON_NETWORK_LABEL_CANNOT_BE_NULL")
+    @NotNull(message = "LABEL_ON_NETWORK_LABEL_CANNOT_BE_NULL")
     @ValidName(message = "NETWORK_LABEL_FORMAT_INVALID")
     private String label;
 

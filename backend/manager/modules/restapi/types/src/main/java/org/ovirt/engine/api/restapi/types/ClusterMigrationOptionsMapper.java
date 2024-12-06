@@ -39,7 +39,7 @@ public class ClusterMigrationOptionsMapper {
 
         if (model.isSetBandwidth()) {
             MigrationBandwidth bandwidth = model.getBandwidth();
-            if (bandwidth.getAssignmentMethod()!=null) {
+            if (bandwidth.getAssignmentMethod() != null) {
                 switch (bandwidth.getAssignmentMethod()) {
                     case AUTO:
                         entity.setMigrationBandwidthLimitType(MigrationBandwidthLimitType.AUTO);

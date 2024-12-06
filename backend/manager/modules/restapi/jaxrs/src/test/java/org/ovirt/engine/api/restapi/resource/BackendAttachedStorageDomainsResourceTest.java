@@ -42,7 +42,7 @@ public class BackendAttachedStorageDomainsResourceTest
                                                   BackendAttachedStorageDomainsResource> {
 
     public BackendAttachedStorageDomainsResourceTest() {
-        super(new BackendAttachedStorageDomainsResource(GUIDS[NAMES.length-1].toString()), null, null);
+        super(new BackendAttachedStorageDomainsResource(GUIDS[NAMES.length - 1].toString()), null, null);
     }
 
     @Override
@@ -60,14 +60,14 @@ public class BackendAttachedStorageDomainsResourceTest
         setUpCreationExpectations(ActionType.AttachStorageDomainToPool,
                                   AttachStorageDomainToPoolParameters.class,
                                   new String[] { "StorageDomainId", "StoragePoolId" },
-                                  new Object[] { GUIDS[0], GUIDS[NAMES.length-1] },
+                                  new Object[] { GUIDS[0], GUIDS[NAMES.length - 1] },
                                   true,
                                   true,
                                   null,
                                   QueryType.GetStorageDomainByIdAndStoragePoolId,
                                   StorageDomainAndPoolQueryParameters.class,
                                   new String[] { "StorageDomainId", "StoragePoolId" },
-                                  new Object[] { GUIDS[0], GUIDS[NAMES.length-1] },
+                                  new Object[] { GUIDS[0], GUIDS[NAMES.length - 1] },
                                   getEntity(0));
 
         StorageDomain model = new StorageDomain();
@@ -101,14 +101,14 @@ public class BackendAttachedStorageDomainsResourceTest
         setUpCreationExpectations(ActionType.AttachStorageDomainToPool,
                                   AttachStorageDomainToPoolParameters.class,
                                   new String[] { "StorageDomainId", "StoragePoolId" },
-                                  new Object[] { GUIDS[0], GUIDS[NAMES.length-1] },
+                                  new Object[] { GUIDS[0], GUIDS[NAMES.length - 1] },
                                   true,
                                   true,
                                   null,
                                   QueryType.GetStorageDomainByIdAndStoragePoolId,
                                   StorageDomainAndPoolQueryParameters.class,
                                   new String[] { "StorageDomainId", "StoragePoolId" },
-                                  new Object[] { GUIDS[0], GUIDS[NAMES.length-1] },
+                                  new Object[] { GUIDS[0], GUIDS[NAMES.length - 1] },
                 getEntity(0));
 
         StorageDomain model = new StorageDomain();
@@ -134,7 +134,7 @@ public class BackendAttachedStorageDomainsResourceTest
         setUriInfo(setUpActionExpectations(ActionType.AttachStorageDomainToPool,
                                            AttachStorageDomainToPoolParameters.class,
                                            new String[] { "StorageDomainId", "StoragePoolId" },
-                                           new Object[] { GUIDS[0], GUIDS[NAMES.length-1] },
+                                           new Object[] { GUIDS[0], GUIDS[NAMES.length - 1] },
                                            valid,
                                            success));
 
@@ -155,7 +155,7 @@ public class BackendAttachedStorageDomainsResourceTest
 
 
     private void setUpGetConnection(int times) {
-        for (int i=0; i<times; i++) {
+        for (int i = 0; i < times; i++) {
             setUpGetEntityExpectations(QueryType.GetStorageServerConnectionById,
                     StorageServerConnectionQueryParametersBase.class,
                     new String[] { "ServerConnectionId" },
@@ -188,7 +188,7 @@ public class BackendAttachedStorageDomainsResourceTest
         setUpEntityQueryExpectations(QueryType.GetStorageDomainsByStoragePoolId,
                                      IdQueryParameters.class,
                                      new String[] { "Id" },
-                                     new Object[] { GUIDS[NAMES.length-1] },
+                                     new Object[] { GUIDS[NAMES.length - 1] },
                                      setUpStorageDomains(),
                                      failure);
 
@@ -243,7 +243,7 @@ public class BackendAttachedStorageDomainsResourceTest
     private static void verifyStorageDomain(StorageDomain model, int index) {
         assertEquals(GUIDS[index].toString(), model.getId());
         assertNotNull(model.getDataCenter());
-        assertEquals(GUIDS[NAMES.length-1].toString(), model.getDataCenter().getId());
+        assertEquals(GUIDS[NAMES.length - 1].toString(), model.getDataCenter().getId());
         assertEquals(org.ovirt.engine.api.model.StorageDomainStatus.ACTIVE, model.getStatus());
         assertEquals(true, model.isMaster());
     }

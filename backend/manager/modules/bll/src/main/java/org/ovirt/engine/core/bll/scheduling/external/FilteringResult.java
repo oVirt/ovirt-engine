@@ -12,7 +12,7 @@ public class FilteringResult extends SchedulerResult {
         possibleHosts.add(host);
     }
 
-    public List<Guid> getHosts(){
+    public List<Guid> getHosts() {
         return possibleHosts;
     }
 }

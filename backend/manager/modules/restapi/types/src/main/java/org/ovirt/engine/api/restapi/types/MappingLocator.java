@@ -57,7 +57,7 @@ public class MappingLocator {
      * with the @Mapping annotation.
      */
     public void populate() {
-        String packageName = discoverPackageName != null? discoverPackageName: this.getClass().getPackage().getName();
+        String packageName = discoverPackageName != null ? discoverPackageName : this.getClass().getPackage().getName();
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         List<String> classNames = PackageExplorer.discoverClasses(packageName);
         for (String className : classNames) {

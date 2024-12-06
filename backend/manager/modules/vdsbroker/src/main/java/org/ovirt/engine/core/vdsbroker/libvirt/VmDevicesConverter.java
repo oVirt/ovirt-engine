@@ -267,7 +267,7 @@ public class VmDevicesConverter {
     }
 
     private String getDevicePath(final HostDevice hostDevice) {
-        return (String)hostDevice.getSpecParams().get(VdsProperties.DEVICE_PATH);
+        return (String) hostDevice.getSpecParams().get(VdsProperties.DEVICE_PATH);
     }
 
     private List<Map<String, Object>> parseNvdimms(XmlDocument document, List<VmDevice> devices, Guid hostId) {
@@ -399,7 +399,7 @@ public class VmDevicesConverter {
     }
 
     private List<Map<String, Object>> parseRedirs(XmlDocument document, List<VmDevice> devices) {
-        List<VmDevice> dbDevices= filterDevices(devices, VmDeviceGeneralType.REDIR);
+        List<VmDevice> dbDevices = filterDevices(devices, VmDeviceGeneralType.REDIR);
 
         List<Map<String, Object>> result = new ArrayList<>();
         for (XmlNode node : document.selectNodes("//*/redirdev")) {
@@ -680,7 +680,7 @@ public class VmDevicesConverter {
             if (result.isPresent()) {
                 return result;
             }
-        } catch(Exception e) {
+        } catch (Exception e) {
             log.debug("Received unexpected user-alias: {}", alias);
         }
         // We need it in case the user have a VM running from old versions(4.1) without shutting it down as a backward

@@ -100,7 +100,7 @@ public class AffinityGroupDaoImpl extends DefaultGenericDao<AffinityGroup, Guid>
     }
 
     @Override
-    public void insertAffinityVm(Guid affinityId, Guid vmId){
+    public void insertAffinityVm(Guid affinityId, Guid vmId) {
         getCallsHandler().executeModification("InsertAffinityVm",
                 getCustomMapSqlParameterSource()
                         .addValue("affinity_group_id", affinityId)
@@ -108,7 +108,7 @@ public class AffinityGroupDaoImpl extends DefaultGenericDao<AffinityGroup, Guid>
     }
 
     @Override
-    public void deleteAffinityVm(Guid affinityId, Guid vmId){
+    public void deleteAffinityVm(Guid affinityId, Guid vmId) {
         getCallsHandler().executeModification("DeleteAffinityVm",
                 getCustomMapSqlParameterSource()
                         .addValue("affinity_group_id", affinityId)
@@ -116,7 +116,7 @@ public class AffinityGroupDaoImpl extends DefaultGenericDao<AffinityGroup, Guid>
     }
 
     @Override
-    public void insertAffinityHost(Guid affinityId, Guid vdsId){
+    public void insertAffinityHost(Guid affinityId, Guid vdsId) {
         getCallsHandler().executeModification("InsertAffinityHost",
                 getCustomMapSqlParameterSource()
                         .addValue("affinity_group_id", affinityId)

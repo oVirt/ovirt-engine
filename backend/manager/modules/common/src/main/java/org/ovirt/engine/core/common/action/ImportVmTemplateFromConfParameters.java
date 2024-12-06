@@ -21,7 +21,7 @@ public class ImportVmTemplateFromConfParameters extends ImportVmTemplateParamete
     private Map<Guid, Set<Guid>> imageToAvailableStorageDomains = new HashMap<>();
 
     private Set<DbUser> dbUsers;
-    private Map<String, Set<String>> userToRoles  = new HashMap<>();
+    private Map<String, Set<String>> userToRoles = new HashMap<>();
     private Collection<ExternalVnicProfileMapping> externalVnicProfileMappings;
 
     public ImportVmTemplateFromConfParameters() {

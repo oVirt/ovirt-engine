@@ -240,7 +240,7 @@ public class Network implements Queryable, BusinessEntity<Guid>, Nameable, Comme
     }
 
     public boolean isTunnelled() {
-        return isExternal() && getProvidedBy().getPhysicalNetworkId()==null;
+        return isExternal() && getProvidedBy().getPhysicalNetworkId() == null;
     }
 
     public String getLabel() {

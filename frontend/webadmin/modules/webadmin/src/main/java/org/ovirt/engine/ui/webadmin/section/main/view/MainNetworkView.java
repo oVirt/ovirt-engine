@@ -167,11 +167,11 @@ public class MainNetworkView extends AbstractMainWithDetailsTableView<NetworkVie
         AbstractTextColumn<NetworkView> qosColumn = new AbstractTextColumn<NetworkView>() {
             @Override
             public String getValue(NetworkView object) {
-                return object.getQosName() == null ? "-" : object.getQosName().toString();//$NON-NLS-1$
+                return object.getQosName() == null ? "-" : object.getQosName().toString(); //$NON-NLS-1$
             }
         };
         qosColumn.makeSortable(NetworkConditionFieldAutoCompleter.QOS);
-        getTable().ensureColumnVisible(qosColumn, constants.qosName(), virtMode, "60px");//$NON-NLS-1$
+        getTable().ensureColumnVisible(qosColumn, constants.qosName(), virtMode, "60px"); //$NON-NLS-1$
 
         AbstractTextColumn<NetworkView> labelColumn = new AbstractTextColumn<NetworkView>() {
             @Override

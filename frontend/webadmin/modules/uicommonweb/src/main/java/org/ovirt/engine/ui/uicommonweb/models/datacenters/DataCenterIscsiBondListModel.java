@@ -63,7 +63,7 @@ public class DataCenterIscsiBondListModel extends SearchableListModel<StoragePoo
     }
 
     private void updateActionAvailability() {
-        boolean atLeastOneItemSelected =  getSelectedItems() != null && !getSelectedItems().isEmpty();
+        boolean atLeastOneItemSelected = getSelectedItems() != null && !getSelectedItems().isEmpty();
 
         getEditCommand().setIsExecutionAllowed(atLeastOneItemSelected);
         getRemoveCommand().setIsExecutionAllowed(atLeastOneItemSelected);

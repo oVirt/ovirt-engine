@@ -31,17 +31,17 @@ public class HostNetworkQosWidget extends QosWidget<HostNetworkQos, HostNetworkQ
     EnableableFormLabel qosOutLabel;
 
     @UiField(provided = true)
-    @Path(value="outAverageLinkshare.entity")
+    @Path(value = "outAverageLinkshare.entity")
     @WithElementId
     StringEntityModelTextBoxEditor outAverageLinkshare;
 
     @UiField(provided = true)
-    @Path(value="outAverageUpperlimit.entity")
+    @Path(value = "outAverageUpperlimit.entity")
     @WithElementId
     StringEntityModelTextBoxEditor outAverageUpperlimit;
 
     @UiField(provided = true)
-    @Path(value="outAverageRealtime.entity")
+    @Path(value = "outAverageRealtime.entity")
     @WithElementId
     StringEntityModelTextBoxEditor outAverageRealtime;
 

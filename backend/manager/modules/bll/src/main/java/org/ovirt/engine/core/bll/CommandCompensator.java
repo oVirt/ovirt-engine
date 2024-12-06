@@ -48,7 +48,7 @@ public class CommandCompensator {
         // get all command snapshot entries
         List<KeyValue> commandSnapshots = businessEntitySnapshotDao.getAllCommands();
         for (KeyValue commandSnapshot : commandSnapshots) {
-            if(skipCompensationOnStartup((Guid) commandSnapshot.getKey())) {
+            if (skipCompensationOnStartup((Guid) commandSnapshot.getKey())) {
                 continue;
             }
             // create an instance of the related command by its class name and command id

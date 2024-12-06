@@ -119,7 +119,7 @@ public class VdcOperation<T, P> {
      * @param callback The callback to call when the operation is finished.
      */
     public VdcOperation(final T operation, final P operationParameter, final boolean isPublicOperation,
-            final boolean fromList, final VdcOperationCallback<?, ?> callback)  {
+            final boolean fromList, final VdcOperationCallback<?, ?> callback) {
         this(operation, operationParameter, callback, null, isPublicOperation, fromList, false);
     }
 

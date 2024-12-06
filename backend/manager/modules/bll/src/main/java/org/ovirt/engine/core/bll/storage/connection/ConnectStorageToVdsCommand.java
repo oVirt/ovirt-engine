@@ -171,7 +171,7 @@ public class ConnectStorageToVdsCommand<T extends StorageServerConnectionParamet
             }
 
             engineMessage = glusterUtil.validateVolumeForStorageDomain(glusterVolume);
-            if(engineMessage != null) {
+            if (engineMessage != null) {
                 return new ValidationResult(engineMessage);
             }
 

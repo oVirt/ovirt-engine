@@ -379,7 +379,7 @@ public final class Cloner {
         obj.setDataCenterId(instance.getDataCenterId());
         obj.setMtu(instance.getMtu());
         obj.setVmNetwork(instance.isVmNetwork());
-        if (instance.getCluster() !=null){
+        if (instance.getCluster() != null) {
             obj.setCluster(cloneNetworkCluster(instance.getCluster()));
         }
         if (instance.getProvidedBy() != null) {

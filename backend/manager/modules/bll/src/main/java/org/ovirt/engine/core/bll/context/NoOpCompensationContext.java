@@ -31,7 +31,7 @@ public class NoOpCompensationContext extends CompensationContextBase {
     }
 
     @Override
-    public <T extends Enum<?>> void  snapshotEntityStatus(BusinessEntityWithStatus<?, T> entity, T status) {
+    public <T extends Enum<?>> void snapshotEntityStatus(BusinessEntityWithStatus<?, T> entity, T status) {
     }
 
     @Override

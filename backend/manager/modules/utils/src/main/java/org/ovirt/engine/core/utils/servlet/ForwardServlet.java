@@ -142,7 +142,7 @@ public class ForwardServlet extends HttpServlet {
                 }
             }
             dispatcher.forward(request, response);
-        } catch(Exception e) {
+        } catch (Exception e) {
             log.error("Forward failed", e);
             response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
                     e.getMessage());

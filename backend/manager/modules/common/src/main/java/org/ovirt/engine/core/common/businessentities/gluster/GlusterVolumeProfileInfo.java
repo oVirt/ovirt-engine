@@ -49,7 +49,7 @@ public class GlusterVolumeProfileInfo implements Serializable {
         if (this == obj) {
             return true;
         }
-        if(!(obj instanceof GlusterVolumeProfileInfo)) {
+        if (!(obj instanceof GlusterVolumeProfileInfo)) {
             return false;
         }
         GlusterVolumeProfileInfo other = (GlusterVolumeProfileInfo) obj;

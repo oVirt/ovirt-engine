@@ -214,7 +214,7 @@ public class HostSetupNetworksModel extends EntityModel<VDS> {
 
     private NetworkItemModel<?> getItemModel(String key, String type) {
         if (type != null) {
-            switch(type) {
+            switch (type) {
             case NIC:
                 return nicModelByName.get(key);
             case NETWORK:
@@ -317,7 +317,7 @@ public class HostSetupNetworksModel extends EntityModel<VDS> {
              * Bond Dialog
              *****************/
             boolean doesBondHaveVmNetworkAttached = doesBondHaveVmNetworkAttached((NetworkInterfaceModel) item);
-            BondNetworkInterfaceModel bondModel = (BondNetworkInterfaceModel)item;
+            BondNetworkInterfaceModel bondModel = (BondNetworkInterfaceModel) item;
             final CreateOrUpdateBond createOrUpdateBondParameter = bondModel.getCreateOrUpdateBond();
             editPopup = new SetupNetworksEditBondModel(createOrUpdateBondParameter, doesBondHaveVmNetworkAttached);
             final SetupNetworksBondModel bondDialogModel = (SetupNetworksBondModel) editPopup;
@@ -1303,8 +1303,8 @@ public class HostSetupNetworksModel extends EntityModel<VDS> {
 
     }
 
-    private boolean doesBondHaveVmNetworkAttached(NetworkInterfaceModel... networkInterfaceModels){
-        for (NetworkInterfaceModel networkInterfaceModel : networkInterfaceModels){
+    private boolean doesBondHaveVmNetworkAttached(NetworkInterfaceModel... networkInterfaceModels) {
+        for (NetworkInterfaceModel networkInterfaceModel : networkInterfaceModels) {
             for (LogicalNetworkModel logicalNetwork : networkInterfaceModel.getItems()) {
                 if (logicalNetwork.getNetwork().isVmNetwork()) {
                     return true;

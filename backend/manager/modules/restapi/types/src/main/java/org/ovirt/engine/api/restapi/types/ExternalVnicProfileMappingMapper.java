@@ -14,7 +14,7 @@ import org.ovirt.engine.core.compat.Guid;
 public class ExternalVnicProfileMappingMapper {
 
     // hide me
-    private ExternalVnicProfileMappingMapper() {}
+    private ExternalVnicProfileMappingMapper() { }
 
     @Deprecated
     public static Collection<ExternalVnicProfileMapping> mapFromModel(VnicProfileMappings vnicProfileMappings) {

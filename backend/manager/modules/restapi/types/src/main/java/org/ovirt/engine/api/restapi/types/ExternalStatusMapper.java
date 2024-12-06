@@ -32,7 +32,7 @@ public class ExternalStatusMapper {
             return org.ovirt.engine.core.common.businessentities.ExternalStatus.Info;
         case WARNING:
             return org.ovirt.engine.core.common.businessentities.ExternalStatus.Warning;
-        case  ERROR:
+        case ERROR:
             return org.ovirt.engine.core.common.businessentities.ExternalStatus.Error;
         case FAILURE:
             return org.ovirt.engine.core.common.businessentities.ExternalStatus.Failure;

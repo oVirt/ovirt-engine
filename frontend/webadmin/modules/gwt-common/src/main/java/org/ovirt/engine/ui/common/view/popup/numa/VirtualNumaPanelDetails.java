@@ -37,7 +37,7 @@ public class VirtualNumaPanelDetails extends Composite {
 
     @Inject
     public VirtualNumaPanelDetails() {
-        numaTuneMode = new ListModelListBox<>(new EnumRendererWithNull<NumaTuneMode>("&nbsp;"));//$NON-NLS-1$
+        numaTuneMode = new ListModelListBox<>(new EnumRendererWithNull<NumaTuneMode>("&nbsp;")); //$NON-NLS-1$
         initWidget(WidgetUiBinder.uiBinder.createAndBindUi(this));
         applyStyles();
     }
@@ -59,11 +59,11 @@ public class VirtualNumaPanelDetails extends Composite {
         }, ValueChangeEvent.getType());
 
         nodeModel.getNumaTuneModeList().getPropertyChangedEvent().addListener((ev, sender, args) -> {
-            if ("Items".equals(ev.getName())) {//$NON-NLS-1$
+            if ("Items".equals(ev.getName())) { //$NON-NLS-1$
                 setAcceptableValuesForNumaTune(nodeModel);
-            } else if ("SelectedItem".equals(ev.getName())) {//$NON-NLS-1$
+            } else if ("SelectedItem".equals(ev.getName())) { //$NON-NLS-1$
                 setSelectedValueNumaTune(nodeModel);
-            } else if ("IsChangable".equals(ev.getName())) {//$NON-NLS-1$
+            } else if ("IsChangable".equals(ev.getName())) { //$NON-NLS-1$
                 enableNumaTune(nodeModel);
             }
         });

@@ -39,7 +39,7 @@ public class RemoveUnregisteredVmCommand<T extends RemoveUnregisteredEntityParam
     }
 
     @Override
-    protected boolean isUnregisteredEntityExists(){
+    protected boolean isUnregisteredEntityExists() {
         return vmFromConfiguration != null;
     }
 

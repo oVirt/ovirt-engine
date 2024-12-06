@@ -203,9 +203,9 @@ public class AutoRecoveryManager implements BackendService {
         log.debug("Checking autorecoverable {} done", logMsg);
     }
 
-    private <T extends BusinessEntity<Guid>>  String getHostName(T entity) {
+    private <T extends BusinessEntity<Guid>> String getHostName(T entity) {
         if (entity instanceof VDS) {
-            return ", name : "+((VDS) entity).getName();
+            return ", name : " + ((VDS) entity).getName();
         }
         return "";
     }

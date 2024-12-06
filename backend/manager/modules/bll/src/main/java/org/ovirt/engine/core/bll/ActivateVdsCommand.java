@@ -78,7 +78,7 @@ public class ActivateVdsCommand<T extends VdsActionParameters> extends VdsComman
                 if (vds.getClusterSupportsGlusterService()) {
                     // Check gluster service running status
                     GlusterStatus isGlusterRunning = glusterUtil.isGlusterRunning(vds.getId());
-                    switch(isGlusterRunning) {
+                    switch (isGlusterRunning) {
                     case DOWN:
                         log.info("Gluster service on host '{}' is down, starting it",
                                 vds.getHostName());

@@ -24,7 +24,7 @@ public class GetGlusterVolumeRemoveBricksStatusQuery<P extends GlusterVolumeRemo
                                 getParameters().getBricks(),
                                 volume.getReplicaCount()));
 
-        GlusterVolumeTaskStatusEntity entity = (GlusterVolumeTaskStatusEntity)returnValue.getReturnValue();
+        GlusterVolumeTaskStatusEntity entity = (GlusterVolumeTaskStatusEntity) returnValue.getReturnValue();
 
         // Update the latest status details
         GlusterAsyncTask asyncTask = volume.getAsyncTask();

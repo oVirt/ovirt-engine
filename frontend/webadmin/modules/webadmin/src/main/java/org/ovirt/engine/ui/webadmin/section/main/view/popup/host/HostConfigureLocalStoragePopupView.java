@@ -217,7 +217,7 @@ public class HostConfigureLocalStoragePopupView extends AbstractTabbedModelBound
         clusterCpuTypeEditor = new ListModelListBoxEditor<>(new AbstractRenderer<ServerCpu>() {
             @Override
             public String render(ServerCpu object) {
-                return object != null  && object.getCpuName().length() > 0
+                return object != null && object.getCpuName().length() > 0
                         ?
                         object.getCpuName()
                         :

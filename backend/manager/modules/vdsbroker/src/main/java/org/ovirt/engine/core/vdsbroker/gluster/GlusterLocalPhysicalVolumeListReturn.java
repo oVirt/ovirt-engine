@@ -18,7 +18,7 @@ public class GlusterLocalPhysicalVolumeListReturn extends StatusReturn {
         super(innerMap);
 
         Object[] volumeInfo = (Object[]) innerMap.get(PHYSICAL_VOLUME_LIST);
-        for(Object volumeObject : volumeInfo) {
+        for (Object volumeObject : volumeInfo) {
             Map<String, Object> volumeData = (Map<String, Object>) volumeObject;
 
             GlusterLocalPhysicalVolume volume = new GlusterLocalPhysicalVolume();

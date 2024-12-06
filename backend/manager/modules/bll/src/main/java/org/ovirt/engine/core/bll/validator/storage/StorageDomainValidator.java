@@ -401,7 +401,7 @@ public class StorageDomainValidator {
             }
         }
 
-        return validationSucceeded? ValidationResult.VALID : new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_FORMAT_ILLEGAL_HOST,
+        return validationSucceeded ? ValidationResult.VALID : new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_FORMAT_ILLEGAL_HOST,
                     String.format("$storageFormat %1$s", storageDomain.getStorageFormat()));
     }
 

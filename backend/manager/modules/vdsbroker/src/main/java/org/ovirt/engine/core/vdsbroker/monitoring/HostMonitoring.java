@@ -125,7 +125,7 @@ public class HostMonitoring implements HostMonitoringInterface {
         } catch (Throwable t) {
             logFailureMessage("ResourceManager::refreshVdsRunTimeInfo:", t);
             log.debug("Exception", t);
-        }  finally {
+        } finally {
             vdsManager.afterRefreshTreatment(succeeded);
         }
     }
@@ -322,7 +322,7 @@ public class HostMonitoring implements HostMonitoringInterface {
 
         if (LogMaxMemoryUsedThresholdType.PERCENTAGE == cluster.getLogMaxMemoryUsedThresholdType()) {
             checkVdsMemoryThresholdPercentage(cluster, stat);
-        }  else {
+        } else {
             checkVdsMemoryThresholdAbsoluteValue(cluster, stat);
         }
     }
@@ -433,7 +433,7 @@ public class HostMonitoring implements HostMonitoringInterface {
 
         // Allow the space to be up to 2% lower than as defined in configuration
         Long allowedMinAvailableThreshold = Math.round(minAvailableThreshold.doubleValue() * THRESHOLD);
-        AuditLogType valueToLog = stat.getSwapFree() <  allowedMinAvailableThreshold ?
+        AuditLogType valueToLog = stat.getSwapFree() < allowedMinAvailableThreshold ?
                 AuditLogType.VDS_LOW_SWAP :
                 AuditLogType.VDS_HIGH_SWAP_USE;
 
@@ -544,7 +544,7 @@ public class HostMonitoring implements HostMonitoringInterface {
                     vdsManager.setStatus(VDSStatus.Up, vds);
                 }
                 refreshVdsRunTimeInfo(vdsUpOrGoingToMaintenance);
-            } catch(Throwable t) {
+            } catch (Throwable t) {
                 onFailure(t);
             }
         }

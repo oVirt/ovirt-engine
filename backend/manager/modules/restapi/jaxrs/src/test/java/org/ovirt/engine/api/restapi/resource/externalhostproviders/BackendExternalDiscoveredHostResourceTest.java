@@ -94,7 +94,7 @@ public class BackendExternalDiscoveredHostResourceTest
             ProviderQueryParameters.class,
             new String[] { "Provider.Id" },
             new Object[] { GUIDS[0] },
-            notFound? null: getHosts()
+            notFound ? null : getHosts()
         );
     }
 

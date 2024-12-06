@@ -154,7 +154,7 @@ public class MainVolumeView extends AbstractMainWithDetailsTableView<GlusterVolu
                 return object;
             }
         };
-        getTable().addColumn(capacityColumn, constants.volumeCapacity(), "100px");//$NON-NLS-1$
+        getTable().addColumn(capacityColumn, constants.volumeCapacity(), "100px"); //$NON-NLS-1$
 
         getTable().addColumn(new VolumeActivityColumn<GlusterVolumeEntity>(
                 new VolumeActivityCompositeCell<GlusterTaskSupport>(compositeList)),

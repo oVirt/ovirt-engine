@@ -25,7 +25,7 @@ public class BackendClusterExternalNetworkProvidersResourceTest
 
     private static final int PROVIDER_INDEX = 0;
     private static final Guid PROVIDER_ID = GUIDS[PROVIDER_INDEX];
-    private static final Guid CLUSTER_ID = GUIDS[PROVIDER_INDEX +1];
+    private static final Guid CLUSTER_ID = GUIDS[PROVIDER_INDEX + 1];
 
     public BackendClusterExternalNetworkProvidersResourceTest() {
         super(new BackendClusterExternalNetworkProvidersResource(CLUSTER_ID), null, null);

@@ -133,7 +133,7 @@ public class VmNextRunConfigurationWidget extends AbstractModelBoundPopupWidget<
     public void edit(VmNextRunConfigurationModel object) {
         driver.edit(object);
 
-        if (object.isVmUnpinned()){
+        if (object.isVmUnpinned()) {
             setVisibilityToVmUnpinningWarrningPanel(true);
         }
 

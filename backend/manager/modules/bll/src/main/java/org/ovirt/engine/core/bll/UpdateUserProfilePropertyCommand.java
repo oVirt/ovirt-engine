@@ -56,7 +56,7 @@ public class UpdateUserProfilePropertyCommand<T extends UserProfilePropertyParam
     @Override
     protected boolean validate() {
         UserProfileProperty propertyToUpdate = getParameters().getUserProfileProperty();
-        if(!propertyToUpdate.getUserId().equals(getUserId())){
+        if (!propertyToUpdate.getUserId().equals(getUserId())) {
             addCustomValue(PROFILE_USER, buildUserName(userDao, propertyToUpdate.getUserId()));
         }
         addCustomValue(PROFILE_PROPERTY, propertyToUpdate.getName());

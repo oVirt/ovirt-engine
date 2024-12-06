@@ -127,7 +127,7 @@ public final class WebAdminApplicationPlaces {
     // User
 
     public static final String userGeneralSubTabPlace = userMainPlace + SUB_TAB_PREFIX + "general"; //$NON-NLS-1$
-    public static final String userSettingsSubTabPlace= userMainPlace + SUB_TAB_PREFIX + "settings"; //$NON-NLS-1$
+    public static final String userSettingsSubTabPlace = userMainPlace + SUB_TAB_PREFIX + "settings"; //$NON-NLS-1$
     public static final String userQuotaSubTabPlace = userMainPlace + SUB_TAB_PREFIX + "quota"; //$NON-NLS-1$
     public static final String userGroupSubTabPlace = userMainPlace + SUB_TAB_PREFIX + "directory_groups"; //$NON-NLS-1$
     public static final String userEventNotifierSubTabPlace = userMainPlace + SUB_TAB_PREFIX + "event_notifier"; //$NON-NLS-1$

@@ -22,7 +22,7 @@ class Argument {
         NO_ARGUMENT;
 
         public static Type valueOfIgnoreCase(String name) {
-            if(name != null) {
+            if (name != null) {
                 return valueOf(name.toUpperCase());
             }
             throw new IllegalArgumentException("Invalid value null");
@@ -111,7 +111,7 @@ class Argument {
 
     @Override
     public boolean equals(Object obj) {
-        if(obj == this) {
+        if (obj == this) {
             return true;
         }
         if (!(obj instanceof Argument)) {

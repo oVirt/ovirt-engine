@@ -35,7 +35,7 @@ import org.ovirt.engine.core.common.utils.CommonConstants;
 public class QueryHelper {
     public static final String CONSTRAINT_PARAMETER = "search";
 
-    private QueryHelper() {}
+    private QueryHelper() { }
 
     /**
      * Map return types per-collection-class, as there's no logical pattern
@@ -120,7 +120,7 @@ public class QueryHelper {
      * @return constraint in correct format
      */
     public static String getConstraint(HttpHeaders headers, UriInfo ui, String defaultQuery, Class<?> clz, boolean typePrefix) {
-        String prefix = typePrefix? RETURN_TYPES.get(clz) : "";
+        String prefix = typePrefix ? RETURN_TYPES.get(clz) : "";
         String search = ParametersHelper.getParameter(headers, ui, CONSTRAINT_PARAMETER);
         if (search != null) {
             return prefix + search;

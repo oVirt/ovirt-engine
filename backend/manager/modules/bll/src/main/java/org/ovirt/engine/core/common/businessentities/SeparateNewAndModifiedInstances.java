@@ -9,7 +9,7 @@ public class SeparateNewAndModifiedInstances {
     private final List<BusinessEntity<?>> updatedEntities = new ArrayList<>();
 
     public SeparateNewAndModifiedInstances(List<? extends BusinessEntity<?>> businessEntities) {
-        for (BusinessEntity<?> businessEntity :  businessEntities) {
+        for (BusinessEntity<?> businessEntity : businessEntities) {
             boolean withoutId = businessEntity.getId() == null;
             if (withoutId) {
                 newEntities.add(businessEntity);

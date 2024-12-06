@@ -28,7 +28,7 @@ public class TransferDiskImageParameters extends ImagesActionsParametersBase {
     // Transfer only specified image data instead of entire image chain.
     private boolean shallow;
 
-    public TransferDiskImageParameters() {}
+    public TransferDiskImageParameters() { }
 
     public TransferDiskImageParameters(Guid storageDomainId, AddDiskParameters addDiskParameters) {
         setStorageDomainId(storageDomainId);

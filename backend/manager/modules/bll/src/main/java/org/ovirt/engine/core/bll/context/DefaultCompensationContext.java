@@ -113,7 +113,7 @@ public class DefaultCompensationContext extends CompensationContextBase {
     }
 
     @Override
-    public <T extends Enum<?>> void  snapshotEntityStatus(BusinessEntityWithStatus<?, T> entity, T status) {
+    public <T extends Enum<?>> void snapshotEntityStatus(BusinessEntityWithStatus<?, T> entity, T status) {
         EntityStatusSnapshot snapshot = new EntityStatusSnapshot();
         snapshot.setId(entity.getId());
         snapshot.setStatus(status);
@@ -168,7 +168,7 @@ public class DefaultCompensationContext extends CompensationContextBase {
     }
 
     private void checkEntityForRollback(BusinessEntity<?> entity) {
-        if(entity == null) {
+        if (entity == null) {
             throw new IllegalArgumentException("Can not create snapshot from a null entity");
         }
 

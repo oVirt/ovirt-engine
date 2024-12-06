@@ -80,7 +80,7 @@ public class DiskValidator {
                 return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_SGIO_IS_FILTERED);
             }
         }
-        return  ValidationResult.VALID;
+        return ValidationResult.VALID;
     }
 
     public ValidationResult validateConnectionsInLun(StorageType storageType) {
@@ -89,7 +89,7 @@ public class DiskValidator {
                 case UNKNOWN:
                     return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_DISK_LUN_HAS_NO_VALID_TYPE);
                 case ISCSI:
-                    LUNs luns = ((LunDisk)disk).getLun();
+                    LUNs luns = ((LunDisk) disk).getLun();
                     if (luns.getLunConnections() == null || luns.getLunConnections().isEmpty()) {
                         return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_DISK_LUN_ISCSI_MISSING_CONNECTION_PARAMS);
                     }

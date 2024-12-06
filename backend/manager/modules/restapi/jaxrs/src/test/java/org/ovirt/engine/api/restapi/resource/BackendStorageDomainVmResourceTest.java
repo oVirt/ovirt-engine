@@ -50,7 +50,7 @@ public class BackendStorageDomainVmResourceTest
 
     private static final Guid VM_ID = GUIDS[1];
     private static final Guid DATA_CENTER_ID = GUIDS[0];
-    private static final Guid STORAGE_DOMAIN_ID = GUIDS[GUIDS.length-1];
+    private static final Guid STORAGE_DOMAIN_ID = GUIDS[GUIDS.length - 1];
 
     private static final String URL_BASE = "storagedomains/" + STORAGE_DOMAIN_ID + "/vms/" + VM_ID;
 
@@ -367,7 +367,7 @@ public class BackendStorageDomainVmResourceTest
 
         Response response = resource.doImport(action);
         verifyActionResponse(response, URL_BASE, true, null);
-        action = (Action)response.getEntity();
+        action = (Action) response.getEntity();
         assertTrue(action.isSetStatus());
         assertEquals(actionStatus.value(), action.getStatus());
     }

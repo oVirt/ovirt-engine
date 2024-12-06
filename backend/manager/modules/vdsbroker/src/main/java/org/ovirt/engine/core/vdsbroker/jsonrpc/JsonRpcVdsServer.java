@@ -1214,7 +1214,7 @@ public class JsonRpcVdsServer implements IVdsServer {
             int replicaCount,
             Boolean forceRemove) {
         String command = "GlusterVolume.removeBrickStart";
-        if(forceRemove) {
+        if (forceRemove) {
             command = "GlusterVolume.removeBrickForce";
         }
         JsonRpcRequest request = new RequestBuilder(command).withParameter("volumeName", volumeName)

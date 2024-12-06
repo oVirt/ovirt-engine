@@ -287,7 +287,7 @@ public class SearchSuggestBox extends SuggestBox implements HasElementId {
     }
 
     public void hideSuggestion() {
-        ((SearchSuggestionDisplay)getSuggestionDisplay()).hideSuggestions();
+        ((SearchSuggestionDisplay) getSuggestionDisplay()).hideSuggestions();
     }
 
     @Override

@@ -358,11 +358,11 @@ public class VdsStatic implements BusinessEntity<Guid>, Commented {
         this.sshKeyFingerprint = sshKeyFingerprint;
     }
 
-    public String getSshPublicKey(){
+    public String getSshPublicKey() {
         return sshPublicKey;
     }
 
-    public void setSshPublicKey(String sshPublicKey){
+    public void setSshPublicKey(String sshPublicKey) {
         this.sshPublicKey = sshPublicKey;
     }
 

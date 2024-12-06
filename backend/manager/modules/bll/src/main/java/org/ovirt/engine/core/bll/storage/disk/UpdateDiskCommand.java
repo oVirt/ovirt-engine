@@ -335,7 +335,7 @@ public class UpdateDiskCommand<T extends UpdateDiskParameters> extends AbstractD
     private boolean isIncrementalBackupChangedOnRawDisk() {
         if (getNewDisk().getDiskStorageType() == DiskStorageType.IMAGE) {
             DiskImage diskImage = (DiskImage) getNewDisk();
-            return diskImage.getBackup() == DiskBackup.Incremental &&  diskImage.getVolumeFormat() == VolumeFormat.RAW;
+            return diskImage.getBackup() == DiskBackup.Incremental && diskImage.getVolumeFormat() == VolumeFormat.RAW;
         }
         return false;
     }
@@ -376,7 +376,7 @@ public class UpdateDiskCommand<T extends UpdateDiskParameters> extends AbstractD
 
         if (isUpdatedToShareable(getOldDisk(), getNewDisk())) {
 
-            StorageDomainStatic sds = storageDomainStaticDao.get(((DiskImage)getNewDisk()).getStorageIds().get(0));
+            StorageDomainStatic sds = storageDomainStaticDao.get(((DiskImage) getNewDisk()).getStorageIds().get(0));
             if (sds.getStorageType() == StorageType.GLUSTERFS) {
                 return failValidation(EngineMessage.ACTION_TYPE_FAILED_SHAREABLE_DISKS_NOT_SUPPORTED_ON_GLUSTER_DOMAIN);
             }
@@ -402,7 +402,7 @@ public class UpdateDiskCommand<T extends UpdateDiskParameters> extends AbstractD
 
     protected boolean validateCanUpdateReadOnly() {
         if (updateReadOnlyRequested()) {
-            if(getVm().getStatus() != VMStatus.Down && vmDeviceForVm.isPlugged()) {
+            if (getVm().getStatus() != VMStatus.Down && vmDeviceForVm.isPlugged()) {
                 return failValidation(EngineMessage.ACTION_TYPE_FAILED_VM_IS_NOT_DOWN);
             }
             DiskVmElementValidator diskVmElementValidator = getDiskVmElementValidator(getNewDisk(), getDiskVmElement());
@@ -792,7 +792,7 @@ public class UpdateDiskCommand<T extends UpdateDiskParameters> extends AbstractD
                     .map(VM::getName)
                     .sorted()
                     .collect(Collectors.joining(", "));
-            jobProperties.put("vm", vmNames.isEmpty()? "N/A" : vmNames);
+            jobProperties.put("vm", vmNames.isEmpty() ? "N/A" : vmNames);
         }
         return jobProperties;
     }
@@ -886,7 +886,7 @@ public class UpdateDiskCommand<T extends UpdateDiskParameters> extends AbstractD
                         QuotaStorageConsumptionParameter.QuotaAction.RELEASE,
                         //TODO: Shared Disk?
                         oldDiskImage.getStorageIds().get(0),
-                        (double)oldDiskImage.getSizeInGigabytes()));
+                        (double) oldDiskImage.getSizeInGigabytes()));
             }
         }
         return list;

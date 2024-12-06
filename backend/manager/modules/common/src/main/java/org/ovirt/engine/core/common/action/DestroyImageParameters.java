@@ -13,7 +13,7 @@ public class DestroyImageParameters extends StorageDomainParametersBase {
     private boolean postZero;
     private boolean force;
 
-    private DestroyImageParameters() {}
+    private DestroyImageParameters() { }
 
     public DestroyImageParameters(
             Guid vdsId,

@@ -643,7 +643,7 @@ public class Model implements IEventListener<EventArgs>, ICommandTarget, IProvid
     }
 
     public class AsyncQuery<T> extends org.ovirt.engine.ui.frontend.AsyncQuery<T> {
-        public AsyncQuery(){
+        public AsyncQuery() {
         }
 
         public AsyncQuery(AsyncCallback<T> callback) {

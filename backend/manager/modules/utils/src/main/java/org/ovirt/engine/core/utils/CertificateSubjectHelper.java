@@ -7,7 +7,7 @@ import org.ovirt.engine.core.common.config.ConfigValues;
 public class CertificateSubjectHelper {
 
     public static String getCertificateSubject(String hostName) {
-        String certificateSubject=null;
+        String certificateSubject = null;
         if (hostName != null) {
             certificateSubject = "";
             String organization = getOrganizationName();

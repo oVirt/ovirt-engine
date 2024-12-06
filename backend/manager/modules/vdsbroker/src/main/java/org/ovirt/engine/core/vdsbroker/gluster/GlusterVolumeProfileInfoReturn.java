@@ -70,10 +70,10 @@ public final class GlusterVolumeProfileInfoReturn extends StatusReturn {
             GlusterVolumeEntity volume = getGlusterVolumeDao().getByName(clusterId, volumeName);
 
             glusterVolumeProfileInfo.setVolumeId(volume.getId());
-            if(profileInfo.containsKey(BRICKS)) {
+            if (profileInfo.containsKey(BRICKS)) {
                 glusterVolumeProfileInfo.setBrickProfileDetails(prepareBrickProfileDetails(volume,
                     (Object[]) profileInfo.get(BRICKS)));
-            } else if(profileInfo.containsKey(NFSSERVERS)){
+            } else if (profileInfo.containsKey(NFSSERVERS)) {
                 glusterVolumeProfileInfo.setNfsProfileDetails(prepareNfsProfileDetails((Object[]) profileInfo.get(NFSSERVERS)));
             }
         }
@@ -81,7 +81,7 @@ public final class GlusterVolumeProfileInfoReturn extends StatusReturn {
 
     private List<GlusterVolumeProfileStats> prepareNfsProfileDetails(Object[] nfsServerProfileDetails) {
         List<GlusterVolumeProfileStats> nfsProfileDetails = new ArrayList<>();
-        for(Object nfsObject : nfsServerProfileDetails) {
+        for (Object nfsObject : nfsServerProfileDetails) {
             GlusterVolumeProfileStats nfsDetails = new GlusterVolumeProfileStats();
             Map<String, Object> nfsProfile = (Map<String, Object>) nfsObject;
             nfsDetails.setIdentity((String) nfsProfile.get(NFS));

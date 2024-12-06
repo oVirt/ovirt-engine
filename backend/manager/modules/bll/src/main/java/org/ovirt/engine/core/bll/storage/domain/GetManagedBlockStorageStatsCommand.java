@@ -56,7 +56,7 @@ public class GetManagedBlockStorageStatsCommand<T extends AddManagedBlockStorage
                             getCorrelationId());
             returnValue = cinderlibExecutor.runCommand(CinderlibExecutor.CinderlibCommand.STORAGE_STATS, params);
 
-            if(returnValue.getSucceed()) {
+            if (returnValue.getSucceed()) {
                 storageStats = JsonHelper.jsonToMap(returnValue.getOutput());
             }
         } catch (Exception e) {

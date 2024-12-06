@@ -248,7 +248,7 @@ public class HostPopupView extends AbstractTabbedModelBoundPopupView<HostModel> 
     @Ignore
     DialogTab hostedEngineTab;
 
-    @UiField(provided=true)
+    @UiField(provided = true)
     @Path(value = "hostedEngineHostModel.selectedItem")
     ListModelListBoxEditor<HostedEngineDeployConfiguration.Action> hostedEngineDeployActionsEditor;
 
@@ -739,7 +739,7 @@ public class HostPopupView extends AbstractTabbedModelBoundPopupView<HostModel> 
 
             RadioButton rb = new RadioButton("spm"); // $//$NON-NLS-1$
             rb.setText(model.getTitle());
-            Element labelElement = (Element)rb.getElement().getChild(1);
+            Element labelElement = (Element) rb.getElement().getChild(1);
             labelElement.addClassName(style.patternFlyRadio());
             rb.setValue(object.getSpmPriority().getSelectedItem() == model);
 

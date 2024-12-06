@@ -39,7 +39,7 @@ public class NumericSuffixNameableComparatorTest {
         assertThat(underTest.compare(nameable1, nameable2), expectedMatcher);
     }
 
-    public static Stream<Arguments> compare()  {
+    public static Stream<Arguments> compare() {
         return Stream.of(
                 Arguments.of(null, null, 0),
                 Arguments.of(null, "", -1),

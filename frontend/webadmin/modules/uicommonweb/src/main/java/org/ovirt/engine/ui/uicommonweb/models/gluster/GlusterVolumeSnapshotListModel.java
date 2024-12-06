@@ -30,7 +30,7 @@ public class GlusterVolumeSnapshotListModel extends SearchableListModel<GlusterV
     public GlusterVolumeSnapshotListModel() {
         setTitle(ConstantsManager.getInstance().getConstants().snapshotsTitle());
         setHelpTag(HelpTag.volume_snapshots);
-        setHashName("volume_snapshots");//$NON-NLS-1$
+        setHashName("volume_snapshots"); //$NON-NLS-1$
 
         setRestoreSnapshotCommand(new UICommand("restore", this)); //$NON-NLS-1$
         setDeleteSnapshotCommand(new UICommand("delete", this)); //$NON-NLS-1$

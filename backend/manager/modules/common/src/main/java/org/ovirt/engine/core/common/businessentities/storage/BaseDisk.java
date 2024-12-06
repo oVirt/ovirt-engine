@@ -155,7 +155,7 @@ public class BaseDisk implements Queryable, BusinessEntity<Guid>, ProgressEntity
     }
 
     public PropagateErrors getPropagateErrors() {
-        if ((Boolean)(Config.getValue(ConfigValues.PropagateDiskErrors))) {
+        if ((Boolean) (Config.getValue(ConfigValues.PropagateDiskErrors))) {
             return PropagateErrors.On;
         }
         return propagateErrors;
@@ -170,7 +170,7 @@ public class BaseDisk implements Queryable, BusinessEntity<Guid>, ProgressEntity
     }
 
     public void setDiskDescription(String diskDescription) {
-        this.diskDescription =  diskDescription == null ? "" : diskDescription;
+        this.diskDescription = diskDescription == null ? "" : diskDescription;
     }
 
     public String getDiskAlias() {

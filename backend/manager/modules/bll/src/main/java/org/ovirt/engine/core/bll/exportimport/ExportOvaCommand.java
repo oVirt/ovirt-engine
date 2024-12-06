@@ -51,7 +51,7 @@ public abstract class ExportOvaCommand<T extends ExportOvaParameters> extends Co
         }
         String path = getParameters().getDirectory();
         if (path != null && path.endsWith("/")) {
-            getParameters().setDirectory(path.substring(0, path.length()-1));
+            getParameters().setDirectory(path.substring(0, path.length() - 1));
         }
         if (StringUtils.isEmpty(getParameters().getName())) {
             getParameters().setName(String.format("%s.ova", getEntity().getName()));

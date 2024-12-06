@@ -497,11 +497,11 @@ public abstract class VmBaseListModel<E, T> extends ListWithSimpleDetailsModel<E
                         this);
     }
 
-    protected void updateVM(UnitVmModel model){
+    protected void updateVM(UnitVmModel model) {
         // no-op by default. Override if needed.
     }
 
-    protected void cloneVM(UnitVmModel model){
+    protected void cloneVM(UnitVmModel model) {
         // no-op by default. Override if needed.
     }
 

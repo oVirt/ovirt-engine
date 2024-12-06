@@ -41,7 +41,7 @@ public class VmInitToOpenStackMetadataAdapter {
 
         if (vmInitNetworks != null) {
             links = new LinkedList<>();
-            networks  = new LinkedList<>();
+            networks = new LinkedList<>();
 
             for (VmInitNetwork vmInitNetwork: vmInitNetworks) {
                 if (!isStartOnBoot(vmInitNetwork)) {
@@ -118,7 +118,7 @@ public class VmInitToOpenStackMetadataAdapter {
             throw new IllegalArgumentException("IPv6 address must be supplied for a static IPv6 configuration");
         }
 
-        Map<String, Object>  networkIPv6 = new HashMap<>();
+        Map<String, Object> networkIPv6 = new HashMap<>();
         networkIPv6.put("id", vmInitNetwork.getName());
         networkIPv6.put("link", vmInitNetwork.getName());
 

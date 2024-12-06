@@ -28,7 +28,7 @@ import org.ovirt.engine.core.utils.MockConfigExtension;
 
 @ExtendWith({MockitoExtension.class, MockConfigExtension.class})
 @MockitoSettings(strictness = Strictness.LENIENT)
-public class NumaWeightPolicyUnitTest extends NumaPolicyTestBase{
+public class NumaWeightPolicyUnitTest extends NumaPolicyTestBase {
 
     public static Stream<MockConfigDescriptor<?>> mockConfiguration() {
         return Stream.of(
@@ -37,7 +37,7 @@ public class NumaWeightPolicyUnitTest extends NumaPolicyTestBase{
     }
 
     @InjectMocks
-    private NumaWeightPolicyUnit unit = new NumaWeightPolicyUnit(null,  null);
+    private NumaWeightPolicyUnit unit = new NumaWeightPolicyUnit(null, null);
 
     private VM vm;
     private VDS host1;

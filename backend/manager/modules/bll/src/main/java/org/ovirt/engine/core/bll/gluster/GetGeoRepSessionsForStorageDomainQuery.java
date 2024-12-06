@@ -59,7 +59,7 @@ public class GetGeoRepSessionsForStorageDomainQuery<P extends IdQueryParameters>
             //retrieve the gluster volume associated with path
             String path = connection.getConnection();
             String[] pathElements = path.split(StorageConstants.GLUSTER_VOL_SEPARATOR);
-            if (pathElements.length !=2 ) {
+            if (pathElements.length != 2 ) {
                // return empty as volume name could not be determined
                 log.info("Volume name could not be determined from storage connection '{}' ", path);
                 getQueryReturnValue().setSucceeded(false);

@@ -214,7 +214,7 @@ public class QuotaDaoImpl extends BaseDao implements QuotaDao {
         // get thin quota (only basic quota meta data)
         List<Quota> allThinQuota = getCallsHandler().executeReadList("getAllThinQuota", getQuotaMetaDataFromResultSet(), parameterSource);
 
-        if (!allThinQuota.isEmpty()){
+        if (!allThinQuota.isEmpty()) {
             Map<Guid, Quota> allQuotaMap = new HashMap<>();
             for (Quota quota : allThinQuota) {
                 allQuotaMap.put(quota.getId(), quota);
@@ -546,7 +546,7 @@ public class QuotaDaoImpl extends BaseDao implements QuotaDao {
     }
 
     @Override
-    public boolean isQuotaInUse(Quota quota){
+    public boolean isQuotaInUse(Quota quota) {
 
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("quota_id", quota.getId());

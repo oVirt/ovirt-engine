@@ -126,7 +126,7 @@ public class GlusterUtilTest {
         VdsNetworkInterface vdsNetworkInterfaceClusterHost = new VdsNetworkInterface();
         VdsNetworkInterface vdsNetworkInterfaceClusterHost2 = new VdsNetworkInterface();
         List<VdsNetworkInterface> vdsNetworkInterfaceOldHostList = new ArrayList<>();
-        List<VdsNetworkInterface> vdsNetworkInterfaceClusterHostList= new ArrayList<>();
+        List<VdsNetworkInterface> vdsNetworkInterfaceClusterHostList = new ArrayList<>();
         List<VdsNetworkInterface> vdsNetworkInterfaceClusterHost2List = new ArrayList<>();
 
         VDS vds1 = new VDS();
@@ -178,7 +178,7 @@ public class GlusterUtilTest {
         VdsNetworkInterface vdsNetworkInterfaceClusterHostIpv6 = new VdsNetworkInterface();
         VdsNetworkInterface vdsNetworkInterfaceClusterHost2Ipv6 = new VdsNetworkInterface();
         List<VdsNetworkInterface> vdsNetworkInterfaceOldHostListIpv6 = new ArrayList<>();
-        List<VdsNetworkInterface> vdsNetworkInterfaceClusterHostListIpv6= new ArrayList<>();
+        List<VdsNetworkInterface> vdsNetworkInterfaceClusterHostListIpv6 = new ArrayList<>();
         List<VdsNetworkInterface> vdsNetworkInterfaceClusterHost2ListIpv6 = new ArrayList<>();
 
         VDS vds1 = new VDS();

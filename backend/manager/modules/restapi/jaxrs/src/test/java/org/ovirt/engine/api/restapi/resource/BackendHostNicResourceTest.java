@@ -119,7 +119,7 @@ public class BackendHostNicResourceTest
 
         @SuppressWarnings("unchecked")
         BackendStatisticsResource<HostNic, VdsNetworkInterface> statisticsResource =
-            (BackendStatisticsResource<HostNic, VdsNetworkInterface>)resource.getStatisticsResource();
+            (BackendStatisticsResource<HostNic, VdsNetworkInterface>) resource.getStatisticsResource();
         assertNotNull(statisticsResource);
 
         verifyQuery(statisticsResource.getQuery(), entity);

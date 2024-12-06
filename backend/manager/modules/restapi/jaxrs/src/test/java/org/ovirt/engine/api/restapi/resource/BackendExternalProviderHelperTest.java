@@ -48,7 +48,7 @@ public class BackendExternalProviderHelperTest extends AbstractBackendBaseTest {
         List<ExternalNetworkProviderConfiguration> configurationList =
                 configurations.getExternalNetworkProviderConfigurations();
 
-        for(int i = 0; i< PROVIDER_COUNT; i++) {
+        for (int i = 0; i < PROVIDER_COUNT; i++) {
             verifyModel(configurationList.get(i).getExternalNetworkProvider(), i);
         }
     }
@@ -74,7 +74,7 @@ public class BackendExternalProviderHelperTest extends AbstractBackendBaseTest {
         BackendExternalProviderHelper.completeExternalProviders(resource, providers);
         List<ExternalProvider> providerList = providers.getExternalProviders();
 
-        for(int i = 0; i< PROVIDER_COUNT; i++) {
+        for (int i = 0; i < PROVIDER_COUNT; i++) {
             verifyModel(providerList.get(i), i);
         }
     }
@@ -92,7 +92,7 @@ public class BackendExternalProviderHelperTest extends AbstractBackendBaseTest {
     }
 
     private void setUpQueryExpectations() {
-        for(int i = 0; i < LAST_PROVIDER_INDEX; i++) {
+        for (int i = 0; i < LAST_PROVIDER_INDEX; i++) {
             setUpEntityQueryExpectations(QueryType.GetProviderByName,
                     NameQueryParameters.class,
                     new String[]{"Name"},
@@ -109,7 +109,7 @@ public class BackendExternalProviderHelperTest extends AbstractBackendBaseTest {
 
     private ExternalNetworkProviderConfigurations getExternalNetworkProviderConfigurations(int count) {
         ExternalNetworkProviderConfigurations configurations = new ExternalNetworkProviderConfigurations();
-        for(int i = 0; i< PROVIDER_COUNT; i++) {
+        for (int i = 0; i < PROVIDER_COUNT; i++) {
             configurations.getExternalNetworkProviderConfigurations().add(getExternalNetworkProviderConfiguration(i));
         }
         return configurations;
@@ -124,7 +124,7 @@ public class BackendExternalProviderHelperTest extends AbstractBackendBaseTest {
 
     private ExternalProviders getExternalProviders(int cont) {
         ExternalProviders providers = new ExternalProviders();
-        for(int i = 0; i < PROVIDER_COUNT; i++) {
+        for (int i = 0; i < PROVIDER_COUNT; i++) {
             providers.getExternalProviders().add(getExternalProvider(i));
         }
         return providers;

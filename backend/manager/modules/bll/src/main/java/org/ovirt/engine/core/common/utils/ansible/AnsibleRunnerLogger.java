@@ -36,7 +36,7 @@ public class AnsibleRunnerLogger {
         return logFile;
     }
 
-    public void log(String str, Object ...params) {
+    public void log(String str, Object ... params) {
         if (str == null) {
             return;
         }

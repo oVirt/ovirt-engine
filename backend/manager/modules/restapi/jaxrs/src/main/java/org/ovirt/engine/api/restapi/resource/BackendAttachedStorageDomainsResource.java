@@ -82,7 +82,7 @@ public class BackendAttachedStorageDomainsResource
                 "Storage: name=" + name).getId();
     }
 
-    protected org.ovirt.engine.core.common.businessentities.StorageDomain  lookupStorageDomainById(Guid storageDomainId) {
+    protected org.ovirt.engine.core.common.businessentities.StorageDomain lookupStorageDomainById(Guid storageDomainId) {
         return getEntity(org.ovirt.engine.core.common.businessentities.StorageDomain.class,
                          QueryType.GetStorageDomainByIdAndStoragePoolId,
                          new StorageDomainAndPoolQueryParameters(storageDomainId, dataCenterId),

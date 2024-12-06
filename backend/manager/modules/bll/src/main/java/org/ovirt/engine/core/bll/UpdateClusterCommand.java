@@ -86,7 +86,7 @@ import org.ovirt.engine.core.vdsbroker.VmManager;
 
 @NonTransactiveCommandAttribute(forceCompensation = true)
 public class UpdateClusterCommand<T extends ClusterOperationParameters> extends
-        ClusterOperationCommandBase<T> implements RenamedEntityInfoProvider{
+        ClusterOperationCommandBase<T> implements RenamedEntityInfoProvider {
 
     @Inject
     private ClusterFeatureDao clusterFeatureDao;
@@ -258,7 +258,7 @@ public class UpdateClusterCommand<T extends ClusterOperationParameters> extends
             ServerCpu sc = cpuFlagsManagerHandler.findMaxServerCpuByFlags(vds.getCpuFlags(),
                     getParameters().getCluster().getCompatibilityVersion());
 
-            if (vds.getStatus() == VDSStatus.Up && sc != null  &&
+            if (vds.getStatus() == VDSStatus.Up && sc != null &&
                     (scMin == null || scMin.getLevel() > sc.getLevel()) &&
                     (!oldCpuExisted || oldCpuManufacturer.equals(cpuFlagsManagerHandler.
                             getVendorByCpuName(sc.getCpuName(), getParameters().getCluster().getCompatibilityVersion())))) {

@@ -26,13 +26,13 @@ public class GetLldpVDSCommand<T extends GetLldpVDSCommandParameters> extends Vd
 
     private Map<String, LldpInfo> parseLldpInfos(Map<String, Object> lldps) {
         return lldps.entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey,
-                entry -> parseLldpInfo((Map<String, Object>)entry.getValue())));
+                entry -> parseLldpInfo((Map<String, Object>) entry.getValue())));
     }
 
     private LldpInfo parseLldpInfo(Map<String, Object> lldp) {
         LldpInfo lldpInfo = new LldpInfo();
-        lldpInfo.setEnabled((boolean)lldp.get(VdsProperties.LLDP_ENABLED));
-        lldpInfo.setTlvs(parseTlvs((Object[])lldp.get(VdsProperties.LLDP_TLVS)));
+        lldpInfo.setEnabled((boolean) lldp.get(VdsProperties.LLDP_ENABLED));
+        lldpInfo.setTlvs(parseTlvs((Object[]) lldp.get(VdsProperties.LLDP_TLVS)));
         return lldpInfo;
     }
 
@@ -43,13 +43,13 @@ public class GetLldpVDSCommand<T extends GetLldpVDSCommandParameters> extends Vd
 
     private Tlv parseTlv(Map<String, Object> in) {
         Tlv out = new Tlv();
-        out.setName((String)(in.get(VdsProperties.TLV_NAME)));
-        out.setType((Integer)(in.get(VdsProperties.TLV_TYPE)));
+        out.setName((String) (in.get(VdsProperties.TLV_NAME)));
+        out.setType((Integer) (in.get(VdsProperties.TLV_TYPE)));
         if (in.containsKey(VdsProperties.TLV_OUI)) {
-            out.setOui((Integer)(in.get(VdsProperties.TLV_OUI)));
+            out.setOui((Integer) (in.get(VdsProperties.TLV_OUI)));
         }
         if (in.containsKey(VdsProperties.TLV_SUBTYPE)) {
-            out.setSubtype((Integer)(in.get(VdsProperties.TLV_SUBTYPE)));
+            out.setSubtype((Integer) (in.get(VdsProperties.TLV_SUBTYPE)));
         }
         Map<String, String> entries = (Map<String, String>) in.get(VdsProperties.TLV_PROPERTIES);
         out.getProperties().putAll(entries);

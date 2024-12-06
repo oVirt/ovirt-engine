@@ -22,10 +22,10 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 @Singleton
 public class LabelDaoImpl extends BaseDao implements LabelDao {
     private static final RowMapper<Label> labelRowMapper = (rs, rowNum) -> {
-        String[] rawUuids = (String[])rs.getArray("vm_ids").getArray();
+        String[] rawUuids = (String[]) rs.getArray("vm_ids").getArray();
         List<String> vms = Arrays.asList(rawUuids);
 
-        rawUuids = (String[])rs.getArray("vds_ids").getArray();
+        rawUuids = (String[]) rs.getArray("vds_ids").getArray();
         List<String> hosts = Arrays.asList(rawUuids);
 
         return new LabelBuilder()

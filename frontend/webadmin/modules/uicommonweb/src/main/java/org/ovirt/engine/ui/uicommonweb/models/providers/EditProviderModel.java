@@ -47,7 +47,7 @@ public class EditProviderModel extends ProviderModel {
         getUrl().setEntity(provider.getUrl());
         getRequiresAuthentication().setEntity(provider.isRequiringAuthentication());
         getUsername().setEntity(provider.getUsername());
-        getPassword().setEntity(provider.getPassword());
+        getPassword().setEntity("********");  //$NON-NLS-1$
         if (provider.isRequiringAuthentication() && provider.getType().isAuthUrlAware()) {
             Uri uri = new Uri(provider.getAuthUrl());
             if (uri.isValid()) {

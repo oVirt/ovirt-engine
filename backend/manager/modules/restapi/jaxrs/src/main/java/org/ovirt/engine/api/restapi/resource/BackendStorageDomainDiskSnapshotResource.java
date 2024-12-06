@@ -28,7 +28,7 @@ public class BackendStorageDomainDiskSnapshotResource
 
     @Override
     public DiskSnapshot get() {
-        DiskSnapshot diskSnapshot =  performGet(QueryType.GetDiskSnapshotByImageId, new IdQueryParameters(guid), StorageDomain.class);
+        DiskSnapshot diskSnapshot = performGet(QueryType.GetDiskSnapshotByImageId, new IdQueryParameters(guid), StorageDomain.class);
 
         // this code generates back-link to the corresponding SD
         diskSnapshot.setStorageDomain(new StorageDomain());

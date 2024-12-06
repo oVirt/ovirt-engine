@@ -120,7 +120,7 @@ public abstract class StopVmCommandBase<T extends StopVmParametersBase> extends 
                 returnValueFromDestination = runVdsCommand(
                         VDSCommandType.DestroyVm,
                         buildDestroyVmVDSCommandParameters(getVm().getMigratingToVds()));
-            } catch(EngineException e) {
+            } catch (EngineException e) {
                 switch (e.getErrorCode()) {
                 case noVM:
                     break;
@@ -134,7 +134,7 @@ public abstract class StopVmCommandBase<T extends StopVmParametersBase> extends 
                 returnValueFromSource = runVdsCommand(
                         VDSCommandType.DestroyVm,
                         buildDestroyVmVDSCommandParameters(getVdsId()));
-            } catch(EngineException e) {
+            } catch (EngineException e) {
                 switch (e.getErrorCode()) {
                 case noVM:
                     if (returnValueFromDestination == null) {
@@ -242,7 +242,7 @@ public abstract class StopVmCommandBase<T extends StopVmParametersBase> extends 
     }
 
     @Override
-    protected  boolean shouldSkipCommandExecution() {
+    protected boolean shouldSkipCommandExecution() {
         return getVm() != null && getVm().getStatus() == VMStatus.Down;
     }
 

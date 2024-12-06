@@ -2,7 +2,7 @@ package org.ovirt.engine.ui.uicommonweb.models.gluster;
 
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 
-public class ResetBrickModel extends ConfirmationModel{
+public class ResetBrickModel extends ConfirmationModel {
 
     private String validationMessage;
 

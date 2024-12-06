@@ -190,7 +190,7 @@ public class VmOverheadCalculatorImpl implements VmOverheadCalculator {
      */
     @Override
     public long getSnapshotMemorySizeInBytes(VM vm) {
-        long videoRam = (long)videoDeviceSettings.totalVideoRAMSizeMb(vm,
+        long videoRam = (long) videoDeviceSettings.totalVideoRAMSizeMb(vm,
                 VmDeviceCommonUtils.isSingleQxlPci(vm.getStaticData()));
         return (vm.getVmMemSizeMb() + 200 + videoRam) * 1024 * 1024;
     }

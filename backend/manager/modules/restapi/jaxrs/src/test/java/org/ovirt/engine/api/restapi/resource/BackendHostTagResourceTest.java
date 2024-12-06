@@ -82,7 +82,7 @@ public class BackendHostTagResourceTest extends AbstractBackendSubResourceTest<T
             GetTagsByVdsIdParameters.class,
             new String[] { "VdsId" },
             new Object[] { HOST_ID.toString() },
-            succeed? setUpTagsExpectations(): Collections.emptyList()
+            succeed ? setUpTagsExpectations() : Collections.emptyList()
         );
     }
 

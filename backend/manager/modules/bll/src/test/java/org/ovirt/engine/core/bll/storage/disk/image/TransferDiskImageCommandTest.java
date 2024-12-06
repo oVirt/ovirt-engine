@@ -81,7 +81,7 @@ public class TransferDiskImageCommandTest extends BaseCommandTest {
 
     @Spy
     @InjectMocks
-    private  TransferDiskImageCommand<TransferDiskImageParameters> transferImageCommand =
+    private TransferDiskImageCommand<TransferDiskImageParameters> transferImageCommand =
             new TransferDiskImageCommand<>(new TransferDiskImageParameters(), null);
 
     public static Stream<MockConfigDescriptor<?>> mockConfiguration() {

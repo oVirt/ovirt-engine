@@ -24,7 +24,7 @@ public class VolumeActivityStatusCell<T extends GlusterTaskSupport> extends Abst
     public void render(Context context, T value, SafeHtmlBuilder sb, String id) {
         // Nothing to render if no task is provided, or if task status is empty:
         if (value == null || value.getAsyncTask() == null || value.getAsyncTask().getType() == null
-                ||value.getAsyncTask().getStatus() == null) {
+                || value.getAsyncTask().getStatus() == null) {
             return;
         }
 

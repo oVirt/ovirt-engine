@@ -5,7 +5,7 @@ import java.util.Map;
 
 import org.ovirt.engine.core.compat.Guid;
 
-public class VmLeaseParameters  extends ActionParametersBase implements Serializable {
+public class VmLeaseParameters extends ActionParametersBase implements Serializable {
 
     private Guid storagePoolId;
     private Guid storageDomainId;
@@ -15,7 +15,7 @@ public class VmLeaseParameters  extends ActionParametersBase implements Serializ
     private Map<String, String> vmLeaseInfo;
     private boolean failureExpected;
 
-    public VmLeaseParameters() {}
+    public VmLeaseParameters() { }
 
     public VmLeaseParameters(Guid storagePoolId, Guid storageDomainId, Guid vmId) {
         this.storagePoolId = storagePoolId;

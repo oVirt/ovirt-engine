@@ -13,7 +13,7 @@ public class ImageTicketVDSCommandParametersBase extends VdsIdVDSCommandParamete
         this.timeout = timeout;
     }
 
-    public ImageTicketVDSCommandParametersBase() {}
+    public ImageTicketVDSCommandParametersBase() { }
 
     public Guid getTicketId() {
         return ticketId;

@@ -190,7 +190,7 @@ public class VdsOperationActionParameters extends VdsActionParameters {
         return reconfigureGluster;
     }
 
-    public void setReconfigureGluster(boolean reconfigureGluster){
+    public void setReconfigureGluster(boolean reconfigureGluster) {
         this.reconfigureGluster = reconfigureGluster;
     }
 }

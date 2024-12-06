@@ -81,7 +81,7 @@ public class BackendOpenStackImageResourceTest
             GetImageByIdParameters.class,
             new String[] { "RepoImageId" },
             new Object[] { GUIDS[1].toString() },
-            notFound? null: getEntity(1)
+            notFound ? null : getEntity(1)
         );
     }
 

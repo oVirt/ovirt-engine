@@ -64,7 +64,7 @@ public enum OsInfoPreferencesLoader implements OsLoader {
     }
 
     private void loadFile(Path path) {
-        try(BufferedReader reader = Files.newBufferedReader(path, StandardCharsets.UTF_8)) {
+        try (BufferedReader reader = Files.newBufferedReader(path, StandardCharsets.UTF_8)) {
             properties = new Properties(properties);
             properties.load(reader);
         } catch (IOException e) {

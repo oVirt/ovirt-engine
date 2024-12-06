@@ -7,7 +7,7 @@ import org.ovirt.engine.core.compat.Guid;
 public class LoginOnBehalfParameters extends ActionParametersBase implements Serializable {
     private static final long serialVersionUID = -1660445011620552804L;
 
-    public enum QueryType {ByInternalId, ByExternalId, ByPrincipalName, Unknown}
+    public enum QueryType { ByInternalId, ByExternalId, ByPrincipalName, Unknown }
 
     private QueryType queryType = QueryType.Unknown;
     private Guid userId;

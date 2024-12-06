@@ -174,7 +174,7 @@ public class GlusterTasksSyncJobTest {
         Calendar stepTime = Calendar.getInstance();
         if (taskGuid.equals(TASK_GUIDS[2])) {
             //only create TASK_GUIDS[2] as older job
-            stepTime.set(Calendar.HOUR, stepTime.get(Calendar.HOUR) -1);
+            stepTime.set(Calendar.HOUR, stepTime.get(Calendar.HOUR) - 1);
         }
         step.setStartTime(stepTime.getTime());
         return step;

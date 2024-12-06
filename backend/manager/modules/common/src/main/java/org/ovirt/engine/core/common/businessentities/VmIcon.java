@@ -63,7 +63,7 @@ public class VmIcon implements BusinessEntity<Guid> {
      * @return icon in dataurl
      */
     public static String typeAndDataToDataUrl(String mediaType, String data) {
-        return  "data:" + mediaType + ";base64," + data;
+        return "data:" + mediaType + ";base64," + data;
     }
 
     @Override

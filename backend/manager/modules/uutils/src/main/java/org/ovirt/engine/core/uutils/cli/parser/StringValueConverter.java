@@ -47,7 +47,7 @@ class StringValueConverter {
                 if (Modifier.isStatic(f.getModifiers())) {
                     v = f.get(null);
                 }
-            } catch(ReflectiveOperationException ignore) {}
+            } catch (ReflectiveOperationException ignore) { }
         }
 
         if (v == null) {
@@ -56,7 +56,7 @@ class StringValueConverter {
                 if (Modifier.isStatic(convert.getModifiers())) {
                     v = convert.invoke(null, value);
                 }
-            } catch(ReflectiveOperationException ignore) {}
+            } catch (ReflectiveOperationException ignore) { }
         }
 
         if (v == null) {
@@ -65,14 +65,14 @@ class StringValueConverter {
                 if (Modifier.isStatic(convert.getModifiers())) {
                     v = convert.invoke(null, value);
                 }
-            } catch(ReflectiveOperationException ignore) {}
+            } catch (ReflectiveOperationException ignore) { }
         }
 
         if (v == null) {
             try {
                 Constructor<?> constructor = clazz.getDeclaredConstructor(String.class);
                 v = constructor.newInstance(value);
-            } catch(ReflectiveOperationException ignore) {}
+            } catch (ReflectiveOperationException ignore) { }
         }
 
         if (v == null) {

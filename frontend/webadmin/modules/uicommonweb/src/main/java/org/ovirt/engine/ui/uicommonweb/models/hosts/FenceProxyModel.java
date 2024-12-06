@@ -75,7 +75,7 @@ public class FenceProxyModel extends EntityModel<FenceProxySourceType> {
 
         // Determine the available proxy types.
         List<FenceProxyModel> availableProxiesList = new ArrayList<>();
-        for(FenceProxySourceType type : FenceProxySourceType.values()) {
+        for (FenceProxySourceType type : FenceProxySourceType.values()) {
             if (!currentSourceTypes.contains(type)) {
                 FenceProxyModel newModel = new FenceProxyModel();
                 newModel.setEntity(type);

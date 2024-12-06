@@ -98,7 +98,7 @@ public class DisksViewColumns {
                     DiskImage diskImage = (DiskImage) object;
                     List<String> quotaNamesArr = diskImage.getQuotaNames();
                     if (quotaNamesArr != null) {
-                        value = String.join(", ", quotaNamesArr);//$NON-NLS-1$
+                        value = String.join(", ", quotaNamesArr); //$NON-NLS-1$
                     }
                 }
                 return value;
@@ -226,7 +226,7 @@ public class DisksViewColumns {
         }
     };
 
-    public static final DiskContainersColumn getdiskContainersColumn(String sortBy){
+    public static final DiskContainersColumn getdiskContainersColumn(String sortBy) {
         DiskContainersColumn diskContainersColumn = new DiskContainersColumn();
         makeSortable(diskContainersColumn, sortBy);
         return diskContainersColumn;

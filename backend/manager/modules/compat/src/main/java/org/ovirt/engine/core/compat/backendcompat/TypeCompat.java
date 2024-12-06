@@ -47,7 +47,7 @@ public class TypeCompat {
                 if (properties.contains(propertyName)) {
                     Object value = null;
                     hitCount++;
-                    if(!values.containsKey(propertyName))  {
+                    if (!values.containsKey(propertyName)) {
                         try {
                             value = pd.getReadMethod().invoke(obj);
                             String stringValue = value != null ? value.toString() : null;

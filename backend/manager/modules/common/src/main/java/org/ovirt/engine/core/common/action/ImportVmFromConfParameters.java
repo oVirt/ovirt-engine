@@ -27,7 +27,7 @@ public class ImportVmFromConfParameters extends ImportVmParameters implements Im
 
     private List<AffinityGroup> affinityGroups;
     private Set<DbUser> dbUsers;
-    private Map<String, Set<String>> userToRoles  = new HashMap<>();
+    private Map<String, Set<String>> userToRoles = new HashMap<>();
     private List<Label> affinityLabels;
     private Collection<ExternalVnicProfileMapping> externalVnicProfileMappings;
 

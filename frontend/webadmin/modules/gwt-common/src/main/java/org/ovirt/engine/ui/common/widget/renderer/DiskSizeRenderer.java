@@ -64,13 +64,13 @@ public class DiskSizeRenderer<T extends Number> extends AbstractRenderer<T> {
 
     private String renderHumanReadableSize(long size) {
         long sizeInBytes = SizeConverter.convert(size, unit, SizeUnit.BYTES).longValue();
-        if(sizeInBytes >= SizeConverter.BYTES_IN_GB) {
+        if (sizeInBytes >= SizeConverter.BYTES_IN_GB) {
             return messages.gibibytes(String.valueOf(
                     SizeConverter.convert(sizeInBytes, SizeUnit.BYTES, SizeUnit.GiB).longValue()));
-        } else if(sizeInBytes >= SizeConverter.BYTES_IN_MB) {
+        } else if (sizeInBytes >= SizeConverter.BYTES_IN_MB) {
             return messages.megabytes(String.valueOf(
                     SizeConverter.convert(sizeInBytes, SizeUnit.BYTES, SizeUnit.MiB).longValue()));
-        } else if(sizeInBytes >= SizeConverter.BYTES_IN_KB) {
+        } else if (sizeInBytes >= SizeConverter.BYTES_IN_KB) {
             return messages.kilobytes(String.valueOf(
                     SizeConverter.convert(sizeInBytes, SizeUnit.BYTES, SizeUnit.KiB).longValue()));
         } else {

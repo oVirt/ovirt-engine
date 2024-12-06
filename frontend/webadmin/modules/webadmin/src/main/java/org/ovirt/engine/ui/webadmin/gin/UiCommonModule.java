@@ -113,7 +113,7 @@ public class UiCommonModule extends BaseUiCommonModule {
         bind(ClusterPolicyClusterModelProvider.class).in(Singleton.class);
 
         bind(InstanceTypeModelProvider.class).in(Singleton.class);
-        bind(new TypeLiteral<DetailTabModelProvider<InstanceTypeListModel, InstanceTypeGeneralModel>>(){}).in(Singleton.class);
+        bind(new TypeLiteral<DetailTabModelProvider<InstanceTypeListModel, InstanceTypeGeneralModel>>() { }).in(Singleton.class);
 
         // disk profiles permissions
         bind(DiskProfilePermissionModelProvider.class).in(Singleton.class);

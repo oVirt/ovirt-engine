@@ -33,7 +33,7 @@ import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.uicompat.UIConstants;
 import org.ovirt.engine.ui.uicompat.UIMessages;
 
-public class GlusterVolumeGeoRepCreateModel extends Model{
+public class GlusterVolumeGeoRepCreateModel extends Model {
 
     private EntityModel<Boolean> showEligibleVolumes;
     private EntityModel<String> slaveUserName;
@@ -103,7 +103,7 @@ public class GlusterVolumeGeoRepCreateModel extends Model{
 
     public void getVolumesForForceSessionCreate() {
         GlusterVolumeGeoRepCreateModel.this.startProgress(constants.fetchingDataMessage());
-        SearchParameters volumesSearchParameters = new SearchParameters("Volumes:", SearchType.GlusterVolume, false);//$NON-NLS-1$
+        SearchParameters volumesSearchParameters = new SearchParameters("Volumes:", SearchType.GlusterVolume, false); //$NON-NLS-1$
         volumesSearchParameters.setRefresh(true);
 
         Frontend.getInstance().runQuery(QueryType.Search, volumesSearchParameters, new AsyncQuery<QueryReturnValue>(returnValue -> showAvailableVolumes(returnValue)));
@@ -111,7 +111,7 @@ public class GlusterVolumeGeoRepCreateModel extends Model{
 
     private void showAvailableVolumes(QueryReturnValue returnValue) {
         stopProgress();
-        if(!returnValue.getSucceeded()) {
+        if (!returnValue.getSucceeded()) {
             setQueryFailureMessage(returnValue.getExceptionString());
         } else {
             setVolumeList((Collection) returnValue.getReturnValue());
@@ -130,16 +130,16 @@ public class GlusterVolumeGeoRepCreateModel extends Model{
 
     protected Set<String> getClusterForVolumes(Collection<GlusterVolumeEntity> eligibleVolumes) {
         Set<String> clusters = new HashSet<>();
-        for(GlusterVolumeEntity currentVolume : eligibleVolumes) {
+        for (GlusterVolumeEntity currentVolume : eligibleVolumes) {
             clusters.add(currentVolume.getClusterName());
         }
         return clusters;
     }
 
     public List<GlusterVolumeEntity> getVolumesInCluster(String cluster, Collection<GlusterVolumeEntity> volumes) {
-        List<GlusterVolumeEntity> volumesInCurrentCluster= new ArrayList<>();
-        for(GlusterVolumeEntity currentVolume : volumes) {
-            if(currentVolume.getClusterName().equals(cluster)) {
+        List<GlusterVolumeEntity> volumesInCurrentCluster = new ArrayList<>();
+        for (GlusterVolumeEntity currentVolume : volumes) {
+            if (currentVolume.getClusterName().equals(cluster)) {
                 volumesInCurrentCluster.add(currentVolume);
             }
         }
@@ -148,7 +148,7 @@ public class GlusterVolumeGeoRepCreateModel extends Model{
 
     public Set<Pair<String, Guid>> getHostNamesForVolume(GlusterVolumeEntity volume) {
         Set<Pair<String, Guid>> hosts = new HashSet<>();
-        for(GlusterBrickEntity currentBrick : volume.getBricks()) {
+        for (GlusterBrickEntity currentBrick : volume.getBricks()) {
             hosts.add(new Pair<>(currentBrick.getServerName(), currentBrick.getServerId()));
         }
         return hosts;
@@ -176,13 +176,13 @@ public class GlusterVolumeGeoRepCreateModel extends Model{
 
     public void setVolumeList(Collection<GlusterVolumeEntity> volumeList) {
         this.volumeList = volumeList;
-        onPropertyChanged(new PropertyChangedEventArgs("RecommendationViolations"));//$NON-NLS-1$
+        onPropertyChanged(new PropertyChangedEventArgs("RecommendationViolations")); //$NON-NLS-1$
     }
 
     private void init() {
         setTitle(constants.newGeoRepSessionTitle());
         setHelpTag(HelpTag.volume_geo_rep_create);
-        setHashName("volume_geo_rep_create");//$NON-NLS-1$
+        setHashName("volume_geo_rep_create"); //$NON-NLS-1$
 
         setShowEligibleVolumes(new EntityModel<Boolean>());
         setSlaveClusters(new ListModel<String>());
@@ -240,7 +240,7 @@ public class GlusterVolumeGeoRepCreateModel extends Model{
 
     public void setRecommendationViolations(String recommendationViolations) {
         this.recommendationViolations = recommendationViolations;
-        onPropertyChanged(new PropertyChangedEventArgs("RecommendationViolations"));//$NON-NLS-1$
+        onPropertyChanged(new PropertyChangedEventArgs("RecommendationViolations")); //$NON-NLS-1$
     }
 
     public void updateRecommendatonViolations() {
@@ -248,10 +248,10 @@ public class GlusterVolumeGeoRepCreateModel extends Model{
         AsyncDataProvider.getInstance().getGlusterVolumeGeoRepRecommendationViolations(new AsyncQuery<>(
                 eligibilityViolators -> {
                     stopProgress();
-                    if(eligibilityViolators.size() > 0) {
+                    if (eligibilityViolators.size() > 0) {
                         StringBuilder configViolations = new StringBuilder(constants.geoReplicationRecommendedConfigViolation());
-                        for(GlusterGeoRepNonEligibilityReason currentViolator : eligibilityViolators) {
-                            configViolations.append("\n* ");//$NON-NLS-1$
+                        for (GlusterGeoRepNonEligibilityReason currentViolator : eligibilityViolators) {
+                            configViolations.append("\n* "); //$NON-NLS-1$
                             configViolations.append(EnumTranslator.getInstance().translate(currentViolator));
                         }
                         setRecommendationViolations(configViolations.toString());
@@ -273,7 +273,7 @@ public class GlusterVolumeGeoRepCreateModel extends Model{
 
     public void setQueryFailureMessage(String queryFailureMessage) {
         this.queryFailureMessage = queryFailureMessage;
-        onPropertyChanged(new PropertyChangedEventArgs("QueryFailed"));//$NON-NLS-1$
+        onPropertyChanged(new PropertyChangedEventArgs("QueryFailed")); //$NON-NLS-1$
     }
 
     public EntityModel<String> getSlaveUserGroupName() {

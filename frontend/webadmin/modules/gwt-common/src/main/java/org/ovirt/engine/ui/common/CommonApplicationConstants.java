@@ -647,6 +647,8 @@ public interface CommonApplicationConstants extends Constants {
 
     String removePermission();
 
+    String removeDirectSystemPermissionsButtonLabel();
+
     String objectPermission();
 
     String addSystemPermission();

@@ -307,15 +307,15 @@ public class VolumeListModel extends ListWithSimpleDetailsModel<Void, GlusterVol
         setStartRebalanceCommand(new UICommand("StartRebalance", this)); //$NON-NLS-1$
         setStopRebalanceCommand(new UICommand("StopRebalace", this)); //$NON-NLS-1$
         setStatusRebalanceCommand(new UICommand("StatusRebalance", this)); //$NON-NLS-1$
-        setStartVolumeProfilingCommand(new UICommand("startProfiling", this));//$NON-NLS-1$
-        setShowVolumeProfileDetailsCommand(new UICommand("showProfileDetails", this));//$NON-NLS-1$
-        setStopVolumeProfilingCommand(new UICommand("stopProfiling", this));//$NON-NLS-1$
+        setStartVolumeProfilingCommand(new UICommand("startProfiling", this)); //$NON-NLS-1$
+        setShowVolumeProfileDetailsCommand(new UICommand("showProfileDetails", this)); //$NON-NLS-1$
+        setStopVolumeProfilingCommand(new UICommand("stopProfiling", this)); //$NON-NLS-1$
         setOptimizeForVirtStoreCommand(new UICommand("OptimizeForVirtStore", this)); //$NON-NLS-1$
         setConfigureClusterSnapshotOptionsCommand(new UICommand("configureClusterSnapshotOptions", this)); //$NON-NLS-1$
         setConfigureVolumeSnapshotOptionsCommand(new UICommand("configureVolumeSnapshotOptions", this)); //$NON-NLS-1$
         setCreateSnapshotCommand(new UICommand("createSnapshot", this)); //$NON-NLS-1$
         setEditSnapshotScheduleCommand(new UICommand("editSnapshotSchedule", this)); //$NON-NLS-1$
-        setNewGeoRepSessionCommand(new UICommand("createGeoRepSession", this));//$NON-NLS-1$
+        setNewGeoRepSessionCommand(new UICommand("createGeoRepSession", this)); //$NON-NLS-1$
 
         getRemoveVolumeCommand().setIsExecutionAllowed(false);
         getStartCommand().setIsExecutionAllowed(false);
@@ -585,7 +585,7 @@ public class VolumeListModel extends ListWithSimpleDetailsModel<Void, GlusterVol
                 if (volumeEntity.getStatus() == GlusterStatus.DOWN) {
                     return false;
                 }
-                if (volumeEntity.getOptionValue("diagnostics.latency-measurement") == null || !volumeEntity.getOptionValue("diagnostics.latency-measurement").equals("on")) {//$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
+                if (volumeEntity.getOptionValue("diagnostics.latency-measurement") == null || !volumeEntity.getOptionValue("diagnostics.latency-measurement").equals("on")) { //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
                     return false;
                 }
             }
@@ -601,7 +601,7 @@ public class VolumeListModel extends ListWithSimpleDetailsModel<Void, GlusterVol
                 if (volumeEntity.getStatus() == GlusterStatus.DOWN) {
                     return false;
                 }
-                if (volumeEntity.getOptionValue("diagnostics.latency-measurement") != null && volumeEntity.getOptionValue("diagnostics.latency-measurement").equals("on")) {//$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
+                if (volumeEntity.getOptionValue("diagnostics.latency-measurement") != null && volumeEntity.getOptionValue("diagnostics.latency-measurement").equals("on")) { //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
                     return false;
                 }
             }
@@ -621,9 +621,9 @@ public class VolumeListModel extends ListWithSimpleDetailsModel<Void, GlusterVol
     }
 
     private boolean getProfileStatisticsAvailability(List<GlusterVolumeEntity> selectedVolumes) {
-        if(selectedVolumes.size() == 1) {
+        if (selectedVolumes.size() == 1) {
             GlusterVolumeEntity selectedVolume = selectedVolumes.get(0);
-            if(selectedVolume.getStatus() == GlusterStatus.UP) {
+            if (selectedVolume.getStatus() == GlusterStatus.UP) {
                 return true;
             }
         }
@@ -641,7 +641,7 @@ public class VolumeListModel extends ListWithSimpleDetailsModel<Void, GlusterVol
             newVolume();
         } else if (command.equals(getRemoveVolumeCommand())) {
             removeVolume();
-        } else if(command.getName().equals("closeConfirmationWindow")) {//$NON-NLS-1$
+        } else if (command.getName().equals("closeConfirmationWindow")) { //$NON-NLS-1$
             closeConfirmationWindow();
         } else if (command.getName().equalsIgnoreCase("Cancel")) { //$NON-NLS-1$
             cancel();
@@ -663,60 +663,60 @@ public class VolumeListModel extends ListWithSimpleDetailsModel<Void, GlusterVol
             showRebalanceStatus();
         } else if (command.getName().equals("CancelConfirmation")) { //$NON-NLS-1$
             setConfirmWindow(null);
-        } else if (command.getName().equals("CancelRebalanceStatus")) {//$NON-NLS-1$
+        } else if (command.getName().equals("CancelRebalanceStatus")) { //$NON-NLS-1$
             cancelRebalanceStatus();
-        }else if (command.equals(getOptimizeForVirtStoreCommand())) {
+        } else if (command.equals(getOptimizeForVirtStoreCommand())) {
             optimizeForVirtStore();
-        } else if (command.getName().equals("onStop")) {//$NON-NLS-1$
+        } else if (command.getName().equals("onStop")) { //$NON-NLS-1$
             onStop();
         } else if (command.getName().equals("OnRemove")) { //$NON-NLS-1$
             onRemoveVolume();
-        } else if(command.getName().equals("stop_rebalance_from_status")) {//$NON-NLS-1$
+        } else if (command.getName().equals("stop_rebalance_from_status")) { //$NON-NLS-1$
             stopRebalance();
-        } else if(command.equals(getStartVolumeProfilingCommand()) || command.getName().equals("startProfiling")) {//$NON-NLS-1$
+        } else if (command.equals(getStartVolumeProfilingCommand()) || command.getName().equals("startProfiling")) { //$NON-NLS-1$
             startVolumeProfiling();
-        } else if(command.equals(getStopVolumeProfilingCommand()) || command.getName().equals("stopProfiling")) {//$NON-NLS-1$
+        } else if (command.equals(getStopVolumeProfilingCommand()) || command.getName().equals("stopProfiling")) { //$NON-NLS-1$
             stopVolumeProfiling();
-        } else if(command.equals(getShowVolumeProfileDetailsCommand()) || command.getName().equals("showProfileDetails")) {//$NON-NLS-1$
+        } else if (command.equals(getShowVolumeProfileDetailsCommand()) || command.getName().equals("showProfileDetails")) { //$NON-NLS-1$
             showVolumeProfiling();
-        }else if(command.getName().equalsIgnoreCase("closeProfileStats")) {//$NON-NLS-1$
+        } else if (command.getName().equalsIgnoreCase("closeProfileStats")) { //$NON-NLS-1$
             setWindow(null);
-        } else if(command.getName().equalsIgnoreCase("CancelOptimizeForVirtStore")) {//$NON-NLS-1$
+        } else if (command.getName().equalsIgnoreCase("CancelOptimizeForVirtStore")) { //$NON-NLS-1$
             setConfirmWindow(null);
-        } else if (command.getName().equalsIgnoreCase("ConfirmOptimiseForVirtStore")) {//$NON-NLS-1$
+        } else if (command.getName().equalsIgnoreCase("ConfirmOptimiseForVirtStore")) { //$NON-NLS-1$
             List<GlusterVolumeEntity> selectedVolumes = new ArrayList<>();
-            for(Object selectedVolume : getSelectedItems()) {
+            for (Object selectedVolume : getSelectedItems()) {
                 selectedVolumes.add((GlusterVolumeEntity) selectedVolume);
             }
             optimizeVolumesForVirtStore(selectedVolumes);
         } else if (command.equals(getConfigureClusterSnapshotOptionsCommand())) {
             configureClusterSnapshotOptions();
-        } else if (command.getName().equalsIgnoreCase("confirmConfigureClusterSnapshotOptions")) {//$NON-NLS-1$
+        } else if (command.getName().equalsIgnoreCase("confirmConfigureClusterSnapshotOptions")) { //$NON-NLS-1$
             confirmConfigureClusterSnapshotOptions();
-        } else if (command.getName().equalsIgnoreCase("onConfigureClusterSnapshotOptions")) {//$NON-NLS-1$
+        } else if (command.getName().equalsIgnoreCase("onConfigureClusterSnapshotOptions")) { //$NON-NLS-1$
             onConfigureClusterSnapshotOptions();
         } else if (command.equals(getConfigureVolumeSnapshotOptionsCommand())) {
             configureVolumeSnapshotOptions();
-        } else if (command.getName().equalsIgnoreCase("confirmConfigureVolumeSnapshotOptions")) {//$NON-NLS-1$
+        } else if (command.getName().equalsIgnoreCase("confirmConfigureVolumeSnapshotOptions")) { //$NON-NLS-1$
             confirmConfigureVolumeSnapshotOptions();
-        } else if (command.getName().equalsIgnoreCase("onConfigureVolumeSnapshotOptions")) {//$NON-NLS-1$
+        } else if (command.getName().equalsIgnoreCase("onConfigureVolumeSnapshotOptions")) { //$NON-NLS-1$
             onConfigureVolumeSnapshotOptions();
         } else if (command.equals(getCreateSnapshotCommand())) {
             setWindow(null);
             createVolumeSnapshot();
-        } else if (command.getName().equalsIgnoreCase("onCreateSnapshot")) {//$NON-NLS-1$
+        } else if (command.getName().equalsIgnoreCase("onCreateSnapshot")) { //$NON-NLS-1$
             onCreateSnapshot();
         } else if (command.equals(getEditSnapshotScheduleCommand())) {
             editSnapshotSchedule();
-        } else if (command.getName().equalsIgnoreCase("onEditSnapshotSchedule")) {//$NON-NLS-1$
+        } else if (command.getName().equalsIgnoreCase("onEditSnapshotSchedule")) { //$NON-NLS-1$
             onEditSnapshotSchedule();
-        } else if (command.getName().equalsIgnoreCase("onEditSnapshotScheduleInternal")) {//$NON-NLS-1$
+        } else if (command.getName().equalsIgnoreCase("onEditSnapshotScheduleInternal")) { //$NON-NLS-1$
             onEditSnapshotScheduleInternal();
-        } else if (command.getName().equals("startVolumeWithForceOption")) {//$NON-NLS-1$
+        } else if (command.getName().equals("startVolumeWithForceOption")) { //$NON-NLS-1$
             prepareForStartVolume(false);
-        } else if (command.getName().equalsIgnoreCase("onCreateSession")) {//$NON-NLS-1$
+        } else if (command.getName().equalsIgnoreCase("onCreateSession")) { //$NON-NLS-1$
             onCreateSession();
-        } else if (command.getName().equalsIgnoreCase("closeWindow")) {//$NON-NLS-1$
+        } else if (command.getName().equalsIgnoreCase("closeWindow")) { //$NON-NLS-1$
             setWindow(null);
         }
     }
@@ -734,12 +734,12 @@ public class VolumeListModel extends ListWithSimpleDetailsModel<Void, GlusterVol
         geoRepCreateModel.getSlaveUserName().setEntity(constants.rootUser());
         geoRepCreateModel.getShowEligibleVolumes().setEntity(true);
 
-        UICommand ok = new UICommand("onCreateSession", this);//$NON-NLS-1$
+        UICommand ok = new UICommand("onCreateSession", this); //$NON-NLS-1$
         ok.setTitle(constants.ok());
         ok.setIsDefault(true);
         geoRepCreateModel.getCommands().add(ok);
 
-        UICommand close = new UICommand("closeWindow", this);//$NON-NLS-1$
+        UICommand close = new UICommand("closeWindow", this); //$NON-NLS-1$
         close.setTitle(constants.cancel());
         close.setIsCancel(true);
         geoRepCreateModel.getCommands().add(close);
@@ -842,7 +842,7 @@ public class VolumeListModel extends ListWithSimpleDetailsModel<Void, GlusterVol
         cModel.setForceLabel(forceLabelText);
 
         List<UICommand> geoRepActionCommands = Arrays.asList(UICommand.createDefaultOkUiCommand(commandName, this),
-                UICommand.createCancelUiCommand("closeWindow", this));//$NON-NLS-1$
+                UICommand.createCancelUiCommand("closeWindow", this)); //$NON-NLS-1$
 
         if (cModel.getCommands().size() > 0) {
             cModel.setCommands(geoRepActionCommands);
@@ -924,7 +924,7 @@ public class VolumeListModel extends ListWithSimpleDetailsModel<Void, GlusterVol
             StringBuilder sb = new StringBuilder();
             for (DayOfWeek day : snapshotModel.getDaysOfTheWeek().getSelectedItem()) {
                 sb.append(day.name().substring(0, 3));
-                sb.append(',');//$NON-NLS-1$
+                sb.append(','); //$NON-NLS-1$
             }
             schedule.setDays(sb.toString());
             break;
@@ -1049,7 +1049,7 @@ public class VolumeListModel extends ListWithSimpleDetailsModel<Void, GlusterVol
                     break;
                 case WEEKLY:
                     List<DayOfWeek> daysList = new ArrayList<>();
-                    for (String day : schedule.getDays().split(",")) {//$NON-NLS-1$
+                    for (String day : schedule.getDays().split(",")) { //$NON-NLS-1$
                         daysList.add(getDayOfWeek(day));
                     }
                     snapshotModel.getDaysOfTheWeek().setSelectedItem(daysList);
@@ -1067,19 +1067,19 @@ public class VolumeListModel extends ListWithSimpleDetailsModel<Void, GlusterVol
 
             private DayOfWeek getDayOfWeek(String day) {
                 switch (day) {
-                case "Sun"://$NON-NLS-1$
+                case "Sun": //$NON-NLS-1$
                     return DayOfWeek.Sunday;
-                case "Mon"://$NON-NLS-1$
+                case "Mon": //$NON-NLS-1$
                     return DayOfWeek.Monday;
-                case "Tue"://$NON-NLS-1$
+                case "Tue": //$NON-NLS-1$
                     return DayOfWeek.Tuesday;
-                case "Wed"://$NON-NLS-1$
+                case "Wed": //$NON-NLS-1$
                     return DayOfWeek.Wednesday;
-                case "Thu"://$NON-NLS-1$
+                case "Thu": //$NON-NLS-1$
                     return DayOfWeek.Thursday;
-                case "Fri"://$NON-NLS-1$
+                case "Fri": //$NON-NLS-1$
                     return DayOfWeek.Friday;
-                case "Sat"://$NON-NLS-1$
+                case "Sat": //$NON-NLS-1$
                     return DayOfWeek.Saturday;
                 default:
                     return null;
@@ -1171,7 +1171,7 @@ public class VolumeListModel extends ListWithSimpleDetailsModel<Void, GlusterVol
     }
 
     private void closeConfirmationWindow() {
-        if(getConfirmWindow() == null) {
+        if (getConfirmWindow() == null) {
             return;
         }
         getConfirmWindow().stopProgress();
@@ -1245,11 +1245,11 @@ public class VolumeListModel extends ListWithSimpleDetailsModel<Void, GlusterVol
         final GlusterVolumeEntity volumeEntity = getSelectedItem();
         setConfirmWindow(cModel);
         cModel.setTitle(ConstantsManager.getInstance().getConstants().rebalanceStatusTitle());
-        cModel.startProgress(ConstantsManager.getInstance().getConstants().fetchingDataMessage());//$NON-NLS-1$
+        cModel.startProgress(ConstantsManager.getInstance().getConstants().fetchingDataMessage()); //$NON-NLS-1$
         cModel.setHelpTag(HelpTag.volume_rebalance_status);
         cModel.setHashName("volume_rebalance_status"); //$NON-NLS-1$
 
-        final UICommand rebalanceStatusOk = new UICommand("closeConfirmationWindow", VolumeListModel.this);//$NON-NLS-1$
+        final UICommand rebalanceStatusOk = new UICommand("closeConfirmationWindow", VolumeListModel.this); //$NON-NLS-1$
         rebalanceStatusOk.setTitle(ConstantsManager.getInstance().getConstants().ok());
         rebalanceStatusOk.setIsCancel(true);
         cModel.getCommands().add(rebalanceStatusOk);
@@ -1273,18 +1273,18 @@ public class VolumeListModel extends ListWithSimpleDetailsModel<Void, GlusterVol
                     rebalanceStatusModel.getVolume().setEntity(volumeEntity.getName());
                     rebalanceStatusModel.getCluster().setEntity(volumeEntity.getClusterName());
 
-                    UICommand stopRebalanceFromStatus = new UICommand("stop_rebalance_from_status", VolumeListModel.this);//$NON-NLS-1$
+                    UICommand stopRebalanceFromStatus = new UICommand("stop_rebalance_from_status", VolumeListModel.this); //$NON-NLS-1$
                     stopRebalanceFromStatus.setTitle(ConstantsManager.getInstance().getConstants().stopRebalance());
                     rebalanceStatusModel.getCommands().add(stopRebalanceFromStatus);
                     rebalanceStatusModel.setStopReblanceFromStatus(stopRebalanceFromStatus);
 
-                    UICommand cancelRebalance = new UICommand("CancelRebalanceStatus", VolumeListModel.this);//$NON-NLS-1$
+                    UICommand cancelRebalance = new UICommand("CancelRebalanceStatus", VolumeListModel.this); //$NON-NLS-1$
                     cancelRebalance.setTitle(ConstantsManager.getInstance().getConstants().close());
                     cancelRebalance.setIsCancel(true);
                     rebalanceStatusModel.getCommands().add(cancelRebalance);
 
                     rebalanceStatusModel.showStatus(rebalanceStatusEntity);
-                }else {
+                } else {
                     VolumeRebalanceStatusModel statusModel = (VolumeRebalanceStatusModel) getWindow();
                     statusModel.getCommands().get(0).setIsExecutionAllowed(false);
                     statusModel.showStatus(rebalanceStatusEntity);
@@ -1297,7 +1297,7 @@ public class VolumeListModel extends ListWithSimpleDetailsModel<Void, GlusterVol
     }
 
     private void showVolumeProfiling() {
-        if(getSelectedItem() == null || getWindow()!= null) {
+        if (getSelectedItem() == null || getWindow() != null) {
             return;
         }
         GlusterVolumeEntity selectedVolume = getSelectedItem();
@@ -1307,9 +1307,9 @@ public class VolumeListModel extends ListWithSimpleDetailsModel<Void, GlusterVol
         setHelpTag(HelpTag.volume_profile_statistics);
         setHashName("volume_profile_statistics"); //$NON-NLS-1$
 
-        profileStatsModel.startProgress(ConstantsManager.getInstance().getConstants().fetchingDataMessage());//$NON-NLS-1$
+        profileStatsModel.startProgress(ConstantsManager.getInstance().getConstants().fetchingDataMessage()); //$NON-NLS-1$
 
-        UICommand closeProfilingStats = new UICommand("closeProfileStats", VolumeListModel.this);//$NON-NLS-1$
+        UICommand closeProfilingStats = new UICommand("closeProfileStats", VolumeListModel.this); //$NON-NLS-1$
         closeProfilingStats.setTitle(ConstantsManager.getInstance().getConstants().close());
         closeProfilingStats.setIsCancel(true);
         profileStatsModel.getCommands().add(closeProfilingStats);
@@ -1324,7 +1324,7 @@ public class VolumeListModel extends ListWithSimpleDetailsModel<Void, GlusterVol
         if (getWindow() == null) {
             return;
         }
-        ((VolumeRebalanceStatusModel)getWindow()).cancelRefresh();
+        ((VolumeRebalanceStatusModel) getWindow()).cancelRefresh();
         cancel();
     }
 
@@ -1340,24 +1340,24 @@ public class VolumeListModel extends ListWithSimpleDetailsModel<Void, GlusterVol
         for (Object item : getSelectedItems()) {
             GlusterVolumeEntity volume = (GlusterVolumeEntity) item;
             volumesForOptimiseForVirtStore.add(volume);
-            if(volume.getReplicaCount() != 3) {
-                discouragedConfigVolumeNamesBuilder.append(volume.getName() + "\n");//$NON-NLS-1$
+            if (volume.getReplicaCount() != 3) {
+                discouragedConfigVolumeNamesBuilder.append(volume.getName() + "\n"); //$NON-NLS-1$
                 isDiscouragedVolumePresent = true;
             }
         }
         discouragedConfigVolumeNamesBuilder.append(constants.optimiseForVirtStoreContinueMessage());
 
-        if(isDiscouragedVolumePresent) {
+        if (isDiscouragedVolumePresent) {
             ConfirmationModel cModel = new ConfirmationModel();
 
             cModel.setMessage(discouragedConfigVolumeNamesBuilder.toString());
             cModel.setTitle(ConstantsManager.getInstance().getConstants().optimiseForVirtStoreTitle());
-            UICommand cancelOptimiseVirtStoreCommand = new UICommand("CancelOptimizeForVirtStore", this);//$NON-NLS-1$
+            UICommand cancelOptimiseVirtStoreCommand = new UICommand("CancelOptimizeForVirtStore", this); //$NON-NLS-1$
             cancelOptimiseVirtStoreCommand.setTitle(constants.doNotOptimiseForVirtStore());
             cancelOptimiseVirtStoreCommand.setIsCancel(true);
             cModel.getCommands().add(cancelOptimiseVirtStoreCommand);
 
-            UICommand confirmOptimiseForVirtStoreCommand = new UICommand("ConfirmOptimiseForVirtStore", this);//$NON-NLS-1$
+            UICommand confirmOptimiseForVirtStoreCommand = new UICommand("ConfirmOptimiseForVirtStore", this); //$NON-NLS-1$
             confirmOptimiseForVirtStoreCommand.setTitle(constants.continueOptimiseForVirtStore());
             confirmOptimiseForVirtStoreCommand.setIsDefault(true);
             cModel.getCommands().add(confirmOptimiseForVirtStoreCommand);
@@ -1368,7 +1368,7 @@ public class VolumeListModel extends ListWithSimpleDetailsModel<Void, GlusterVol
     }
 
     private void optimizeVolumesForVirtStore(final List<GlusterVolumeEntity> volumeList) {
-        if(getConfirmWindow() != null) {
+        if (getConfirmWindow() != null) {
             setConfirmWindow(null);
         }
         AsyncDataProvider.getInstance().getConfigFromCache(
@@ -1383,25 +1383,25 @@ public class VolumeListModel extends ListWithSimpleDetailsModel<Void, GlusterVol
                                     for (GlusterVolumeEntity volume : volumeList) {
                                         Guid volumeId = volume.getId();
                                         if (volume.getVolumeType().isReplicatedType()) {
-                                            list.add(new GlusterVolumeOptionParameters(getOption(volumeId, "group", optionGroupVirt)));//$NON-NLS-1$
-                                        } else if (volume.getVolumeType().equals(GlusterVolumeType.DISTRIBUTE)){
-                                            list.add(new GlusterVolumeOptionParameters(getOption(volumeId, "group", "distributed-virt")));//$NON-NLS-1$ $NON-NLS-2$
+                                            list.add(new GlusterVolumeOptionParameters(getOption(volumeId, "group", optionGroupVirt))); //$NON-NLS-1$
+                                        } else if (volume.getVolumeType().equals(GlusterVolumeType.DISTRIBUTE)) {
+                                            list.add(new GlusterVolumeOptionParameters(getOption(volumeId, "group", "distributed-virt"))); //$NON-NLS-1$ $NON-NLS-2$
                                         }
 
-                                        list.add(new GlusterVolumeOptionParameters(getOption(volumeId, "storage.owner-uid", optionOwnerUserVirt)));//$NON-NLS-1$
+                                        list.add(new GlusterVolumeOptionParameters(getOption(volumeId, "storage.owner-uid", optionOwnerUserVirt))); //$NON-NLS-1$
 
-                                        list.add(new GlusterVolumeOptionParameters(getOption(volumeId, "storage.owner-gid", optionOwnerGroupVirt)));//$NON-NLS-1$
+                                        list.add(new GlusterVolumeOptionParameters(getOption(volumeId, "storage.owner-gid", optionOwnerGroupVirt))); //$NON-NLS-1$
 
-                                        list.add(new GlusterVolumeOptionParameters(getOption(volumeId, "performance.strict-o-direct", "on")));//$NON-NLS-1$ $NON-NLS-2$
+                                        list.add(new GlusterVolumeOptionParameters(getOption(volumeId, "performance.strict-o-direct", "on"))); //$NON-NLS-1$ $NON-NLS-2$
 
-                                        list.add(new GlusterVolumeOptionParameters(getOption(volumeId, "network.remote-dio", "off")));//$NON-NLS-1$ $NON-NLS-2$
+                                        list.add(new GlusterVolumeOptionParameters(getOption(volumeId, "network.remote-dio", "off"))); //$NON-NLS-1$ $NON-NLS-2$
 
-                                        list.add(new GlusterVolumeOptionParameters(getOption(volumeId, "cluster.granular-entry-heal", "enable")));//$NON-NLS-1$ $NON-NLS-2$
+                                        list.add(new GlusterVolumeOptionParameters(getOption(volumeId, "cluster.granular-entry-heal", "enable"))); //$NON-NLS-1$ $NON-NLS-2$
 
-                                        final GlusterVolumeOptionEntity checkOption = getOption(volumeId, "network.ping-timeout", "30");//$NON-NLS-1$//$NON-NLS-2$
+                                        final GlusterVolumeOptionEntity checkOption = getOption(volumeId, "network.ping-timeout", "30"); //$NON-NLS-1$//$NON-NLS-2$
                                         if (volume.getOptions().stream().noneMatch
                                                 (obj -> obj.getKey().equalsIgnoreCase(checkOption.getKey()))) {
-                                            list.add(new GlusterVolumeOptionParameters(checkOption));//$NON-NLS-1$
+                                            list.add(new GlusterVolumeOptionParameters(checkOption)); //$NON-NLS-1$
                                         }
                                     }
                                     Frontend.getInstance().runMultipleAction(ActionType.SetGlusterVolumeOption, list);
@@ -1494,7 +1494,7 @@ public class VolumeListModel extends ListWithSimpleDetailsModel<Void, GlusterVol
         if (!volumesForForceStartWarning.isEmpty()) {
             final ConfirmationModel cModel = new ConfirmationModel();
             cModel.setHelpTag(HelpTag.volume_start);
-            cModel.setHashName("volume_start");//$NON-NLS-1$
+            cModel.setHashName("volume_start"); //$NON-NLS-1$
 
             setConfirmWindow(cModel);
 
@@ -1506,13 +1506,13 @@ public class VolumeListModel extends ListWithSimpleDetailsModel<Void, GlusterVol
             cModel.getForce().setEntity(true);
 
             cModel.getForce().getEntityChangedEvent().addListener((ev, sender, args) -> {
-                if(cModel.getCommands() != null && cModel.getCommands().get(0) !=null) {
+                if (cModel.getCommands() != null && cModel.getCommands().get(0) != null) {
                     cModel.getCommands().get(0).setIsExecutionAllowed(cModel.getForce().getEntity());
                 }
             });
 
-            cModel.getCommands().add(UICommand.createDefaultOkUiCommand("startVolumeWithForceOption", this));//$NON-NLS-1$
-            cModel.getCommands().add(UICommand.createCancelUiCommand("closeConfirmationWindow", this));//$NON-NLS-1$
+            cModel.getCommands().add(UICommand.createDefaultOkUiCommand("startVolumeWithForceOption", this)); //$NON-NLS-1$
+            cModel.getCommands().add(UICommand.createCancelUiCommand("closeConfirmationWindow", this)); //$NON-NLS-1$
         }
     }
 

@@ -146,11 +146,11 @@ public abstract class HostModel extends Model implements HasValidatedTabs {
 
     private EntityModel<String> privateFetchSshPublicKey;
 
-    public EntityModel<String> getFetchSshPublicKey(){
+    public EntityModel<String> getFetchSshPublicKey() {
         return privateFetchSshPublicKey;
     }
 
-    public void setFetchSshPublicKey(EntityModel<String> value){
+    public void setFetchSshPublicKey(EntityModel<String> value) {
         this.privateFetchSshPublicKey = value;
     }
 
@@ -553,12 +553,12 @@ public abstract class HostModel extends Model implements HasValidatedTabs {
 
     private UICommand proxySSHPublicKeyCommand;
 
-    public UICommand getSSHPublicKey(){
+    public UICommand getSSHPublicKey() {
         return proxySSHPublicKeyCommand;
     }
 
-    public void setSSHPublicKey(UICommand value){
-        this.proxySSHPublicKeyCommand =value;
+    public void setSSHPublicKey(UICommand value) {
+        this.proxySSHPublicKeyCommand = value;
     }
 
     private Integer postponedSpmPriority;
@@ -887,7 +887,7 @@ public abstract class HostModel extends Model implements HasValidatedTabs {
                 selectedItem = items.get(i);
                 break;
             } else if (prevValue != null && value > prevValue && value < currentValue) {
-                EntityModel<Integer> customItem = new EntityModel<>("Custom (" + value + ")", value);//$NON-NLS-1$ //$NON-NLS-2$
+                EntityModel<Integer> customItem = new EntityModel<>("Custom (" + value + ")", value); //$NON-NLS-1$ //$NON-NLS-2$
 
                 items.add(i, customItem);
                 selectedItem = customItem;
@@ -1324,7 +1324,7 @@ public abstract class HostModel extends Model implements HasValidatedTabs {
             // in case CPU of cluster was not yet set
             return null;
         }
-        return  clustersCpu.getVendor();
+        return clustersCpu.getVendor();
     }
 
     private void addKernelCmdlineCheckboxesListeners() {

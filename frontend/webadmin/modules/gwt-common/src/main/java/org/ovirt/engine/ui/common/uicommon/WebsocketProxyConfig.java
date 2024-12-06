@@ -9,8 +9,8 @@ public class WebsocketProxyConfig {
     private final String configValue;
     private String targetHost;
 
-    private static final String ENGINE = "Engine";//$NON-NLS-1$
-    private static final String HOST = "Host";//$NON-NLS-1$
+    private static final String ENGINE = "Engine"; //$NON-NLS-1$
+    private static final String HOST = "Host"; //$NON-NLS-1$
 
     /**
      * @param configValue - websocket proxy config string
@@ -18,7 +18,7 @@ public class WebsocketProxyConfig {
      */
     public WebsocketProxyConfig(String configValue, String targetHost) {
         if (!matchesHostColonPort(configValue)) {
-            throw new IllegalArgumentException("Config value must be in following form: host:port");//$NON-NLS-1$
+            throw new IllegalArgumentException("Config value must be in following form: host:port"); //$NON-NLS-1$
         }
 
         this.configValue = configValue;
@@ -26,7 +26,7 @@ public class WebsocketProxyConfig {
     }
 
     public String getProxyHost() {
-        String val = configValue.split(":")[0];//$NON-NLS-1$
+        String val = configValue.split(":")[0]; //$NON-NLS-1$
         if (val.equals(ENGINE)) {
             return Location.getHostName(); //the proxy runs on the engine
         } else if (val.equals(HOST)) {
@@ -36,7 +36,7 @@ public class WebsocketProxyConfig {
     }
 
     public String getProxyPort() {
-        return configValue.split(":")[1];//$NON-NLS-1$
+        return configValue.split(":")[1]; //$NON-NLS-1$
     }
 
     private boolean matchesHostColonPort(String s) {

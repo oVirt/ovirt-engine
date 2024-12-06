@@ -116,7 +116,7 @@ public class NetworkOperationFactory {
             if (!networks.add((LogicalNetworkModel) op1)) {
                 return NetworkOperation.NULL_OPERATION;
             }
-        } else if(op1 instanceof NetworkLabelModel) {
+        } else if (op1 instanceof NetworkLabelModel) {
             // op1 is a label, verify that it's not applied to the interface already labelled by it
             NetworkLabelModel src = (NetworkLabelModel) op1;
             if (dst.equals(src.getInterface())) {

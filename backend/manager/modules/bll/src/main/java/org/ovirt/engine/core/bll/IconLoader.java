@@ -46,8 +46,8 @@ public class IconLoader implements BackendService {
 
     private static final Logger log = LoggerFactory.getLogger(IconLoader.class);
     private static final Path ICONS_DIR = EngineLocalConfig.getInstance().getUsrDir().toPath().resolve("icons");
-    private static final Path LARGE_ICON_DIR =ICONS_DIR.resolve("large");
-    private static final Path SMALL_ICON_DIR =ICONS_DIR.resolve("small");
+    private static final Path LARGE_ICON_DIR = ICONS_DIR.resolve("large");
+    private static final Path SMALL_ICON_DIR = ICONS_DIR.resolve("small");
     private final Map<Integer, VmIconIdSizePair> osIdToIconIdMap = new HashMap<>();
     private final int DEFAULT_OS_ID = OsRepository.DEFAULT_X86_OS;
 

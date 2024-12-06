@@ -42,10 +42,10 @@ public class GlusterTasksService {
             log.info("No up server in cluster");
             return null;
         }
-        VDSReturnValue returnValue =runVdsCommand(VDSCommandType.GlusterTasksList,
+        VDSReturnValue returnValue = runVdsCommand(VDSCommandType.GlusterTasksList,
                 new VdsIdVDSCommandParametersBase(upServer.getId()));
         if (returnValue.getSucceeded()) {
-            List<GlusterAsyncTask> tasks = (List<GlusterAsyncTask>)returnValue.getReturnValue();
+            List<GlusterAsyncTask> tasks = (List<GlusterAsyncTask>) returnValue.getReturnValue();
             Map<Guid, GlusterAsyncTask> tasksMap = new HashMap<>();
             for (GlusterAsyncTask task: tasks) {
                 tasksMap.put(task.getTaskId(), task);

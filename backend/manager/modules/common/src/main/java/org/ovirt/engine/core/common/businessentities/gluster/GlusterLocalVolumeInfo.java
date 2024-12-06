@@ -125,7 +125,7 @@ public class GlusterLocalVolumeInfo {
         if ( v.getLogicalBlocks() == 0 || v.getPhysicalBlocks() == 0) {
             return 0;
         }
-        return (int)(((v.getLogicalBlocks() - v.getPhysicalBlocks())/v.getLogicalBlocks().doubleValue())*100);
+        return (int) (((v.getLogicalBlocks() - v.getPhysicalBlocks()) / v.getLogicalBlocks().doubleValue()) * 100);
     }
 
     private Function<ThinSize, ThinSize> chooseSmallest(Optional<ThinSize> innerResult) {

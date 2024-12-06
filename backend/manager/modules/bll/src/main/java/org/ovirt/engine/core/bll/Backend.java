@@ -176,7 +176,7 @@ public class Backend implements BackendInternal, BackendCommandObjectsHandler {
         checkDBConnectivity();
         try {
             initialize();
-        } catch(Exception ex) {
+        } catch (Exception ex) {
             log.error("Error during initialization", ex);
             throw ex;
         }
@@ -337,7 +337,7 @@ public class Backend implements BackendInternal, BackendCommandObjectsHandler {
 
         try {
             AttestThread attestThread = new AttestThread(trustedVdsNames);
-            attestThread.start();//start a thread to attest the hosts
+            attestThread.start(); //start a thread to attest the hosts
         } catch (Exception e) {
             log.error("Failed to initialize attestation cache", e);
         }
@@ -434,7 +434,7 @@ public class Backend implements BackendInternal, BackendCommandObjectsHandler {
         return result;
     }
 
-    private boolean isActionExternal(ActionType actionType){
+    private boolean isActionExternal(ActionType actionType) {
         return actionType == ActionType.EndExternalJob || actionType == ActionType.EndExternalStep || actionType == ActionType.ClearExternalJob;
     }
 

@@ -348,8 +348,8 @@ public class AddBricksToGlusterVolumeCommand extends GlusterVolumeCommandBase<Gl
             int brickCount = volumeBricks.get(volumeBricks.size() - 1).getBrickOrder();
 
             //If the volume is an arbiter volume then make every third brick as arbiter brick.
-            if(volume.getIsArbiter()){
-                for(int i=2;i<newBricks.size();i+=3){
+            if (volume.getIsArbiter()) {
+                for (int i = 2; i < newBricks.size(); i += 3) {
                     newBricks.get(i).setIsArbiter(true);
                 }
             }

@@ -145,9 +145,9 @@ public class VmListModel<E> extends VmBaseListModel<E, VM>
 
     private static final String SUSPEND = "Suspend"; //$NON-NLS-1$
     private static final String SHUTDOWN = "Shutdown"; //$NON-NLS-1$
-    private static final String STOP     = "Stop"; //$NON-NLS-1$
-    private static final String REBOOT   = "Reboot"; //$NON-NLS-1$
-    private static final String RESET    = "Reset"; //$NON-NLS-1$
+    private static final String STOP = "Stop"; //$NON-NLS-1$
+    private static final String REBOOT = "Reboot"; //$NON-NLS-1$
+    private static final String RESET = "Reset"; //$NON-NLS-1$
 
     public UICommand getNewVmCommand() {
         return newVMCommand;
@@ -788,14 +788,14 @@ public class VmListModel<E> extends VmBaseListModel<E, VM>
 
     }
 
-    private void confirmBiosTypeUpdate(){
+    private void confirmBiosTypeUpdate() {
         VM vm = getSelectedItem();
         UnitVmModel model = (UnitVmModel) getWindow();
         if (vm == null || model.getIsNew()) {
             preSave();
         } else {
             BiosType newBiosType = model.getBiosType().getSelectedItem();
-            BiosType oldBiosType =  vm.getBiosType();
+            BiosType oldBiosType = vm.getBiosType();
             if (oldBiosType.equals(BiosType.Q35_SECURE_BOOT) && !newBiosType.equals(BiosType.Q35_SECURE_BOOT) ||
                 oldBiosType.isOvmf() && !newBiosType.isOvmf()) {
                 ConfirmationModel confirmModel = new ConfirmationModel();
@@ -1585,7 +1585,7 @@ public class VmListModel<E> extends VmBaseListModel<E, VM>
                 VM a = (VM) item;
                 paramsList.add(new VmOperationParameterBase(a.getId()));
             }
-            Frontend.getInstance().runMultipleAction(ActionType.HibernateVm, paramsList, result -> {}, null);
+            Frontend.getInstance().runMultipleAction(ActionType.HibernateVm, paramsList, result -> { }, null);
         }
     }
 
@@ -1610,7 +1610,7 @@ public class VmListModel<E> extends VmBaseListModel<E, VM>
             list.add(new RunVmParams(a.getId()));
         }
 
-        Frontend.getInstance().runMultipleAction(ActionType.RunVm, list, result -> {}, null);
+        Frontend.getInstance().runMultipleAction(ActionType.RunVm, list, result -> { }, null);
     }
 
     private void onRemove() {
@@ -1784,7 +1784,7 @@ public class VmListModel<E> extends VmBaseListModel<E, VM>
     }
 
     @Override
-    protected void updateVM (final UnitVmModel model){
+    protected void updateVM (final UnitVmModel model) {
         final VM selectedItem = getSelectedItem();
         // explicitly pass non-editable field from the original VM
         getcurrentVm().setCreatedByUserId(selectedItem.getCreatedByUserId());
@@ -2401,7 +2401,7 @@ public class VmListModel<E> extends VmBaseListModel<E, VM>
 
     private OriginType convertImportSourceToOriginType(ImportSource importSource) {
         OriginType originType;
-        switch(importSource) {
+        switch (importSource) {
             case VMWARE:
                 originType = OriginType.VMWARE;
                 break;

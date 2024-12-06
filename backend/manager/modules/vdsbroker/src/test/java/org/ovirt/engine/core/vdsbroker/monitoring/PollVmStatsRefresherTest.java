@@ -52,22 +52,22 @@ public class PollVmStatsRefresherTest {
     public static Stream<Arguments> monitoringNeededByStatus() {
         return Stream.of(
                 // host status              is monitoring needed
-                Arguments.of(Up,                       true),
-                Arguments.of(NonResponsive,            false),
-                Arguments.of(Error,                    true),
-                Arguments.of(NonOperational,           true),
-                Arguments.of(PreparingForMaintenance,  true),
-                Arguments.of(Initializing,             false),
-                Arguments.of(Connecting,               false),
-                Arguments.of(Unassigned,               false),
-                Arguments.of(Down,                     false),
-                Arguments.of(Maintenance,              false),
-                Arguments.of(Installing,               false),
-                Arguments.of(InstallFailed,            false),
-                Arguments.of(Reboot,                   false),
-                Arguments.of(PendingApproval,          false),
-                Arguments.of(InstallingOS,             false),
-                Arguments.of(Kdumping,                 false)
+                Arguments.of(Up, true),
+                Arguments.of(NonResponsive, false),
+                Arguments.of(Error, true),
+                Arguments.of(NonOperational, true),
+                Arguments.of(PreparingForMaintenance, true),
+                Arguments.of(Initializing, false),
+                Arguments.of(Connecting, false),
+                Arguments.of(Unassigned, false),
+                Arguments.of(Down, false),
+                Arguments.of(Maintenance, false),
+                Arguments.of(Installing, false),
+                Arguments.of(InstallFailed, false),
+                Arguments.of(Reboot, false),
+                Arguments.of(PendingApproval, false),
+                Arguments.of(InstallingOS, false),
+                Arguments.of(Kdumping, false)
         );
     }
 

@@ -188,7 +188,7 @@ public class EngineMonitorService implements Runnable {
                 serverUrl = config.getExternalHttpUrl(HEALTH_SERVLET_PATH);
             }
             log.info("Engine health servlet URL is \"{}\".", serverUrl);
-        } catch(MalformedURLException exception) {
+        } catch (MalformedURLException exception) {
             throw new NotificationServiceException("Can't get engine health servlet URL.", exception);
         }
     }
@@ -289,7 +289,7 @@ public class EngineMonitorService implements Runnable {
             } else {
                 // reports an error for non responsive server
                 EngineLocalConfig config = EngineLocalConfig.getInstance();
-                if(config.getEngineUpMark().exists()) {
+                if (config.getEngineUpMark().exists()) {
                     // assumed crash, since engine up file is still there
                     insertEventIntoAuditLogSafe(AuditLogType.VDC_STOP,
                             AuditLogSeverity.ERROR,
@@ -394,7 +394,7 @@ public class EngineMonitorService implements Runnable {
     private void initConnectivity() throws NotificationServiceException {
         try {
             ds = new StandaloneDataSource();
-        } catch(SQLException exception) {
+        } catch (SQLException exception) {
             throw new NotificationServiceException("Failed to obtain database connectivity", exception);
         }
     }

@@ -58,7 +58,7 @@ final class ManageNetworksParametersBuilderImpl extends HostSetupNetworksParamet
                         .map(networkIdToAttachmentMap::get)
                         .collect(Collectors.toList());
 
-        updatedNetworkAttachments.forEach(networkAttachment->networkAttachment.setOverrideConfiguration(true));
+        updatedNetworkAttachments.forEach(networkAttachment -> networkAttachment.setOverrideConfiguration(true));
         updatedNetworksParams.getNetworkAttachments().addAll(updatedNetworkAttachments);
 
         final PersistentHostSetupNetworksParameters combinedParams =

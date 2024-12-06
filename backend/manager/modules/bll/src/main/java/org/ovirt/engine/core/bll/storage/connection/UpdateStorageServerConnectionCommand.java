@@ -363,15 +363,15 @@ public class UpdateStorageServerConnectionCommand<T extends StorageServerConnect
                     EngineMessage.ACTION_TYPE_FAILED_OBJECT_LOCKED));
 
           //lock lun disks and domains, not VMs , no need to load from db.
-          if(getLuns()!=null) {
-              for(LUNs lun : getLuns()) {
+          if (getLuns() != null) {
+              for (LUNs lun : getLuns()) {
                 Guid diskId = lun.getDiskId();
                 Guid storageDomainId = lun.getStorageDomainId();
-                if(diskId != null) {
+                if (diskId != null) {
                        locks.put(diskId.toString(), LockMessagesMatchUtil.makeLockingPair(LockingGroup.DISK,
                        EngineMessage.ACTION_TYPE_FAILED_OBJECT_LOCKED));
                 }
-                if(storageDomainId != null) {
+                if (storageDomainId != null) {
                        locks.put(storageDomainId.toString(), LockMessagesMatchUtil.makeLockingPair(LockingGroup.STORAGE,
                        EngineMessage.ACTION_TYPE_FAILED_OBJECT_LOCKED));
                 }

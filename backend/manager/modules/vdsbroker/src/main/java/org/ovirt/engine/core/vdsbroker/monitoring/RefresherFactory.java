@@ -17,7 +17,7 @@ public class RefresherFactory {
 
     public HostConnectionRefresherInterface createHostConnectionRefresher(VdsManager vdsManager,
             ResourceManager resourceManager) {
-        switch(vdsManager.getVdsType()) {
+        switch (vdsManager.getVdsType()) {
         case KubevirtNode:
             return Injector.injectMembers(new KubevirtHostConnectionRefresher(vdsManager));
         default:
@@ -26,7 +26,7 @@ public class RefresherFactory {
     }
 
     private VmStatsRefresher getVmStatsRefresher(VdsManager vdsManager, ResourceManager resourceManager) {
-        switch(vdsManager.getVdsType()) {
+        switch (vdsManager.getVdsType()) {
         case KubevirtNode:
             return new KubevirtVmStatsRefresher(vdsManager);
         default:

@@ -27,10 +27,10 @@ public abstract class AbstractItemSelectionWithListWidget<T extends Nameable> ex
         ViewUiBinder uiBinder = GWT.create(ViewUiBinder.class);
     }
 
-    @UiField(provided=true)
+    @UiField(provided = true)
     protected AbstractItemSelectionWidget<T> selectionWidget;
 
-    @UiField(provided=true)
+    @UiField(provided = true)
     protected AbstractItemListWidget<T> listWidget;
 
     public AbstractItemSelectionWithListWidget() {

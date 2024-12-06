@@ -78,7 +78,7 @@ public class BackendExternalHostResourceTest
             GetHostListFromExternalProviderParameters.class,
             new String[] { "ProviderId" },
             new Object[] { GUIDS[0] },
-            notFound? null: getHosts()
+            notFound ? null : getHosts()
         );
     }
 

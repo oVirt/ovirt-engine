@@ -483,7 +483,7 @@ public abstract class CommonVmPoolCommand<T extends AddVmPoolParameters> extends
     private Map<Guid, DiskImage> autoSelectTargetDomainAndVolumeFormat() {
         Map<Guid, DiskImage> destinationMap = new HashMap<>();
         for (Disk disk: templateDisks) {
-            DiskImage diskImage = (DiskImage)disk;
+            DiskImage diskImage = (DiskImage) disk;
             ArrayList<Guid> storageIds = new ArrayList<>();
             Guid storageId = findAvailableStorageDomain(disk.getSize(), diskToStorageIds.get(disk.getId()));
             storageIds.add(storageId);
@@ -618,7 +618,7 @@ public abstract class CommonVmPoolCommand<T extends AddVmPoolParameters> extends
                         disk.getQuotaId(),
                         QuotaConsumptionParameter.QuotaAction.CONSUME,
                         disk.getStorageIds().get(0),
-                        (double)(disk.getSizeInGigabytes() * getParameters().getVmsCount())))
+                        (double) (disk.getSizeInGigabytes() * getParameters().getVmsCount())))
                 .collect(Collectors.toList());
     }
 

@@ -51,13 +51,13 @@ public class BackendDataCenterClusterResourceTest
     @Override
     protected void setUriInfo(UriInfo uriInfo) {
         resource.setUriInfo(uriInfo);
-        ((BackendDataCenterClusterResource)resource).getParent().setUriInfo(uriInfo);
+        ((BackendDataCenterClusterResource) resource).getParent().setUriInfo(uriInfo);
     }
 
     @Override
     protected void init() {
         initResource(resource);
-        initResource(((BackendDataCenterClusterResource)resource).getParent());
+        initResource(((BackendDataCenterClusterResource) resource).getParent());
     }
 
     @Test

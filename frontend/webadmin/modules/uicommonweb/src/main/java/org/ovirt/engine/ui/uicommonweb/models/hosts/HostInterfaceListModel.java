@@ -427,7 +427,7 @@ public class HostInterfaceListModel extends SearchableListModel<VDS, HostInterfa
         model.getCommands().add(tempVar2);
     }
 
-    private void onSyncAllHostNetworkConfirm(){
+    private void onSyncAllHostNetworkConfirm() {
         ConfirmationModel model = (ConfirmationModel) getWindow();
         if (model.getProgress() != null) {
             return;
@@ -442,7 +442,7 @@ public class HostInterfaceListModel extends SearchableListModel<VDS, HostInterfa
                 null);
     }
 
-    private void onSyncAllHostNetworkCancelConfirm(){
+    private void onSyncAllHostNetworkCancelConfirm() {
         cancelConfirm();
     }
 

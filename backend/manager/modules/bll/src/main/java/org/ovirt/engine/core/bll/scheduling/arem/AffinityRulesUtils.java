@@ -76,11 +76,11 @@ public class AffinityRulesUtils {
 
         // Go through each positive affinity group and merge all existing groups
         // that contain the referenced VMs into one.
-        for(AffinityGroup ag : affinityGroups) {
-            if(ag.isVmPositive()) {
+        for (AffinityGroup ag : affinityGroups) {
+            if (ag.isVmPositive()) {
                 Set<Guid> mergedGroup = new HashSet<>();
 
-                for(Guid id : ag.getVmIds()) {
+                for (Guid id : ag.getVmIds()) {
                     // Get the current groups VM(id) belongs to
                     Set<Guid> existingGroup = vmIndex.get(id);
 
@@ -114,7 +114,7 @@ public class AffinityRulesUtils {
     static List<AffinityGroup> setsToAffinityGroups(Set<Set<Guid>> uag) {
         List<AffinityGroup> output = new ArrayList<>(uag.size());
 
-        for(Set<Guid> s : uag) {
+        for (Set<Guid> s : uag) {
             AffinityGroup temp = new AffinityGroup();
             temp.setVmAffinityRule(EntityAffinityRule.POSITIVE);
 

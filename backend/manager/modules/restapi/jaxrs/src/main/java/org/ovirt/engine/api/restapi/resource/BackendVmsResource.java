@@ -583,7 +583,7 @@ public class BackendVmsResource extends
     private Map<Guid, DiskImage> getDisksToClone(DiskAttachments diskAttachments, Guid templateId) {
         Map<Guid, DiskImage> disksMap = new HashMap<>();
 
-        if (diskAttachments != null && diskAttachments.isSetDiskAttachments() && diskAttachments.getDiskAttachments().size() > 0){
+        if (diskAttachments != null && diskAttachments.isSetDiskAttachments() && diskAttachments.getDiskAttachments().size() > 0) {
             Map<Guid, DiskImage> templatesDisksMap = getTemplateDisks(templateId);
             for (DiskAttachment diskAttachment : diskAttachments.getDiskAttachments()) {
                 Disk disk = diskAttachment.getDisk();
@@ -620,7 +620,7 @@ public class BackendVmsResource extends
     }
 
     private DiskImage map(Disk entity, DiskImage template) {
-        return (DiskImage)getMapper(Disk.class, org.ovirt.engine.core.common.businessentities.storage.Disk.class).map(entity, template);
+        return (DiskImage) getMapper(Disk.class, org.ovirt.engine.core.common.businessentities.storage.Disk.class).map(entity, template);
     }
 
     protected Response addVm(VmStatic staticVm, Vm vm, Guid storageDomainId, VmTemplate template, InstanceType instanceType, Cluster cluster) {
@@ -669,8 +669,8 @@ public class BackendVmsResource extends
     }
 
     public List<DiskImage> mapDisks(Disks disks) {
-        if (disks!=null && disks.isSetDisks()) {
-            return disks.getDisks().stream().map(d -> (DiskImage)DiskMapper.map(d, null)).collect(Collectors.toList());
+        if (disks != null && disks.isSetDisks()) {
+            return disks.getDisks().stream().map(d -> (DiskImage) DiskMapper.map(d, null)).collect(Collectors.toList());
         }
         return null;
     }
@@ -756,7 +756,7 @@ public class BackendVmsResource extends
     @Override
     public void follow(ActionableResource entity, LinksTreeNode linksTree) {
         super.follow(entity, linksTree);
-        if(DetailHelper.getDetails(httpHeaders, uriInfo).contains(CURRENT_GRAPHICS_CONSOLES)) {
+        if (DetailHelper.getDetails(httpHeaders, uriInfo).contains(CURRENT_GRAPHICS_CONSOLES)) {
             // "?detail=current_graphics_consoles" provides the same output as
             // "?current&follow=graphics_consoles" and similar as "current" flag will
             // overwrite the default output of "?follow=graphics_consoles"
@@ -968,7 +968,7 @@ public class BackendVmsResource extends
     }
 
     private void updateIdForSingleHost(Host host, Set<Guid> guidsSet) {
-        if (host.isSetName() && !host.isSetId()){
+        if (host.isSetName() && !host.isSetId()) {
             // find the corresponding host id
             Guid hostGuid = getHostId(host);
             if (hostGuid != null) {
@@ -976,7 +976,7 @@ public class BackendVmsResource extends
                 // add hostId element to host
                 host.setId(hostGuid.toString());
             }
-        } else if (host.isSetId()){
+        } else if (host.isSetId()) {
             guidsSet.add(Guid.createGuidFromString(host.getId()));
         }
     }

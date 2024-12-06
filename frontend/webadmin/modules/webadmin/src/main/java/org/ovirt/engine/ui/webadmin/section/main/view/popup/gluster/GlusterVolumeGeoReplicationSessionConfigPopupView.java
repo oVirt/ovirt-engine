@@ -67,7 +67,7 @@ public class GlusterVolumeGeoReplicationSessionConfigPopupView extends AbstractM
                 return entity.getSecond().getKey();
             }
         },
-                constants.optionKeyVolumeParameter(), "150px");//$NON-NLS-1$
+                constants.optionKeyVolumeParameter(), "150px"); //$NON-NLS-1$
 
         geoReplicationConfigTable.addColumn(new AbstractScrollableTextColumn<EntityModel<Pair<Boolean, GlusterGeoRepSessionConfiguration>>>() {
             @Override
@@ -77,11 +77,11 @@ public class GlusterVolumeGeoReplicationSessionConfigPopupView extends AbstractM
             }
         },
                 constants.descriptionVolumeParameter(),
-                "300px");//$NON-NLS-1$
+                "300px"); //$NON-NLS-1$
 
         geoReplicationConfigTable.addColumn(new GlusterConfigAwareColumn(),
                 constants.optionValueVolumeParameter(),
-                "200px");//$NON-NLS-1$
+                "200px"); //$NON-NLS-1$
 
         geoReplicationConfigTable.addColumn(new AbstractCheckboxColumn<EntityModel<Pair<Boolean, GlusterGeoRepSessionConfiguration>>>(true,
                 (index, object, value) -> object.getEntity().setFirst(value)) {

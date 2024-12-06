@@ -153,7 +153,7 @@ public class AuditLogDaoImpl extends BaseDao implements AuditLogDao {
     }
 
     @Override
-    public void removeAllofTypeForBrick(Guid brickId, int logType){
+    public void removeAllofTypeForBrick(Guid brickId, int logType) {
         MapSqlParameterSource parameterSource =
                 getCustomMapSqlParameterSource()
                         .addValue("brick_id", brickId)

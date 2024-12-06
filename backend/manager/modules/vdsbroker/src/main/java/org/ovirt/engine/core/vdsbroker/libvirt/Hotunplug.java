@@ -32,7 +32,7 @@ public class Hotunplug {
         return this;
     }
 
-    public static class Devices  {
+    public static class Devices {
         private Device nic;
         private Device disk;
 

@@ -141,7 +141,7 @@ public class ThreadPoolUtil {
      * @param tasks collection of tasks (callable objects) to submit
      */
     public static <V> ExecutorCompletionService<V> createCompletionService(Iterable<Callable<V>> tasks) {
-        ExecutorCompletionService<V> ecs =  createCompletionService();
+        ExecutorCompletionService<V> ecs = createCompletionService();
         submitTasks(ecs, tasks);
         return ecs;
     }

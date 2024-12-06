@@ -6,7 +6,7 @@ import java.util.Objects;
 import org.ovirt.engine.core.common.businessentities.BusinessEntity;
 import org.ovirt.engine.core.compat.Guid;
 
-public class GlusterGeoRepSessionConfiguration extends GlusterVolumeOptionInfo implements BusinessEntity<Guid>{
+public class GlusterGeoRepSessionConfiguration extends GlusterVolumeOptionInfo implements BusinessEntity<Guid> {
 
     private static final long serialVersionUID = -6506417314359159692L;
 

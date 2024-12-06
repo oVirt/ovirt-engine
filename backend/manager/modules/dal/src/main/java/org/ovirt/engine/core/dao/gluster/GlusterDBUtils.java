@@ -150,9 +150,9 @@ public class GlusterDBUtils {
         String hostName = null;
         if (glusterHostUuid != null) {
             GlusterServer glusterServer = glusterServerDao.getByGlusterServerUuid(glusterHostUuid);
-            if(glusterServer != null) {
+            if (glusterServer != null) {
                 VdsStatic vds = vdsStaticDao.get(glusterServer.getId());
-                if(vds != null) {
+                if (vds != null) {
                     hostName = vds.getHostName();
                 }
             }

@@ -17,7 +17,7 @@ public abstract class ExternalEventCommandBase<T extends ActionParametersBase> e
         super(parameters, cmdContext);
     }
 
-    protected List<PermissionSubject> getPermissionList(AuditLog event){
+    protected List<PermissionSubject> getPermissionList(AuditLog event) {
         List<PermissionSubject> permissionList = new ArrayList<>();
         if (event.getStorageDomainId() != null) {
             permissionList.add(new PermissionSubject(new Guid(event.getStorageDomainId().toString()),

@@ -20,7 +20,7 @@ public class ResourceLocator {
     }
 
     public static ResourceLocator getInstance() {
-        if (instance==null) {
+        if (instance == null) {
             instance = new ResourceLocator();
         }
         return instance;
@@ -61,8 +61,8 @@ public class ResourceLocator {
      */
     private String removePrefix(String href) {
         int index = href.indexOf("/api/");
-        if (index>0) {
-            href = href.substring(index+5);
+        if (index > 0) {
+            href = href.substring(index + 5);
         }
         return href;
     }

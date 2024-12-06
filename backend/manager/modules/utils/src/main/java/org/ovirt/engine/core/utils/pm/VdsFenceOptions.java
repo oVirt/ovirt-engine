@@ -292,7 +292,7 @@ public class VdsFenceOptions implements Serializable {
      * @return String the options after adding default agent parameters
      */
     public static String getDefaultAgentOptions(String agent, String fenceOptions, ArchitectureType architectureType) {
-        String agentDefaultParams =  (architectureType != null && architectureType == ArchitectureType.ppc64)
+        String agentDefaultParams = (architectureType != null && architectureType == ArchitectureType.ppc64)
                 ?
                 FenceConfigHelper.getFenceConfigurationValue(ConfigValues.FenceAgentDefaultParamsForPPC.name(), ConfigCommon.defaultConfigurationVersion)
                 :

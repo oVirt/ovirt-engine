@@ -23,11 +23,11 @@ public class LinkFollower {
     private ResourceLocator resourceLocator;
 
     public LinkFollower() {
-        this.resourceLocator =  ResourceLocator.getInstance();
+        this.resourceLocator = ResourceLocator.getInstance();
     }
 
     public LinkFollower(ResourceLocator resourceLocator) {
-        this.resourceLocator =  resourceLocator;
+        this.resourceLocator = resourceLocator;
     }
 
     /**
@@ -141,9 +141,9 @@ public class LinkFollower {
     private void followLink(ActionableResource entity, LinksTreeNode node) {
         List<ActionableResource> nextStepEntities = new LinkedList<>();
         if (EntityHelper.isCollection(entity)) {
-            nextStepEntities.addAll(fetchData((BaseResources)entity, node));
+            nextStepEntities.addAll(fetchData((BaseResources) entity, node));
         } else {
-            nextStepEntities.add(fetchData((BaseResource)entity, node));
+            nextStepEntities.add(fetchData((BaseResource) entity, node));
         }
         for (LinksTreeNode child : node.getChildren()) {
             followLinks(nextStepEntities, child);
@@ -175,7 +175,7 @@ public class LinkFollower {
         try {
             //get the actual list of entities in the collection-type, e.g for Nics get List<Nic>
             //(by invoking nics.getNics() using reflection)
-            List<BaseResource> entities = (List<BaseResource>)collectionGetter.invoke(collectionEntity);
+            List<BaseResource> entities = (List<BaseResource>) collectionGetter.invoke(collectionEntity);
             //for each entity in the list, fetch link data.
             for (BaseResource entity : entities) {
                 results.add(fetchData(entity, node));
@@ -204,9 +204,9 @@ public class LinkFollower {
             String element = underscoreToCamelCase(link.getElement());
             if (link.isFollowed()) {
                 Method getter = ReflectionHelper.getGetter(entity, element);
-                return (ActionableResource)getter.invoke(entity);
+                return (ActionableResource) getter.invoke(entity);
             } else {
-                String href = getHref((BaseResource)entity, link.getElement());
+                String href = getHref((BaseResource) entity, link.getElement());
                 ActionableResource result = fetch(href);
                 Method setter = ReflectionHelper.getSetter(entity, element);
                 setter.invoke(entity, result);
@@ -241,9 +241,9 @@ public class LinkFollower {
         Optional<Link> optional = entity.getLinks().stream().filter(x -> x.getRel().equals(toRelFormat(link))).findFirst();
         if (optional.isPresent()) {
             return optional.get().getHref();
-        } else {//assume this is not a sub-collection, since it wasn't found among links.
+        } else { //assume this is not a sub-collection, since it wasn't found among links.
             Method getter = ReflectionHelper.getGetter(entity, underscoreToCamelCase(link));
-            BaseResource member = (BaseResource)getter.invoke(entity);
+            BaseResource member = (BaseResource) getter.invoke(entity);
             return member.getHref();
         }
     }

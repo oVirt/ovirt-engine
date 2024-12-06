@@ -154,7 +154,7 @@ public class PendingResourceManager {
      */
     public <T extends PendingResource> List<T> pendingHostResources(Guid host, Class<T> type) {
         return collectResources(resourcesByHost, host, res -> res.getClass().equals(type)).stream()
-                .map(r -> (T)r)
+                .map(r -> (T) r)
                 .collect(Collectors.toList());
     }
 
@@ -166,7 +166,7 @@ public class PendingResourceManager {
      */
     public <T extends PendingResource> List<T> pendingVmResources(Guid vm, Class<T> type) {
         return collectResources(resourcesByVm, vm, res -> res.getClass().equals(type)).stream()
-                .map(r -> (T)r)
+                .map(r -> (T) r)
                 .collect(Collectors.toList());
     }
 
@@ -191,7 +191,7 @@ public class PendingResourceManager {
      * @return The actual pending resource
      */
     public <T extends PendingResource> T getExactPendingResource(T template) {
-        return (T)pendingResources.get(template);
+        return (T) pendingResources.get(template);
     }
 
     /**
@@ -203,7 +203,7 @@ public class PendingResourceManager {
         List<T> list = new ArrayList<>();
         for (PendingResource resource: pendingResources.values()) {
             if (resource.getClass().equals(type)) {
-                list.add((T)resource);
+                list.add((T) resource);
             }
         }
 

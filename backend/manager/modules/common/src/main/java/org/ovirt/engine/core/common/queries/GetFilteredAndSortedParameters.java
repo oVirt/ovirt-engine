@@ -34,7 +34,7 @@ public class GetFilteredAndSortedParameters extends QueryParametersBase {
         return maxResults;
     }
     public void setMaxResults(int maxResults) {
-        this.maxResults= maxResults;
+        this.maxResults = maxResults;
     }
     public int getPageNum() {
         return pageNum;

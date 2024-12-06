@@ -332,7 +332,7 @@ public class RemoveDiskCommand<T extends RemoveDiskParameters> extends CommandBa
             return failValidation(EngineMessage.VM_TEMPLATE_IMAGE_LAST_DOMAIN);
         }
 
-        if (!checkDerivedVmFromTemplateExists(diskImage) || !checkDerivedDisksFromDiskNotExist(diskImage)){
+        if (!checkDerivedVmFromTemplateExists(diskImage) || !checkDerivedDisksFromDiskNotExist(diskImage)) {
             return false;
         }
 
@@ -744,6 +744,6 @@ public class RemoveDiskCommand<T extends RemoveDiskParameters> extends CommandBa
 
     @Override
     public CommandCallback getCallback() {
-        return getDiskStorageType() == DiskStorageType.IMAGE ? callbackProvider.get() :  null;
+        return getDiskStorageType() == DiskStorageType.IMAGE ? callbackProvider.get() : null;
     }
 }

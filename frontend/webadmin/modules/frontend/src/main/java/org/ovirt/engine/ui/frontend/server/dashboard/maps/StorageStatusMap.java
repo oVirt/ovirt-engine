@@ -19,7 +19,7 @@ public enum StorageStatusMap {
 
     private StorageDomainStatus[] values;
 
-    private StorageStatusMap(StorageDomainStatus ...values) {
+    private StorageStatusMap(StorageDomainStatus ... values) {
         this.values = values.clone();
     }
 

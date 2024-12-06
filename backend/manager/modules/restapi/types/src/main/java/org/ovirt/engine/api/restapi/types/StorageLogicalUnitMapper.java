@@ -19,16 +19,16 @@ public class StorageLogicalUnitMapper {
     public static LogicalUnit map(LUNs entity, LogicalUnit template) {
         LogicalUnit model = template != null ? template : new LogicalUnit();
         model.setId(entity.getLUNId());
-        if (entity.getVendorId()!=null && !entity.getVendorId().isEmpty()) {
+        if (entity.getVendorId() != null && !entity.getVendorId().isEmpty()) {
             model.setVendorId(entity.getVendorId());
         }
-        if (entity.getProductId()!=null && !entity.getProductId().isEmpty()) {
+        if (entity.getProductId() != null && !entity.getProductId().isEmpty()) {
             model.setProductId(entity.getProductId());
         }
-        if (entity.getSerial()!=null && !entity.getSerial().isEmpty()) {
+        if (entity.getSerial() != null && !entity.getSerial().isEmpty()) {
             model.setSerial(entity.getSerial());
         }
-        if (entity.getLunMapping()!=null) {
+        if (entity.getLunMapping() != null) {
             model.setLunMapping(entity.getLunMapping());
         }
         if (entity.getVolumeGroupId() != null && !entity.getVolumeGroupId().isEmpty()) {
@@ -48,7 +48,7 @@ public class StorageLogicalUnitMapper {
         }
         // Not supported by sysfs since kernel version 4.12, and thus deprecated.
         model.setDiscardZeroesData(false);
-        model.setSize(SizeConverter.convert((long)entity.getDeviceSize(),
+        model.setSize(SizeConverter.convert((long) entity.getDeviceSize(),
                 SizeConverter.SizeUnit.GiB, SizeConverter.SizeUnit.BYTES).longValue());
 
         if (entity.getLunConnections() != null && !entity.getLunConnections().isEmpty()) {
@@ -69,7 +69,7 @@ public class StorageLogicalUnitMapper {
         model.setTarget(entity.getIqn());
         model.setPort(Integer.parseInt(entity.getPort()));
         model.setUsername(entity.getUserName());
-        if (entity.getConnection()!=null && entity.getPort()!=null && entity.getPortal()!=null) {
+        if (entity.getConnection() != null && entity.getPort() != null && entity.getPortal() != null) {
             model.setPortal(entity.getConnection() + ":" + entity.getPort() + "," + entity.getPortal());
         }
         return model;

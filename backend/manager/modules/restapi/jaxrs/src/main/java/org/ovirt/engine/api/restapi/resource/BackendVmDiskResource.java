@@ -240,7 +240,7 @@ public class BackendVmDiskResource
             diskVmElement.setDiskInterface(DiskMapper.mapInterface(disk.getInterface()));
         }
 
-        if(disk.isSetBootable()) {
+        if (disk.isSetBootable()) {
             diskVmElement.setBoot(disk.isBootable());
         }
 

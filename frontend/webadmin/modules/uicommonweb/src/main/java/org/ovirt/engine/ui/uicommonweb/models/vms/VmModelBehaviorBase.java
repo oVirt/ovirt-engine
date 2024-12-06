@@ -241,7 +241,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
         boolean isLocalSD =
                 getModel().getSelectedDataCenter() != null
                         && getModel().getSelectedDataCenter().isLocal();
-        if(isLocalSD) {
+        if (isLocalSD) {
             getModel().getIsAutoAssign().setEntity(false);
             getModel().getMigrationMode().setSelectedItem(MigrationSupport.PINNED_TO_HOST);
         }
@@ -376,7 +376,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
         final Map<Guid, VmTemplate> baseIdToBaseTemplateMap = new HashMap<>();
         final Map<Guid, VmTemplate> baseIdToLastVersionMap = new HashMap<>();
         for (VmTemplate template : templates) {
-            if (template.isBaseTemplate())  {
+            if (template.isBaseTemplate()) {
                 baseIdToBaseTemplateMap.put(template.getId(), template);
                 baseIdToLastVersionMap.put(template.getId(), template);
             }
@@ -472,7 +472,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
     }
 
     protected String getSelectedTimeZone() {
-        String timeZoneKey =  getModel().getTimeZone().getSelectedItem().getTimeZoneKey();
+        String timeZoneKey = getModel().getTimeZone().getSelectedItem().getTimeZoneKey();
         return timeZoneKey != null ? timeZoneKey : "";
     }
 
@@ -1028,7 +1028,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
             return;
         }
 
-        if (numOfSockets * coresPerSocket > totalCpuCores) {// decrease the number of sockets, threads can be 1
+        if (numOfSockets * coresPerSocket > totalCpuCores) { // decrease the number of sockets, threads can be 1
             numOfSockets = totalCpuCores / coresPerSocket;
             getModel().getNumOfSockets().setSelectedItem(numOfSockets);
         }
@@ -1819,7 +1819,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
     }
 
     protected void useHostCpuValueChanged() {
-        if(getModel().getHostCpu().getEntity() != null && getModel().getHostCpu().getEntity()) {
+        if (getModel().getHostCpu().getEntity() != null && getModel().getHostCpu().getEntity()) {
             getModel().getCustomCpu().setIsChangeable(false);
             getModel().getCustomCpu().setSelectedItem(""); //$NON-NLS-1$
         } else {

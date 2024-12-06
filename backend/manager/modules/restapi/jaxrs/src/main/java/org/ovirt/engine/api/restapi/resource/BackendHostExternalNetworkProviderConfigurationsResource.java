@@ -52,7 +52,7 @@ public class BackendHostExternalNetworkProviderConfigurationsResource extends Ab
 
     private ExternalNetworkProviderConfigurations mapCollection(List<Provider> externalNetworkProviders) {
         ExternalNetworkProviderConfigurations result = new ExternalNetworkProviderConfigurations();
-        for(Provider externalNetworkProvider: externalNetworkProviders) {
+        for (Provider externalNetworkProvider: externalNetworkProviders) {
             result.getExternalNetworkProviderConfigurations().add(addLinks(populate(map(externalNetworkProvider), null), Host.class));
         }
         return result;

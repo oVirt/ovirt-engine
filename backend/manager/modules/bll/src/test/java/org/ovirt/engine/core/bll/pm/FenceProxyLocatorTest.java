@@ -382,6 +382,6 @@ public class FenceProxyLocatorTest extends BaseCommandTest {
     }
 
     private boolean shouldHostBeUnreachable(VDSStatus status) {
-        return  status != VDSStatus.Up && status != VDSStatus.NonOperational;
+        return status != VDSStatus.Up && status != VDSStatus.NonOperational;
     }
 }

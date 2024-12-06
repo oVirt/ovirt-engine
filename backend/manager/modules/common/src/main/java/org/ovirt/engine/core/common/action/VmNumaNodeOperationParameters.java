@@ -24,7 +24,7 @@ public class VmNumaNodeOperationParameters extends VmOperationParameterBase {
 
     public VmNumaNodeOperationParameters(Guid vmId, List<VmNumaNode> vmNumaNodes) {
         super(vmId);
-        if (vmNumaNodes != null){
+        if (vmNumaNodes != null) {
             vmNumaNodeList = vmNumaNodes;
         }
         vm = null;

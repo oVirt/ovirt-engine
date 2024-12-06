@@ -289,10 +289,10 @@ public class MaintenanceVdsCommand<T extends MaintenanceVdsParameters> extends V
                 return AuditLogType.VDS_MAINTENANCE_FAILED;
             }
         } else {
-            if (isSucceededWithReasonGiven()){
+            if (isSucceededWithReasonGiven()) {
                 addCustomValue("Reason", getVds().getMaintenanceReason());
                 return AuditLogType.USER_VDS_MAINTENANCE;
-            } else if(isSucceededWithoutReasonGiven()) {
+            } else if (isSucceededWithoutReasonGiven()) {
                 return AuditLogType.USER_VDS_MAINTENANCE_WITHOUT_REASON;
             } else if (getSucceeded()) {
                 return AuditLogType.USER_VDS_MAINTENANCE_MANUAL_HA;
@@ -328,11 +328,11 @@ public class MaintenanceVdsCommand<T extends MaintenanceVdsParameters> extends V
         return getSucceeded() && !haMaintenanceFailed;
     }
 
-    private boolean isSucceededWithReasonGiven(){
+    private boolean isSucceededWithReasonGiven() {
         return isSucceededWithHA() && StringUtils.isNotEmpty(getVds().getMaintenanceReason());
     }
 
-    private boolean isSucceededWithoutReasonGiven(){
+    private boolean isSucceededWithoutReasonGiven() {
         return isSucceededWithHA() && !haMaintenanceFailed && StringUtils.isEmpty(getVds().getMaintenanceReason());
     }
 

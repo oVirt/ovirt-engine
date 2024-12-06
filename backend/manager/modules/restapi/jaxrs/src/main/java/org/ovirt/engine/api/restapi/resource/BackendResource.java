@@ -151,7 +151,7 @@ public class BackendResource extends BaseBackendResource {
         try {
             List<T> results = asCollection(clz, new ArrayList<T>());
             QueryReturnValue result = runQuery(query, queryParams);
-            if (result!=null ) {
+            if (result != null ) {
                 if (!result.getSucceeded()) {
                     backendFailure(result.getExceptionString());
                 }
@@ -224,7 +224,7 @@ public class BackendResource extends BaseBackendResource {
     protected Response performNonBlockingAction(ActionType task, ActionParametersBase params, Action action) {
         try {
             doNonBlockingAction(task, params);
-            if (action!=null) {
+            if (action != null) {
                 action.setStatus(CreationStatus.IN_PROGRESS.value());
                 return Response.status(Response.Status.ACCEPTED).entity(action).build();
             } else {

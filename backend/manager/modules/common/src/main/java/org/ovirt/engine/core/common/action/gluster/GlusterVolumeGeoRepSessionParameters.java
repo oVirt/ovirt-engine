@@ -2,7 +2,7 @@ package org.ovirt.engine.core.common.action.gluster;
 
 import org.ovirt.engine.core.compat.Guid;
 
-public class GlusterVolumeGeoRepSessionParameters extends GlusterVolumeParameters{
+public class GlusterVolumeGeoRepSessionParameters extends GlusterVolumeParameters {
 
     private static final long serialVersionUID = -881348048838907389L;
 

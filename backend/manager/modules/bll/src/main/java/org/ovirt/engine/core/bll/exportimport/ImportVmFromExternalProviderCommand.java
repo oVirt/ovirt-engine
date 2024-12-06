@@ -301,7 +301,7 @@ implements SerialChildExecutingCommand, QuotaStorageDependent {
                     diskImage.getQuotaId(),
                     QuotaConsumptionParameter.QuotaAction.CONSUME,
                     getStorageDomainId(),
-                    (double)diskImage.getSizeInGigabytes()));
+                    (double) diskImage.getSizeInGigabytes()));
         }
         return list;
     }
@@ -522,7 +522,7 @@ implements SerialChildExecutingCommand, QuotaStorageDependent {
 
     @Override
     public boolean performNextOperation(int completedChildCount) {
-        switch(getParameters().getImportPhase()) {
+        switch (getParameters().getImportPhase()) {
         case CREATE_DISKS:
             getParameters().setImportPhase(Phase.CONVERT);
             if (getParameters().getProxyHostId() == null) {

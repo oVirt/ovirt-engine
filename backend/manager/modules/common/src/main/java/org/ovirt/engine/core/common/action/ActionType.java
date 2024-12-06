@@ -199,7 +199,7 @@ public enum ActionType {
     DestroyImage(239, QuotaDependency.STORAGE),
     MergeExtend(241, QuotaDependency.STORAGE),
     SparsifyImage(244, ActionGroup.SPARSIFY_DISK, QuotaDependency.NONE),
-    AmendImageGroupVolumes(245,  ActionGroup.EDIT_DISK_PROPERTIES, QuotaDependency.NONE),
+    AmendImageGroupVolumes(245, ActionGroup.EDIT_DISK_PROPERTIES, QuotaDependency.NONE),
     ColdMergeSnapshotSingleDisk(246, QuotaDependency.STORAGE),
     PrepareMerge(247, QuotaDependency.STORAGE),
     ColdMerge(248, QuotaDependency.STORAGE),

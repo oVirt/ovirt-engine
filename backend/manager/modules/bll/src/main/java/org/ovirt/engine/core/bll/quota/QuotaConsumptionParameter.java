@@ -2,7 +2,7 @@ package org.ovirt.engine.core.bll.quota;
 
 import org.ovirt.engine.core.compat.Guid;
 
-public abstract class QuotaConsumptionParameter implements Cloneable{
+public abstract class QuotaConsumptionParameter implements Cloneable {
     private Guid quotaGuid;
     private QuotaAction quotaAction;
 

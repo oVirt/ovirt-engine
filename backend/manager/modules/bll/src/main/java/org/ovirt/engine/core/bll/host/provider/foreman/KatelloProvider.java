@@ -25,7 +25,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 /**
  * A base class for Katello providers
  */
-public abstract class KatelloProvider  implements ContentHostProvider {
+public abstract class KatelloProvider implements ContentHostProvider {
 
     private static final Logger log = LoggerFactory.getLogger(KatelloProvider.class);
     protected static final Integer UNLIMITED_PAGE_SIZE = 999999;

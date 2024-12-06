@@ -44,7 +44,7 @@ public class AddStorageDomainCommonTest extends BaseCommandTest {
 
     @InjectMocks
     private AddStorageDomainCommon<StorageDomainManagementParameter> cmd =
-            new AddStorageDomainCommon<>(new StorageDomainManagementParameter(), null){};
+            new AddStorageDomainCommon<>(new StorageDomainManagementParameter(), null) { };
 
     public static Stream<MockConfigDescriptor<?>> mockConfiguration() {
         return Stream.of(MockConfigDescriptor.of(ConfigValues.StorageDomainNameSizeLimit, 10));

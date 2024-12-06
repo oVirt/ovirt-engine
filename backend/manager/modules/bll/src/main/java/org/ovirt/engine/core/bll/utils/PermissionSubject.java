@@ -49,7 +49,7 @@ public class PermissionSubject {
         this.actionGroup = actionGroup;
     }
 
-    public EngineMessage getMessage(){
+    public EngineMessage getMessage() {
         return message;
     }
 

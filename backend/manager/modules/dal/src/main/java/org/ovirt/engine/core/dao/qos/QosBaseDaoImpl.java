@@ -43,7 +43,7 @@ public abstract class QosBaseDaoImpl<T extends QosBase> extends DefaultGenericDa
         }
         if (isFiltered) {
             switch (getQosType()) {
-                case  NETWORK:
+                case NETWORK:
                     return getCallsHandler().executeReadList("GetAllNetworkQos",
                         createEntityRowMapper(),
                         parameterSource);

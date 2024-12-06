@@ -24,7 +24,7 @@ import org.ovirt.engine.core.dao.VmTemplateDao;
 /**
  * Base class for crud for random number generator devices
  */
-public abstract class AbstractRngDeviceCommand<T extends RngDeviceParameters> extends CommandBase<T>  {
+public abstract class AbstractRngDeviceCommand<T extends RngDeviceParameters> extends CommandBase<T> {
 
     @Inject
     private VmStaticDao vmStaticDao;

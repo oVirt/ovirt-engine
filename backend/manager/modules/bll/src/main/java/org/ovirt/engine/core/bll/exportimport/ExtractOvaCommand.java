@@ -94,7 +94,7 @@ public class ExtractOvaCommand<T extends ConvertOvaParameters> extends VmCommand
             }
             storeExternalData(runAnsibleOvaExternalDataPlaybook());
             setSucceeded(true);
-        } catch(EngineException e) {
+        } catch (EngineException e) {
             log.error("Failed to extract OVA file", e);
             setCommandStatus(CommandStatus.FAILED);
         }
@@ -135,7 +135,7 @@ public class ExtractOvaCommand<T extends ConvertOvaParameters> extends VmCommand
                 .playAction("Import OVA")
                 .playbook(AnsibleConstants.IMPORT_OVA_PLAYBOOK);
 
-        AnsibleReturnValue ansibleReturnValue  = ansibleExecutor.runCommand(commandConfig);
+        AnsibleReturnValue ansibleReturnValue = ansibleExecutor.runCommand(commandConfig);
         boolean succeeded = ansibleReturnValue.getAnsibleReturnCode() == AnsibleReturnCode.OK;
         if (!succeeded) {
             log.error("Failed to extract OVA. Please check logs for more details: {}", ansibleReturnValue.getLogFile());

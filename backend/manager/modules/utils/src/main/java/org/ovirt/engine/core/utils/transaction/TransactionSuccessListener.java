@@ -1,7 +1,7 @@
 package org.ovirt.engine.core.utils.transaction;
 
 @FunctionalInterface
-public interface TransactionSuccessListener extends TransactionCompletionListener{
+public interface TransactionSuccessListener extends TransactionCompletionListener {
     @Override
-    default void onRollback() {};
+    default void onRollback() { };
 }

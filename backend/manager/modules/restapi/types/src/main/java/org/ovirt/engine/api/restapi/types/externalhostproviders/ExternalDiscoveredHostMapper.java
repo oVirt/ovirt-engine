@@ -17,7 +17,7 @@ public class ExternalDiscoveredHostMapper {
     public static ExternalDiscoveredHost map(
             org.ovirt.engine.core.common.businessentities.ExternalDiscoveredHost entity,
             ExternalDiscoveredHost template) {
-        ExternalDiscoveredHost model = template != null? template: new ExternalDiscoveredHost();
+        ExternalDiscoveredHost model = template != null ? template : new ExternalDiscoveredHost();
         String name = entity.getName();
         if (name != null) {
             model.setId(string2hex(name));
@@ -44,7 +44,7 @@ public class ExternalDiscoveredHostMapper {
             ExternalDiscoveredHost model,
             org.ovirt.engine.core.common.businessentities.ExternalDiscoveredHost template) {
         org.ovirt.engine.core.common.businessentities.ExternalDiscoveredHost entity =
-                template != null? template: new org.ovirt.engine.core.common.businessentities.ExternalDiscoveredHost();
+                template != null ? template : new org.ovirt.engine.core.common.businessentities.ExternalDiscoveredHost();
         if (model.isSetId()) {
             entity.setName(hex2string(model.getId()));
         } else if (model.isSetName()) {

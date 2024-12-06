@@ -36,7 +36,7 @@ import org.ovirt.engine.core.compat.Guid;
 public class BackendTagsResourceTest
     extends AbstractBackendCollectionResourceTest<Tag, Tags, BackendTagsResource> {
 
-    static int PARENT_IDX = NAMES.length-1;
+    static int PARENT_IDX = NAMES.length - 1;
     static Guid PARENT_GUID = GUIDS[PARENT_IDX];
 
     public BackendTagsResourceTest() {
@@ -91,7 +91,7 @@ public class BackendTagsResourceTest
         Response response = collection.add(getModel(0));
         assertEquals(201, response.getStatus());
         assertTrue(response.getEntity() instanceof Tag);
-        verifyModel((Tag)response.getEntity(), 0);
+        verifyModel((Tag) response.getEntity(), 0);
     }
 
     @Test
@@ -124,7 +124,7 @@ public class BackendTagsResourceTest
         Response response = collection.add(model);
         assertEquals(201, response.getStatus());
         assertTrue(response.getEntity() instanceof Tag);
-        verifyModel((Tag)response.getEntity(), 0);
+        verifyModel((Tag) response.getEntity(), 0);
     }
 
     @Test
@@ -152,7 +152,7 @@ public class BackendTagsResourceTest
         Response response = collection.add(model);
         assertEquals(201, response.getStatus());
         assertTrue(response.getEntity() instanceof Tag);
-        verifyModel((Tag)response.getEntity(), 0, Guid.Empty.toString());
+        verifyModel((Tag) response.getEntity(), 0, Guid.Empty.toString());
     }
 
     @Test

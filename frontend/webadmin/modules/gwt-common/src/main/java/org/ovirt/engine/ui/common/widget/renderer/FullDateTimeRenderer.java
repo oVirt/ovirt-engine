@@ -43,7 +43,7 @@ public class FullDateTimeRenderer extends AbstractRenderer<Date> {
 
     @Override
     public String render(Date object) {
-        if(object == null){
+        if (object == null) {
             return constants.notAvailableLabel();
         }
         return formatPattern.format(object);

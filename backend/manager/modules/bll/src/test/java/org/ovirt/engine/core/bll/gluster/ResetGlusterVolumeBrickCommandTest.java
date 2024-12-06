@@ -109,13 +109,13 @@ public class ResetGlusterVolumeBrickCommandTest extends BaseCommandTest {
         volumeEntity.setName("test-vol");
         volumeEntity.addAccessProtocol(AccessProtocol.GLUSTER);
         volumeEntity.addTransportType(TransportType.TCP);
-        if(volumeType.equals(GlusterVolumeType.DISTRIBUTED_REPLICATE)) {
+        if (volumeType.equals(GlusterVolumeType.DISTRIBUTED_REPLICATE)) {
             volumeEntity.setStatus((volumeId == volumeId1) ? GlusterStatus.UP : GlusterStatus.DOWN);
             volumeEntity.setBricks(getBricks(volumeId, "distrib", 2));
             volumeEntity.setVolumeType(GlusterVolumeType.DISTRIBUTED_REPLICATE);
             volumeEntity.setClusterId(clusterId);
             return volumeEntity;
-        } else if(volumeType.equals(GlusterVolumeType.REPLICATE)) {
+        } else if (volumeType.equals(GlusterVolumeType.REPLICATE)) {
             volumeEntity.setStatus(GlusterStatus.UP);
             volumeEntity.setBricks(getBricks(volumeId, "repl", brickCount));
             volumeEntity.setVolumeType(GlusterVolumeType.REPLICATE);

@@ -22,7 +22,7 @@ public abstract class AbstractBackendStorageDomainContentResource<C extends Base
     protected AbstractBackendStorageDomainContentsResource<C, R, Q> parent;
 
     public AbstractBackendStorageDomainContentResource(String id,
-                                                       AbstractBackendStorageDomainContentsResource<C, R, Q>  parent,
+                                                       AbstractBackendStorageDomainContentsResource<C, R, Q> parent,
                                                        Class<R> modelType,
                                                        Class<Q> entityType) {
         super(id, modelType, entityType);

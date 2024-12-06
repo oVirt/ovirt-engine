@@ -4,7 +4,7 @@ public abstract class IEnlistmentNotification {
 
     private final String correlationId;
 
-    public IEnlistmentNotification(String correlationId){
+    public IEnlistmentNotification(String correlationId) {
         this.correlationId = correlationId;
     }
 

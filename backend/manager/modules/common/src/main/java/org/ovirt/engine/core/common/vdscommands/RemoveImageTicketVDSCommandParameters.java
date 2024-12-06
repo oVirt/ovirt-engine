@@ -7,5 +7,5 @@ public class RemoveImageTicketVDSCommandParameters extends ImageTicketVDSCommand
         super(vdsId, ticketId, null);
     }
 
-    public RemoveImageTicketVDSCommandParameters() {}
+    public RemoveImageTicketVDSCommandParameters() { }
 }

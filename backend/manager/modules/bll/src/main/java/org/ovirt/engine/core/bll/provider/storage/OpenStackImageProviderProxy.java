@@ -103,7 +103,7 @@ public class OpenStackImageProviderProxy extends AbstractOpenStackStorageProvide
     @Override
     protected Glance getClient() {
         if (client == null) {
-            client = new Glance(getProvider().getUrl() + API_VERSION,  new CustomizedRESTEasyConnector());
+            client = new Glance(getProvider().getUrl() + API_VERSION, new CustomizedRESTEasyConnector());
             if (getProvider().isRequiringAuthentication()) {
                 setClientTokenProvider(client);
             }
@@ -170,7 +170,7 @@ public class OpenStackImageProviderProxy extends AbstractOpenStackStorageProvide
                 repoImage.setLastRefreshed(currentTime);
                 repoImages.add(repoImage);
             }
-        } while(images.getList().size() >= listSize &&
+        } while (images.getList().size() >= listSize &&
                 totalListSize != null && repoImages.size() < totalListSize);
 
         return repoImages;
@@ -316,7 +316,7 @@ public class OpenStackImageProviderProxy extends AbstractOpenStackStorageProvide
     }
 
     private String getImageUrl(String apiVersion, String id) {
-        return removeTrailingSlash(getProvider().getUrl()) + apiVersion  + "/images/" + id;
+        return removeTrailingSlash(getProvider().getUrl()) + apiVersion + "/images/" + id;
     }
 
     private String removeTrailingSlash(String s) {

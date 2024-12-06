@@ -971,7 +971,7 @@ public class AuditLogableBaseTest {
     public void setCustomValuesOverridesDoesNotAffectsOtherKeys() {
         final String key1 = "foo";
         final String key2 = "bar";
-        b.appendCustomValue(key2,  "test value 2", null);
+        b.appendCustomValue(key2, "test value 2", null);
 
         doSetCustomValuesTest(b, key1);
 

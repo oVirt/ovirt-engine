@@ -56,7 +56,7 @@ public class StartGlusterVolumeGeoRepCommand extends GeoRepSessionCommandBase<Gl
 
     @Override
     public AuditLogType getAuditLogTypeValue() {
-        if(getSucceeded()) {
+        if (getSucceeded()) {
             return AuditLogType.GLUSTER_VOLUME_GEO_REP_START;
         } else {
             return errorType == null ? AuditLogType.GLUSTER_VOLUME_GEO_REP_START_FAILED_EXCEPTION : errorType;

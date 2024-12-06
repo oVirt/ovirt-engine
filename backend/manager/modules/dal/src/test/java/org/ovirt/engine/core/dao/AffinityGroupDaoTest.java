@@ -216,7 +216,7 @@ public class AffinityGroupDaoTest extends BaseDaoTestCase<AffinityGroupDao> {
 
     @Test
     public void testGetWithFlatLabelsByClusterId() {
-        Guid labelId1= Guid.newGuid();
+        Guid labelId1 = Guid.newGuid();
         Guid labelId2 = Guid.newGuid();
 
         labelDao.save(new LabelBuilder()
@@ -252,7 +252,7 @@ public class AffinityGroupDaoTest extends BaseDaoTestCase<AffinityGroupDao> {
 
     @Test
     public void testGetWithFlatLabelsByVmId() {
-        Guid labelId1= Guid.newGuid();
+        Guid labelId1 = Guid.newGuid();
         Guid labelId2 = Guid.newGuid();
 
         labelDao.save(new LabelBuilder()
@@ -326,7 +326,7 @@ public class AffinityGroupDaoTest extends BaseDaoTestCase<AffinityGroupDao> {
 
     @Test
     public void testAddVmLabelForExistingAffinityGroup() {
-        Guid labelId1= Guid.newGuid();
+        Guid labelId1 = Guid.newGuid();
 
         labelDao.save(new LabelBuilder()
                 .id(labelId1)
@@ -344,7 +344,7 @@ public class AffinityGroupDaoTest extends BaseDaoTestCase<AffinityGroupDao> {
 
     @Test
     public void testRemoveVmLabelForExistingAffinityGroup() {
-        Guid labelId1= Guid.newGuid();
+        Guid labelId1 = Guid.newGuid();
 
         labelDao.save(new LabelBuilder()
                 .id(labelId1)
@@ -364,7 +364,7 @@ public class AffinityGroupDaoTest extends BaseDaoTestCase<AffinityGroupDao> {
 
     @Test
     public void testAddHostLabelForExistingAffinityGroup() {
-        Guid labelId1= Guid.newGuid();
+        Guid labelId1 = Guid.newGuid();
 
         labelDao.save(new LabelBuilder()
                 .id(labelId1)
@@ -381,7 +381,7 @@ public class AffinityGroupDaoTest extends BaseDaoTestCase<AffinityGroupDao> {
 
     @Test
     public void testRemoveHostLabelForExistingAffinityGroup() {
-        Guid labelId1= Guid.newGuid();
+        Guid labelId1 = Guid.newGuid();
 
         labelDao.save(new LabelBuilder()
                 .id(labelId1)

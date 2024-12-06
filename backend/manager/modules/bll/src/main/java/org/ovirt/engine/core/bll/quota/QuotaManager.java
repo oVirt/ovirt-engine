@@ -379,7 +379,7 @@ public class QuotaManager implements BackendService {
             lock.writeLock().unlock();
         }
         long timeEnd = System.currentTimeMillis();
-        log.info("Quota Cache updated. ({} msec)", timeEnd-timeStart);
+        log.info("Quota Cache updated. ({} msec)", timeEnd - timeStart);
     }
 
     public boolean isCacheUpdateNeeded() {
@@ -388,14 +388,14 @@ public class QuotaManager implements BackendService {
 
         lock.readLock().lock();
         try {
-            for(Map<Guid, Quota> quotaMap : storagePoolQuotaMap.values()) {
+            for (Map<Guid, Quota> quotaMap : storagePoolQuotaMap.values()) {
                 cacheCount += quotaMap.size();
             }
         } finally {
             lock.readLock().unlock();
         }
 
-        return cacheCount < quotaCount * Config.<Integer> getValue(ConfigValues.MinimumPercentageToUpdateQuotaCache)/100;
+        return cacheCount < quotaCount * Config.<Integer> getValue(ConfigValues.MinimumPercentageToUpdateQuotaCache) / 100;
     }
 
     public boolean isVmStatusQuotaCountable(VMStatus status) {
@@ -464,7 +464,7 @@ public class QuotaManager implements BackendService {
         // Validate that all requests satisfy the quota limits
         for (Request request : requests.get()) {
             ValidationResult validation = request.validate(hardEnforcement, auditLogger);
-            if(!validation.isValid()) {
+            if (!validation.isValid()) {
                 command.getReturnValue().getValidationMessages().addAll(validation.getMessagesAsStrings());
                 return false;
             }
@@ -494,7 +494,7 @@ public class QuotaManager implements BackendService {
 
         for (QuotaConsumptionParameter param: parameters) {
             // Use default quota if the id is empty
-            if(Guid.isNullOrEmpty(param.getQuotaGuid())) {
+            if (Guid.isNullOrEmpty(param.getQuotaGuid())) {
                 param.setQuotaGuid(storagePoolDefaultQuotaIdMap.get(command.getStoragePoolId()));
             }
 
@@ -555,7 +555,7 @@ public class QuotaManager implements BackendService {
             return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_QUOTA_IS_NOT_VALID);
         }
 
-        Pair<Guid, Guid> key = quota.isGlobalClusterQuota()?
+        Pair<Guid, Guid> key = quota.isGlobalClusterQuota() ?
                 new Pair<>(quota.getId(), null) :
                 new Pair<>(quota.getId(), param.getClusterId());
 
@@ -668,7 +668,7 @@ public class QuotaManager implements BackendService {
     /**
      * Request for cluster quota
      */
-    private class ClusterRequest extends Request{
+    private class ClusterRequest extends Request {
         private QuotaCluster quotaCluster;
         private int coresRequest = 0;
         private long memoryRequestMB = 0L;
@@ -702,7 +702,7 @@ public class QuotaManager implements BackendService {
             }
 
             // Valid if the request releases quota, not consumes it.
-            if (coresRequest <=0 && memoryRequestMB <= 0) {
+            if (coresRequest <= 0 && memoryRequestMB <= 0) {
                 return ValidationResult.VALID;
             }
 

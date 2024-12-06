@@ -26,7 +26,7 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.inject.Inject;
 
-public class VolumeGeoRepSessionDetailsPopUpView extends AbstractModelBoundPopupView<VolumeGeoRepSessionDetailsModel> implements VolumeGeoRepSessionDetailsPopUpPresenterWidget.ViewDef{
+public class VolumeGeoRepSessionDetailsPopUpView extends AbstractModelBoundPopupView<VolumeGeoRepSessionDetailsModel> implements VolumeGeoRepSessionDetailsPopUpPresenterWidget.ViewDef {
 
     interface Driver extends UiCommonEditorDriver<VolumeGeoRepSessionDetailsModel, VolumeGeoRepSessionDetailsPopUpView> {
     }
@@ -178,7 +178,7 @@ public class VolumeGeoRepSessionDetailsPopUpView extends AbstractModelBoundPopup
     }
 
     @Override
-    public void setCheckPointCompletedAtVisibility(boolean visible)  {
+    public void setCheckPointCompletedAtVisibility(boolean visible) {
         checkPointCompletedAt.setVisible(visible);
     }
 

@@ -51,7 +51,7 @@ public class BackendGroupsResource
      * execution of the {@code list} operation.
      */
     private String getSearchPattern() {
-        String userProvidedPattern = QueryHelper.getConstraint(httpHeaders, uriInfo, "",  modelType);
+        String userProvidedPattern = QueryHelper.getConstraint(httpHeaders, uriInfo, "", modelType);
         return userProvidedPattern.equals("Groups : ") ?
                userProvidedPattern + GROUPS_SEARCH_PATTERN
                :
@@ -184,7 +184,7 @@ public class BackendGroupsResource
     private DirectoryGroup getGroupById(String directoryName, String namespace, String groupId) {
         try {
             groupId = DirectoryEntryIdUtils.decode(groupId);
-        } catch(IllegalArgumentException exception) {
+        } catch (IllegalArgumentException exception) {
             return null;
         }
         return getEntity(

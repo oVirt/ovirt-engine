@@ -32,7 +32,7 @@ public class Uri {
 
     public Uri(String scheme, String authority, String path) {
         StringBuilder stringBuilder = new StringBuilder();
-        if (scheme != null  && !scheme.isEmpty()) {
+        if (scheme != null && !scheme.isEmpty()) {
             stringBuilder.append(scheme);
             stringBuilder.append("://"); //$NON-NLS-1$
         }

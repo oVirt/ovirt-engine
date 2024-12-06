@@ -469,19 +469,19 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
     public AuditLogType getAuditLogTypeValue() {
         switch (getActionState()) {
         case EXECUTE:
-            return getSucceeded() ? (isMoveOperation()) ? AuditLogType.USER_MOVED_DISK
+            return getSucceeded() ? isMoveOperation() ? AuditLogType.USER_MOVED_DISK
                     : AuditLogType.USER_COPIED_DISK
-                    : (isMoveOperation()) ? AuditLogType.USER_FAILED_MOVED_VM_DISK
+                    : isMoveOperation() ? AuditLogType.USER_FAILED_MOVED_VM_DISK
                             : AuditLogType.USER_FAILED_COPY_DISK;
 
         case END_SUCCESS:
-            return getSucceeded() ? (isMoveOperation()) ? AuditLogType.USER_MOVED_DISK_FINISHED_SUCCESS
+            return getSucceeded() ? isMoveOperation() ? AuditLogType.USER_MOVED_DISK_FINISHED_SUCCESS
                     : AuditLogType.USER_COPIED_DISK_FINISHED_SUCCESS
-                    : (isMoveOperation()) ? AuditLogType.USER_MOVED_DISK_FINISHED_FAILURE
+                    : isMoveOperation() ? AuditLogType.USER_MOVED_DISK_FINISHED_FAILURE
                             : AuditLogType.USER_COPIED_DISK_FINISHED_FAILURE;
 
         default:
-            return (isMoveOperation()) ? AuditLogType.USER_MOVED_DISK_FINISHED_FAILURE
+            return isMoveOperation() ? AuditLogType.USER_MOVED_DISK_FINISHED_FAILURE
                     : AuditLogType.USER_COPIED_DISK_FINISHED_FAILURE;
         }
     }
@@ -670,7 +670,7 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
                 getDestinationQuotaId(),
                 QuotaConsumptionParameter.QuotaAction.CONSUME,
                 getParameters().getDestDomainId(),
-                (double)getImage().getSizeInGigabytes()));
+                (double) getImage().getSizeInGigabytes()));
 
         if (isMoveOperation()) {
             if (getImage().getQuotaId() != null && !Guid.Empty.equals(getImage().getQuotaId())) {
@@ -678,7 +678,7 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
                         getImage().getQuotaId(),
                         QuotaConsumptionParameter.QuotaAction.RELEASE,
                         getParameters().getSourceDomainId(),
-                        (double)getImage().getSizeInGigabytes()));
+                        (double) getImage().getSizeInGigabytes()));
             }
         }
         return list;

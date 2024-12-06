@@ -210,16 +210,16 @@ public class GlusterTaskUtils {
 
     public void logEventMessage(GlusterAsyncTask task, JobExecutionStatus oldStatus, Cluster cluster) {
         GlusterVolumeEntity volume = volumeDao.getVolumeByGlusterTask(task.getTaskId());
-        if ( volume == null){
-            if(task.getTaskParameters() != null) {
+        if ( volume == null) {
+            if (task.getTaskParameters() != null) {
                 String volName = task.getTaskParameters().getVolumeName();
                 volume = volumeDao.getByName(cluster.getId(), volName);
             } else {
                 return;
             }
         }
-        if (JobExecutionStatus.ABORTED == task.getStatus() || JobExecutionStatus.FINISHED == task.getStatus() || JobExecutionStatus.FAILED == task.getStatus()){
-            if(oldStatus != task.getStatus()){
+        if (JobExecutionStatus.ABORTED == task.getStatus() || JobExecutionStatus.FINISHED == task.getStatus() || JobExecutionStatus.FAILED == task.getStatus()) {
+            if (oldStatus != task.getStatus()) {
                 logMessage(cluster.getId(), volume , taskTypeStrMap.get(task.getType()), task.getStatus().name().toLowerCase(), taskTypeAuditMsg.get(task.getType()));
             }
         }

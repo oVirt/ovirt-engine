@@ -17,7 +17,7 @@ public class LocationInfoHelper {
 
     public static Map<String, Object> prepareLocationInfoForVdsCommand(LocationInfo locationInfo) {
         if (locationInfo instanceof ExternalLocationInfo) {
-            ExternalLocationInfo info = (ExternalLocationInfo)locationInfo;
+            ExternalLocationInfo info = (ExternalLocationInfo) locationInfo;
             if (ConnectionMethod.HTTP.equals(info.getConnectionMethod())) {
                 HttpLocationInfo httpInfo = (HttpLocationInfo) info;
                 Map<String, Object> infoMap = new HashMap<>();
@@ -29,7 +29,7 @@ public class LocationInfoHelper {
         }
 
         if (locationInfo instanceof VdsmImageLocationInfo) {
-            VdsmImageLocationInfo info = (VdsmImageLocationInfo)locationInfo;
+            VdsmImageLocationInfo info = (VdsmImageLocationInfo) locationInfo;
             Map<String, Object> infoMap = new HashMap<>();
             infoMap.put("endpoint_type", "div");
             infoMap.put("sd_id", info.getStorageDomainId().toString());

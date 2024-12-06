@@ -28,7 +28,7 @@ public class SsoLogoutServlet extends HttpServlet {
         String token = request.getParameter("token");
         String scope = request.getParameter("scope");
 
-        Map<String, Object> revokeResponse =  SsoOAuthServiceUtils.revoke(token, scope);
+        Map<String, Object> revokeResponse = SsoOAuthServiceUtils.revoke(token, scope);
         String error = (String) revokeResponse.get("error");
         if (StringUtils.isNotEmpty(error)) {
             log.error("Unable to logout user: {}", error);

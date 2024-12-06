@@ -216,7 +216,7 @@ public final class BatchProcedureExecutionConnectionCallback implements Connecti
         log.debug("Mapped params: {}", values.keySet());
     }
 
-    private  static class ProcData {
+    private static class ProcData {
         private String colName;
         private int ordinal;
         private int dataType;

@@ -72,7 +72,7 @@ public class DbUser implements Queryable, Nameable {
     private Collection<Guid> groupIds;
 
     public DbUser() {
-        this((DbUser)null);
+        this((DbUser) null);
     }
 
     public DbUser(DirectoryUser directoryUser) {

@@ -18,7 +18,7 @@ public class DoubleValueHelper extends BaseValueHelper {
     @Override public ValidationResult validate(ConfigKey key, String value) {
        try {
            Double doubleValue = Double.parseDouble(value);
-           return  new ValidationResult(true);
+           return new ValidationResult(true);
        } catch (NumberFormatException e) {
            // invalid number
            return new ValidationResult(false);

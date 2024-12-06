@@ -185,7 +185,7 @@ public class HostGlusterStorageDevicesListModel extends SearchableListModel<VDS,
         }
     }
 
-    private boolean canCreateBrick(){
+    private boolean canCreateBrick() {
         boolean canCreateBrick = false;
         List<StorageDevice> selectedDevices = getSelectedItems();
         if (selectedDevices != null) {

@@ -85,7 +85,7 @@ public class MapVnicContext extends Context {
      * @return the last outcome of the flow
      */
     public HandlerOutcome getLastOutcome() {
-        return  (HandlerOutcome) flowTrace.peek().get(0);
+        return (HandlerOutcome) flowTrace.peek().get(0);
     }
 
     public boolean isSuccessful() {

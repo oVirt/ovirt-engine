@@ -108,7 +108,7 @@ public final class Linq {
     }
 
     public static <I, T extends I> T findByType(Collection<I> models, Class<T> specific) {
-        return models.stream().filter(m -> m.getClass().equals(specific)).findFirst().map(m -> (T)m).orElse(null);
+        return models.stream().filter(m -> m.getClass().equals(specific)).findFirst().map(m -> (T) m).orElse(null);
     }
 
     public static Collection<EntityModel<?>> findSelectedItems(Collection<EntityModel<?>> items) {

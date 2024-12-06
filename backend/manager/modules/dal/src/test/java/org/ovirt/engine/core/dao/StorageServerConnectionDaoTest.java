@@ -223,7 +223,7 @@ public class StorageServerConnectionDaoTest
         List<StorageServerConnections> result =
                 dao.getAllForVolumeGroup(EXISTING_DOMAIN_STORAGE_NAME);
         assertFalse(result.isEmpty());
-        Set<String> connections  = new HashSet<>();
+        Set<String> connections = new HashSet<>();
         for (StorageServerConnections connection : result) {
             assertFalse(connections.contains(connection.getId()));
             connections.add(connection.getId());

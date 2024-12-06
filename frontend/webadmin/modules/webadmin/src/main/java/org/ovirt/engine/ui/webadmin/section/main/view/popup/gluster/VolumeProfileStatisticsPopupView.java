@@ -156,21 +156,21 @@ public class VolumeProfileStatisticsPopupView extends AbstractModelBoundPopupVie
         volumeProfileStats.addColumn(new AbstractEntityModelTextColumn<FopStats>() {
             @Override
             protected String getText(FopStats entity) {
-                return entity.getMaxLatencyFormatted().getFirst() + " " + entity.getMaxLatencyFormatted().getSecond();//$NON-NLS-1$
+                return entity.getMaxLatencyFormatted().getFirst() + " " + entity.getMaxLatencyFormatted().getSecond(); //$NON-NLS-1$
             }
         }, constants.fOpMaxLatency());
 
         volumeProfileStats.addColumn(new AbstractEntityModelTextColumn<FopStats>() {
             @Override
             protected String getText(FopStats entity) {
-                return entity.getMinLatencyFormatted().getFirst() + " " + entity.getMinLatencyFormatted().getSecond();//$NON-NLS-1$
+                return entity.getMinLatencyFormatted().getFirst() + " " + entity.getMinLatencyFormatted().getSecond(); //$NON-NLS-1$
             }
         }, constants.fOpMinLatency());
 
         volumeProfileStats.addColumn(new AbstractEntityModelTextColumn<FopStats>() {
             @Override
             protected String getText(FopStats entity) {
-                return entity.getAvgLatencyFormatted().getFirst() + " " + entity.getAvgLatencyFormatted().getSecond();//$NON-NLS-1$
+                return entity.getAvgLatencyFormatted().getFirst() + " " + entity.getAvgLatencyFormatted().getSecond(); //$NON-NLS-1$
             }
         }, constants.fOpAvgLatency());
 
@@ -193,21 +193,21 @@ public class VolumeProfileStatisticsPopupView extends AbstractModelBoundPopupVie
         nfsServerProfileStats.addColumn(new AbstractEntityModelTextColumn<FopStats>() {
             @Override
             protected String getText(FopStats entity) {
-                return entity.getMaxLatencyFormatted().getFirst() + " " + entity.getMaxLatencyFormatted().getSecond();//$NON-NLS-1$
+                return entity.getMaxLatencyFormatted().getFirst() + " " + entity.getMaxLatencyFormatted().getSecond(); //$NON-NLS-1$
             }
         }, constants.fOpMaxLatency());
 
         nfsServerProfileStats.addColumn(new AbstractEntityModelTextColumn<FopStats>() {
             @Override
             protected String getText(FopStats entity) {
-                return entity.getMinLatencyFormatted().getFirst() + " " + entity.getMinLatencyFormatted().getSecond();//$NON-NLS-1$
+                return entity.getMinLatencyFormatted().getFirst() + " " + entity.getMinLatencyFormatted().getSecond(); //$NON-NLS-1$
             }
         }, constants.fOpMinLatency());
 
         nfsServerProfileStats.addColumn(new AbstractEntityModelTextColumn<FopStats>() {
             @Override
             protected String getText(FopStats entity) {
-                return entity.getAvgLatencyFormatted().getFirst() + " " + entity.getAvgLatencyFormatted().getSecond();//$NON-NLS-1$
+                return entity.getAvgLatencyFormatted().getFirst() + " " + entity.getAvgLatencyFormatted().getSecond(); //$NON-NLS-1$
             }
         }, constants.fOpAvgLatency());
 
@@ -216,7 +216,7 @@ public class VolumeProfileStatisticsPopupView extends AbstractModelBoundPopupVie
     private void initAnchor(String url, Anchor anchor) {
         anchor.setHref(url);
         anchor.setText(constants.exportToText());
-        anchor.setTarget("_blank");//$NON-NLS-1$
+        anchor.setTarget("_blank"); //$NON-NLS-1$
     }
 
     @Override
@@ -240,29 +240,29 @@ public class VolumeProfileStatisticsPopupView extends AbstractModelBoundPopupVie
         nfsRefreshIcon.setRefreshIconClickListener(nfsTabClickHandler);
 
         object.getPropertyChangedEvent().addListener((ev, sender, args) -> {
-            if (args.propertyName.equals("brickProfileRunTimeChanged")) {//$NON-NLS-1$
+            if (args.propertyName.equals("brickProfileRunTimeChanged")) { //$NON-NLS-1$
                 profileRunTime.setText(object.getProfileRunTime());
             }
-            if (args.propertyName.equals("brickProfileDataRead")) {//$NON-NLS-1$
+            if (args.propertyName.equals("brickProfileDataRead")) { //$NON-NLS-1$
                 bytesRead.setText(object.getBytesRead());
             }
-            if (args.propertyName.equals("brickProfileDataWritten")) {//$NON-NLS-1$
+            if (args.propertyName.equals("brickProfileDataWritten")) { //$NON-NLS-1$
                 bytesWritten.setText(object.getBytesWritten());
             }
-            if (args.propertyName.equals("nfsProfileRunTimeChanged")) {//$NON-NLS-1$
+            if (args.propertyName.equals("nfsProfileRunTimeChanged")) { //$NON-NLS-1$
                 nfsProfileRunTime.setText(object.getNfsProfileRunTime());
             }
-            if (args.propertyName.equals("nfsProfileDataRead")) {//$NON-NLS-1$
+            if (args.propertyName.equals("nfsProfileDataRead")) { //$NON-NLS-1$
                 nfsBytesRead.setText(object.getNfsBytesRead());
             }
-            if (args.propertyName.equals("nfsProfileDataWritten")) {//$NON-NLS-1$
+            if (args.propertyName.equals("nfsProfileDataWritten")) { //$NON-NLS-1$
                 nfsBytesWritten.setText(object.getNfsBytesWritten());
             }
-            if(args.propertyName.equals("statusOfFetchingProfileStats")) {//$NON-NLS-1$
+            if (args.propertyName.equals("statusOfFetchingProfileStats")) { //$NON-NLS-1$
                 boolean disableErrorLabels = !object.isSuccessfulProfileStatsFetch();
-                if(!disableErrorLabels) {
+                if (!disableErrorLabels) {
                     String url = object.getProfileExportUrl();
-                    boolean isBrickTabSelected = !url.contains(";nfsStatistics=true");//$NON-NLS-1$
+                    boolean isBrickTabSelected = !url.contains(";nfsStatistics=true"); //$NON-NLS-1$
                     initAnchor(url, isBrickTabSelected ? brickProfileAnchor : nfsProfileAnchor);
                 }
                 bricksError.setVisible(disableErrorLabels);

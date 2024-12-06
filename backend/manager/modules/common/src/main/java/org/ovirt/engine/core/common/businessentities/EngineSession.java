@@ -36,7 +36,7 @@ public class EngineSession implements Queryable {
 
     private Date lastActiveTime;
 
-    public EngineSession() {}
+    public EngineSession() { }
 
     public EngineSession(DbUser dbUser, String engineSessionId, String sourceIp) {
         setUserId(dbUser.getId());

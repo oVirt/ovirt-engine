@@ -10,7 +10,7 @@ import org.ovirt.engine.core.common.businessentities.gluster.GlusterGeoRepSessio
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.compat.Guid;
 
-public class GetGlusterVolumeGeoRepSessionsQuery<P extends IdQueryParameters> extends GlusterQueriesCommandBase<P>{
+public class GetGlusterVolumeGeoRepSessionsQuery<P extends IdQueryParameters> extends GlusterQueriesCommandBase<P> {
 
     public GetGlusterVolumeGeoRepSessionsQuery(P parameters, EngineContext engineContext) {
         super(parameters, engineContext);
@@ -30,7 +30,7 @@ public class GetGlusterVolumeGeoRepSessionsQuery<P extends IdQueryParameters> ex
                  * Session details could be null, if they are not yet synced. possible if session detail command failed for some unexpected reason
                  * such as network failure even though the sessions in the cluster are synced(sessionListCommand)
                  */
-                if(geoRepSessionDetails == null) {
+                if (geoRepSessionDetails == null) {
                     continue;
                 }
                 /*
@@ -38,11 +38,11 @@ public class GetGlusterVolumeGeoRepSessionsQuery<P extends IdQueryParameters> ex
                  * as obtained by using masterbrickId
                  */
                 for (GlusterGeoRepSessionDetails currentDetail : geoRepSessionDetails) {
-                    if(currentDetail == null) {
+                    if (currentDetail == null) {
                         continue;
                     }
                     Guid currentMasterBrickId = currentDetail.getMasterBrickId();
-                    if(currentMasterBrickId == null) {
+                    if (currentMasterBrickId == null) {
                         continue;
                     }
                     GlusterBrickEntity currentBrick = glusterBrickDao.getById(currentMasterBrickId);

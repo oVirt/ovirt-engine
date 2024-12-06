@@ -67,7 +67,7 @@ public class TimeSpanTest {
 
     @Test
     public void testInvalidParse() {
-        assertThrows(IllegalArgumentException.class, ()  -> TimeSpan.parse("1.02.03"));
+        assertThrows(IllegalArgumentException.class, () -> TimeSpan.parse("1.02.03"));
     }
 
     @Test

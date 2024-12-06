@@ -5,7 +5,7 @@ import org.ovirt.engine.core.compat.Guid;
 
 public class FenceVdsActionParameters extends VdsActionParameters {
     private static final long serialVersionUID = 6174371941176548263L;
-    private boolean changeHostToMaintenanceOnStart=false;
+    private boolean changeHostToMaintenanceOnStart = false;
 
     /*
      * If the power management policy is responsible for this action

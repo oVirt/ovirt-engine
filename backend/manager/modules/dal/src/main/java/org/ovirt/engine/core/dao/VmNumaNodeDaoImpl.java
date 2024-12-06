@@ -120,7 +120,7 @@ public class VmNumaNodeDaoImpl extends NumaNodeDaoBase<VmNumaNode> implements Vm
         return entity;
     };
 
-    private static final RowMapper<VmNumaNode> vmNumaNodeCpuRowMapper =  (rs, rowNum) -> {
+    private static final RowMapper<VmNumaNode> vmNumaNodeCpuRowMapper = (rs, rowNum) -> {
         VmNumaNode entity = vmNumaNodeRowMapper.mapRow(rs, rowNum);
         // We need to copy the array to a normal ArrayList to be GWT compatible. GWT has deserialization
         // problems with the Arrays.asList implementation returned by getArray() (Java8 related?)

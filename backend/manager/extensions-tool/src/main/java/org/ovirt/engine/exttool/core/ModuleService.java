@@ -25,6 +25,6 @@ public interface ModuleService {
 
     public void parseArguments(List<String> args) throws Exception;
 
-    public void run() throws  Exception;
+    public void run() throws Exception;
 
 }

@@ -37,7 +37,7 @@ public class LocalConfig {
      */
     public static LocalConfig getInstance() {
         if (instance == null) {
-            synchronized(LocalConfig.class) {
+            synchronized (LocalConfig.class) {
                 if (instance == null) {
                     LocalConfig tmp = new LocalConfig();
                     tmp.config = EngineLocalConfig.getInstance();

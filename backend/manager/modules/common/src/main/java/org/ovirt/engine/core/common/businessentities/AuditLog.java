@@ -595,7 +595,7 @@ public class AuditLog implements Queryable {
         sb.append("Correlation ID: ");
         sb.append(correlationId);
         sb.append(", ");
-        if(jobId != null){
+        if (jobId != null) {
             sb.append("Job ID: ");
             sb.append(jobId.toString());
             sb.append(", ");

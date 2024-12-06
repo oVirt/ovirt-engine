@@ -28,8 +28,8 @@ public class GetNonEligibilityReasonsOfVolumeForGeoRepSessionQuery<P extends Glu
     protected List<GlusterGeoRepNonEligibilityReason> getNonEligibilityReasons(GlusterVolumeEntity masterVolume, GlusterVolumeEntity slaveVolume) {
         List<GlusterGeoRepNonEligibilityReason> nonEligibilityreasons = new ArrayList<>();
         Map<GlusterGeoRepNonEligibilityReason, Predicate<GlusterVolumeEntity>> eligibilityPredicateMap = getGeoRepUtilInstance().getEligibilityPredicates(masterVolume);
-        for(Map.Entry<GlusterGeoRepNonEligibilityReason, Predicate<GlusterVolumeEntity>> eligibilityPredicateMapEntries : eligibilityPredicateMap.entrySet()) {
-            if(!eligibilityPredicateMapEntries.getValue().test(slaveVolume)) {
+        for (Map.Entry<GlusterGeoRepNonEligibilityReason, Predicate<GlusterVolumeEntity>> eligibilityPredicateMapEntries : eligibilityPredicateMap.entrySet()) {
+            if (!eligibilityPredicateMapEntries.getValue().test(slaveVolume)) {
                 nonEligibilityreasons.add(eligibilityPredicateMapEntries.getKey());
             }
         }

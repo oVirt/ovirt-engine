@@ -25,7 +25,7 @@ public class AuditLogDirector {
         log(auditLogable, logType, "", false);
     }
 
-    public void log(AuditLogable auditLogable, AuditLogType logType, String message){
+    public void log(AuditLogable auditLogable, AuditLogType logType, String message) {
         log(auditLogable, logType, message, false);
     }
 

@@ -486,7 +486,7 @@ public class UpdateStorageServerConnectionCommandTest extends
 
     @Test
     public void succeedUpdateNFSCommandWithDomain() {
-        StorageServerConnections  newNFSConnection = createNFSConnection(
+        StorageServerConnections newNFSConnection = createNFSConnection(
                        "multipass.my.domain.tlv.company.com:/export/allstorage/data2",
                         StorageType.NFS,
                         NfsVersion.V4,
@@ -532,7 +532,7 @@ public class UpdateStorageServerConnectionCommandTest extends
 
     @Test
     public void failUpdateStats() {
-        StorageServerConnections  newNFSConnection = createNFSConnection(
+        StorageServerConnections newNFSConnection = createNFSConnection(
                        "multipass.my.domain.tlv.company.com:/export/allstorage/data2",
                         StorageType.NFS,
                         NfsVersion.V4,
@@ -559,7 +559,7 @@ public class UpdateStorageServerConnectionCommandTest extends
 
     @Test
     public void failUpdateConnectToStorage() {
-        StorageServerConnections  newNFSConnection = createNFSConnection(
+        StorageServerConnections newNFSConnection = createNFSConnection(
                 "multipass.my.domain.tlv.company.com:/export/allstorage/data2",
                 StorageType.NFS,
                 NfsVersion.V4,
@@ -584,7 +584,7 @@ public class UpdateStorageServerConnectionCommandTest extends
 
     @Test
     public void isConnWithSameDetailsExistFileDomains() {
-       StorageServerConnections  newNFSConnection = createNFSConnection(
+       StorageServerConnections newNFSConnection = createNFSConnection(
                        "multipass.my.domain.tlv.company.com:/export/allstorage/data2",
                         StorageType.NFS,
                         NfsVersion.V4,
@@ -612,7 +612,7 @@ public class UpdateStorageServerConnectionCommandTest extends
 
     @Test
     public void isConnWithSameDetailsExistSameConnection() {
-       StorageServerConnections  newNFSConnection = createNFSConnection(
+       StorageServerConnections newNFSConnection = createNFSConnection(
                        "multipass.my.domain.tlv.company.com:/export/allstorage/data2",
                         StorageType.NFS,
                         NfsVersion.V4,
@@ -627,7 +627,7 @@ public class UpdateStorageServerConnectionCommandTest extends
 
     @Test
     public void isConnWithSameDetailsExistNoConnections() {
-       StorageServerConnections  newNFSConnection = createNFSConnection(
+       StorageServerConnections newNFSConnection = createNFSConnection(
                        "multipass.my.domain.tlv.company.com:/export/allstorage/data2",
                         StorageType.NFS,
                         NfsVersion.V4,
@@ -642,7 +642,7 @@ public class UpdateStorageServerConnectionCommandTest extends
 
     @Test
     public void isConnWithSameDetailsExistBlockDomains() {
-       StorageServerConnections  newISCSIConnection = createISCSIConnection("1.2.3.4", StorageType.ISCSI, "iqn.2013-04.myhat.com:aaa-target1", "3260", "user1", "mypassword123");
+       StorageServerConnections newISCSIConnection = createISCSIConnection("1.2.3.4", StorageType.ISCSI, "iqn.2013-04.myhat.com:aaa-target1", "3260", "user1", "mypassword123");
 
        StorageServerConnections connection1 = createISCSIConnection("1.2.3.4", StorageType.ISCSI, "iqn.2013-04.myhat.com:aaa-target1", "3260", "user1", "mypassword123");
        when(iscsiStorageHelper.findConnectionsByAddressPortAndIqn(newISCSIConnection)).thenReturn(Collections.singletonList(connection1));
@@ -652,7 +652,7 @@ public class UpdateStorageServerConnectionCommandTest extends
 
     @Test
     public void isConnWithSameDetailsExistCheckSameConn() {
-       StorageServerConnections  newISCSIConnection = createISCSIConnection("1.2.3.4", StorageType.ISCSI, "iqn.2013-04.myhat.com:aaa-target1", "3260", "user1", "mypassword123");
+       StorageServerConnections newISCSIConnection = createISCSIConnection("1.2.3.4", StorageType.ISCSI, "iqn.2013-04.myhat.com:aaa-target1", "3260", "user1", "mypassword123");
        when(iscsiStorageHelper.findConnectionsByAddressPortAndIqn(newISCSIConnection)).thenReturn(Collections.singletonList(newISCSIConnection));
        boolean isExists = !command.isConnWithSameDetailsExists(newISCSIConnection, null).isEmpty();
         assertTrue(isExists);

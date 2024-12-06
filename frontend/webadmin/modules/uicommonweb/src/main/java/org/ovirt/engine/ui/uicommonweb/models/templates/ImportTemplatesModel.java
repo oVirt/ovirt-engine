@@ -418,7 +418,7 @@ public class ImportTemplatesModel extends ListWithSimpleDetailsModel {
 
         selectedImportVmModel = null;
 
-        switch(importSources.getSelectedItem()) {
+        switch (importSources.getSelectedItem()) {
         case EXPORT_DOMAIN:
             importFromExportDomainModel.setEntity(null);
             importFromExportDomainModel.init(templates, exportDomain.getEntity().getId());

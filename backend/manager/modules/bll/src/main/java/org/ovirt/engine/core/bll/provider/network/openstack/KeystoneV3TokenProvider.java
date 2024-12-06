@@ -26,7 +26,7 @@ public class KeystoneV3TokenProvider<P extends OpenStackProviderProperties> impl
     @Override
     public String getToken() {
         if (token == null) {
-            token =  createToken();
+            token = createToken();
         }
         return token;
     }

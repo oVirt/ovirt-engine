@@ -189,7 +189,7 @@ public class UpdateVmInterfaceCommand<T extends AddVmInterfaceParameters> extend
             setVdsId(getVm().getRunOnVds());
         }
 
-        if (getRequiredAction() != null){
+        if (getRequiredAction() != null) {
             switch (getRequiredAction()) {
             case PLUG:
                 return activateOrDeactivateExistingNic(getInterface(), PlugAction.PLUG);

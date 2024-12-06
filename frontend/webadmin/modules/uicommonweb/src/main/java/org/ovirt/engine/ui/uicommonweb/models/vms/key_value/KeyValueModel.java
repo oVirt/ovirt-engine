@@ -58,7 +58,7 @@ public class KeyValueModel extends BaseKeyModel<KeyValueLineModel> {
             if (constrainedValue) {
                 keyValueLineModel.getValues().setItems(allRegExKeys.get(key));
             }
-        } else if (showInvalidKeys){
+        } else if (showInvalidKeys) {
             keyValueLineModel.getValue().setIsAvailable(true);
             keyValueLineModel.getValue().setEntity("");
             keyValueLineModel.getEditableKey().setIsAvailable(false);

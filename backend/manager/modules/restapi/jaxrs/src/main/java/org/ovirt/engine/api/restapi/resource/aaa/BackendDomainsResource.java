@@ -44,7 +44,7 @@ public class BackendDomainsResource extends AbstractBackendCollectionResource<Do
 
     private List<Directory> getCollection() {
         List<Directory> dsl = new ArrayList<>();
-        for(String domain : getDomainList()){
+        for (String domain : getDomainList()) {
             Directory ds = new Directory();
             ds.setDomain(domain);
             ds.setId(DirectoryEntryIdUtils.encode(domain));
@@ -64,7 +64,7 @@ public class BackendDomainsResource extends AbstractBackendCollectionResource<Do
         for (Directory directoriesService : getCollection()) {
             if (directoriesService.getId().equals(id)) {
                 this.id = id;
-                return addlinks?
+                return addlinks ?
                         addLinks(map(directoriesService))
                         :
                         map(directoriesService);
@@ -75,9 +75,9 @@ public class BackendDomainsResource extends AbstractBackendCollectionResource<Do
 
     public Domain lookupDirectoryByDomain(String domain, boolean addlinks) {
         for (Directory directoriesService : getCollection()) {
-            if (directoriesService.getDomain().equals(domain)){
+            if (directoriesService.getDomain().equals(domain)) {
                 this.id = directoriesService.getId().toString();
-                return addlinks?
+                return addlinks ?
                         addLinks(map(directoriesService))
                         :
                         map(directoriesService);
@@ -88,7 +88,7 @@ public class BackendDomainsResource extends AbstractBackendCollectionResource<Do
 
     @Override
     protected Domain addParents(Domain domain) {
-        if(id!=null){
+        if (id != null) {
             assignChildModel(domain, Domain.class).setId(id);
         }
         return domain;

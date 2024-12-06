@@ -96,7 +96,7 @@ public abstract class HttpImageTaskVDSCommand<T extends HttpRequestBase, P exten
         String response = null;
         try {
             HttpEntity entity = httpResponse.getEntity();
-            if(entity!=null){
+            if (entity != null) {
                 response = EntityUtils.toString(entity);
             }
         } catch (Exception e) {
@@ -114,7 +114,7 @@ public abstract class HttpImageTaskVDSCommand<T extends HttpRequestBase, P exten
         proceedProxyReturnValue();
     }
 
-    protected void handleOkResponse(HttpResponse httpResponse) {}
+    protected void handleOkResponse(HttpResponse httpResponse) { }
 
     protected String processResponseHeaderValue(HttpResponse response, String headerName, String expectedValue) {
         Header header = response.getFirstHeader(headerName);
@@ -164,7 +164,7 @@ public abstract class HttpImageTaskVDSCommand<T extends HttpRequestBase, P exten
         throw outEx;
     }
 
-    protected void prepareMethod() {}
+    protected void prepareMethod() { }
 
     protected abstract ConfigValues getConfigValueTimeLimitForOperation();
 

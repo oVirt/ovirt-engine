@@ -5,7 +5,7 @@ import java.util.Objects;
 
 import org.ovirt.engine.core.compat.Guid;
 
-public class StorageDomainDR implements Serializable{
+public class StorageDomainDR implements Serializable {
 
     private static final long serialVersionUID = 8897241841053545233L;
 

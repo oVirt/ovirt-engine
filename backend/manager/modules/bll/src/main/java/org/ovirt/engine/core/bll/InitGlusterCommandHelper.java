@@ -185,7 +185,7 @@ public class InitGlusterCommandHelper {
                             // though gluster peer probe succeeds, it takes some time for the host to be
                             // listed as a peer. Return success only when the host is acknowledged as peer
                             // from another upServer.
-                            VDS newUpServer =  getNewUpServer(vds, upServer);
+                            VDS newUpServer = getNewUpServer(vds, upServer);
                             if (newUpServer == null) {
                                 //there's no other up server. so there's no issue with peer status results
                                 return true;

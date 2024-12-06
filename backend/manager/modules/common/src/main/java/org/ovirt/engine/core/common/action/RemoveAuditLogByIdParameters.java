@@ -6,7 +6,7 @@ public class RemoveAuditLogByIdParameters extends ActionParametersBase implement
     private static final long serialVersionUID = 7211692656127711421L;
     private long auditLogId;
 
-    public RemoveAuditLogByIdParameters() {}
+    public RemoveAuditLogByIdParameters() { }
 
     public RemoveAuditLogByIdParameters(long auditLogId) {
         this.auditLogId = auditLogId;

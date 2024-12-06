@@ -52,7 +52,7 @@ public class SyncHealClusterVolumesCommand extends GlusterCommandBase<ClusterPar
 
     @Override
     protected boolean validate() {
-        if(cluster == null) {
+        if (cluster == null) {
             return failValidation(EngineMessage.VDS_CLUSTER_IS_NOT_VALID);
         }
         if (!cluster.supportsGlusterService()) {

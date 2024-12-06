@@ -363,9 +363,9 @@ public class MenuView extends AbstractView implements MenuPresenterWidget.ViewDe
             if (widget.asWidget() instanceof Anchor) {
                 // This is the anchor with the href, replace it with javascrip:;
                 Anchor labelAnchor = (Anchor) widget.asWidget();
-                for (int j= 0; j < labelAnchor.getWidgetCount(); j++) {
+                for (int j = 0; j < labelAnchor.getWidgetCount(); j++) {
                     if (labelAnchor.getWidget(j).getStyleName().contains(PatternflyStyles.LIST_GROUP_ITEM_VALUE)) {
-                        secondaryMenuHeaderLabel.setText(((Span)labelAnchor.getWidget(j)).getText());
+                        secondaryMenuHeaderLabel.setText(((Span) labelAnchor.getWidget(j)).getText());
                     }
                 }
             }

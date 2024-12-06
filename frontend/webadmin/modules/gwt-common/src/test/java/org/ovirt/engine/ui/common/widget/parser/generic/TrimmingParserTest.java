@@ -30,7 +30,7 @@ class TrimmingParserTest {
 
     @Test
     void whiteCharsOnlyString() throws ParseException {
-        assertThat(underTest.parse("  \t \t   \n\r ")).isEmpty();//$NON-NLS-1$
+        assertThat(underTest.parse("  \t \t   \n\r ")).isEmpty(); //$NON-NLS-1$
     }
 
     @Test

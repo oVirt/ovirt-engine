@@ -25,7 +25,7 @@ public class InternalClusterPoliciesTest {
     @Test
     public void testConfiguredPolicyCreation() {
         assertNotNull(InternalClusterPolicies.getClusterPolicies());
-        assertNotEquals(0, (long)InternalClusterPolicies.getClusterPolicies().size());
+        assertNotEquals(0, (long) InternalClusterPolicies.getClusterPolicies().size());
     }
 
     @Test
@@ -98,8 +98,8 @@ public class InternalClusterPoliciesTest {
             funcMap.put(pair.getFirst(), pair.getSecond());
         }
 
-        assertEquals(1, (long)funcMap.get(getUnitId(HaReservationWeightPolicyUnit.class)));
-        assertEquals(2, (long)funcMap.get(getUnitId(VmAffinityWeightPolicyUnit.class)));
+        assertEquals(1, (long) funcMap.get(getUnitId(HaReservationWeightPolicyUnit.class)));
+        assertEquals(2, (long) funcMap.get(getUnitId(VmAffinityWeightPolicyUnit.class)));
     }
 
     private Guid getUnitId(Class<? extends PolicyUnitImpl> unit) {

@@ -51,7 +51,7 @@ import org.ovirt.engine.core.dao.VmPoolDao;
 import org.ovirt.engine.core.dao.VmTemplateDao;
 import org.ovirt.engine.core.dao.network.VmNicDao;
 import org.ovirt.engine.core.utils.MockConfigDescriptor;
-import  org.ovirt.engine.core.utils.MockedConfig;
+import org.ovirt.engine.core.utils.MockedConfig;
 
 public abstract class CommonVmPoolCommandTestAbstract extends BaseCommandTest {
     private final Guid clusterId = Guid.newGuid();
@@ -63,7 +63,7 @@ public abstract class CommonVmPoolCommandTestAbstract extends BaseCommandTest {
     private Cluster cluster = mockCluster();
     protected VM testVm = mockVm();
     protected VmPool vmPools = mockVmPools();
-    protected List<VM>  vms = mockVms();
+    protected List<VM> vms = mockVms();
     protected static int VM_COUNT = 5;
     protected VmTemplate vmTemplate = mockVmTemplate();
     protected StoragePool storagePool = mockStoragePool();
@@ -216,7 +216,7 @@ public abstract class CommonVmPoolCommandTestAbstract extends BaseCommandTest {
     }
 
     private List<VM> mockVms() {
-        List<VM>  vms = new ArrayList<>();
+        List<VM> vms = new ArrayList<>();
         vms.add(mockVm());
         return vms;
     }

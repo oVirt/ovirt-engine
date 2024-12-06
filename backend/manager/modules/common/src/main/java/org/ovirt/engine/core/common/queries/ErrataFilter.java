@@ -11,7 +11,7 @@ public class ErrataFilter implements Serializable {
     private Integer pageNumber;
     private Integer pageSize;
 
-    public ErrataFilter(){
+    public ErrataFilter() {
     }
 
     public Set<Erratum.ErrataType> getErrataTypes() {

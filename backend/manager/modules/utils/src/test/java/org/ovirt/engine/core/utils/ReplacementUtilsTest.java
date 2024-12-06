@@ -74,7 +74,7 @@ public class ReplacementUtilsTest {
         // Less than the default number of elements to show.
         int numOfElementsToShow = 3;
         Collection<String> replacements = ReplacementUtils.replaceWith(PROPERTY_NAME, items, separator , numOfElementsToShow);
-        assertTrue(validateReplacementElementCount(replacements, separator,  numOfElementsToShow));
+        assertTrue(validateReplacementElementCount(replacements, separator, numOfElementsToShow));
     }
 
     @Test
@@ -117,7 +117,7 @@ public class ReplacementUtilsTest {
         // More than the default number of elements to show.
         int numOfElementsToShow = 8;
         Collection<String> replacements = ReplacementUtils.replaceWith(PROPERTY_NAME, items, separator , numOfElementsToShow);
-        assertTrue(validateReplacementElementCount(replacements, separator,  numOfElementsToShow));
+        assertTrue(validateReplacementElementCount(replacements, separator, numOfElementsToShow));
     }
 
     private boolean validateReplacementElementCount(Collection<String> replacements, String separator, int numOfElementsToShow) {

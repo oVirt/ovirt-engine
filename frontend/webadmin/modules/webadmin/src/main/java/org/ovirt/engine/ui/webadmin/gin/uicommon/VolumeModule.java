@@ -79,15 +79,15 @@ public class VolumeModule extends AbstractGinModule {
                     UICommand lastExecutedCommand, Model windowModel) {
                 if (lastExecutedCommand == getModel().getNewVolumeCommand()) {
                     return popupProvider.get();
-                } else if (lastExecutedCommand == getModel().getStatusRebalanceCommand() || lastExecutedCommand.getName().equals("onStopRebalance")) {//$NON-NLS-1$
+                } else if (lastExecutedCommand == getModel().getStatusRebalanceCommand() || lastExecutedCommand.getName().equals("onStopRebalance")) { //$NON-NLS-1$
                     return rebalanceStatusPopupProvider.get();
-                } else if (lastExecutedCommand == getModel().getShowVolumeProfileDetailsCommand() || lastExecutedCommand.getName().equals("showProfileDetails")) {//$NON-NLS-1$
+                } else if (lastExecutedCommand == getModel().getShowVolumeProfileDetailsCommand() || lastExecutedCommand.getName().equals("showProfileDetails")) { //$NON-NLS-1$
                     return volumeProfileStatsPopupProvider.get();
                 } else if (lastExecutedCommand == getModel().getConfigureVolumeSnapshotOptionsCommand()) {
                     return volumeSnapshotConfigOptionsPopupProvider.get();
                 } else if (lastExecutedCommand == getModel().getConfigureClusterSnapshotOptionsCommand()) {
                     return clusterSnapshotConfigOptionsPopupProvider.get();
-                }  else if (lastExecutedCommand == getModel().getCreateSnapshotCommand()) {
+                } else if (lastExecutedCommand == getModel().getCreateSnapshotCommand()) {
                     return snapshotPopupProvider.get();
                 } else if (lastExecutedCommand == getModel().getEditSnapshotScheduleCommand()) {
                     return snapshotPopupProvider.get();
@@ -140,7 +140,7 @@ public class VolumeModule extends AbstractGinModule {
                     return removeBrickPopupProvider.get();
                 } else if (lastExecutedCommand == getModel().getStatusRemoveBricksCommand()) {
                     return removeBricksStatusPopupProvider.get();
-                }else if (lastExecutedCommand.getName().equals("OnStopRemoveBricks")) {  //$NON-NLS-1$
+                } else if (lastExecutedCommand.getName().equals("OnStopRemoveBricks")) {  //$NON-NLS-1$
                     return removeBricksStatusPopupProvider.get();
                 } else if (lastExecutedCommand == getModel().getReplaceBrickCommand()) {
                     return replaceBrickPopupProvider.get();
@@ -305,14 +305,14 @@ public class VolumeModule extends AbstractGinModule {
         bind(VolumeEventListModel.class).in(Singleton.class);
         bind(VolumeGeoRepListModel.class).in(Singleton.class);
         bind(GlusterVolumeSnapshotListModel.class).in(Singleton.class);
-        bind(new TypeLiteral<PermissionListModel<GlusterVolumeEntity>>(){}).in(Singleton.class);
+        bind(new TypeLiteral<PermissionListModel<GlusterVolumeEntity>>() { }).in(Singleton.class);
         bind(VolumeMainSelectedItems.class).asEagerSingleton();
 
         // Form Detail Models
-        bind(new TypeLiteral<DetailModelProvider<VolumeListModel, VolumeGeneralModel>>(){})
-            .to(new TypeLiteral<DetailTabModelProvider<VolumeListModel, VolumeGeneralModel>>(){}).in(Singleton.class);
+        bind(new TypeLiteral<DetailModelProvider<VolumeListModel, VolumeGeneralModel>>() { })
+            .to(new TypeLiteral<DetailTabModelProvider<VolumeListModel, VolumeGeneralModel>>() { }).in(Singleton.class);
         // Permission Detail Model
-        bind(new TypeLiteral<SearchableDetailModelProvider<Permission, VolumeListModel, PermissionListModel<GlusterVolumeEntity>>>(){})
-           .to(new TypeLiteral<PermissionModelProvider<GlusterVolumeEntity, VolumeListModel>>(){}).in(Singleton.class);
+        bind(new TypeLiteral<SearchableDetailModelProvider<Permission, VolumeListModel, PermissionListModel<GlusterVolumeEntity>>>() { })
+           .to(new TypeLiteral<PermissionModelProvider<GlusterVolumeEntity, VolumeListModel>>() { }).in(Singleton.class);
     }
 }

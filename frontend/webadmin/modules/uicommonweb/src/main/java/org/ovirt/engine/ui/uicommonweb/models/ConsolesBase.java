@@ -94,7 +94,7 @@ public abstract class ConsolesBase implements VmConsoles {
 
     public void selectProtocol(ConsoleProtocol protocol) throws IllegalArgumentException {
         if (!canSelectProtocol(protocol)) {
-            throw new IllegalArgumentException("Cannot select " +protocol.toString() + " protocol for vm " + getVm().getName()); // $NON-NLS-1$ $NON-NLS-2$
+            throw new IllegalArgumentException("Cannot select " + protocol.toString() + " protocol for vm " + getVm().getName()); // $NON-NLS-1$ $NON-NLS-2$
         }
         this.selectedProtocol = protocol;
     }

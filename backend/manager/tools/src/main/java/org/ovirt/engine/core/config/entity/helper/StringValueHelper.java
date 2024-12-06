@@ -28,7 +28,7 @@ public class StringValueHelper extends BaseValueHelper {
         } else {
             isValid = validValues.contains(value);
             if (!isValid) {
-                details = "Valid values are "+key.getValidValues();
+                details = "Valid values are " + key.getValidValues();
             }
         }
         return new ValidationResult(isValid, details);

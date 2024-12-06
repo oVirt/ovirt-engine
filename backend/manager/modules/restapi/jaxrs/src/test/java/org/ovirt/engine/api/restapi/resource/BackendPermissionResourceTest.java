@@ -183,7 +183,7 @@ public class BackendPermissionResourceTest
 
     protected ArrayList<DbUser> getUsers() {
         ArrayList<DbUser> users = new ArrayList<>();
-        for (int i=0; i < NAMES.length; i++) {
+        for (int i = 0; i < NAMES.length; i++) {
             DbUser user = new DbUser();
             user.setId(GUIDS[i]);
             user.setLoginName(NAMES[i]);

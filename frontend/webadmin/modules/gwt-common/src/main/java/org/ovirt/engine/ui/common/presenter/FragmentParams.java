@@ -47,7 +47,7 @@ public enum FragmentParams {
         List<T> namedItems = null;
         if (items != null) {
             namedItems = items.stream().filter(item ->
-                item instanceof Nameable && name.equals(((Nameable)item).getName())).collect(Collectors.toList());
+                item instanceof Nameable && name.equals(((Nameable) item).getName())).collect(Collectors.toList());
         }
         return namedItems;
     }

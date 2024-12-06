@@ -270,7 +270,7 @@ public class HostGeneralSubTabView extends AbstractSubTabFormView<VDS, HostListM
         generalFormBuilder.setRelativeColumnWidth(1, 4);
         generalFormBuilder.setRelativeColumnWidth(2, 5);
 
-        generalFormBuilder.addFormItem(new FormItem(constants.ipHost(), hostName,  0, 0).withAutoPlacement());
+        generalFormBuilder.addFormItem(new FormItem(constants.ipHost(), hostName, 0, 0).withAutoPlacement());
         generalFormBuilder.addFormItem(new FormItem(constants.spmPriority(), spmPriority, 0, virtSupported).withAutoPlacement());
         generalFormBuilder.addFormItem(new FormItem(constants.activeVmsHostGeneral(), activeVms, 0, virtSupported).withAutoPlacement());
         generalFormBuilder.addFormItem(new FormItem(constants.logicalCores(), logicalCores, 0).withAutoPlacement());

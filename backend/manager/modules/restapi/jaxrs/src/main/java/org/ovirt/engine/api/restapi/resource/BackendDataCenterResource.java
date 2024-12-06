@@ -144,7 +144,7 @@ public class BackendDataCenterResource extends AbstractBackendActionableResource
      * storagedomain.
      */
     @SuppressWarnings("unchecked")
-    public static  List<StoragePool> getStoragePools(Guid storageDomainId, AbstractBackendResource parent) {
+    public static List<StoragePool> getStoragePools(Guid storageDomainId, AbstractBackendResource parent) {
         return parent.getEntity(List.class,
                 QueryType.GetStoragePoolsByStorageDomainId,
                 new IdQueryParameters(storageDomainId),

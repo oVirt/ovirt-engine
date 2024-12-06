@@ -24,7 +24,7 @@ public class NullableStringAutoCompleter implements IConditionValueAutoCompleter
 
     @Override
     public String convertFieldEnumValueToActualValue(String fieldValue) {
-        if("null".equalsIgnoreCase(fieldValue)) {
+        if ("null".equalsIgnoreCase(fieldValue)) {
             return null;
         } else {
             return fieldValue;

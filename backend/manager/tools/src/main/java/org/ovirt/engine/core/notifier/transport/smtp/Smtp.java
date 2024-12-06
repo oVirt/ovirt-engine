@@ -85,7 +85,7 @@ public class Smtp extends Transport {
     }
 
     private void init(NotificationProperties props) {
-        Properties mailSessionProps =  new Properties();
+        Properties mailSessionProps = new Properties();
 
         try {
             hostName = InetAddress.getLocalHost().getHostName();
@@ -224,7 +224,7 @@ public class Smtp extends Transport {
                 msg.setReplyTo(new Address[] { replyTo });
             }
             msg.setSubject(messageSubject);
-            if (isBodyHtml){
+            if (isBodyHtml) {
                 msg.setContent(String.format("<html><head><title>%s</title></head><body><p>%s</body></html>",
                         messageSubject,
                         messageBody), "text/html");

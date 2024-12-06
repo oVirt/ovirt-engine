@@ -16,7 +16,7 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Widget;
 
-public class ImportVmGeneralSubTabView  extends AbstractSubTabFormView<VM, ImportVmModel, VmImportGeneralModel> {
+public class ImportVmGeneralSubTabView extends AbstractSubTabFormView<VM, ImportVmModel, VmImportGeneralModel> {
 
     interface ViewUiBinder extends UiBinder<Widget, ImportVmGeneralSubTabView> {
         ViewUiBinder uiBinder = GWT.create(ViewUiBinder.class);

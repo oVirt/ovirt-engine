@@ -58,7 +58,7 @@ public class RegisterVmPopupView extends RegisterEntityPopupView<VM, RegisterVmD
     }
 
     private void addBadMacsValidationListener(RegisterVmModel model) {
-        for(RegisterVmData vmData : model.getEntities().getItems()) {
+        for (RegisterVmData vmData : model.getEntities().getItems()) {
             vmData.getBadMacsExist().getEntityChangedEvent().addListener((ev, sender, args) -> refreshEntityTable());
         }
     }

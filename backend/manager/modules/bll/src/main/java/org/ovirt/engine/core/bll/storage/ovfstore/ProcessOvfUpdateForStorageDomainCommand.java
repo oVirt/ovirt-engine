@@ -464,7 +464,7 @@ public class ProcessOvfUpdateForStorageDomainCommand<T extends ProcessOvfUpdateP
         return false;
     }
 
-    private void setOvfUpdateStep(OvfUpdateStep step){
+    private void setOvfUpdateStep(OvfUpdateStep step) {
         getParameters().setOvfUpdateStep(step);
         persistCommand(getParameters().getParentCommand(), true);
     }

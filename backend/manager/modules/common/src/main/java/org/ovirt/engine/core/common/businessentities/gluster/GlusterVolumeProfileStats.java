@@ -34,7 +34,7 @@ public class GlusterVolumeProfileStats implements Serializable, Nameable {
         if (this == obj) {
             return true;
         }
-        if(!(obj instanceof GlusterVolumeProfileStats)) {
+        if (!(obj instanceof GlusterVolumeProfileStats)) {
             return false;
         }
         GlusterVolumeProfileStats other = (GlusterVolumeProfileStats) obj;

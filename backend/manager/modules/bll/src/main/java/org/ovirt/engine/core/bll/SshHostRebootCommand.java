@@ -34,7 +34,7 @@ public class SshHostRebootCommand<T extends SshHostRebootParameters> extends Vds
     }
 
     private VDSStatus getStatusAfterReboot() {
-        switch(getParameters().getPrevVdsStatus()) {
+        switch (getParameters().getPrevVdsStatus()) {
             case Maintenance:
             case Installing:
                 return getParameters().getPrevVdsStatus();

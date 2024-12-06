@@ -9,7 +9,7 @@ import org.ovirt.engine.core.common.businessentities.GraphicsType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.StringHelper;
 
-public class ConsoleOptions implements Serializable{
+public class ConsoleOptions implements Serializable {
 
     private Guid vmId;
     private GraphicsType graphicsType;

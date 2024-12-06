@@ -55,7 +55,7 @@ public class BackendStepsResourceTest extends AbstractBackendCollectionResourceT
 
     @Override
     protected org.ovirt.engine.core.common.job.Step getEntity(int index) {
-        int jobIndex = index == 0 ? 1 : index -1;
+        int jobIndex = index == 0 ? 1 : index - 1;
         org.ovirt.engine.core.common.job.Step step = new org.ovirt.engine.core.common.job.Step();
         step.setId(GUIDS[index]);
         step.setJobId(GUIDS[jobIndex]);

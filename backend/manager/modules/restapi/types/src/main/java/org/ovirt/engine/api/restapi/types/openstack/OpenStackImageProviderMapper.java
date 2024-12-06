@@ -22,7 +22,7 @@ public class OpenStackImageProviderMapper {
     public static Provider<OpenStackImageProviderProperties> map(OpenStackImageProvider model,
                 Provider<OpenStackImageProviderProperties> template) {
         Provider<OpenStackImageProviderProperties> entity =
-                template != null? template: new Provider<>();
+                template != null ? template : new Provider<>();
         entity.setType(ProviderType.OPENSTACK_IMAGE);
         if (model.isSetId()) {
             entity.setId(GuidUtils.asGuid(model.getId()));
@@ -66,7 +66,7 @@ public class OpenStackImageProviderMapper {
     @Mapping(from = Provider.class, to = OpenStackImageProvider.class)
     public static OpenStackImageProvider map(Provider<OpenStackImageProviderProperties> entity,
             OpenStackImageProvider template) {
-        OpenStackImageProvider model = template != null? template: new OpenStackImageProvider();
+        OpenStackImageProvider model = template != null ? template : new OpenStackImageProvider();
         if (entity.getId() != null) {
             model.setId(entity.getId().toString());
         }

@@ -24,7 +24,7 @@ public class GetVmTemplateFromConfigurationQuery<P extends GetVmFromConfiguratio
             return;
         }
 
-        switch(getParameters().getConfigurationType()) {
+        switch (getParameters().getConfigurationType()) {
         case OVF:
             try {
                 getQueryReturnValue().setReturnValue(ovfHelper.readVmTemplateFromOvf(getParameters().getVmConfiguration()).getVm());

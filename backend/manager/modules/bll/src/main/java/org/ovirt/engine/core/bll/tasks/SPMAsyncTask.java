@@ -469,7 +469,7 @@ public class SPMAsyncTask implements SPMTask {
                 onTaskCleanFailure();
             } else {
                 setState(AsyncTaskState.Cleared);
-                shouldGracefullyDeleteTask =  true;
+                shouldGracefullyDeleteTask = true;
             }
         }
         //A task should be removed from DB if forceDelete is set to true, or if it was cleared successfully.

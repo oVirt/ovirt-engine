@@ -111,7 +111,7 @@ public class DaysOfMonthSelector extends Composite implements TakesValue<String>
     public void setValue(String value, boolean fireEvents) {
         clearSelections();
         if (value != null && !value.isEmpty()) {
-            for (String valueInProcess : Arrays.asList(value.split(","))) {//$NON-NLS-1$
+            for (String valueInProcess : Arrays.asList(value.split(","))) { //$NON-NLS-1$
                 int selectedIndex = getIndexFromDate(valueInProcess);
                 if (clickedList.get(selectedIndex) != null) {
                     clickedList.set(selectedIndex, true);
@@ -160,14 +160,14 @@ public class DaysOfMonthSelector extends Composite implements TakesValue<String>
         if (selectedValues == null) {
             selectedValues = dateString;
         } else {
-            selectedValues = selectedValues.concat(",");//$NON-NLS-1$
+            selectedValues = selectedValues.concat(","); //$NON-NLS-1$
             selectedValues = selectedValues.concat(dateString);
         }
         return selectedValues;
     }
 
     private String removeSelectedDate(String selectedValues, String dayInProcess) {
-        List<String> selectedDatesList = new ArrayList<>(Arrays.asList(selectedValues.split(",")));//$NON-NLS-1$
+        List<String> selectedDatesList = new ArrayList<>(Arrays.asList(selectedValues.split(","))); //$NON-NLS-1$
         selectedDatesList.remove(dayInProcess);
         String selectedDatesString = null;
         for (String currentSelectedDate : selectedDatesList) {
@@ -177,11 +177,11 @@ public class DaysOfMonthSelector extends Composite implements TakesValue<String>
     }
 
     private String getDateFromIndex(int dayInProcess) {
-        return dayInProcess == LAST_DAY_OF_MONTH_INDEX ? "L" : Integer.toString(dayInProcess + 1);//$NON-NLS-1$
+        return dayInProcess == LAST_DAY_OF_MONTH_INDEX ? "L" : Integer.toString(dayInProcess + 1); //$NON-NLS-1$
     }
 
     private int getIndexFromDate(String value) {
-        return value.equals("L") ? LAST_DAY_OF_MONTH_INDEX : Integer.parseInt(value) - 1;//$NON-NLS-1$
+        return value.equals("L") ? LAST_DAY_OF_MONTH_INDEX : Integer.parseInt(value) - 1; //$NON-NLS-1$
     }
 
     private int getRowForTheDay(int date) {

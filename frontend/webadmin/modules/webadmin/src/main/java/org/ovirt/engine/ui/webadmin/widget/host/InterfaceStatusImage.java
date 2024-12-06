@@ -16,7 +16,7 @@ public class InterfaceStatusImage extends Image {
         setResource(getResource(status));
     }
 
-    public static ImageResource getResource(InterfaceStatus status){
+    public static ImageResource getResource(InterfaceStatus status) {
         switch (status) {
         case UP:
             return resources.upImage();

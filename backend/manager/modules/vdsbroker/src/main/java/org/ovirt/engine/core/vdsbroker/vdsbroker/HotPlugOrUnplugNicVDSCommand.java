@@ -7,7 +7,7 @@ import javax.xml.bind.JAXBException;
 
 import org.ovirt.engine.core.common.vdscommands.VmNicDeviceVDSParameters;
 
-public abstract class HotPlugOrUnplugNicVDSCommand<P  extends VmNicDeviceVDSParameters> extends VdsBrokerCommand<P> {
+public abstract class HotPlugOrUnplugNicVDSCommand<P extends VmNicDeviceVDSParameters> extends VdsBrokerCommand<P> {
 
     public HotPlugOrUnplugNicVDSCommand(P parameters) {
         super(parameters);

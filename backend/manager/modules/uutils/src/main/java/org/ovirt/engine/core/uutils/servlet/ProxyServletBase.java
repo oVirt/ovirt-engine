@@ -35,7 +35,7 @@ public class ProxyServletBase extends HttpServlet {
     private String url;
 
     protected static long copy(final InputStream input, final OutputStream output) throws IOException {
-        final byte[] buffer = new byte[8*1024];
+        final byte[] buffer = new byte[8 * 1024];
         long count = 0;
         int n;
         while ((n = input.read(buffer)) != -1) {

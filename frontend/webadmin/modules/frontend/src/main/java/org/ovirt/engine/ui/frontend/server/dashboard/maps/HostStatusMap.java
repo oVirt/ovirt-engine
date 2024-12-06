@@ -20,7 +20,7 @@ public enum HostStatusMap {
 
     private VDSStatus[] values;
 
-    private HostStatusMap(VDSStatus ...values) {
+    private HostStatusMap(VDSStatus ... values) {
         this.values = values.clone();
     }
 

@@ -14,7 +14,7 @@ import org.ovirt.engine.ui.uicompat.UIConstants;
 
 public class CpuPinningListModel extends ListModel<CpuPinningListModelItem> {
 
-    public static final String ITEMS_ENABLED_PROPERTY_CHANGE = "ItemsEnabledPropertyChange";//$NON-NLS-1$
+    public static final String ITEMS_ENABLED_PROPERTY_CHANGE = "ItemsEnabledPropertyChange"; //$NON-NLS-1$
 
     static final UIConstants constants = ConstantsManager.getInstance().getConstants();
 

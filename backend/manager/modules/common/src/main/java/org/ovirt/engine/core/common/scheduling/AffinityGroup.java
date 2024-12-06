@@ -124,7 +124,7 @@ public class AffinityGroup implements BusinessEntity<Guid>, Queryable, Nameable 
     // It is computed by queries returning affinity groups
     private Boolean broken;
 
-    public AffinityGroup() {}
+    public AffinityGroup() { }
 
     public AffinityGroup(AffinityGroup other) {
         id = other.id;

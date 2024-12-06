@@ -1151,7 +1151,7 @@ public abstract class AbstractDiskModel extends DiskModel {
     protected Guid getStorageDomainId() {
         switch (getDisk().getDiskStorageType()) {
             case IMAGE:
-                return  getDiskImage().getStorageIds().get(0);
+                return getDiskImage().getStorageIds().get(0);
             case MANAGED_BLOCK_STORAGE:
                 return getManagedBlockDisk().getStorageIds().get(0);
         }

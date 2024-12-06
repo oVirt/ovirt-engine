@@ -51,7 +51,7 @@ import org.ovirt.engine.core.utils.transaction.TransactionSupport;
  * This command responsible to removing image, contains all created snapshots.
  */
 @InternalCommandAttribute
-@NonTransactiveCommandAttribute(forceCompensation=true)
+@NonTransactiveCommandAttribute(forceCompensation = true)
 public class RemoveImageCommand<T extends RemoveImageParameters> extends BaseImagesCommand<T> {
 
     private static final Set<ActionType> ACTIONS_NOT_REQUIRED_DB_OPERATION = new HashSet<>(

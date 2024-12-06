@@ -106,7 +106,7 @@ public class LinkHelper {
     private static String getRelativePath(Class<?> service, Class<?> parentService) {
         PathKey key = new PathKey(service, parentService);
         String path = pathCache.get(key);
-        if (path!=null) {
+        if (path != null) {
             return path;
         } else {
             for (Method method : parentService.getMethods()) {
@@ -149,7 +149,7 @@ public class LinkHelper {
                 if (inline instanceof BaseResource) {
                     ret.add((BaseResource) inline);
                 } else if (inline instanceof BaseResources) {
-                    BaseResources entities = (BaseResources)inline;
+                    BaseResources entities = (BaseResources) inline;
                     Method getter = EntityHelper.getCollectionGetter(entities);
                     try {
                         List<BaseResource> entitiesList = (List<BaseResource>) getter.invoke(entities);
@@ -407,7 +407,7 @@ public class LinkHelper {
         for (BaseResource inline : getInlineResources(model)) {
             if (inline.getId() != null) {
                 path = getPath(inline, null);
-                if (path!=null) {
+                if (path != null) {
                     inline.setHref(path);
                 }
             }

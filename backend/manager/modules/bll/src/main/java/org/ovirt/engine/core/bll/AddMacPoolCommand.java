@@ -65,7 +65,7 @@ public class AddMacPoolCommand extends MacPoolCommandBase<MacPoolParameters> {
 
     @Override
     protected void executeCommand() {
-        registerRollbackHandler((TransactionRollbackListener)() -> macPoolPerCluster.removePool(getMacPoolId()));
+        registerRollbackHandler((TransactionRollbackListener) () -> macPoolPerCluster.removePool(getMacPoolId()));
 
         getMacPoolEntity().setId(Guid.newGuid());
         macPoolDao.save(getMacPoolEntity());

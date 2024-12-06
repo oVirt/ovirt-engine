@@ -80,7 +80,7 @@ public abstract class ChildCommandsCallbackBase implements CommandCallback {
         childCommandsExecutionEnded(command, anyFailed, childCmdIds, status, completedChildren);
     }
 
-    private void logChildCommandFailed(Guid cmdId, Guid childCmdId, CommandStatus status){
+    private void logChildCommandFailed(Guid cmdId, Guid childCmdId, CommandStatus status) {
         log.debug("Child command id: '{}' of command id: '{}' status is {}, set as failed.", childCmdId, cmdId, status);
     }
 
