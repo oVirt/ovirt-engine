@@ -715,7 +715,7 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
                 diskVmElementDao.getAllDiskVmElementsByDiskId(getParameters().getImageGroupID()));
     }
 
-    protected MultipleStorageDomainsValidator createMultipleStorageDomainsValidator() {
+    public MultipleStorageDomainsValidator createMultipleStorageDomainsValidator() {
         List<Guid> sdsToValidate = new ArrayList<>();
         sdsToValidate.add(getStorageDomainId());
 
