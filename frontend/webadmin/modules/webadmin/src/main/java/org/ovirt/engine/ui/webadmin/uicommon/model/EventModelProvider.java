@@ -34,4 +34,9 @@ public class EventModelProvider extends SearchableTabModelProvider<AuditLog, Eve
     protected boolean handleItemsChangedEvent() {
         return false;
     }
+
+    @Override
+    public String csvExportFilenameBase() {
+        return "events"; //$NON-NLS-1$
+    }
 }
