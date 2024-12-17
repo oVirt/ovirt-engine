@@ -132,19 +132,21 @@ public class NegotiateAuthService {
                                 .mput(
                                         Authz.InvokeKeys.QUERY_FLAGS,
                                         Authz.QueryFlags.RESOLVE_GROUPS | Authz.QueryFlags.RESOLVE_GROUPS_RECURSIVE);
-                        if (SsoService.getSsoContext(req)
+                        boolean externalSso = SsoService.getSsoContext(req)
                                 .getSsoLocalConfig()
-                                .getBoolean("ENGINE_SSO_ENABLE_EXTERNAL_SSO")) {
+                                .getBoolean("ENGINE_SSO_ENABLE_EXTERNAL_SSO");
+                        if (externalSso) {
                             input.put(Authz.InvokeKeys.HTTP_SERVLET_REQUEST, req);
                         }
                         ExtMap outputMap = profile.getAuthz().invoke(input);
                         token = SsoService.getTokenFromHeader(req);
+                        ExtMap principalRecord = outputMap.get(Authz.InvokeKeys.PRINCIPAL_RECORD);
                         SsoSession ssoSession = SsoService.persistAuthInfoInContextWithToken(req,
                                 token,
                                 null,
                                 profile.getName(),
                                 authRecord,
-                                outputMap.get(Authz.InvokeKeys.PRINCIPAL_RECORD));
+                                SsoService.fixExternalNames(principalRecord, externalSso));
                         log.info("User {}@{} with profile [{}] successfully logged in with scopes : {} ",
                                 SsoService.getUserId(outputMap.get(Authz.InvokeKeys.PRINCIPAL_RECORD)),
                                 profile.getAuthzName(),
