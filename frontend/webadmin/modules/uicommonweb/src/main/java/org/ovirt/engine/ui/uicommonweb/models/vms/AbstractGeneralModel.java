@@ -39,18 +39,18 @@ public class AbstractGeneralModel<E> extends EntityModel<E> {
 
         Frontend.getInstance().runQuery(QueryType.GetGraphicsDevices,
                 new IdQueryParameters(entityId).withoutRefresh(), new AsyncQuery<QueryReturnValue>(returnValue -> {
-                            List<GraphicsDevice> graphicsDevices = returnValue.getReturnValue();
-                            Set<GraphicsType> graphicsTypesCollection = new HashSet<>();
+                    List<GraphicsDevice> graphicsDevices = returnValue.getReturnValue();
+                    Set<GraphicsType> graphicsTypesCollection = new HashSet<>();
 
-                            for (GraphicsDevice graphicsDevice : graphicsDevices) {
-                                graphicsTypesCollection.add(graphicsDevice.getGraphicsType());
-                            }
+                    for (GraphicsDevice graphicsDevice : graphicsDevices) {
+                        graphicsTypesCollection.add(graphicsDevice.getGraphicsType());
+                    }
 
-                            UnitVmModel.GraphicsTypes graphicsTypes = UnitVmModel.GraphicsTypes.fromGraphicsTypes(graphicsTypesCollection);
-                            Translator translator = EnumTranslator.getInstance();
-                            setGraphicsType(translator.translate(graphicsTypes));
-                        }
-                ));
+                    UnitVmModel.GraphicsTypes graphicsTypes = UnitVmModel.GraphicsTypes.fromGraphicsTypes(graphicsTypesCollection);
+                    Translator translator = EnumTranslator.getInstance();
+                    setGraphicsType(translator.translate(graphicsTypes));
+                }
+            ));
     }
 
 }

@@ -25,7 +25,7 @@ public class GetFenceConfigurationValueQuery<P extends GetConfigurationValuePara
                 }
                 getQueryReturnValue().setReturnValue(FenceConfigHelper.getFenceConfigurationValue(getParameters().getConfigValue().toString(), version));
             } catch (Exception e) {
-                log.error("Unable to return config parameter {}: {}", getParameters(), e.getMessage() );
+                log.error("Unable to return config parameter {}: {}", getParameters(), e.getMessage());
                 log.debug("Exception", e);
             }
         }

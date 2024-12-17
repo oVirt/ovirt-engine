@@ -10,18 +10,18 @@ public class Ipv6BootProtocolMapper {
             return null;
         }
         switch (entity) {
-        case AUTOCONF:
-            return BootProtocol.AUTOCONF;
-        case DHCP:
-            return BootProtocol.DHCP;
-        case POLY_DHCP_AUTOCONF:
-            return BootProtocol.POLY_DHCP_AUTOCONF;
-        case NONE:
-            return BootProtocol.NONE;
-        case STATIC_IP:
-            return BootProtocol.STATIC;
-        default:
-            return null;
+            case AUTOCONF:
+                return BootProtocol.AUTOCONF;
+            case DHCP:
+                return BootProtocol.DHCP;
+            case POLY_DHCP_AUTOCONF:
+                return BootProtocol.POLY_DHCP_AUTOCONF;
+            case NONE:
+                return BootProtocol.NONE;
+            case STATIC_IP:
+                return BootProtocol.STATIC;
+            default:
+                return null;
         }
     }
 
@@ -30,18 +30,18 @@ public class Ipv6BootProtocolMapper {
             return null;
         }
         switch (model) {
-        case AUTOCONF:
-            return Ipv6BootProtocol.AUTOCONF;
-        case DHCP:
-            return Ipv6BootProtocol.DHCP;
-        case POLY_DHCP_AUTOCONF:
-            return Ipv6BootProtocol.POLY_DHCP_AUTOCONF;
-        case NONE:
-            return Ipv6BootProtocol.NONE;
-        case STATIC:
-            return Ipv6BootProtocol.STATIC_IP;
-        default:
-            return null;
+            case AUTOCONF:
+                return Ipv6BootProtocol.AUTOCONF;
+            case DHCP:
+                return Ipv6BootProtocol.DHCP;
+            case POLY_DHCP_AUTOCONF:
+                return Ipv6BootProtocol.POLY_DHCP_AUTOCONF;
+            case NONE:
+                return Ipv6BootProtocol.NONE;
+            case STATIC:
+                return Ipv6BootProtocol.STATIC_IP;
+            default:
+                return null;
         }
     }
 }

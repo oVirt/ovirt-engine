@@ -64,7 +64,7 @@ public class VdcUserConditionFieldAutoCompleter extends BaseConditionFieldAutoCo
 
     @Override
     public IAutoCompleter getFieldRelationshipAutoCompleter(String fieldName) {
-            return StringConditionRelationAutoCompleter.INSTANCE;
+        return StringConditionRelationAutoCompleter.INSTANCE;
     }
 
     @Override

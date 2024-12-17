@@ -134,7 +134,7 @@ public class SimpleActionTable<E, T> extends AbstractActionTable<E, T> {
      * Show the refresh buttons if the data provider's refresh timer is enabled.
      */
     public void showRefreshButton() {
-        refreshPanel.setVisible( !getDataProvider().getModel().getIsTimerDisabled() );
+        refreshPanel.setVisible(!getDataProvider().getModel().getIsTimerDisabled());
     }
 
     public void hideRefreshButton() {

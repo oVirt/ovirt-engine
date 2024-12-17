@@ -71,7 +71,7 @@ public class VmHighPerformanceConfigurationWidget extends AbstractModelBoundPopu
             SafeHtmlBuilder recommendationsListBuilder = new SafeHtmlBuilder();
             for (String field: object.getRecommendationsList()) {
                 String escapedField = SafeHtmlUtils.htmlEscape(field).replaceAll("\n", "<br>"); //$NON-NLS-1$ //$NON-NLS-2$
-               recommendationsListBuilder.append(bulletedItem(escapedField));
+                recommendationsListBuilder.append(bulletedItem(escapedField));
             }
             recommendationsList.setHTML(recommendationsListBuilder.toSafeHtml());
         }

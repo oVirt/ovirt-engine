@@ -32,18 +32,18 @@ public class TaskStatusColumn extends AbstractImageResourceColumn<EntityModel> {
         }
 
         switch (jobExecutionStatus) {
-        case STARTED:
-            return resources.waitImage();
-        case FINISHED:
-            return resources.logNormalImage();
-        case FAILED:
-            return resources.logErrorImage();
-        case ABORTED:
-            return resources.alertImage();
-        case UNKNOWN:
-            return resources.questionMarkImage();
-        default:
-            return null;
+            case STARTED:
+                return resources.waitImage();
+            case FINISHED:
+                return resources.logNormalImage();
+            case FAILED:
+                return resources.logErrorImage();
+            case ABORTED:
+                return resources.alertImage();
+            case UNKNOWN:
+                return resources.questionMarkImage();
+            default:
+                return null;
         }
     }
 

@@ -122,7 +122,7 @@ public class VfSchedulerImpl implements VfScheduler {
      * Not to query same nic multiple times from db.
      * Mapped by VdsNetworkInterface.getId() Map<Guid, VdsNetworkInterface> fetchedNics = new HashMap<>();
      */
-   private String findFreeVfForVnic(List<HostNicVfsConfig> vfsConfigs,
+    private String findFreeVfForVnic(List<HostNicVfsConfig> vfsConfigs,
             Map<Guid, List<String>> nicToUsedVfs,
             Map<Guid, VdsNetworkInterface> fetchedNics,
             Network vnicNetwork,

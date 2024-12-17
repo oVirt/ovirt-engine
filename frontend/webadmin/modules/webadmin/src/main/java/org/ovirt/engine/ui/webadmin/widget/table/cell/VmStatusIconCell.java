@@ -32,54 +32,54 @@ public class VmStatusIconCell extends AbstractCell<VM> {
         ImageResource statusImage;
 
         switch (status) {
-        case Up:
-            if (vm.isRunOnce()) {
-                statusImage = resources.runOnceUpImage();
-            } else {
-                statusImage = resources.vmStatusRunning();
-            }
-            break;
-        case SavingState:
-            statusImage = resources.vmStatusWait();
-            break;
-        case RestoringState:
-            statusImage = resources.vmStatusWait();
-            break;
-        case PoweringUp:
-            statusImage = resources.vmStatusStarting();
-            break;
-        case PoweringDown:
-            statusImage = resources.vmStatusPoweringDown();
-            break;
-        case RebootInProgress:
-            statusImage = resources.rebootInProgress();
-            break;
-        case WaitForLaunch:
-            statusImage = resources.waitForLaunch();
-            break;
-        case ImageLocked:
-            statusImage = resources.vmStatusWait();
-            break;
-        case MigratingFrom:
-        case MigratingTo:
-            statusImage = resources.migrationImage();
-            break;
-        case Suspended:
-            statusImage = resources.suspendedImage();
-            break;
-        case Paused:
-            statusImage = resources.pauseImage();
-            break;
-        case Unknown:
-        case Unassigned:
-            statusImage = resources.questionMarkImage();
-            break;
-        case NotResponding:
-            statusImage = resources.questionMarkImage();
-            break;
-        default:
-            statusImage = resources.downStatusImage();
-            break;
+            case Up:
+                if (vm.isRunOnce()) {
+                    statusImage = resources.runOnceUpImage();
+                } else {
+                    statusImage = resources.vmStatusRunning();
+                }
+                break;
+            case SavingState:
+                statusImage = resources.vmStatusWait();
+                break;
+            case RestoringState:
+                statusImage = resources.vmStatusWait();
+                break;
+            case PoweringUp:
+                statusImage = resources.vmStatusStarting();
+                break;
+            case PoweringDown:
+                statusImage = resources.vmStatusPoweringDown();
+                break;
+            case RebootInProgress:
+                statusImage = resources.rebootInProgress();
+                break;
+            case WaitForLaunch:
+                statusImage = resources.waitForLaunch();
+                break;
+            case ImageLocked:
+                statusImage = resources.vmStatusWait();
+                break;
+            case MigratingFrom:
+            case MigratingTo:
+                statusImage = resources.migrationImage();
+                break;
+            case Suspended:
+                statusImage = resources.suspendedImage();
+                break;
+            case Paused:
+                statusImage = resources.pauseImage();
+                break;
+            case Unknown:
+            case Unassigned:
+                statusImage = resources.questionMarkImage();
+                break;
+            case NotResponding:
+                statusImage = resources.questionMarkImage();
+                break;
+            default:
+                statusImage = resources.downStatusImage();
+                break;
         }
 
         // Generate the HTML for status image

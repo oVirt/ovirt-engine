@@ -25,7 +25,7 @@ public abstract class CtorsTestBase {
     protected abstract Collection<Class<?>> getClassesToTest();
 
     protected static <E extends Enum<E>> Collection<Class<?>> commandsFromEnum
-            (Class<E> enumClass, Function<String, Class<?>> f) {
+    (Class<E> enumClass, Function<String, Class<?>> f) {
 
         // Create a stream of the enum objects.
         return EnumSet.allOf(enumClass)

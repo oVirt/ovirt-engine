@@ -18,7 +18,7 @@ public class AuthenticationException extends Exception {
     }
 
     public String getErrorCode() {
-      return errorCode;
+        return errorCode;
     }
 
     @Override

@@ -203,29 +203,29 @@ public class CommandAsyncTask extends SPMAsyncTask {
                             + " completed, handling the result.",
                     actionType);
 
-                if (actionReturnValue == null || !actionReturnValue.getSucceeded() && actionReturnValue.getEndActionTryAgain()) {
-                    log.info("CommandAsyncTask::HandleEndActionResult [within thread]: endAction for action type"
-                                    + " '{}' hasn't succeeded, not clearing tasks, will attempt again next polling.",
+            if (actionReturnValue == null || !actionReturnValue.getSucceeded() && actionReturnValue.getEndActionTryAgain()) {
+                log.info("CommandAsyncTask::HandleEndActionResult [within thread]: endAction for action type"
+                            + " '{}' hasn't succeeded, not clearing tasks, will attempt again next polling.",
                         actionType);
 
-                    commandInfo.repoll();
-                } else {
-                    log.info("CommandAsyncTask::HandleEndActionResult [within thread]: endAction for action type"
-                                    + " '{}' {}succeeded, clearing tasks.",
+                commandInfo.repoll();
+            } else {
+                log.info("CommandAsyncTask::HandleEndActionResult [within thread]: endAction for action type"
+                            + " '{}' {}succeeded, clearing tasks.",
                         actionType,
-                        actionReturnValue.getSucceeded() ? "" : "hasn't ");
+                    actionReturnValue.getSucceeded() ? "" : "hasn't ");
 
-                    commandInfo.clearTasks();
+                commandInfo.clearTasks();
 
-                    synchronized (_lockObject) {
-                        if (commandInfo.getAllCleared()) {
-                            log.info("CommandAsyncTask::HandleEndActionResult [within thread]: Removing"
-                                            + " CommandMultiAsyncTasks object for entity '{}'",
+                synchronized (_lockObject) {
+                    if (commandInfo.getAllCleared()) {
+                        log.info("CommandAsyncTask::HandleEndActionResult [within thread]: Removing"
+                                    + " CommandMultiAsyncTasks object for entity '{}'",
                                     commandInfo.getCommandId());
-                            _multiTasksByCommandIds.remove(commandInfo.getCommandId());
-                        }
+                        _multiTasksByCommandIds.remove(commandInfo.getCommandId());
                     }
                 }
+            }
         } catch (RuntimeException ex) {
             log.error("CommandAsyncTask::HandleEndActionResult [within thread]: an exception has been thrown", ex);
         }

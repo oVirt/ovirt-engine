@@ -28,22 +28,22 @@ public abstract class AbstractHandler<C extends Context> implements Handler<C> {
         }
         HandlerOutcome outcome = tryHandle(ctx);
         switch (outcome) {
-        case SUCCESS:
-            processCase(onSuccess, ctx, SUCCESS);
-            break;
-        case NEUTRAL:
-            processCase(onNeutral, ctx, NEUTRAL);
-            break;
-        case FAILURE:
-            processCase(onFailure, ctx, FAILURE);
-            break;
-        case EXCEPTION:
-            logger.error("Exception in handler {}", getClass().getCanonicalName(), ctx.getException());
-            processCase(onException, ctx, EXCEPTION);
-            break;
-        default:
-            logger.error("On flow {} handler {} terminated the flow with {}", ctx.getId(), getName(), outcome);
-            break;
+            case SUCCESS:
+                processCase(onSuccess, ctx, SUCCESS);
+                break;
+            case NEUTRAL:
+                processCase(onNeutral, ctx, NEUTRAL);
+                break;
+            case FAILURE:
+                processCase(onFailure, ctx, FAILURE);
+                break;
+            case EXCEPTION:
+                logger.error("Exception in handler {}", getClass().getCanonicalName(), ctx.getException());
+                processCase(onException, ctx, EXCEPTION);
+                break;
+            default:
+                logger.error("On flow {} handler {} terminated the flow with {}", ctx.getId(), getName(), outcome);
+                break;
         }
     }
 

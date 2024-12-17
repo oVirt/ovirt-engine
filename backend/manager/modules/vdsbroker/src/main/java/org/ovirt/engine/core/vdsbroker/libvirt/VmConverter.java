@@ -104,40 +104,40 @@ public class VmConverter {
 
     private Map<String, Object> parseInterface(XmlNode dev) {
         switch (DomainXmlUtils.parseAttribute(dev, "type")) {
-        case "bridge":
-            Map<String, Object> device = new HashMap<>();
-            device.put(VdsProperties.Device, DomainXmlUtils.parseAttribute(dev, "type"));
-            device.put(VdsProperties.Type, VmDeviceGeneralType.INTERFACE.getValue());
-            device.put(VdsProperties.DeviceId, Guid.newGuid().toString());
-            device.put(VdsProperties.Alias, VmDevicesConverter.parseAlias(dev));
-            device.put(VdsProperties.Name, VmDevicesConverter.parseAlias(dev));
-            device.put(VdsProperties.MAC_ADDR, DomainXmlUtils.parseMacAddress(dev));
-            device.put(VdsProperties.NETWORK, DomainXmlUtils.parseNicNetwork(dev));
-            device.put(VdsProperties.NIC_TYPE, DomainXmlUtils.parseNicType(dev));
-            return device;
-        default:
-            return null;
+            case "bridge":
+                Map<String, Object> device = new HashMap<>();
+                device.put(VdsProperties.Device, DomainXmlUtils.parseAttribute(dev, "type"));
+                device.put(VdsProperties.Type, VmDeviceGeneralType.INTERFACE.getValue());
+                device.put(VdsProperties.DeviceId, Guid.newGuid().toString());
+                device.put(VdsProperties.Alias, VmDevicesConverter.parseAlias(dev));
+                device.put(VdsProperties.Name, VmDevicesConverter.parseAlias(dev));
+                device.put(VdsProperties.MAC_ADDR, DomainXmlUtils.parseMacAddress(dev));
+                device.put(VdsProperties.NETWORK, DomainXmlUtils.parseNicNetwork(dev));
+                device.put(VdsProperties.NIC_TYPE, DomainXmlUtils.parseNicType(dev));
+                return device;
+            default:
+                return null;
         }
     }
 
     private Map<String, Object> parseDisk(XmlNode dev) {
         switch (DomainXmlUtils.parseAttribute(dev, "device")) {
-        case "disk":
-            Map<String, String> uuids = parseDiskUuids(DomainXmlUtils.parseDiskPath(dev));
-            if (uuids == null) {
-                return null;
-            }
+            case "disk":
+                Map<String, String> uuids = parseDiskUuids(DomainXmlUtils.parseDiskPath(dev));
+                if (uuids == null) {
+                    return null;
+                }
 
-            Map<String, Object> device = new HashMap<>();
-            device.put(VdsProperties.Device, VdsProperties.Disk);
-            device.put(VdsProperties.Alias, VmDevicesConverter.parseAlias(dev));
-            device.put(VdsProperties.Format,
-                    "raw".equals(DomainXmlUtils.parseDiskDriver(dev)) ? "raw" : "cow");
-            device.put(VdsProperties.INTERFACE, DomainXmlUtils.parseDiskBus(dev));
-            device.putAll(uuids);
-            return device;
-        default:
-            return null;
+                Map<String, Object> device = new HashMap<>();
+                device.put(VdsProperties.Device, VdsProperties.Disk);
+                device.put(VdsProperties.Alias, VmDevicesConverter.parseAlias(dev));
+                device.put(VdsProperties.Format,
+                        "raw".equals(DomainXmlUtils.parseDiskDriver(dev)) ? "raw" : "cow");
+                device.put(VdsProperties.INTERFACE, DomainXmlUtils.parseDiskBus(dev));
+                device.putAll(uuids);
+                return device;
+            default:
+                return null;
         }
     }
 

@@ -177,7 +177,7 @@ public class BackendClusterResource<P extends BackendClustersResource>
 
     @Override
     public ClusterEnabledFeaturesResource getEnabledFeaturesResource() {
-       return inject(new BackendClusterEnabledFeaturesResource(guid));
+        return inject(new BackendClusterEnabledFeaturesResource(guid));
     }
 
     @Override

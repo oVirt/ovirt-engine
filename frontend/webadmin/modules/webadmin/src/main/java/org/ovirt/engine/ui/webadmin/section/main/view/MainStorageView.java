@@ -59,22 +59,22 @@ public class MainStorageView extends AbstractMainWithDetailsTableView<StorageDom
         getTable().addColumn(additionalStatusColumn, constants.empty(), "60px"); //$NON-NLS-1$
 
         AbstractTextColumn<StorageDomain> nameColumn = new AbstractLinkColumn<StorageDomain>(
-                new FieldUpdater<StorageDomain, String>() {
+            new FieldUpdater<StorageDomain, String>() {
 
-            @Override
-            public void update(int index, StorageDomain storageDomain, String value) {
-                Map<String, String> parameters = new HashMap<>();
-                parameters.put(FragmentParams.NAME.getName(), storageDomain.getName());
-                //The link was clicked, now fire an event to switch to details.
-                getPlaceTransitionHandler().handlePlaceTransition(
-                        WebAdminApplicationPlaces.storageGeneralSubTabPlace, parameters);
-            }
+                @Override
+                public void update(int index, StorageDomain storageDomain, String value) {
+                    Map<String, String> parameters = new HashMap<>();
+                    parameters.put(FragmentParams.NAME.getName(), storageDomain.getName());
+                    //The link was clicked, now fire an event to switch to details.
+                    getPlaceTransitionHandler().handlePlaceTransition(
+                            WebAdminApplicationPlaces.storageGeneralSubTabPlace, parameters);
+                }
 
-        }) {
-            @Override
-            public String getValue(StorageDomain object) {
-                return object.getName();
-            }
+            }) {
+                @Override
+                public String getValue(StorageDomain object) {
+                    return object.getName();
+                }
         };
         nameColumn.makeSortable(StorageDomainFieldAutoCompleter.NAME);
         getTable().addColumn(nameColumn, constants.domainNameStorage(), "150px"); //$NON-NLS-1$

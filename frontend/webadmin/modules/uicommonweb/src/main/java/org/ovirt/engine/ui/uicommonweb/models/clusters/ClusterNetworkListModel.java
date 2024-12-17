@@ -113,9 +113,9 @@ public class ClusterNetworkListModel extends SearchableListModel<Cluster, Networ
         Frontend.getInstance().runQuery(QueryType.GetAllNetworksByClusterId, tempVar, new AsyncQuery<>((AsyncCallback<QueryReturnValue>) returnValue -> {
             final List<Network> newItems = returnValue.getReturnValue();
             Collections.sort(newItems,
-                    Comparator.comparing((Network n) -> n.getCluster().isManagement()).reversed()
-                        .thenComparing(Network::getName, new LexoNumericComparator())
-                    );
+                Comparator.comparing((Network n) -> n.getCluster().isManagement()).reversed()
+                    .thenComparing(Network::getName, new LexoNumericComparator())
+            );
             for (Network network : newItems) {
                 network.getCluster().setId(new NetworkClusterId(clusterId, network.getId()));
             }

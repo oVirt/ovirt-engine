@@ -65,8 +65,8 @@ public class ManagedBlockStorageView extends AbstractStorageView<ManagedBlockSto
         Collection<KeyValueLineModel> keyValueLineModelCollection = driverOptionsEditor.getModel().getItems();
         KeyValueLineModel keyValueLineModel = keyValueLineModelCollection.iterator().next();
         if (keyValueLineModelCollection.size() == 1 && keyValueLineModel != null
-                && keyValueLineModel.getEditableKey().getEntity().equals("")) {
-             keyValueLineModel.getEditableKey().setEntity(VOLUME_DRIVER);
+            && keyValueLineModel.getEditableKey().getEntity().equals("")) {
+            keyValueLineModel.getEditableKey().setEntity(VOLUME_DRIVER);
         }
     }
 

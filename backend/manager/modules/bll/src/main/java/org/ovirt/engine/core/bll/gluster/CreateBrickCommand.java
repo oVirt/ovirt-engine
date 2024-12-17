@@ -189,7 +189,7 @@ public class CreateBrickCommand extends VdsCommand<CreateBrickParameters> {
                 .playAction("Create Brick")
                 .playbook(AnsibleConstants.CREATE_BRICK_PLAYBOOK);
 
-         AnsibleReturnValue ansibleReturnValue = ansibleExecutor.runCommand(commandConfig);
+        AnsibleReturnValue ansibleReturnValue = ansibleExecutor.runCommand(commandConfig);
         if (ansibleReturnValue.getAnsibleReturnCode() != AnsibleReturnCode.OK) {
             log.error("Failed to execute Ansible create brick role. Please check logs for more details: {}",
                     ansibleReturnValue.getLogFile());

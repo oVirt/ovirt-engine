@@ -35,12 +35,12 @@ public class AddCinderDiskCommandCallback extends ConcurrentChildCommandsExecuti
         DiskImage disk = (CinderDisk) diskDao.get(diskId);
         if (imageStatus != null && imageStatus != disk.getImageStatus()) {
             switch (imageStatus) {
-            case OK:
-                setCommandEndStatus(command, false, status, childCmdIds);
-                break;
-            case ILLEGAL:
-                setCommandEndStatus(command, true, status, childCmdIds);
-                break;
+                case OK:
+                    setCommandEndStatus(command, false, status, childCmdIds);
+                    break;
+                case ILLEGAL:
+                    setCommandEndStatus(command, true, status, childCmdIds);
+                    break;
             }
         }
     }

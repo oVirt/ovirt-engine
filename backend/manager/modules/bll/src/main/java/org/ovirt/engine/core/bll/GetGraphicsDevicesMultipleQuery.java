@@ -28,7 +28,7 @@ public class GetGraphicsDevicesMultipleQuery<P extends IdsQueryParameters> exten
     protected void executeQueryCommand() {
         Map<Guid, List<GraphicsDevice>> result = new HashMap<>();
 
-        mapDevices(result, VmDeviceType.SPICE, getParameters().getIds() );
+        mapDevices(result, VmDeviceType.SPICE, getParameters().getIds());
         mapDevices(result, VmDeviceType.VNC, getParameters().getIds());
 
         setReturnValue(result);

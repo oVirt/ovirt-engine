@@ -132,8 +132,8 @@ public class DbEntityCleanupManager implements BackendService {
                     auditLogable.addCustomValue("VmName", vmDao.get(vmBackup.getVmId()).getName());
                     auditLogDirector.log(auditLogable, AuditLogType.VM_BACKUP_FAILED_UNMONITORED);
 
-                   vmBackup.setPhase(VmBackupPhase.FAILED);
-                   vmBackupDao.update(vmBackup);
+                    vmBackup.setPhase(VmBackupPhase.FAILED);
+                    vmBackupDao.update(vmBackup);
                 });
     }
 }

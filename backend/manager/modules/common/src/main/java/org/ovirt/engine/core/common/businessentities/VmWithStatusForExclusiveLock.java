@@ -9,8 +9,8 @@ package org.ovirt.engine.core.common.businessentities;
  */
 public class VmWithStatusForExclusiveLock extends VM {
     public VmWithStatusForExclusiveLock() {
-            super();
-        }
+        super();
+    }
 
     public VmWithStatusForExclusiveLock(VM vm) {
         super(vm.getStaticData(), vm.getDynamicData(), vm.getStatisticsData());

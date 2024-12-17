@@ -196,15 +196,15 @@ public class AnsibleExecutor {
 
     private AuditLogable createAuditLogable(AnsibleCommandConfig command, String taskName) {
         if (command.host() == null) {
-                return AuditLogableImpl.createEvent(
-                        command.correlationId(),
-                        Map.of("Message", taskName, "PlayAction", command.playAction())
-                    );
-        }
-        return AuditLogableImpl.createHostEvent(
-                command.host(),
+            return AuditLogableImpl.createEvent(
                 command.correlationId(),
                 Map.of("Message", taskName, "PlayAction", command.playAction())
+            );
+        }
+        return AuditLogableImpl.createHostEvent(
+            command.host(),
+            command.correlationId(),
+            Map.of("Message", taskName, "PlayAction", command.playAction())
         );
     }
 }

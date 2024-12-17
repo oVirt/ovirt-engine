@@ -53,4 +53,4 @@ public class AddInternalJobCommand<T extends AddInternalJobParameters> extends A
         return permissionList;
     }
 
-  }
+}

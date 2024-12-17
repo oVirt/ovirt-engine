@@ -54,25 +54,25 @@ public class BackendStorageServerConnectionsResource
 
         Guid hostId = Guid.Empty;
         if (storageConn.getHost() != null) {
-           hostId = getHostId(storageConn.getHost());
+            hostId = getHostId(storageConn.getHost());
         }
         switch (storageConnection.getStorageType()) {
-        case ISCSI:
-            validateParameters(storageConn, "address", "target", "port");
-            break;
-        case NFS:
-            validateParameters(storageConn, "address", "path");
-            break;
-        case LOCALFS:
-            validateParameters(storageConn, "path");
-            break;
-        case POSIXFS:
-        case GLUSTERFS:
-            // address is possible, but is optional, non mandatory
-            validateParameters(storageConn, "path", "vfsType");
-            break;
-        default:
-            break;
+            case ISCSI:
+                validateParameters(storageConn, "address", "target", "port");
+                break;
+            case NFS:
+                validateParameters(storageConn, "address", "path");
+                break;
+            case LOCALFS:
+                validateParameters(storageConn, "path");
+                break;
+            case POSIXFS:
+            case GLUSTERFS:
+                // address is possible, but is optional, non mandatory
+                validateParameters(storageConn, "path", "vfsType");
+                break;
+            default:
+                break;
         }
         return performCreate(ActionType.AddStorageServerConnection,
                 getAddParams(storageConnection, hostId),

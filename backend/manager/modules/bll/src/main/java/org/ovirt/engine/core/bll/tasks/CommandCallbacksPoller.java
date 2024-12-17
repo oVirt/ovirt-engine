@@ -262,7 +262,7 @@ public class CommandCallbacksPoller implements BackendService {
                     cmdEntity.getCommandStatus() != CommandStatus.FAILED &&
                     cmdEntity.getCommandStatus() != CommandStatus.EXECUTION_FAILED &&
                     cmdEntity.getCommandStatus() != CommandStatus.ENDED_WITH_FAILURE
-                    ) {
+            ) {
                 commandsRepository.updateCommandStatus(cmdEntity.getId(), CommandStatus.EXECUTION_FAILED);
             }
 

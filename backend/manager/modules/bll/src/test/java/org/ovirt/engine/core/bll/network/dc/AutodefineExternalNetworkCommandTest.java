@@ -135,8 +135,7 @@ public class AutodefineExternalNetworkCommandTest extends BaseCommandTest {
     public void testCommandExternalNetwork() {
         setUpPhysicalNetwork(HAS_SHORT_NAME, IS_VM_NETWORK);
         physicalNetwork.setProvidedBy(new ProviderNetwork());
-        ValidateTestUtils.runAndAssertValidateFailure
-                (command, EngineMessage.ACTION_TYPE_FAILED_NOT_SUPPORTED_FOR_EXTERNAL_NETWORK);
+        ValidateTestUtils.runAndAssertValidateFailure(command, EngineMessage.ACTION_TYPE_FAILED_NOT_SUPPORTED_FOR_EXTERNAL_NETWORK);
     }
 
     @Test

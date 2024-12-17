@@ -31,17 +31,17 @@ public class BrickStatusCell extends AbstractCell<GlusterBrickEntity> {
         ImageResource statusImage = null;
 
         switch (status) {
-        case DOWN:
-            statusImage = resources.downImage();
-            break;
-        case UP:
-            statusImage = resources.upImage();
-            break;
-        case UNKNOWN:
-            statusImage = resources.questionMarkImage();
-            break;
-        default:
-            statusImage = resources.downImage();
+            case DOWN:
+                statusImage = resources.downImage();
+                break;
+            case UP:
+                statusImage = resources.upImage();
+                break;
+            case UNKNOWN:
+                statusImage = resources.questionMarkImage();
+                break;
+            default:
+                statusImage = resources.downImage();
         }
 
         // Generate the HTML for the image:

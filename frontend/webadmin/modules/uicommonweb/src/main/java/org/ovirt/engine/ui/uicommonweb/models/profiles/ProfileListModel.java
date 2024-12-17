@@ -135,17 +135,17 @@ public abstract class ProfileListModel<P extends ProfileBase, Q extends QosBase,
         if (dcId == null) { // not attached to data center
             fetchProfiles();
         } else {
-        Frontend.getInstance().runQuery(QueryType.GetAllQosByStoragePoolIdAndType,
+            Frontend.getInstance().runQuery(QueryType.GetAllQosByStoragePoolIdAndType,
                 new QosQueryParameterBase(dcId, getQosType()),
                 new AsyncQuery<QueryReturnValue>(returnValue -> {
-                        List<Q> qosList = returnValue.getReturnValue();
-                        qosMap = new HashMap<>();
+                    List<Q> qosList = returnValue.getReturnValue();
+                    qosMap = new HashMap<>();
                     if (qosList != null) {
-                            for (Q qos : qosList) {
-                                qosMap.put(qos.getId(), qos);
+                        for (Q qos : qosList) {
+                            qosMap.put(qos.getId(), qos);
                         }
                     }
-                        fetchProfiles();
+                    fetchProfiles();
                 }));
         }
     }

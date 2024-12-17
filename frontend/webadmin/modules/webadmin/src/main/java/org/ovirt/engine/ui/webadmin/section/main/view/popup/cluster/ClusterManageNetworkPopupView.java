@@ -189,7 +189,7 @@ public class ClusterManageNetworkPopupView extends AbstractModelBoundPopupView<C
         private final ApplicationConstants constants = AssetProvider.getConstants();
 
         private VmNetworkImageSafeHtmlWithSafeHtmlTooltipColumn() {
-            }
+        }
 
         @Override
         public SafeHtml getValue(ClusterNetworkModel clusterNetworkModel) {

@@ -874,7 +874,7 @@ public class UpdateDiskCommand<T extends UpdateDiskParameters> extends AbstractD
             boolean differentNewQuota = !emptyOldQuota && !oldDiskImage.getQuotaId().equals(newDiskImage.getQuotaId());
             long diskExtendingDiff = newDiskImage.getSizeInGigabytes() - oldDiskImage.getSizeInGigabytes();
 
-            if (emptyOldQuota || differentNewQuota ) {
+            if (emptyOldQuota || differentNewQuota) {
                 list.add(generateQuotaConsumeParameters(newDiskImage, newDiskImage.getSizeInGigabytes()));
             } else if (diskExtendingDiff > 0L) {
                 list.add(generateQuotaConsumeParameters(newDiskImage, diskExtendingDiff));
@@ -902,17 +902,17 @@ public class UpdateDiskCommand<T extends UpdateDiskParameters> extends AbstractD
                QuotaStorageConsumptionParameter.QuotaAction.CONSUME,
                //TODO: Shared Disk?
                newDiskImage.getStorageIds().get(0),
-               (double) sizeInGigabytes );
+               (double) sizeInGigabytes);
     }
 
     private boolean resizeDiskImageRequested() {
         boolean sizeChanged = getNewDisk().getSize() != getOldDisk().getSize();
         switch (getNewDisk().getDiskStorageType()) {
-        case IMAGE:
-            return sizeChanged && (getVmDeviceForVm() == null || getVmDeviceForVm().getSnapshotId() == null);
-        case MANAGED_BLOCK_STORAGE:
-        case CINDER:
-            return sizeChanged;
+            case IMAGE:
+                return sizeChanged && (getVmDeviceForVm() == null || getVmDeviceForVm().getSnapshotId() == null);
+            case MANAGED_BLOCK_STORAGE:
+            case CINDER:
+                return sizeChanged;
         }
         return false;
     }

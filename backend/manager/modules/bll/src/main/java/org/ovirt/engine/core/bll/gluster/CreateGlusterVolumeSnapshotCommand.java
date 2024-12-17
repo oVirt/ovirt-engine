@@ -121,9 +121,9 @@ public class CreateGlusterVolumeSnapshotCommand extends GlusterSnapshotCommandBa
                                         force));
                 if (!snapCreationRetVal.getSucceeded()) {
                     handleVdsError(AuditLogType.GLUSTER_VOLUME_SNAPSHOT_CREATE_FAILED,
-                            snapCreationRetVal.getVdsError().getMessage());
-                            setSucceeded(false);
-                            return false;
+                        snapCreationRetVal.getVdsError().getMessage());
+                    setSucceeded(false);
+                    return false;
                 } else {
                     // Persist the snapshot details
                     GlusterVolumeSnapshotEntity slaveVolumeSnapshot =

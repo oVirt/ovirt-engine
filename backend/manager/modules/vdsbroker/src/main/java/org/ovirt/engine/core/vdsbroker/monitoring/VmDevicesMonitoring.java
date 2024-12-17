@@ -166,16 +166,16 @@ public class VmDevicesMonitoring {
         public void updateVm(Guid vmId, String vdsmHash) {
             DevicesChange devicesChange = isVmDevicesChanged(vmId, vdsmHash, fetchTime);
             switch (devicesChange) {
-            case CHANGED:
-                if (!tryLockVmDevices(vmId)) {
-                    break;
-                }
-                lockTouchedVm(vmId);
-                addVmToProcess(vmId);
-                // fallthrough
-            case HASH_ONLY:
-                addVmToSaveHash(vmId);
-            default:
+                case CHANGED:
+                    if (!tryLockVmDevices(vmId)) {
+                        break;
+                    }
+                    lockTouchedVm(vmId);
+                    addVmToProcess(vmId);
+                    // fallthrough
+                case HASH_ONLY:
+                    addVmToSaveHash(vmId);
+                default:
             }
         }
 
@@ -710,7 +710,7 @@ public class VmDevicesMonitoring {
 
         if (!change.getVmsToSaveHash().isEmpty()) {
             TransactionSupport.executeInScope(TransactionScopeOption.Required, () -> {
-                        getVmDynamicDao().updateDevicesHashes(change.getVmsToSaveHash().stream()
+                getVmDynamicDao().updateDevicesHashes(change.getVmsToSaveHash().stream()
                                 .map(vmId -> new Pair<>(vmId, vmDevicesStatuses.get(vmId).getHash()))
                                 .collect(Collectors.toList()));
                 return null;

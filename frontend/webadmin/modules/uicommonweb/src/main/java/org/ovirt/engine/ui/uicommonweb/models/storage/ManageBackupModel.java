@@ -138,12 +138,12 @@ public abstract class ManageBackupModel<T extends BusinessEntity<?>> extends Sea
         }
 
         switch (command.getName()) {
-        case CANCEL_COMMAND:
-            cancel();
-            break;
-        case CANCEL_CONFIRMATION_COMMAND:
-            cancelConfirm();
-            break;
+            case CANCEL_COMMAND:
+                cancel();
+                break;
+            case CANCEL_CONFIRMATION_COMMAND:
+                cancelConfirm();
+                break;
         }
     }
 

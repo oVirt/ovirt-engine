@@ -187,8 +187,8 @@ public class StorageDataCenterListModel extends SearchableListModel<StorageDomai
             for (StorageDomain domain : domains) {
                 domain.setId(domain.getStoragePoolId());
             }
-            Collections.sort
-                    (domains, Comparator.comparing(StorageDomain::getStoragePoolName, new LexoNumericComparator()));
+            Collections.sort(domains,
+                 Comparator.comparing(StorageDomain::getStoragePoolName, new LexoNumericComparator()));
             setItems(domains);
             setIsEmpty(getItems().size() == 0);
         }));

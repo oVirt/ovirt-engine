@@ -225,34 +225,34 @@ public class BackendTemplatesResourceTest
         setUpGetRngDeviceExpectations(2, 2);
         setUpGetTpmExpectations(2);
 
-            setUpGetEntityExpectations(QueryType.GetVmByVmId,
-                                       IdQueryParameters.class,
-                                       new String[] { "Id" },
-                                       new Object[] { GUIDS[1] },
-                                       setUpVm(GUIDS[1]));
+        setUpGetEntityExpectations(QueryType.GetVmByVmId,
+                                    IdQueryParameters.class,
+                                    new String[] { "Id" },
+                                    new Object[] { GUIDS[1] },
+                                    setUpVm(GUIDS[1]));
         setUpGetEntityExpectations(2);
 
-            setUpCreationExpectations(ActionType.AddVmTemplate,
-                                      AddVmTemplateParameters.class,
-                                      new String[] { "Name", "Description" },
-                                      new Object[] { NAMES[2], DESCRIPTIONS[2] },
-                                      true,
-                                      true,
-                                      GUIDS[2],
-                                      asList(GUIDS[2]),
-                                      asList(new AsyncTaskStatus(AsyncTaskStatusEnum.finished)),
-                                      QueryType.GetVmTemplate,
-                                      GetVmTemplateParameters.class,
-                                      new String[] { "Id" },
-                                      new Object[] { GUIDS[2] },
-                                      getEntity(2));
+        setUpCreationExpectations(ActionType.AddVmTemplate,
+                                AddVmTemplateParameters.class,
+                                new String[] { "Name", "Description" },
+                                new Object[] { NAMES[2], DESCRIPTIONS[2] },
+                                true,
+                                true,
+                                GUIDS[2],
+                                asList(GUIDS[2]),
+                                asList(new AsyncTaskStatus(AsyncTaskStatusEnum.finished)),
+                                QueryType.GetVmTemplate,
+                                GetVmTemplateParameters.class,
+                                new String[] { "Id" },
+                                new Object[] { GUIDS[2] },
+                                getEntity(2));
 
-            Response response = collection.add(getModel(2));
-            assertEquals(201, response.getStatus());
-            assertTrue(response.getEntity() instanceof Template);
-            assertEquals(VERSION_NAME, ((Template) response.getEntity()).getVersion().getVersionName());
-            assertEquals(((Template) response.getEntity()).getVersion().getBaseTemplate().getId(), GUIDS[1].toString());
-            verifyModel((Template) response.getEntity(), 2);
+        Response response = collection.add(getModel(2));
+        assertEquals(201, response.getStatus());
+        assertTrue(response.getEntity() instanceof Template);
+        assertEquals(VERSION_NAME, ((Template) response.getEntity()).getVersion().getVersionName());
+        assertEquals(((Template) response.getEntity()).getVersion().getBaseTemplate().getId(), GUIDS[1].toString());
+        verifyModel((Template) response.getEntity(), 2);
     }
 
     @Test
@@ -591,10 +591,10 @@ public class BackendTemplatesResourceTest
         when(entity.getThreadsPerCpu()).thenReturn(1);
         when(entity.getCpuPerSocket()).thenReturn(4);
         if (index == 2) {
-           when(entity.getTemplateVersionName()).thenReturn(VERSION_NAME);
-           when(entity.getTemplateVersionNumber()).thenReturn(2);
-           when(entity.getBaseTemplateId()).thenReturn(GUIDS[1]);
-           when(entity.isBaseTemplate()).thenReturn(false);
+            when(entity.getTemplateVersionName()).thenReturn(VERSION_NAME);
+            when(entity.getTemplateVersionNumber()).thenReturn(2);
+            when(entity.getBaseTemplateId()).thenReturn(GUIDS[1]);
+            when(entity.isBaseTemplate()).thenReturn(false);
         } else {
             when(entity.getTemplateVersionNumber()).thenReturn(1);
             // same base template id as the template itself
@@ -642,9 +642,9 @@ public class BackendTemplatesResourceTest
 
         for (Template template : collection) {
             if (template.getId().equals(GUIDS[2].toString())) {
-                 assertEquals(VERSION_NAME, template.getVersion().getVersionName());
-                 assertEquals(new Integer(2), template.getVersion().getVersionNumber());
-                 assertEquals(template.getVersion().getBaseTemplate().getId(), GUIDS[1].toString());
+                assertEquals(VERSION_NAME, template.getVersion().getVersionName());
+                assertEquals(new Integer(2), template.getVersion().getVersionNumber());
+                assertEquals(template.getVersion().getBaseTemplate().getId(), GUIDS[1].toString());
             } else {
                 assertFalse(template.getVersion().isSetVersionName());
                 assertEquals(new Integer(1), template.getVersion().getVersionNumber());

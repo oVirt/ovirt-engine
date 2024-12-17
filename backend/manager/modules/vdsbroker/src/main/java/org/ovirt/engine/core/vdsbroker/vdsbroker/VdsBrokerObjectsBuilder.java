@@ -210,19 +210,19 @@ public class VdsBrokerObjectsBuilder {
                     DiskVmElement dve = new DiskVmElement(image.getId(), vmId);
                     image.setDiskVmElements(Collections.singletonList(dve));
                     switch ((String) deviceMap.get("iface")) {
-                    case "virtio":
-                        dve.setDiskInterface(DiskInterface.VirtIO);
-                        break;
-                    case "iscsi":
-                    case "scsi":
-                        dve.setDiskInterface(DiskInterface.VirtIO_SCSI);
-                        break;
-                    case "ide":
-                        dve.setDiskInterface(DiskInterface.IDE);
-                        break;
-                    case "sata":
-                        dve.setDiskInterface(DiskInterface.SATA);
-                        break;
+                        case "virtio":
+                            dve.setDiskInterface(DiskInterface.VirtIO);
+                            break;
+                        case "iscsi":
+                        case "scsi":
+                            dve.setDiskInterface(DiskInterface.VirtIO_SCSI);
+                            break;
+                        case "ide":
+                            dve.setDiskInterface(DiskInterface.IDE);
+                            break;
+                        case "sata":
+                            dve.setDiskInterface(DiskInterface.SATA);
+                            break;
                     }
                     diskImages.add(image);
                 }
@@ -398,15 +398,15 @@ public class VdsBrokerObjectsBuilder {
         String diskDevName = (String) map.get(VdsProperties.DISK_TARGET_DEV_NAME);
         diskDevName = (diskDevName == null || diskDevName.length() < 3) ? "" : diskDevName.substring(0, 2);
         switch (diskDevName) {
-        case "sd":
-            dve.setDiskInterface(DiskInterface.VirtIO_SCSI);
-            break;
-        case "hd":
-            dve.setDiskInterface(DiskInterface.IDE);
-            break;
-        case "vd":
-        default:
-            dve.setDiskInterface(DiskInterface.VirtIO);
+            case "sd":
+                dve.setDiskInterface(DiskInterface.VirtIO_SCSI);
+                break;
+            case "hd":
+                dve.setDiskInterface(DiskInterface.IDE);
+                break;
+            case "vd":
+            default:
+                dve.setDiskInterface(DiskInterface.VirtIO);
         }
         return dve;
     }
@@ -926,18 +926,18 @@ public class VdsBrokerObjectsBuilder {
         }
 
         switch (jobType) {
-        case BLOCK:
-            VmBlockJob blockJob = new VmBlockJob();
-            blockJob.setBlockJobType(VmBlockJobType.getByName(assignStringValue(struct, VdsProperties.vmBlockJobType)));
-            blockJob.setCursorCur(assignLongValue(struct, VdsProperties.vmJobCursorCur));
-            blockJob.setCursorEnd(assignLongValue(struct, VdsProperties.vmJobCursorEnd));
-            blockJob.setBandwidth(assignLongValue(struct, VdsProperties.vmJobBandwidth));
-            blockJob.setImageGroupId(new Guid(assignStringValue(struct, VdsProperties.vmJobImageUUID)));
-            ret = blockJob;
-            break;
-        default:
-            ret = new VmJob();
-            break;
+            case BLOCK:
+                VmBlockJob blockJob = new VmBlockJob();
+                blockJob.setBlockJobType(VmBlockJobType.getByName(assignStringValue(struct, VdsProperties.vmBlockJobType)));
+                blockJob.setCursorCur(assignLongValue(struct, VdsProperties.vmJobCursorCur));
+                blockJob.setCursorEnd(assignLongValue(struct, VdsProperties.vmJobCursorEnd));
+                blockJob.setBandwidth(assignLongValue(struct, VdsProperties.vmJobBandwidth));
+                blockJob.setImageGroupId(new Guid(assignStringValue(struct, VdsProperties.vmJobImageUUID)));
+                ret = blockJob;
+                break;
+            default:
+                ret = new VmJob();
+                break;
         }
 
         ret.setVmId(vmId);
@@ -1894,20 +1894,20 @@ public class VdsBrokerObjectsBuilder {
 
     public VMStatus convertToVmStatus(String status) {
         switch (status) {
-        case VdsProperties.MIGRATION_SOURCE:
-            return VMStatus.MigratingFrom;
+            case VdsProperties.MIGRATION_SOURCE:
+                return VMStatus.MigratingFrom;
 
-        case VdsProperties.MIGRATION_DESTINATION:
-            return VMStatus.MigratingTo;
+            case VdsProperties.MIGRATION_DESTINATION:
+                return VMStatus.MigratingTo;
 
-        default:
-            status = status.replace(" ", "");
-            try {
-                return EnumUtils.valueOf(VMStatus.class, status, true);
-            } catch (Exception e) {
-                log.error("Illegal VM status: '{}'.", status);
-                return VMStatus.Unassigned;
-            }
+            default:
+                status = status.replace(" ", "");
+                try {
+                    return EnumUtils.valueOf(VMStatus.class, status, true);
+                } catch (Exception e) {
+                    log.error("Illegal VM status: '{}'.", status);
+                    return VMStatus.Unassigned;
+                }
         }
     }
 

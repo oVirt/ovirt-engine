@@ -32,8 +32,8 @@ public class ClientStorageImpl implements ClientStorage {
 
     static final String CLIENT_STORAGE_KEY_PREFIX = "ENGINE_WebAdmin_"; //$NON-NLS-1$
     private static final String[] REMOTE_SUPPORTED_PREFIXES = {
-            GRID_HIDDEN_COLUMN_WIDTH_PREFIX,
-            GRID_VISIBLE
+        GRID_HIDDEN_COLUMN_WIDTH_PREFIX,
+        GRID_VISIBLE
     };
 
     private static final String[] REMOTE_SUPPORTED_SUFFIXES = { GRID_SWAPPED_COLUMN_LIST_SUFFIX };
@@ -176,18 +176,18 @@ public class ClientStorageImpl implements ClientStorage {
             Frontend.getInstance()
                     .getUserProfileManager()
                     .uploadUserProfileProperty(
-                            nextSettings.encode(),
-                            property -> {
-                                lastUploadStartTime = 0L;
-                                logger.fine("Uploaded property: " + property); //$NON-NLS-1$
-                                },
-                            result -> {
-                                lastUploadStartTime = 0L;
-                                logger.warning("Failed to upload WebAdmin settings due to:" + result);  //$NON-NLS-1$
-                            },
-                            (remote, local) -> OVERWRITE_REMOTE,
-                            null,
-                            false);
+                        nextSettings.encode(),
+                        property -> {
+                            lastUploadStartTime = 0L;
+                            logger.fine("Uploaded property: " + property); //$NON-NLS-1$
+                        },
+                        result -> {
+                            lastUploadStartTime = 0L;
+                            logger.warning("Failed to upload WebAdmin settings due to:" + result);  //$NON-NLS-1$
+                        },
+                        (remote, local) -> OVERWRITE_REMOTE,
+                        null,
+                        false);
         }
 
         public void trigger() {

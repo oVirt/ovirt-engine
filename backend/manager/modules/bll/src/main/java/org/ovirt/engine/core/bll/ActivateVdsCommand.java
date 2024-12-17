@@ -79,43 +79,43 @@ public class ActivateVdsCommand<T extends VdsActionParameters> extends VdsComman
                     // Check gluster service running status
                     GlusterStatus isGlusterRunning = glusterUtil.isGlusterRunning(vds.getId());
                     switch (isGlusterRunning) {
-                    case DOWN:
-                        log.info("Gluster service on host '{}' is down, starting it",
-                                vds.getHostName());
-                        runVdsCommand(VDSCommandType.ManageGlusterService,
-                                new GlusterServiceVDSParameters(vds.getId(), Arrays.asList("glusterd"), "start"));
-                        break;
-                    case UP:
-                        log.debug("Gluster service on host '{}' is up, continuing",
-                                vds.getHostName());
-                           break;
-                    case UNKNOWN:
-                        log.warn("Gluster service on host '{}' has some issues, trying to restart it",
-                                vds.getHostName());
-                        runVdsCommand(VDSCommandType.ManageGlusterService,
-                                new GlusterServiceVDSParameters(vds.getId(), Arrays.asList("glusterd"), "restart"));
-                        break;
+                        case DOWN:
+                            log.info("Gluster service on host '{}' is down, starting it",
+                                    vds.getHostName());
+                            runVdsCommand(VDSCommandType.ManageGlusterService,
+                                    new GlusterServiceVDSParameters(vds.getId(), Arrays.asList("glusterd"), "start"));
+                            break;
+                        case UP:
+                            log.debug("Gluster service on host '{}' is up, continuing",
+                                    vds.getHostName());
+                            break;
+                        case UNKNOWN:
+                            log.warn("Gluster service on host '{}' has some issues, trying to restart it",
+                                    vds.getHostName());
+                            runVdsCommand(VDSCommandType.ManageGlusterService,
+                                    new GlusterServiceVDSParameters(vds.getId(), Arrays.asList("glusterd"), "restart"));
+                            break;
                     }
 
                     // starting vdo service
                     GlusterStatus isRunning = glusterUtil.isVDORunning(vds.getId());
                     switch (isRunning) {
-                    case DOWN:
-                        log.info("VDO service is down in host : '{}' with id '{}', starting VDO service",
-                                vds.getHostName(),
-                                vds.getId());
-                        startVDOService(vds);
-                        break;
-                    case UP:
-                        log.info("VDO service is up in host : '{}' with id '{}', skipping starting of VDO service",
-                                vds.getHostName(),
-                                vds.getId());
-                           break;
-                    case UNKNOWN:
-                        log.info("VDO service is not installed host : '{}' with id '{}', ignoring to start VDO service",
-                                vds.getHostName(),
-                                vds.getId());
-                        break;
+                        case DOWN:
+                            log.info("VDO service is down in host : '{}' with id '{}', starting VDO service",
+                                    vds.getHostName(),
+                                    vds.getId());
+                            startVDOService(vds);
+                            break;
+                        case UP:
+                            log.info("VDO service is up in host : '{}' with id '{}', skipping starting of VDO service",
+                                    vds.getHostName(),
+                                    vds.getId());
+                            break;
+                        case UNKNOWN:
+                            log.info("VDO service is not installed host : '{}' with id '{}', ignoring to start VDO service",
+                                    vds.getHostName(),
+                                    vds.getId());
+                            break;
                     }
 
                 }

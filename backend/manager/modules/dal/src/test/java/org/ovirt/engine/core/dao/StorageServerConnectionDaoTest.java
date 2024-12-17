@@ -319,16 +319,16 @@ public class StorageServerConnectionDaoTest
 
     @Test
     public void testGetAllConnectionsOfNfsDomain() {
-      List<StorageServerConnections> connections = dao.getAllForDomain(Guid.createGuidFromString("d9ede37f-e6c3-4bf9-a984-19174070aa31"));
-      assertEquals(1, connections.size());
-      assertEquals("0cc146e8-e5ed-482c-8814-270bc48c2981", connections.get(0).getId());
+        List<StorageServerConnections> connections = dao.getAllForDomain(Guid.createGuidFromString("d9ede37f-e6c3-4bf9-a984-19174070aa31"));
+        assertEquals(1, connections.size());
+        assertEquals("0cc146e8-e5ed-482c-8814-270bc48c2981", connections.get(0).getId());
     }
 
     @Test
     public void testGetAllConnectionsOfIscsiDomain() {
-      List<StorageServerConnections> connections = dao.getAllForDomain(FixturesTool.STORAGE_DOMAIN_SCALE_SD5);
-      assertEquals(2, connections.size());
-      assertTrue(connections.get(0).getId().equals("fDMzhE-wx3s-zo3q-Qcxd-T0li-yoYU-QvVePk") || connections.get(0).getId().equals("0cc146e8-e5ed-482c-8814-270bc48c297e"));
+        List<StorageServerConnections> connections = dao.getAllForDomain(FixturesTool.STORAGE_DOMAIN_SCALE_SD5);
+        assertEquals(2, connections.size());
+        assertTrue(connections.get(0).getId().equals("fDMzhE-wx3s-zo3q-Qcxd-T0li-yoYU-QvVePk") || connections.get(0).getId().equals("0cc146e8-e5ed-482c-8814-270bc48c297e"));
     }
 
     @Test

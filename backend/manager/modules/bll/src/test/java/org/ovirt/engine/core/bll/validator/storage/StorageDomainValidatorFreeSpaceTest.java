@@ -75,7 +75,7 @@ public class StorageDomainValidatorFreeSpaceTest {
     @ParameterizedTest
     @MethodSource("createParams")
     public void testValidateDiskWithSnapshots
-            (DiskImage disk, StorageDomain sd, boolean isValidForCloned, boolean isValidForNew, boolean isValidForSnapshots) {
+    (DiskImage disk, StorageDomain sd, boolean isValidForCloned, boolean isValidForNew, boolean isValidForSnapshots) {
 
         disk.getSnapshots().add(DiskImage.copyOf(disk));
 
@@ -88,7 +88,7 @@ public class StorageDomainValidatorFreeSpaceTest {
     @ParameterizedTest
     @MethodSource("createParams")
     public void testValidateClonedDisk
-            (DiskImage disk, StorageDomain sd, boolean isValidForCloned, boolean isValidForNew, boolean isValidForSnapshots) {
+    (DiskImage disk, StorageDomain sd, boolean isValidForCloned, boolean isValidForNew, boolean isValidForSnapshots) {
 
         disk.getSnapshots().add(DiskImage.copyOf(disk));
 
@@ -101,7 +101,7 @@ public class StorageDomainValidatorFreeSpaceTest {
     @ParameterizedTest
     @MethodSource("createParams")
     public void testValidateNewDisk
-            (DiskImage disk, StorageDomain sd, boolean isValidForCloned, boolean isValidForNew, boolean isValidForSnapshots) {
+    (DiskImage disk, StorageDomain sd, boolean isValidForCloned, boolean isValidForNew, boolean isValidForSnapshots) {
 
         disk.getSnapshots().add(DiskImage.copyOf(disk));
 

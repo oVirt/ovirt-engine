@@ -82,25 +82,25 @@ public class VmBackupMapper {
         // Creating and preparing scratch disks should be considered
         // as the backup is still in INITIALIZING phase, scratch disks
         // should be created before the backup can start.
-        case INITIALIZING:
-        case CREATING_SCRATCH_DISKS:
-        case ADDING_BITMAPS:
-        case WAITING_FOR_BITMAPS:
-            return BackupPhase.INITIALIZING;
-        case STARTING:
-            return BackupPhase.STARTING;
-        case READY:
-            return BackupPhase.READY;
-        case FINALIZING:
-        case FINALIZING_FAILURE:
-        case REMOVING_SNAPSHOT:
-            return BackupPhase.FINALIZING;
-        case SUCCEEDED:
-            return BackupPhase.SUCCEEDED;
-        case FAILED:
-            return BackupPhase.FAILED;
-        default:
-            return null;
+            case INITIALIZING:
+            case CREATING_SCRATCH_DISKS:
+            case ADDING_BITMAPS:
+            case WAITING_FOR_BITMAPS:
+                return BackupPhase.INITIALIZING;
+            case STARTING:
+                return BackupPhase.STARTING;
+            case READY:
+                return BackupPhase.READY;
+            case FINALIZING:
+            case FINALIZING_FAILURE:
+            case REMOVING_SNAPSHOT:
+                return BackupPhase.FINALIZING;
+            case SUCCEEDED:
+                return BackupPhase.SUCCEEDED;
+            case FAILED:
+                return BackupPhase.FAILED;
+            default:
+                return null;
         }
     }
 }

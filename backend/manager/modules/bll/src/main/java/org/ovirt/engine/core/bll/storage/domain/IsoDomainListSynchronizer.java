@@ -264,17 +264,17 @@ public class IsoDomainListSynchronizer implements BackendService {
 
     private boolean updateFileList(Guid storageDomainId, Guid storagePoolId, ImageFileType imageType) {
         switch (imageType) {
-        case All:
-            return updateAllFileListFromVDSM(storagePoolId, storageDomainId);
-        case ISO:
-            return updateIsoListFromVDSM(storagePoolId, storageDomainId);
-        case Floppy:
-            return updateFloppyListFromVDSM(storagePoolId, storageDomainId);
-        case Unknown:
-            return updateUnknownFileListFromVDSM(storagePoolId, storageDomainId);
-        default:
-            log.warn("Refreshing Iso domain using unsupported imageType: {}", imageType);
-            return false;
+            case All:
+                return updateAllFileListFromVDSM(storagePoolId, storageDomainId);
+            case ISO:
+                return updateIsoListFromVDSM(storagePoolId, storageDomainId);
+            case Floppy:
+                return updateFloppyListFromVDSM(storagePoolId, storageDomainId);
+            case Unknown:
+                return updateUnknownFileListFromVDSM(storagePoolId, storageDomainId);
+            default:
+                log.warn("Refreshing Iso domain using unsupported imageType: {}", imageType);
+                return false;
         }
     }
 

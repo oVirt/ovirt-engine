@@ -291,25 +291,23 @@ public class ConsolePopupView extends AbstractModelBoundPopupView<ConsolePopupMo
 
         useLocalDrives = new EntityModelValueCheckBoxEditor<>(Align.RIGHT, new ValueCheckboxRenderer<ConsoleModel>() {
 
-                            @Override
-                            public boolean render(ConsoleModel value) {
-                                if (value instanceof RdpConsoleModel) {
-                                    return ((RdpConsoleModel) value).getrdp().getUseLocalDrives();
-                                }
+            @Override
+            public boolean render(ConsoleModel value) {
+                if (value instanceof RdpConsoleModel) {
+                    return ((RdpConsoleModel) value).getrdp().getUseLocalDrives();
+                }
+                return false;
+            }
 
-                                return false;
-                            }
+            @Override
+            public ConsoleModel read(boolean value, ConsoleModel model) {
+                if (model instanceof RdpConsoleModel) {
+                    ((RdpConsoleModel) model).getrdp().setUseLocalDrives(value);
+                }
+                return model;
+            }
 
-                            @Override
-                            public ConsoleModel read(boolean value, ConsoleModel model) {
-                                if (model instanceof RdpConsoleModel) {
-                                    ((RdpConsoleModel) model).getrdp().setUseLocalDrives(value);
-                                }
-
-                                return model;
-                            }
-
-                        });
+        });
         useLocalDrives.setLabel(constants.useLocalDrives());
 
         remoteDesktopRadioButton = new EntityModelRadioButtonEditor("1"); //$NON-NLS-1$
@@ -695,21 +693,21 @@ public class ConsolePopupView extends AbstractModelBoundPopupView<ConsolePopupMo
     @Override
     public void selectRdpImplementation(RdpConsoleModel.ClientConsoleMode consoleMode) {
         switch (consoleMode) {
-        case Native:
-            rdpAutoImplRadioButton.asRadioButton().setValue(false);
-            rdpPluginImplRadioButton.asRadioButton().setValue(false);
-            rdpNativeImplRadioButton.asRadioButton().setValue(true);
-            break;
-        case Plugin:
-            rdpAutoImplRadioButton.asRadioButton().setValue(false);
-            rdpPluginImplRadioButton.asRadioButton().setValue(true);
-            rdpNativeImplRadioButton.asRadioButton().setValue(false);
-            break;
-        default:
-            rdpAutoImplRadioButton.asRadioButton().setValue(true);
-            rdpPluginImplRadioButton.asRadioButton().setValue(false);
-            rdpNativeImplRadioButton.asRadioButton().setValue(false);
-            break;
+            case Native:
+                rdpAutoImplRadioButton.asRadioButton().setValue(false);
+                rdpPluginImplRadioButton.asRadioButton().setValue(false);
+                rdpNativeImplRadioButton.asRadioButton().setValue(true);
+                break;
+            case Plugin:
+                rdpAutoImplRadioButton.asRadioButton().setValue(false);
+                rdpPluginImplRadioButton.asRadioButton().setValue(true);
+                rdpNativeImplRadioButton.asRadioButton().setValue(false);
+                break;
+            default:
+                rdpAutoImplRadioButton.asRadioButton().setValue(true);
+                rdpPluginImplRadioButton.asRadioButton().setValue(false);
+                rdpNativeImplRadioButton.asRadioButton().setValue(false);
+                break;
         }
     }
 

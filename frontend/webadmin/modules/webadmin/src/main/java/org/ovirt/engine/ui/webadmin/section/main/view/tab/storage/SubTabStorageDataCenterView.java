@@ -53,18 +53,18 @@ public class SubTabStorageDataCenterView extends AbstractSubTabTableView<Storage
         getTable().addColumn(statusColumn, constants.empty(), "30px"); //$NON-NLS-1$
 
         AbstractTextColumn<StorageDomain> nameColumn = new AbstractLinkColumn<StorageDomain>(
-                new FieldUpdater<StorageDomain, String>() {
-            @Override
-            public void update(int index, StorageDomain storageDomain, String value) {
-                Map<String, String> parameters = new HashMap<>();
-                parameters.put(FragmentParams.NAME.getName(), storageDomain.getStoragePoolName());
-                getPlaceTransitionHandler().handlePlaceTransition(
-                        WebAdminApplicationPlaces.dataCenterStorageSubTabPlace, parameters);
-            }
-        }) {
-            @Override
-            public String getValue(StorageDomain object) {
-                return object.getStoragePoolName();
+            new FieldUpdater<StorageDomain, String>() {
+                @Override
+                public void update(int index, StorageDomain storageDomain, String value) {
+                    Map<String, String> parameters = new HashMap<>();
+                    parameters.put(FragmentParams.NAME.getName(), storageDomain.getStoragePoolName());
+                    getPlaceTransitionHandler().handlePlaceTransition(
+                            WebAdminApplicationPlaces.dataCenterStorageSubTabPlace, parameters);
+                }
+            }) {
+                @Override
+                public String getValue(StorageDomain object) {
+                    return object.getStoragePoolName();
             }
         };
         nameColumn.makeSortable();

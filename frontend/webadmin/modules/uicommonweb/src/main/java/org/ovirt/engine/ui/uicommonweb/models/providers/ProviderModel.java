@@ -306,22 +306,22 @@ public class ProviderModel extends Model {
             return ""; //$NON-NLS-1$
         }
         switch (type) {
-        case EXTERNAL_NETWORK:
-        case OPENSTACK_NETWORK:
-            return "http://localhost:9696"; //$NON-NLS-1$
-        case OPENSTACK_IMAGE:
-            return "http://localhost:9292"; //$NON-NLS-1$
-        case VMWARE:
-            return ""; //$NON-NLS-1$
-        case KVM:
-            return ""; //$NON-NLS-1$
-        case XEN:
-            return ""; //$NON-NLS-1$
-        case KUBEVIRT:
-            return ""; //$NON-NLS-1$
-        case FOREMAN:
-        default:
-            return "http://localhost"; //$NON-NLS-1$
+            case EXTERNAL_NETWORK:
+            case OPENSTACK_NETWORK:
+                return "http://localhost:9696"; //$NON-NLS-1$
+            case OPENSTACK_IMAGE:
+                return "http://localhost:9292"; //$NON-NLS-1$
+            case VMWARE:
+                return ""; //$NON-NLS-1$
+            case KVM:
+                return ""; //$NON-NLS-1$
+            case XEN:
+                return ""; //$NON-NLS-1$
+            case KUBEVIRT:
+                return ""; //$NON-NLS-1$
+            case FOREMAN:
+            default:
+                return "http://localhost"; //$NON-NLS-1$
         }
     }
 
@@ -588,18 +588,18 @@ public class ProviderModel extends Model {
     private boolean validateConnectionSettings() {
         getUsername().validateEntity(new IValidation[] { new NotEmptyValidation() });
         getPassword().validateEntity(new IValidation[] {
-                new NotEmptyValidation(),
-                new LengthValidation(GENERAL_MAX_SIZE)
+            new NotEmptyValidation(),
+            new LengthValidation(GENERAL_MAX_SIZE)
         });
         if (isTypeOpenStack()) {
-            getTenantName().validateEntity(new IValidation[] { new NotEmptyValidation()} );
-            getUserDomainName().validateEntity(new IValidation[] { new NotEmptyValidation()} );
+            getTenantName().validateEntity(new IValidation[] { new NotEmptyValidation()});
+            getUserDomainName().validateEntity(new IValidation[] { new NotEmptyValidation()});
         }
 
-        getAuthHostname().validateEntity(new IValidation[] { new HostnameValidation()} );
+        getAuthHostname().validateEntity(new IValidation[] { new HostnameValidation()});
         getAuthPort().validateEntity(new IValidation[] {
-                new NotNullIntegerValidation(NETWORK_MIN_LEGAL_PORT, NETWORK_MAX_LEGAL_PORT)
-        } );
+            new NotNullIntegerValidation(NETWORK_MIN_LEGAL_PORT, NETWORK_MAX_LEGAL_PORT)
+        });
 
         return (getUrl().getEntity() == null || getUrl().getIsValid() || getUrl().getEntity().isEmpty()) &&
                 getUsername().getIsValid() &&
@@ -649,7 +649,7 @@ public class ProviderModel extends Model {
         if (authenticationRequired) {
             provider.setUsername(getUsername().getEntity());
             if (!getPassword().getEntity().equals("********")) { //$NON-NLS-1$
-            provider.setPassword(getPassword().getEntity());
+                provider.setPassword(getPassword().getEntity());
             }
             if (getTenantName().getIsAvailable()) {
                 OpenStackProviderProperties properties = getOpenStackProviderProperties();

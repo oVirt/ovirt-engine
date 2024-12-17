@@ -40,9 +40,9 @@ public class RemoveCinderSnapshotCommandCallback extends ConcurrentChildCommands
         DiskImage disk = diskImageDao.getSnapshotById(diskId);
         if (imageStatus != null && imageStatus != disk.getImageStatus()) {
             switch (imageStatus) {
-            case ILLEGAL:
-                setCommandEndStatus(command, true, status, childCmdIds);
-                break;
+                case ILLEGAL:
+                    setCommandEndStatus(command, true, status, childCmdIds);
+                    break;
             }
         }
     }

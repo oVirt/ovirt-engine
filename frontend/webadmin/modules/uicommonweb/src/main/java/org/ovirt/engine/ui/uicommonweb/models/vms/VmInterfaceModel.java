@@ -470,7 +470,7 @@ public abstract class VmInterfaceModel extends Model {
             return;
         }
         if (VmInterfaceType.pciPassthrough.equals(getNicType().getSelectedItem())
-        || getProfile().getSelectedItem().isPassthrough()) {
+            || getProfile().getSelectedItem().isPassthrough()) {
             getLinked().setEntity(true);
             getLinked().setIsChangeable(false);
             getLinked().setChangeProhibitionReason(ConstantsManager.getInstance()

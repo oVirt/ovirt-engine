@@ -160,7 +160,7 @@ public class GlusterTasksSyncJobTest {
         doReturn(getSteps(TASK_GUIDS[0])).when(stepDao).getStepsByExternalId(TASK_GUIDS[0]);
         doReturn(getSteps(TASK_GUIDS[1])).when(stepDao).getStepsByExternalId(TASK_GUIDS[1]);
         doReturn(getSteps(TASK_GUIDS[2])).when(stepDao).getStepsByExternalId(TASK_GUIDS[2]);
-   }
+    }
 
     private List<Step> getSteps(Guid taskGuid) {
         List<Step> steps = new ArrayList<>();

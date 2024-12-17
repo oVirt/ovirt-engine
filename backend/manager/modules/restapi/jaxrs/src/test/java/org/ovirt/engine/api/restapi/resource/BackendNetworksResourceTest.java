@@ -137,7 +137,7 @@ public class BackendNetworksResourceTest
         when(httpHeaders.getRequestHeader(USER_FILTER_HEADER)).thenReturn(filterValue);
         setUpEntityQueryExpectations(1);
         setUriInfo(setUpBasicUriExpectations());
-                List<Network> networks = getCollection();
+        List<Network> networks = getCollection();
         networks.sort(Comparator.comparing(Network::getId));
         verifyCollection(networks);
     }

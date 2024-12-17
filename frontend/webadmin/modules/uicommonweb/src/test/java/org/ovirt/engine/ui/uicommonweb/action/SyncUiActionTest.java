@@ -66,16 +66,16 @@ public class SyncUiActionTest extends UiActionBaseTest {
     @Test
     public void shouldExecuteTest() {
         UiAction action = new SyncUiAction(model, "test") { //$NON-NLS-1$
-                    @Override
-                    protected void onActionExecute() {
-                        fail("the action shouln't be executed"); //$NON-NLS-1$
-                    }
+            @Override
+            protected void onActionExecute() {
+                fail("the action shouln't be executed"); //$NON-NLS-1$
+            }
 
-                    @Override
-                    protected boolean shouldExecute() {
-                        return false;
-                    }
-                };
+            @Override
+            protected boolean shouldExecute() {
+                return false;
+            }
+        };
 
         final SimpleAction finalAction = createFinalAction(Collections.singletonList(action));
 
@@ -115,13 +115,13 @@ public class SyncUiActionTest extends UiActionBaseTest {
 
     protected UiAction createAction(final Executer executer) {
         UiAction action = new SyncUiAction(model, "test") { //$NON-NLS-1$
-                    @Override
-                    protected void onActionExecute() {
-                        if (executer != null) {
-                            executer.onActionExecuted(this);
-                        }
-                    }
-                };
+            @Override
+            protected void onActionExecute() {
+                if (executer != null) {
+                    executer.onActionExecuted(this);
+                }
+            }
+        };
 
         return action;
     }

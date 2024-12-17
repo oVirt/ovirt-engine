@@ -36,15 +36,15 @@ public class OvirtSelectionModel<T> implements SelectionModel<T> {
     public OvirtSelectionModel(Mode mode) {
         this.mode = mode;
         switch (mode) {
-        case SINGLE_SELECTION:
-            this.delegate = new SingleSelectionModel<>(new QueryableEntityKeyProvider<>());
-            break;
-        case MULTI_SELECTION:
-            this.delegate = new OrderedMultiSelectionModel<>(new QueryableEntityKeyProvider<>());
-            break;
-        default:
-            this.delegate = new NoSelectionModel<>();
-            break;
+            case SINGLE_SELECTION:
+                this.delegate = new SingleSelectionModel<>(new QueryableEntityKeyProvider<>());
+                break;
+            case MULTI_SELECTION:
+                this.delegate = new OrderedMultiSelectionModel<>(new QueryableEntityKeyProvider<>());
+                break;
+            default:
+                this.delegate = new NoSelectionModel<>();
+                break;
         }
     }
 
@@ -82,15 +82,15 @@ public class OvirtSelectionModel<T> implements SelectionModel<T> {
      */
     public void clear() {
         switch (mode) {
-        case SINGLE_SELECTION:
-            asSingleSelectionModel().clear();
-            break;
-        case MULTI_SELECTION:
-            asMultiSelectionModel().clear();
-            break;
-        case NO_SELECTION:
-            // no selection to clear
-            break;
+            case SINGLE_SELECTION:
+                asSingleSelectionModel().clear();
+                break;
+            case MULTI_SELECTION:
+                asMultiSelectionModel().clear();
+                break;
+            case NO_SELECTION:
+                // no selection to clear
+                break;
         }
     }
 
@@ -101,13 +101,13 @@ public class OvirtSelectionModel<T> implements SelectionModel<T> {
      */
     public List<T> getSelectedObjects() {
         switch (mode) {
-        case SINGLE_SELECTION:
-            return new ArrayList<>(asSingleSelectionModel().getSelectedSet());
-        case MULTI_SELECTION:
-            return asMultiSelectionModel().getSelectedList();
-        case NO_SELECTION:
-        default:
-            return Collections.emptyList();
+            case SINGLE_SELECTION:
+                return new ArrayList<>(asSingleSelectionModel().getSelectedSet());
+            case MULTI_SELECTION:
+                return asMultiSelectionModel().getSelectedList();
+            case NO_SELECTION:
+            default:
+                return Collections.emptyList();
         }
     }
 

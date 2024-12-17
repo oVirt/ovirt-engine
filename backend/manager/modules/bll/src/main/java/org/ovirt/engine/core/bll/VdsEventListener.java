@@ -589,7 +589,7 @@ public class VdsEventListener implements IVdsEventListener {
                                     cluster.isEnableBallooning(),
                                     cluster.isEnableKsm(),
                                     cluster.isKsmMergeAcrossNumaNodes())
-                            );
+                    );
                 } catch (EngineException e) {
                     log.error("Could not update MoM policy on host '{}'", vds.getName());
                 }

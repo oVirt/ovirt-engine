@@ -371,7 +371,7 @@ public class VmValidator {
         }
 
         if (!messages.isEmpty()) {
-           return new ValidationResult(messages);
+            return new ValidationResult(messages);
         }
         return ValidationResult.VALID;
     }
@@ -438,17 +438,17 @@ public class VmValidator {
         }
 
         switch (vm.getStatus()) {
-        case MigratingFrom:
-            return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_MIGRATION_IN_PROGRESS);
+            case MigratingFrom:
+                return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_MIGRATION_IN_PROGRESS);
 
-        case NotResponding:
-            return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_VM_STATUS_ILLEGAL, LocalizedVmStatus.from(vm.getStatus()));
+            case NotResponding:
+                return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_VM_STATUS_ILLEGAL, LocalizedVmStatus.from(vm.getStatus()));
 
-        case Paused:
-            if (vm.getVmPauseStatus() == VmPauseStatus.EIO) {
-                return new ValidationResult(EngineMessage.MIGRATE_PAUSED_EIO_VM_IS_NOT_SUPPORTED);
-            }
-            break;
+            case Paused:
+                if (vm.getVmPauseStatus() == VmPauseStatus.EIO) {
+                    return new ValidationResult(EngineMessage.MIGRATE_PAUSED_EIO_VM_IS_NOT_SUPPORTED);
+                }
+                break;
         }
 
         if (!vm.isQualifyToMigrate()) {

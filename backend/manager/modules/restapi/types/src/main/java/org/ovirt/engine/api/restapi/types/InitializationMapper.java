@@ -223,24 +223,24 @@ public class InitializationMapper {
     @Mapping(from = org.ovirt.engine.api.model.CloudInitNetworkProtocol.class, to = CloudInitNetworkProtocol.class)
     public static CloudInitNetworkProtocol map(org.ovirt.engine.api.model.CloudInitNetworkProtocol protocol) {
         switch (protocol) {
-        case ENI:
-            return CloudInitNetworkProtocol.ENI;
-        case OPENSTACK_METADATA:
-            return CloudInitNetworkProtocol.OPENSTACK_METADATA;
-        default:
-            return null;
+            case ENI:
+                return CloudInitNetworkProtocol.ENI;
+            case OPENSTACK_METADATA:
+                return CloudInitNetworkProtocol.OPENSTACK_METADATA;
+            default:
+                return null;
         }
     }
 
     @Mapping(from = CloudInitNetworkProtocol.class, to = org.ovirt.engine.api.model.CloudInitNetworkProtocol.class)
     public static org.ovirt.engine.api.model.CloudInitNetworkProtocol map(CloudInitNetworkProtocol protocol) {
         switch (protocol) {
-        case ENI:
-            return ENI;
-        case OPENSTACK_METADATA:
-            return OPENSTACK_METADATA;
-        default:
-            return null;
+            case ENI:
+                return ENI;
+            case OPENSTACK_METADATA:
+                return OPENSTACK_METADATA;
+            default:
+                return null;
         }
     }
 

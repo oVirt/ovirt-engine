@@ -69,16 +69,16 @@ public class RestoreFromSnapshotCommand<T extends RestoreFromSnapshotParameters>
         Guid imageToRemoveId = findImageForSameDrive(getParameters().getRemovedSnapshotId());
 
         switch (getParameters().getSnapshot().getType()) {
-        case REGULAR:
-            removeOtherImageAndParents(imageToRemoveId, getDiskImage().getParentId());
-            break;
-        case PREVIEW:
-        case STATELESS:
-            if (imageToRemoveId != null) {
-                removeSnapshot(diskImageDao.get(imageToRemoveId));
-            }
+            case REGULAR:
+                removeOtherImageAndParents(imageToRemoveId, getDiskImage().getParentId());
+                break;
+            case PREVIEW:
+            case STATELESS:
+                if (imageToRemoveId != null) {
+                    removeSnapshot(diskImageDao.get(imageToRemoveId));
+                }
 
-            break;
+                break;
         }
 
         return performImageVdsmOperation();

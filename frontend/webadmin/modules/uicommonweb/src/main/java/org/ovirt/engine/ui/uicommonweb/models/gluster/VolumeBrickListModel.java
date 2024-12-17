@@ -574,55 +574,55 @@ public class VolumeBrickListModel extends SearchableListModel<GlusterVolumeEntit
         boolean valid = true;
 
         switch (volumeType) {
-        case REPLICATE:
-            if (selectedBricks.size() > 1) {
-                valid = false;
-                removeBrickModel.setValidationMessage(ConstantsManager.getInstance()
-                        .getConstants()
-                        .cannotRemoveBricksReplicateVolume());
-            }
-            removeBrickModel.setReplicaCount(removeBrickModel.getReplicaCount() - 1);
-            removeBrickModel.setReduceReplica(true);
-            break;
+            case REPLICATE:
+                if (selectedBricks.size() > 1) {
+                    valid = false;
+                    removeBrickModel.setValidationMessage(ConstantsManager.getInstance()
+                            .getConstants()
+                            .cannotRemoveBricksReplicateVolume());
+                }
+                removeBrickModel.setReplicaCount(removeBrickModel.getReplicaCount() - 1);
+                removeBrickModel.setReduceReplica(true);
+                break;
 
-        case DISTRIBUTED_REPLICATE:
-            valid = validateDistriputedReplicateRemove(volumeType, selectedBricks, brickList, removeBrickModel);
-            if (!valid) {
-                removeBrickModel.setValidationMessage(ConstantsManager.getInstance()
-                        .getConstants()
-                        .cannotRemoveBricksDistributedReplicateVolume());
-            }
-            break;
+            case DISTRIBUTED_REPLICATE:
+                valid = validateDistriputedReplicateRemove(volumeType, selectedBricks, brickList, removeBrickModel);
+                if (!valid) {
+                    removeBrickModel.setValidationMessage(ConstantsManager.getInstance()
+                            .getConstants()
+                            .cannotRemoveBricksDistributedReplicateVolume());
+                }
+                break;
 
-        case DISTRIBUTED_STRIPE:
-            valid = validateDistriputedStripeRemove(volumeType, selectedBricks, brickList, removeBrickModel);
-            if (!valid) {
-                removeBrickModel.setValidationMessage(ConstantsManager.getInstance()
-                        .getConstants()
-                        .cannotRemoveBricksDistributedStripeVolume());
-            }
-            break;
+            case DISTRIBUTED_STRIPE:
+                valid = validateDistriputedStripeRemove(volumeType, selectedBricks, brickList, removeBrickModel);
+                if (!valid) {
+                    removeBrickModel.setValidationMessage(ConstantsManager.getInstance()
+                            .getConstants()
+                            .cannotRemoveBricksDistributedStripeVolume());
+                }
+                break;
 
-        case STRIPED_REPLICATE:
-            valid = validateStripedReplicateRemove(volumeType, selectedBricks, brickList, removeBrickModel);
-            if (!valid) {
-                removeBrickModel.setValidationMessage(ConstantsManager.getInstance()
-                        .getConstants()
-                        .cannotRemoveBricksStripedReplicateVolume());
-            }
-            break;
+            case STRIPED_REPLICATE:
+                valid = validateStripedReplicateRemove(volumeType, selectedBricks, brickList, removeBrickModel);
+                if (!valid) {
+                    removeBrickModel.setValidationMessage(ConstantsManager.getInstance()
+                            .getConstants()
+                            .cannotRemoveBricksStripedReplicateVolume());
+                }
+                break;
 
-        case DISTRIBUTED_STRIPED_REPLICATE:
-            valid = validateDistributedStripedReplicateRemove(volumeType, selectedBricks, brickList, removeBrickModel);
-            if (!valid) {
-                removeBrickModel.setValidationMessage(ConstantsManager.getInstance()
-                        .getConstants()
-                        .cannotRemoveBricksDistributedStripedReplicateVolume());
-            }
-            break;
+            case DISTRIBUTED_STRIPED_REPLICATE:
+                valid = validateDistributedStripedReplicateRemove(volumeType, selectedBricks, brickList, removeBrickModel);
+                if (!valid) {
+                    removeBrickModel.setValidationMessage(ConstantsManager.getInstance()
+                            .getConstants()
+                            .cannotRemoveBricksDistributedStripedReplicateVolume());
+                }
+                break;
 
-        default:
-            break;
+            default:
+                break;
         }
 
         return valid;

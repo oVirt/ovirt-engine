@@ -50,13 +50,13 @@ import org.slf4j.LoggerFactory;
         description = "Load balancing VMs in cluster according to hosts CPU load, striving cluster's hosts CPU load to"
                 + " be over 'LowUtilization' and under 'HighUtilization'",
         parameters = {
-                PolicyUnitParameter.HIGH_UTILIZATION,
-                PolicyUnitParameter.LOW_MEMORY_LIMIT_FOR_OVER_UTILIZED,
-                PolicyUnitParameter.HIGH_MEMORY_LIMIT_FOR_UNDER_UTILIZED,
-                PolicyUnitParameter.CPU_OVERCOMMIT_DURATION_MINUTES,
-                PolicyUnitParameter.LOW_UTILIZATION,
-                PolicyUnitParameter.ENABLE_AUTOMATIC_HOST_POWER_MANAGEMENT,
-                PolicyUnitParameter.HOSTS_IN_RESERVE
+            PolicyUnitParameter.HIGH_UTILIZATION,
+            PolicyUnitParameter.LOW_MEMORY_LIMIT_FOR_OVER_UTILIZED,
+            PolicyUnitParameter.HIGH_MEMORY_LIMIT_FOR_UNDER_UTILIZED,
+            PolicyUnitParameter.CPU_OVERCOMMIT_DURATION_MINUTES,
+            PolicyUnitParameter.LOW_UTILIZATION,
+            PolicyUnitParameter.ENABLE_AUTOMATIC_HOST_POWER_MANAGEMENT,
+            PolicyUnitParameter.HOSTS_IN_RESERVE
         }
 )
 public class PowerSavingBalancePolicyUnit extends CpuAndMemoryBalancingPolicyUnit {

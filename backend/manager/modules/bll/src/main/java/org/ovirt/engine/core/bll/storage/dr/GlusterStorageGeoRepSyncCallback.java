@@ -44,18 +44,18 @@ public class GlusterStorageGeoRepSyncCallback implements CommandCallback {
         session.setSessionDetails(
                 (ArrayList<GlusterGeoRepSessionDetails>) geoRepDao.getGeoRepSessionDetails(session.getId()));
         switch (session.getStatus()) {
-        case ACTIVE:
-            // check if checkpoint is completed
-            if (session.isCheckPointCompleted()) {
-                // stop the geo-rep session
-                stopGeoRepSessionCommand(rootCommand, session);
-                rootCommand.setCommandStatus(CommandStatus.SUCCEEDED);
-            }
-            break;
-        case FAULTY:
-            rootCommand.setCommandStatus(CommandStatus.FAILED);
-        default:
-            break;
+            case ACTIVE:
+                // check if checkpoint is completed
+                if (session.isCheckPointCompleted()) {
+                    // stop the geo-rep session
+                    stopGeoRepSessionCommand(rootCommand, session);
+                    rootCommand.setCommandStatus(CommandStatus.SUCCEEDED);
+                }
+                break;
+            case FAULTY:
+                rootCommand.setCommandStatus(CommandStatus.FAILED);
+            default:
+                break;
         }
     }
 

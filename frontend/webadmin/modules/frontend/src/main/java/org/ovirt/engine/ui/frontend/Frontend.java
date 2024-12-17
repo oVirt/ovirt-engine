@@ -237,54 +237,54 @@ public class Frontend implements HasHandlers {
         final VdcOperation<QueryType, QueryParametersBase> operation =
                 new VdcOperation<>(queryType, parameters, isPublic, false,
                 new VdcOperationCallback<VdcOperation<QueryType, QueryParametersBase>, QueryReturnValue>() {
-            @Override
-            public void onSuccess(final VdcOperation<QueryType, QueryParametersBase> operation,
-                    final QueryReturnValue result) {
-                try {
-                    if (!result.getSucceeded()) {
+                    @Override
+                    public void onSuccess(final VdcOperation<QueryType, QueryParametersBase> operation,
+                        final QueryReturnValue result) {
+                        try {
+                            if (!result.getSucceeded()) {
 
-                        // translate error enums to text
-                        result.setExceptionMessage(getAppErrorsTranslator().translateErrorTextSingle(result.getExceptionString()));
+                                // translate error enums to text
+                                result.setExceptionMessage(getAppErrorsTranslator().translateErrorTextSingle(result.getExceptionString()));
 
-                        logger.log(Level.WARNING, "Failure while invoking runQuery [" + result.getExceptionString() + ", " + result.getExceptionMessage() + "]"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+                                logger.log(Level.WARNING, "Failure while invoking runQuery [" + result.getExceptionString() + ", " + result.getExceptionMessage() + "]"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 
-                        if (getEventsHandler() != null) {
-                            handleNotLoggedInEvent(result.getExceptionString());
-                        }
-                        if (callback.isHandleFailure()) {
-                            callback.getAsyncCallback().onSuccess(result);
-                        }
-                    } else {
-                        if (callback.getConverter() != null) {
-                            callback.getAsyncCallback().onSuccess(
-                                    callback.getConverter().convert(result.getReturnValue()));
-                        } else {
-                            callback.getAsyncCallback().onSuccess(result);
+                                if (getEventsHandler() != null) {
+                                    handleNotLoggedInEvent(result.getExceptionString());
+                                }
+                                if (callback.isHandleFailure()) {
+                                    callback.getAsyncCallback().onSuccess(result);
+                                }
+                            } else {
+                                if (callback.getConverter() != null) {
+                                    callback.getAsyncCallback().onSuccess(
+                                        callback.getConverter().convert(result.getReturnValue()));
+                                } else {
+                                    callback.getAsyncCallback().onSuccess(result);
+                                }
+                            }
+                        } finally {
+                            fireAsyncQuerySucceededEvent(callback.getModel());
                         }
                     }
-                } finally {
-                    fireAsyncQuerySucceededEvent(callback.getModel());
-                }
-            }
 
-            @Override
-            public void onFailure(final VdcOperation<QueryType, QueryParametersBase> operation,
-                    final Throwable caught) {
-                try {
-                    if (ignoreFailure(caught)) {
-                        return;
+                    @Override
+                    public void onFailure(final VdcOperation<QueryType, QueryParametersBase> operation,
+                        final Throwable caught) {
+                        try {
+                            if (ignoreFailure(caught)) {
+                                return;
+                            }
+                            logger.log(Level.SEVERE, "Failed to execute runQuery: " + caught, caught); //$NON-NLS-1$
+                            getEventsHandler().runQueryFailed(null);
+                            failureEventHandler(caught);
+                            if (callback.isHandleFailure()) {
+                                callback.getAsyncCallback().onSuccess(null);
+                            }
+                        } finally {
+                            fireAsyncQueryFailedEvent(callback.getModel());
+                        }
                     }
-                    logger.log(Level.SEVERE, "Failed to execute runQuery: " + caught, caught); //$NON-NLS-1$
-                    getEventsHandler().runQueryFailed(null);
-                    failureEventHandler(caught);
-                    if (callback.isHandleFailure()) {
-                        callback.getAsyncCallback().onSuccess(null);
-                    }
-                } finally {
-                    fireAsyncQueryFailedEvent(callback.getModel());
-                }
-            }
-        });
+                });
 
         // raise the query started event.
         fireAsyncOperationStartedEvent(callback.getModel());
@@ -329,33 +329,33 @@ public class Frontend implements HasHandlers {
         VdcOperationCallbackList<VdcOperation<QueryType, QueryParametersBase>,
             List<QueryReturnValue>> multiCallback = new VdcOperationCallbackList<VdcOperation<QueryType,
                 QueryParametersBase>, List<QueryReturnValue>>() {
-            @Override
-            public void onSuccess(final List<VdcOperation<QueryType, QueryParametersBase>> operationList,
+                @Override
+                public void onSuccess(final List<VdcOperation<QueryType, QueryParametersBase>> operationList,
                     final List<QueryReturnValue> resultObject) {
-                logger.finer("Succesful returned result from runMultipleQueries!"); //$NON-NLS-1$
-                FrontendMultipleQueryAsyncResult f =
-                        new FrontendMultipleQueryAsyncResult(queryTypeList, queryParamsList, resultObject);
-                callback.executed(f);
-                fireAsyncQuerySucceededEvent(state);
-            }
-
-            @Override
-            public void onFailure(final List<VdcOperation<QueryType, QueryParametersBase>> operationList,
-                    final Throwable caught) {
-                try {
-                    if (ignoreFailure(caught)) {
-                        return;
-                    }
-                    logger.log(Level.SEVERE, "Failed to execute runMultipleQueries: " + caught, caught); //$NON-NLS-1$
+                    logger.finer("Succesful returned result from runMultipleQueries!"); //$NON-NLS-1$
                     FrontendMultipleQueryAsyncResult f =
-                            new FrontendMultipleQueryAsyncResult(queryTypeList, queryParamsList, null);
-                    failureEventHandler(caught);
+                        new FrontendMultipleQueryAsyncResult(queryTypeList, queryParamsList, resultObject);
                     callback.executed(f);
-                } finally {
-                    fireAsyncQueryFailedEvent(state);
+                    fireAsyncQuerySucceededEvent(state);
                 }
-            }
-        };
+
+                @Override
+                public void onFailure(final List<VdcOperation<QueryType, QueryParametersBase>> operationList,
+                    final Throwable caught) {
+                    try {
+                        if (ignoreFailure(caught)) {
+                            return;
+                        }
+                        logger.log(Level.SEVERE, "Failed to execute runMultipleQueries: " + caught, caught); //$NON-NLS-1$
+                        FrontendMultipleQueryAsyncResult f =
+                            new FrontendMultipleQueryAsyncResult(queryTypeList, queryParamsList, null);
+                        failureEventHandler(caught);
+                        callback.executed(f);
+                    } finally {
+                        fireAsyncQueryFailedEvent(state);
+                    }
+                }
+            };
 
         List<VdcOperation<?, ?>> operationList = new ArrayList<>();
         for (int i = 0; i < queryTypeList.size(); i++) {
@@ -414,7 +414,7 @@ public class Frontend implements HasHandlers {
      */
     public void runAction(final ActionType actionType, final ActionParametersBase parameters) {
         runAction(actionType, parameters, Frontend.NULLABLE_ASYNC_CALLBACK);
-     }
+    }
 
     /**
      * Run an action of the specified action type using the passed in parameters. No object state.
@@ -446,30 +446,30 @@ public class Frontend implements HasHandlers {
         VdcOperation<ActionType, ActionParametersBase> operation = new VdcOperation<>(
                 actionType, parameters, new VdcOperationCallback<VdcOperation<ActionType,
                 ActionParametersBase>, ActionReturnValue>() {
-            @Override
-            public void onSuccess(final VdcOperation<ActionType, ActionParametersBase> operation,
-                    final ActionReturnValue result) {
-                logger.finer("Frontend: sucessfully executed runAction, determining result!"); //$NON-NLS-1$
-                handleActionResult(actionType, parameters, result,
-                        callback != null ? callback : NULLABLE_ASYNC_CALLBACK, state, showErrorDialog);
-                fireAsyncActionSucceededEvent(state);
-            }
+                    @Override
+                    public void onSuccess(final VdcOperation<ActionType, ActionParametersBase> operation,
+                        final ActionReturnValue result) {
+                        logger.finer("Frontend: sucessfully executed runAction, determining result!"); //$NON-NLS-1$
+                        handleActionResult(actionType, parameters, result,
+                            callback != null ? callback : NULLABLE_ASYNC_CALLBACK, state, showErrorDialog);
+                        fireAsyncActionSucceededEvent(state);
+                    }
 
-            @Override
-            public void onFailure(final VdcOperation<ActionType, ActionParametersBase> operation,
-                    final Throwable caught) {
-                if (ignoreFailure(caught)) {
-                    return;
-                }
-                logger.log(Level.SEVERE, "Failed to execute runAction: " + caught, caught); //$NON-NLS-1$
-                failureEventHandler(caught);
-                FrontendActionAsyncResult f = new FrontendActionAsyncResult(actionType, parameters, null, state);
-                if (callback != null) {
-                    callback.executed(f);
-                }
-                fireAsyncActionFailedEvent(state);
-            }
-        });
+                    @Override
+                    public void onFailure(final VdcOperation<ActionType, ActionParametersBase> operation,
+                        final Throwable caught) {
+                        if (ignoreFailure(caught)) {
+                            return;
+                        }
+                        logger.log(Level.SEVERE, "Failed to execute runAction: " + caught, caught); //$NON-NLS-1$
+                        failureEventHandler(caught);
+                        FrontendActionAsyncResult f = new FrontendActionAsyncResult(actionType, parameters, null, state);
+                        if (callback != null) {
+                            callback.executed(f);
+                        }
+                        fireAsyncActionFailedEvent(state);
+                    }
+                });
 
         fireAsyncOperationStartedEvent(state);
         getOperationManager().addOperation(operation);
@@ -553,62 +553,62 @@ public class Frontend implements HasHandlers {
      * @param waitForResult a flag to return the result after running the whole action and not just the can do actions.
      */
     public void runMultipleAction(final ActionType actionType,
-            final List<ActionParametersBase> parameters,
-            final boolean isRunOnlyIfAllValidationPass,
-            final IFrontendMultipleActionAsyncCallback callback,
-            final Object state,
-            final boolean showErrorDialog,
-            final boolean waitForResult) {
+        final List<ActionParametersBase> parameters,
+        final boolean isRunOnlyIfAllValidationPass,
+        final IFrontendMultipleActionAsyncCallback callback,
+        final Object state,
+        final boolean showErrorDialog,
+        final boolean waitForResult) {
         VdcOperationCallbackList<VdcOperation<ActionType, ActionParametersBase>, List<ActionReturnValue>>
-        multiCallback = new VdcOperationCallbackList<VdcOperation<ActionType, ActionParametersBase>,
-        List<ActionReturnValue>>() {
-            @Override
-            public void onSuccess(final List<VdcOperation<ActionType, ActionParametersBase>> operationList,
+            multiCallback = new VdcOperationCallbackList<VdcOperation<ActionType, ActionParametersBase>,
+            List<ActionReturnValue>>() {
+                @Override
+                public void onSuccess(final List<VdcOperation<ActionType, ActionParametersBase>> operationList,
                     final List<ActionReturnValue> resultObject) {
-                logger.finer("Frontend: successfully executed runMultipleAction, determining result!"); //$NON-NLS-1$
+                    logger.finer("Frontend: successfully executed runMultipleAction, determining result!"); //$NON-NLS-1$
 
-                List<ActionReturnValue> failed =
+                    List<ActionReturnValue> failed =
                         resultObject.stream()
-                                .filter(v -> !v.isValid())
-                                .collect(Collectors.toList());
+                            .filter(v -> !v.isValid())
+                            .collect(Collectors.toList());
 
-                if (showErrorDialog && !failed.isEmpty()) {
-                    translateErrors(failed);
-                    getEventsHandler().runMultipleActionFailed(actionType, failed);
-                }
+                    if (showErrorDialog && !failed.isEmpty()) {
+                        translateErrors(failed);
+                        getEventsHandler().runMultipleActionFailed(actionType, failed);
+                    }
 
-                if (callback != null) {
-                    callback.executed(new FrontendMultipleActionAsyncResult(actionType,
+                    if (callback != null) {
+                        callback.executed(new FrontendMultipleActionAsyncResult(actionType,
                             parameters, resultObject, state));
+                    }
+                    fireAsyncActionSucceededEvent(state);
                 }
-                fireAsyncActionSucceededEvent(state);
-            }
 
-            @Override
-            public void onFailure(final List<VdcOperation<ActionType, ActionParametersBase>> operation,
+                @Override
+                public void onFailure(final List<VdcOperation<ActionType, ActionParametersBase>> operation,
                     final Throwable caught) {
-                if (ignoreFailure(caught)) {
-                    return;
-                }
-                logger.log(Level.SEVERE, "Failed to execute runMultipleAction: " + caught, caught); //$NON-NLS-1$
-                failureEventHandler(caught);
+                    if (ignoreFailure(caught)) {
+                        return;
+                    }
+                    logger.log(Level.SEVERE, "Failed to execute runMultipleAction: " + caught, caught); //$NON-NLS-1$
+                    failureEventHandler(caught);
 
-                if (callback != null) {
-                    callback.executed(new FrontendMultipleActionAsyncResult(actionType, parameters, null,
+                    if (callback != null) {
+                        callback.executed(new FrontendMultipleActionAsyncResult(actionType, parameters, null,
                             state));
+                    }
+                    fireAsyncActionFailedEvent(state);
                 }
-                fireAsyncActionFailedEvent(state);
-            }
-        };
+            };
 
         List<VdcOperation<?, ?>> operationList = parameters.stream()
-                .map(p -> new VdcOperation<>(actionType, p, !waitForResult, multiCallback, isRunOnlyIfAllValidationPass))
-                .collect(Collectors.toList());
+            .map(p -> new VdcOperation<>(actionType, p, !waitForResult, multiCallback, isRunOnlyIfAllValidationPass))
+            .collect(Collectors.toList());
         fireAsyncOperationStartedEvent(state);
         if (operationList.isEmpty()) {
-            //Someone called run multiple actions with a single action without parameters. The backend will return
-            //an empty return value as there are no parameters, so we can skip the round trip to the server and return
-            //it ourselves.
+        //Someone called run multiple actions with a single action without parameters. The backend will return
+        //an empty return value as there are no parameters, so we can skip the round trip to the server and return
+        //it ourselves.
             if (scheduler == null) {
                 scheduler = Scheduler.get();
             }
@@ -616,7 +616,7 @@ public class Frontend implements HasHandlers {
                 if (callback != null) {
                     List<ActionReturnValue> emptyResult = new ArrayList<>();
                     callback.executed(new FrontendMultipleActionAsyncResult(actionType,
-                            parameters, emptyResult, state));
+                        parameters, emptyResult, state));
                 }
             });
         } else {
@@ -637,7 +637,7 @@ public class Frontend implements HasHandlers {
             final List<ActionParametersBase> parameters,
             final IFrontendActionAsyncCallback successCallback,
             final Object state
-            ) {
+    ) {
         if (parameters == null || parameters.isEmpty()) {
             if (successCallback != null) {
                 successCallback.executed(new FrontendActionAsyncResult(actionType, null, null, state));

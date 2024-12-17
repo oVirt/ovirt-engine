@@ -78,7 +78,7 @@ public class RemoveStorageServerConnectionCommandTest extends BaseCommandTest {
             String userName,
             String password,
             String portal
-            ) {
+    ) {
         Guid id = Guid.newGuid();
         StorageServerConnections connectionDetails = populateBasicConnectionDetails(id, connection, type);
         connectionDetails.setIqn(iqn);

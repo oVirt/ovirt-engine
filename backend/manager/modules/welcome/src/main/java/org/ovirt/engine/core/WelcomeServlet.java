@@ -165,7 +165,7 @@ public class WelcomeServlet extends HttpServlet {
 
     private void setUserNameForMenu(HttpServletRequest request, String token) {
         try {
-           log.debug("setting request attributes for User Menu");
+            log.debug("setting request attributes for User Menu");
             if (StringUtils.isNotEmpty(token)) {
                 Map<String, Object> userInfoMap = SsoOAuthServiceUtils.getTokenInfo(token);
                 String username = getCurrentSsoSessionUser(request, userInfoMap);

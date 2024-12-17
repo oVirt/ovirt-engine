@@ -80,7 +80,7 @@ public class OvfUpdateProcessHelper {
         metaDictionary.put(
                 vm.getId(),
                 new KeyValuePairCompat<>
-                        (vmMeta, vm.getDiskMap().values().stream().map(BaseDisk::getId).collect(Collectors.toList())));
+            (vmMeta, vm.getDiskMap().values().stream().map(BaseDisk::getId).collect(Collectors.toList())));
         return vmMeta;
     }
 

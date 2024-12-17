@@ -34,9 +34,9 @@ public class QuotaVmListModel extends SearchableListModel<Quota, VM> {
         tempVar.setRefresh(getIsQueryFirstTime());
         Frontend.getInstance().runQuery(QueryType.GetVmsRelatedToQuotaId, tempVar, new AsyncQuery<QueryReturnValue>(
                 returnValue -> {
-            setItems((ArrayList<VM>) returnValue.getReturnValue());
-            setIsEmpty(((List) getItems()).size() == 0);
-        }));
+                setItems((ArrayList<VM>) returnValue.getReturnValue());
+                setIsEmpty(((List) getItems()).size() == 0);
+            }));
     }
 
     @Override

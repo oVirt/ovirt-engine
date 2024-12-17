@@ -346,11 +346,11 @@ public class NetworkAttachmentModel extends Model implements HasValidatedTabs {
 
         if (getIsStaticIpv4Address()) {
             getIpv4Address().validateEntity(new IValidation[] {
-                    new NotEmptyValidation(),
-                    new Ipv4AddressValidation() });
+                new NotEmptyValidation(),
+                new Ipv4AddressValidation() });
             getIpv4Subnet().validateEntity(new IValidation[] {
-                    new NotEmptyValidation(),
-                    new SubnetMaskValidation(true) });
+                new NotEmptyValidation(),
+                new SubnetMaskValidation(true) });
             getIpv4Gateway().validateEntity(new IValidation[] { new Ipv4AddressValidation(true) });
         }
 
@@ -360,8 +360,8 @@ public class NetworkAttachmentModel extends Model implements HasValidatedTabs {
 
         if (getIsStaticIpv6Address()) {
             getIpv6Address().validateEntity(new IValidation[] {
-                    new NotEmptyValidation(),
-                    new Ipv6AddressValidation() });
+                new NotEmptyValidation(),
+                new Ipv6AddressValidation() });
             getIpv6Prefix()
                     .validateEntity(new IValidation[] { new NotEmptyValidation(), new IntegerValidation(0, 128) });
             getIpv6Gateway().validateEntity(new IValidation[] { new Ipv6AddressValidation(true) });
@@ -372,9 +372,9 @@ public class NetworkAttachmentModel extends Model implements HasValidatedTabs {
         getCustomPropertiesModel().validate();
 
         setValidTab(TabName.IPV4_TAB,
-                getIpv4Address().getIsValid() && getIpv4Gateway().getIsValid() && getIpv4Subnet().getIsValid());
+            getIpv4Address().getIsValid() && getIpv4Gateway().getIsValid() && getIpv4Subnet().getIsValid());
         setValidTab(TabName.IPV6_TAB,
-                getIpv6Address().getIsValid() && getIpv6Gateway().getIsValid() && getIpv6Prefix().getIsValid());
+            getIpv6Address().getIsValid() && getIpv6Gateway().getIsValid() && getIpv6Prefix().getIsValid());
         setValidTab(TabName.QOS_TAB, getQosModel().getIsValid());
         setValidTab(TabName.CUSTOM_PROPERTIES_TAB, getCustomPropertiesModel().getIsValid());
         setValidTab(TabName.DNS_CONFIGURATION_TAB, getDnsConfigurationModel().getIsValid());
@@ -400,8 +400,8 @@ public class NetworkAttachmentModel extends Model implements HasValidatedTabs {
 
     protected Model setTitle() {
         return setTitle(ConstantsManager.getInstance()
-                .getMessages()
-                .editNetworkTitle(network.getName()));
+            .getMessages()
+            .editNetworkTitle(network.getName()));
     }
 
     public boolean getIpv6AutoconfAvailable() {

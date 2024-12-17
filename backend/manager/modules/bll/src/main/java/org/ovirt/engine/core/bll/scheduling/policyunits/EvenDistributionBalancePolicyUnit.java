@@ -22,11 +22,11 @@ import org.ovirt.engine.core.common.scheduling.PolicyUnitType;
         description = "Load balancing VMs in cluster according to hosts CPU load, striving cluster's hosts CPU load to"
                 + " be under 'HighUtilization'",
         parameters = {
-                PolicyUnitParameter.HIGH_UTILIZATION,
-                PolicyUnitParameter.LOW_MEMORY_LIMIT_FOR_OVER_UTILIZED,
-                PolicyUnitParameter.HIGH_MEMORY_LIMIT_FOR_UNDER_UTILIZED,
-                PolicyUnitParameter.CPU_OVERCOMMIT_DURATION_MINUTES,
-                PolicyUnitParameter.VCPU_TO_PHYSICAL_CPU_RATIO
+            PolicyUnitParameter.HIGH_UTILIZATION,
+            PolicyUnitParameter.LOW_MEMORY_LIMIT_FOR_OVER_UTILIZED,
+            PolicyUnitParameter.HIGH_MEMORY_LIMIT_FOR_UNDER_UTILIZED,
+            PolicyUnitParameter.CPU_OVERCOMMIT_DURATION_MINUTES,
+            PolicyUnitParameter.VCPU_TO_PHYSICAL_CPU_RATIO
         }
 )
 public class EvenDistributionBalancePolicyUnit extends CpuAndMemoryBalancingPolicyUnit {

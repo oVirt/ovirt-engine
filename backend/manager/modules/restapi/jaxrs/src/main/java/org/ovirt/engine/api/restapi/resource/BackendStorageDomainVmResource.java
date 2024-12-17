@@ -54,13 +54,13 @@ public class BackendStorageDomainVmResource
     @Override
     public Vm get() {
         switch (parent.getStorageDomainType()) {
-        case Data:
-        case Master:
-            return getFromDataDomain();
-        case ImportExport:
-            return getFromExportDomain();
-        default:
-            return null;
+            case Data:
+            case Master:
+                return getFromDataDomain();
+            case ImportExport:
+                return getFromExportDomain();
+            default:
+                return null;
         }
     }
 

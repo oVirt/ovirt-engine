@@ -177,16 +177,16 @@ public class AmendImageGroupVolumesCommand<T extends AmendImageGroupVolumesComma
         addCustomValue("DiskAlias", getDiskImage().getDiskAlias());
 
         switch (getActionState()) {
-        case EXECUTE:
-            return getSucceeded() ? AuditLogType.USER_AMEND_IMAGE_START
-                    : AuditLogType.USER_AMEND_IMAGE_FINISH_FAILURE;
+            case EXECUTE:
+                return getSucceeded() ? AuditLogType.USER_AMEND_IMAGE_START
+                        : AuditLogType.USER_AMEND_IMAGE_FINISH_FAILURE;
 
-        case END_SUCCESS:
-            return getSucceeded() ? AuditLogType.USER_AMEND_IMAGE_FINISH_SUCCESS
-                    : AuditLogType.USER_AMEND_IMAGE_FINISH_FAILURE;
+            case END_SUCCESS:
+                return getSucceeded() ? AuditLogType.USER_AMEND_IMAGE_FINISH_SUCCESS
+                        : AuditLogType.USER_AMEND_IMAGE_FINISH_FAILURE;
 
-        default:
-            return AuditLogType.USER_AMEND_IMAGE_FINISH_FAILURE;
+            default:
+                return AuditLogType.USER_AMEND_IMAGE_FINISH_FAILURE;
         }
     }
 

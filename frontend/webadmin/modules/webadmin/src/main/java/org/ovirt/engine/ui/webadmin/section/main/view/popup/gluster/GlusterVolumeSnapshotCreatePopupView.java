@@ -200,7 +200,7 @@ public class GlusterVolumeSnapshotCreatePopupView extends
                     public String render(GlusterVolumeSnapshotScheduleRecurrence object) {
                         return EnumTranslator.getInstance().translate(object);
                     }
-        });
+                });
     }
 
     @Override

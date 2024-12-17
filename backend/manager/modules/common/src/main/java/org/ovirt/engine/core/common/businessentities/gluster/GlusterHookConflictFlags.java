@@ -15,4 +15,4 @@ public enum GlusterHookConflictFlags {
         return flag;
     }
 
- }
+}

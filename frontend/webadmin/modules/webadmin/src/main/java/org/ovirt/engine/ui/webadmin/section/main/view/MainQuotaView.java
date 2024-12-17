@@ -122,7 +122,7 @@ public class MainQuotaView extends AbstractMainWithDetailsTableView<Quota, Quota
                 return allocated < 0 ? -1 : value > 100 ? 100 : value;
             }
         },
-        constants.usedMemoryQuota(), "145px"); //$NON-NLS-1$
+            constants.usedMemoryQuota(), "145px"); //$NON-NLS-1$
 
         getTable().addColumn(new AbstractTextColumn<Quota>() {
             @Override
@@ -188,7 +188,7 @@ public class MainQuotaView extends AbstractMainWithDetailsTableView<Quota, Quota
                 return allocated < 0 ? -1 : value > 100 ? 100 : value;
             }
         },
-        constants.runningCpuQuota(), "135px"); //$NON-NLS-1$
+            constants.runningCpuQuota(), "135px"); //$NON-NLS-1$
 
         getTable().addColumn(new AbstractTextColumn<Quota>() {
             @Override
@@ -253,7 +253,7 @@ public class MainQuotaView extends AbstractMainWithDetailsTableView<Quota, Quota
                 return allocated < 0 ? -1 : value > 100 ? 100 : value;
             }
         },
-        constants.usedStorageQuota(), "155px"); //$NON-NLS-1$
+            constants.usedStorageQuota(), "155px"); //$NON-NLS-1$
 
         getTable().addColumn(new AbstractTextColumn<Quota>() {
             @Override

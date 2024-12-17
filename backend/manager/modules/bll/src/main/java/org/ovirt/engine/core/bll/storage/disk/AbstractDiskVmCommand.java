@@ -93,38 +93,38 @@ public abstract class AbstractDiskVmCommand<T extends VmDiskOperationParameterBa
             VmDevice vmDevice) {
         boolean addressChanged = false;
         switch (disk.getDiskStorageType()) {
-        case LUN:
-            LunDisk lunDisk = (LunDisk) disk;
-            if (commandType == VDSCommandType.HotPlugDisk) {
-                LUNs lun = lunDisk.getLun();
-                updateLUNConnectionsInfo(lun);
+            case LUN:
+                LunDisk lunDisk = (LunDisk) disk;
+                if (commandType == VDSCommandType.HotPlugDisk) {
+                    LUNs lun = lunDisk.getLun();
+                    updateLUNConnectionsInfo(lun);
 
-                lun.getLunConnections().stream().map(StorageServerConnections::getStorageType).distinct().forEach(t -> {
-                    if (!getStorageHelper(t).connectStorageToLunByVdsId(null,
-                            getVm().getRunOnVds(),
-                            lun,
-                            getVm().getStoragePoolId())) {
-                        throw new EngineException(EngineError.StorageServerConnectionError);
-                    }
-                });
-            }
-            break;
+                    lun.getLunConnections().stream().map(StorageServerConnections::getStorageType).distinct().forEach(t -> {
+                        if (!getStorageHelper(t).connectStorageToLunByVdsId(null,
+                                getVm().getRunOnVds(),
+                                lun,
+                                getVm().getStoragePoolId())) {
+                            throw new EngineException(EngineError.StorageServerConnectionError);
+                        }
+                    });
+                }
+                break;
 
-        case CINDER:
-            CinderDisk cinderDisk = (CinderDisk) disk;
-            setStorageDomainId(cinderDisk.getStorageIds().get(0));
-            getCinderBroker().updateConnectionInfoForDisk(cinderDisk);
-            break;
+            case CINDER:
+                CinderDisk cinderDisk = (CinderDisk) disk;
+                setStorageDomainId(cinderDisk.getStorageIds().get(0));
+                getCinderBroker().updateConnectionInfoForDisk(cinderDisk);
+                break;
 
-        case MANAGED_BLOCK_STORAGE:
-            if (commandType == VDSCommandType.HotPlugDisk) {
-                ManagedBlockStorageDisk managedBlockStorageDisk = (ManagedBlockStorageDisk) disk;
-                setStorageDomainId(managedBlockStorageDisk.getStorageIds().get(0));
-                managedBlockStorageCommandUtil.saveDevices(managedBlockStorageDisk, getVds(), vmDevice);
-            }
-            break;
+            case MANAGED_BLOCK_STORAGE:
+                if (commandType == VDSCommandType.HotPlugDisk) {
+                    ManagedBlockStorageDisk managedBlockStorageDisk = (ManagedBlockStorageDisk) disk;
+                    setStorageDomainId(managedBlockStorageDisk.getStorageIds().get(0));
+                    managedBlockStorageCommandUtil.saveDevices(managedBlockStorageDisk, getVds(), vmDevice);
+                }
+                break;
 
-        default:
+            default:
         }
 
         if (commandType == VDSCommandType.HotPlugDisk) {
@@ -263,14 +263,14 @@ public abstract class AbstractDiskVmCommand<T extends VmDiskOperationParameterBa
     private boolean updateDeviceAddress(VmDevice vmDevice) {
         DiskInterface diskInterface = getDiskVmElement().getDiskInterface();
         switch (diskInterface) {
-        case VirtIO_SCSI:
-        case SPAPR_VSCSI:
-            String address = getScsiDiskAddress(vmDevice.getAddress(), diskInterface);
-            boolean addressChanged = !Objects.equals(vmDevice.getAddress(), address);
-            vmDevice.setAddress(address);
-            return addressChanged;
-        default:
-            return false;
+            case VirtIO_SCSI:
+            case SPAPR_VSCSI:
+                String address = getScsiDiskAddress(vmDevice.getAddress(), diskInterface);
+                boolean addressChanged = !Objects.equals(vmDevice.getAddress(), address);
+                vmDevice.setAddress(address);
+                return addressChanged;
+            default:
+                return false;
         }
     }
 

@@ -24,14 +24,14 @@ public class QuotaDcStatusColumn extends AbstractImageResourceColumn<Quota> {
         }
 
         switch (quota.getQuotaEnforcementType()) {
-        case HARD_ENFORCEMENT:
-            return resources.iconEnforce();
-        case SOFT_ENFORCEMENT:
-            return resources.iconAudit();
-        case DISABLED:
-            return resources.iconDisable();
-        default:
-            return resources.iconDisable();
+            case HARD_ENFORCEMENT:
+                return resources.iconEnforce();
+            case SOFT_ENFORCEMENT:
+                return resources.iconAudit();
+            case DISABLED:
+                return resources.iconDisable();
+            default:
+                return resources.iconDisable();
         }
     }
 

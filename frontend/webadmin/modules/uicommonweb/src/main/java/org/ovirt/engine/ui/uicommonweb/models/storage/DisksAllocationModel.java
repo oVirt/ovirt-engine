@@ -481,9 +481,9 @@ public class DisksAllocationModel extends EntityModel {
                 isModelValid = false;
             }
             diskModel.getAlias().validateEntity(new IValidation[] {
-                    new NotEmptyValidation(),
-                    new I18NNameValidation(),
-                    new LengthValidation(255)
+                new NotEmptyValidation(),
+                new I18NNameValidation(),
+                new LengthValidation(255)
             });
             isModelValid = isModelValid && diskModel.getAlias().getIsValid();
         }

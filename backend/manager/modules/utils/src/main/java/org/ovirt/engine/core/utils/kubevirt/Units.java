@@ -25,17 +25,17 @@ public class Units {
         double scale = 1.0;
         String unit = m.group(2);
         switch (unit.charAt(0)) {
-        case 'G':
-            scale *= unit.endsWith("i") ? 1073.74182 : 1000;
-            break;
-        case 'M':
-            scale *= unit.endsWith("i") ? 1.048576 : 1;
-            break;
-        case 'K':
-            scale *= unit.endsWith("i") ? 0.001024 : 0.001;
-            break;
-        default:
-            throw new IllegalArgumentException();
+            case 'G':
+                scale *= unit.endsWith("i") ? 1073.74182 : 1000;
+                break;
+            case 'M':
+                scale *= unit.endsWith("i") ? 1.048576 : 1;
+                break;
+            case 'K':
+                scale *= unit.endsWith("i") ? 0.001024 : 0.001;
+                break;
+            default:
+                throw new IllegalArgumentException();
         }
         return (int) Math.round(Double.parseDouble(m.group(1)) * scale);
     }

@@ -132,7 +132,7 @@ public class SubTabStorageGeneralView extends AbstractSubTabFormView<StorageDoma
                 return entity != null && entity.getStorageDomainType().isDataDomain();
             }
         }, 2, 10);
-       formBuilder.addFormItem(new FormItem(7, 0), 2, 10); // empty cell
+        formBuilder.addFormItem(new FormItem(7, 0), 2, 10); // empty cell
         formBuilder.addFormItem(new FormItem(constants.pathStorageGeneral(), path, 8, 0) {
             @Override
             public boolean getIsAvailable() {

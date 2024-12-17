@@ -98,8 +98,8 @@ public class GlusterThinDeviceService {
                 GlusterLocalVolumeInfo localVolumeInfo = new GlusterLocalVolumeInfo();
                 VDSReturnValue
                         logicalVolumesResult = resourceManager.runVdsCommand(
-                        VDSCommandType.GetGlusterLocalLogicalVolumeList,
-                        new VdsIdVDSCommandParametersBase(vds.getId()));
+                            VDSCommandType.GetGlusterLocalLogicalVolumeList,
+                            new VdsIdVDSCommandParametersBase(vds.getId()));
                 if (logicalVolumesResult.getSucceeded()) {
                     localVolumeInfo.setLogicalVolumes((List<GlusterLocalLogicalVolume>) logicalVolumesResult.getReturnValue());
                 }

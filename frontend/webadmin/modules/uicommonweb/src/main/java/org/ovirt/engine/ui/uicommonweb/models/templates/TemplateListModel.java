@@ -1038,7 +1038,7 @@ public class TemplateListModel extends VmBaseListModel<Void, VmTemplate> {
                 ,
                 new UICommand(CMD_CANCEL, this).setIsCancel(true)
                 .setTitle(ConstantsManager.getInstance().getConstants().cancel())
-                );
+        );
     }
 
     private void executeImportClone(ImportTemplatesModel model) {
@@ -1064,12 +1064,12 @@ public class TemplateListModel extends VmBaseListModel<Void, VmTemplate> {
     protected IValidation[] getClonedAppendedNameValidators() {
         final int maxClonedNameLength = getMaxClonedNameLength();
         return new IValidation[] {
-                new NotEmptyValidation(),
-                new LengthValidation(maxClonedNameLength),
-                new I18NNameValidation(ConstantsManager.getInstance()
-                        .getMessages()
-                        .newNameWithSuffixCannotContainBlankOrSpecialChars(maxClonedNameLength)),
-                new UniqueClonedAppendedNameValidator(assignedVmNames)
+            new NotEmptyValidation(),
+            new LengthValidation(maxClonedNameLength),
+            new I18NNameValidation(ConstantsManager.getInstance()
+                .getMessages()
+                .newNameWithSuffixCannotContainBlankOrSpecialChars(maxClonedNameLength)),
+            new UniqueClonedAppendedNameValidator(assignedVmNames)
         };
     }
 
@@ -1205,12 +1205,12 @@ public class TemplateListModel extends VmBaseListModel<Void, VmTemplate> {
     protected IValidation[] getClonedNameValidators() {
         final int maxClonedNameLength = getMaxClonedNameLength();
         return new IValidation[] {
-                new NotEmptyValidation(),
-                new LengthValidation(maxClonedNameLength),
-                new I18NNameValidation(ConstantsManager.getInstance()
-                        .getMessages()
-                        .nameMustConataionOnlyAlphanumericChars(maxClonedNameLength)),
-                new UniqueClonedNameValidator(assignedVmNames)
+            new NotEmptyValidation(),
+            new LengthValidation(maxClonedNameLength),
+            new I18NNameValidation(ConstantsManager.getInstance()
+                .getMessages()
+                .nameMustConataionOnlyAlphanumericChars(maxClonedNameLength)),
+            new UniqueClonedNameValidator(assignedVmNames)
         };
     }
 

@@ -62,31 +62,31 @@ public class JobMapper {
 
     private static JobStatus mapJobStatus(JobExecutionStatus status) {
         switch (status) {
-        case STARTED:
-            return JobStatus.STARTED;
-        case FINISHED:
-            return JobStatus.FINISHED;
-        case FAILED:
-            return JobStatus.FAILED;
-        case ABORTED:
-            return JobStatus.ABORTED;
-        default:
-            return JobStatus.UNKNOWN;
+            case STARTED:
+                return JobStatus.STARTED;
+            case FINISHED:
+                return JobStatus.FINISHED;
+            case FAILED:
+                return JobStatus.FAILED;
+            case ABORTED:
+                return JobStatus.ABORTED;
+            default:
+                return JobStatus.UNKNOWN;
         }
     }
 
     public static JobExecutionStatus mapJobStatus(JobStatus status) {
         switch (status) {
-        case STARTED:
-            return JobExecutionStatus.STARTED;
-        case FINISHED:
-            return JobExecutionStatus.FINISHED;
-        case FAILED:
-            return JobExecutionStatus.FAILED;
-        case ABORTED:
-            return JobExecutionStatus.ABORTED;
-        default:
-            return JobExecutionStatus.UNKNOWN;
+            case STARTED:
+                return JobExecutionStatus.STARTED;
+            case FINISHED:
+                return JobExecutionStatus.FINISHED;
+            case FAILED:
+                return JobExecutionStatus.FAILED;
+            case ABORTED:
+                return JobExecutionStatus.ABORTED;
+            default:
+                return JobExecutionStatus.UNKNOWN;
         }
     }
 }

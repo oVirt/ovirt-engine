@@ -215,52 +215,52 @@ public class VmAnalyzer {
 
     void proceedVmReportedOnOtherHost() {
         switch (vdsmVm.getVmDynamic().getStatus()) {
-        case MigratingTo:
-            if (dbVm.getRunOnVds() == null) {
-                log.info("VM '{}' is found as migrating on VDS '{}'({}) ",
-                        vdsmVm.getVmDynamic().getId(), vdsManager.getVdsId(), vdsManager.getVdsName());
-                updateRuntimeData();
-                if (!vdsManager.isInitialized()) {
-                    resourceManager.removeVmFromDownVms(vdsManager.getVdsId(), vdsmVm.getVmDynamic().getId());
+            case MigratingTo:
+                if (dbVm.getRunOnVds() == null) {
+                    log.info("VM '{}' is found as migrating on VDS '{}'({}) ",
+                            vdsmVm.getVmDynamic().getId(), vdsManager.getVdsId(), vdsManager.getVdsName());
+                    updateRuntimeData();
+                    if (!vdsManager.isInitialized()) {
+                        resourceManager.removeVmFromDownVms(vdsManager.getVdsId(), vdsmVm.getVmDynamic().getId());
+                    }
+                } else {
+                    log.info("VM '{}' is migrating to VDS '{}'({}) ignoring it in the refresh until migration is done",
+                            vdsmVm.getVmDynamic().getId(), vdsManager.getVdsId(), vdsManager.getVdsName());
                 }
-            } else {
-                log.info("VM '{}' is migrating to VDS '{}'({}) ignoring it in the refresh until migration is done",
-                        vdsmVm.getVmDynamic().getId(), vdsManager.getVdsId(), vdsManager.getVdsName());
-            }
 
-            return;
+                return;
 
-        case MigratingFrom:
-            // do nothing
-            return;
-
-        case Paused:
-            if (vdsmVm.getVmDynamic().getPauseStatus() == VmPauseStatus.POSTCOPY) {
+            case MigratingFrom:
                 // do nothing
                 return;
-            }
 
-            if (dbVm.getRunOnVds() != null // The VM is supposedly running elsewhere
-                    && dbVm.getStatus() != VMStatus.Unknown
-                    && !isVmMigratingToThisVds()) {
-                destroyVm();
-                return;
-            }
+            case Paused:
+                if (vdsmVm.getVmDynamic().getPauseStatus() == VmPauseStatus.POSTCOPY) {
+                    // do nothing
+                    return;
+                }
 
-            // otherwise continue with default processing
-            break;
+                if (dbVm.getRunOnVds() != null // The VM is supposedly running elsewhere
+                        && dbVm.getStatus() != VMStatus.Unknown
+                        && !isVmMigratingToThisVds()) {
+                    destroyVm();
+                    return;
+                }
 
-        case WaitForLaunch:
-            if (dbVm.getStatus() == VMStatus.Unknown) {
-                // do nothing, better keep the VM as unknown on the previous host
-                // until we are sure that the VM is actually running on this host
-                return;
-            }
+                // otherwise continue with default processing
+                break;
 
-            // otherwise continue with default processing
-            break;
+            case WaitForLaunch:
+                if (dbVm.getStatus() == VMStatus.Unknown) {
+                    // do nothing, better keep the VM as unknown on the previous host
+                    // until we are sure that the VM is actually running on this host
+                    return;
+                }
 
-        default:
+                // otherwise continue with default processing
+                break;
+
+            default:
         }
 
         if (isVmMigratingToThisVds() && vdsmVm.getVmDynamic().getStatus().isRunningOrPaused()) {
@@ -305,64 +305,64 @@ public class VmAnalyzer {
 
         logVmStatusTransition();
         switch (dbVm.getStatus()) {
-        case SavingState:
-            resourceManager.internalSetVmStatus(dbVm, VMStatus.Suspended);
-            clearVm(vdsmVm.getVmDynamic().getExitStatus(),
-                    vdsmVm.getVmDynamic().getExitMessage(),
-                    vdsmVm.getVmDynamic().getExitReason());
-            resourceManager.removeAsyncRunningVm(dbVm.getId());
-            auditVmSuspended();
-            break;
-
-        case MigratingFrom:
-            if (vdsmVm.getVmDynamic().getExitStatus() == VmExitStatus.Normal &&
-                    vdsmVm.getVmDynamic().getExitReason() == VmExitReason.MigrationSucceeded) {
-                handOverVm();
-                break;
-            }
-
-            abortVmMigration(vdsmVm.getVmDynamic().getExitStatus(),
-                    vdsmVm.getVmDynamic().getExitMessage(),
-                    vdsmVm.getVmDynamic().getExitReason());
-
-            if (vdsmVm.getVmDynamic().getExitStatus() == VmExitStatus.Error && getVmManager().isAutoStart()) {
-                setAutoRunFlag();
-            }
-
-            break;
-
-        default:
-            switch (vdsmVm.getVmDynamic().getExitStatus()) {
-            case Error:
-                auditVmOnDownError();
+            case SavingState:
+                resourceManager.internalSetVmStatus(dbVm, VMStatus.Suspended);
                 clearVm(vdsmVm.getVmDynamic().getExitStatus(),
                         vdsmVm.getVmDynamic().getExitMessage(),
                         vdsmVm.getVmDynamic().getExitReason());
+                resourceManager.removeAsyncRunningVm(dbVm.getId());
+                auditVmSuspended();
+                break;
 
-                if (resourceManager.isVmInAsyncRunningList(vdsmVm.getVmDynamic().getId())) {
-                    setRerunFlag();
+            case MigratingFrom:
+                if (vdsmVm.getVmDynamic().getExitStatus() == VmExitStatus.Normal &&
+                        vdsmVm.getVmDynamic().getExitReason() == VmExitReason.MigrationSucceeded) {
+                    handOverVm();
                     break;
                 }
 
-                if (getVmManager().isAutoStart()) {
+                abortVmMigration(vdsmVm.getVmDynamic().getExitStatus(),
+                        vdsmVm.getVmDynamic().getExitMessage(),
+                        vdsmVm.getVmDynamic().getExitReason());
+
+                if (vdsmVm.getVmDynamic().getExitStatus() == VmExitStatus.Error && getVmManager().isAutoStart()) {
                     setAutoRunFlag();
-                    break;
                 }
 
                 break;
 
-            case Normal:
-                boolean powerOff = System.nanoTime() - getVmManager().getPowerOffTimeout() < 0;
-                auditVmOnDownNormal(powerOff);
-                resourceManager.removeAsyncRunningVm(vdsmVm.getVmDynamic().getId());
-                clearVm(vdsmVm.getVmDynamic().getExitStatus(),
-                        powerOff ? getPowerOffExitMessage() : vdsmVm.getVmDynamic().getExitMessage(),
-                        vdsmVm.getVmDynamic().getExitReason());
+            default:
+                switch (vdsmVm.getVmDynamic().getExitStatus()) {
+                    case Error:
+                        auditVmOnDownError();
+                        clearVm(vdsmVm.getVmDynamic().getExitStatus(),
+                                vdsmVm.getVmDynamic().getExitMessage(),
+                                vdsmVm.getVmDynamic().getExitReason());
 
-                if (getVmManager().isColdReboot() || vdsmVm.getVmDynamic().getExitReason() == VmExitReason.DestroyedOnReboot) {
-                    setColdRebootFlag();
+                        if (resourceManager.isVmInAsyncRunningList(vdsmVm.getVmDynamic().getId())) {
+                            setRerunFlag();
+                            break;
+                        }
+
+                        if (getVmManager().isAutoStart()) {
+                            setAutoRunFlag();
+                            break;
+                        }
+
+                        break;
+
+                    case Normal:
+                        boolean powerOff = System.nanoTime() - getVmManager().getPowerOffTimeout() < 0;
+                        auditVmOnDownNormal(powerOff);
+                        resourceManager.removeAsyncRunningVm(vdsmVm.getVmDynamic().getId());
+                        clearVm(vdsmVm.getVmDynamic().getExitStatus(),
+                                powerOff ? getPowerOffExitMessage() : vdsmVm.getVmDynamic().getExitMessage(),
+                                vdsmVm.getVmDynamic().getExitReason());
+
+                        if (getVmManager().isColdReboot() || vdsmVm.getVmDynamic().getExitReason() == VmExitReason.DestroyedOnReboot) {
+                            setColdRebootFlag();
+                        }
                 }
-            }
         }
     }
 
@@ -663,17 +663,17 @@ public class VmAnalyzer {
             }
 
             switch (dbVm.getStatus()) {
-            case Paused:
-                break;
+                case Paused:
+                    break;
 
-            default:
-                // otherwise, remove the vm from async list
-                removeFromAsync = true;
-                auditVmPaused();
-                // check exit message to determine why the VM is paused
-                if (vdsmVmDynamic.getPauseStatus().isError()) {
-                    auditVmPausedError(vdsmVmDynamic);
-                }
+                default:
+                    // otherwise, remove the vm from async list
+                    removeFromAsync = true;
+                    auditVmPaused();
+                    // check exit message to determine why the VM is paused
+                    if (vdsmVmDynamic.getPauseStatus().isError()) {
+                        auditVmPausedError(vdsmVmDynamic);
+                    }
             }
         }
 
@@ -755,15 +755,15 @@ public class VmAnalyzer {
 
     private boolean isAnyRuntimeFieldChanged() {
         switch (getVmManager().getOrigin()) {
-        case KUBEVIRT:
-            // that is a workaround for kubevirt since we place the IP we get from kubevirt in VmDynamic
-            // rather than setting vmGuestAgentInterfaces
-            if (!Objects.equals(dbVm.getIp(), vdsmVm.getVmDynamic().getIp())) {
-                dbVm.setIp(vdsmVm.getVmDynamic().getIp());
-                return true;
-            }
-        default:
-            return isAnyFieldChanged(dbVm, vdsmVm.getVmDynamic(), CHANGEABLE_FIELDS_BY_VDSM);
+            case KUBEVIRT:
+                // that is a workaround for kubevirt since we place the IP we get from kubevirt in VmDynamic
+                // rather than setting vmGuestAgentInterfaces
+                if (!Objects.equals(dbVm.getIp(), vdsmVm.getVmDynamic().getIp())) {
+                    dbVm.setIp(vdsmVm.getVmDynamic().getIp());
+                    return true;
+                }
+            default:
+                return isAnyFieldChanged(dbVm, vdsmVm.getVmDynamic(), CHANGEABLE_FIELDS_BY_VDSM);
         }
     }
 
@@ -861,53 +861,53 @@ public class VmAnalyzer {
         }
 
         switch (dbVm.getStatus()) {
-        case MigratingFrom:
-            if (dbVm.getMigratingToVds() != null) {
-                handOverVm();
+            case MigratingFrom:
+                if (dbVm.getMigratingToVds() != null) {
+                    handOverVm();
+                    break;
+                }
+
+                abortVmMigration(VmExitStatus.Error,
+                        String.format("Could not find VM %s on host, assuming it went down unexpectedly",
+                                getVmManager().getName()),
+                        VmExitReason.GenericError);
+
+                // TODO: cold reboot + auto restart
+
                 break;
-            }
 
-            abortVmMigration(VmExitStatus.Error,
-                    String.format("Could not find VM %s on host, assuming it went down unexpectedly",
-                            getVmManager().getName()),
-                    VmExitReason.GenericError);
+            case RebootInProgress:
+            case PoweringDown:
+                if (getVmManager().isColdReboot()) {
+                    setColdRebootFlag();
+                    resourceManager.removeAsyncRunningVm(dbVm.getId());
+                }
+                clearVm(VmExitStatus.Normal,
+                        String.format("VM %s shutdown complete", getVmManager().getName()),
+                        VmExitReason.Success);
 
-            // TODO: cold reboot + auto restart
-
-            break;
-
-        case RebootInProgress:
-        case PoweringDown:
-            if (getVmManager().isColdReboot()) {
-                setColdRebootFlag();
-                resourceManager.removeAsyncRunningVm(dbVm.getId());
-            }
-            clearVm(VmExitStatus.Normal,
-                    String.format("VM %s shutdown complete", getVmManager().getName()),
-                    VmExitReason.Success);
-
-            break;
-
-        default:
-            clearVm(VmExitStatus.Error,
-                    String.format("Could not find VM %s on host, assuming it went down unexpectedly",
-                            getVmManager().getName()),
-                    VmExitReason.GenericError);
-
-            if (resourceManager.isVmInAsyncRunningList(dbVm.getId())) {
-                setRerunFlag();
                 break;
-            }
 
-            if (getVmManager().isColdReboot()) {
-                setColdRebootFlag();
-                break;
-            }
+            default:
+                clearVm(VmExitStatus.Error,
+                        String.format("Could not find VM %s on host, assuming it went down unexpectedly",
+                                getVmManager().getName()),
+                        VmExitReason.GenericError);
 
-            if (getVmManager().isAutoStart()) {
-                setAutoRunFlag();
-                break;
-            }
+                if (resourceManager.isVmInAsyncRunningList(dbVm.getId())) {
+                    setRerunFlag();
+                    break;
+                }
+
+                if (getVmManager().isColdReboot()) {
+                    setColdRebootFlag();
+                    break;
+                }
+
+                if (getVmManager().isAutoStart()) {
+                    setAutoRunFlag();
+                    break;
+                }
         }
     }
 

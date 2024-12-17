@@ -289,7 +289,7 @@ public class VmSnapshotCustomPreviewPopupWidget extends AbstractModelBoundPopupW
                 }
             },
 
-            new SafeHtmlHeader(templates.iconWithText(imageResourceToSafeHtml(resources.diskIcon()), disk.getDiskAlias()),
+                new SafeHtmlHeader(templates.iconWithText(imageResourceToSafeHtml(resources.diskIcon()), disk.getDiskAlias()),
                     SafeHtmlUtils.fromString(disk.getId().toString())),
                     "120px"); //$NON-NLS-1$
 

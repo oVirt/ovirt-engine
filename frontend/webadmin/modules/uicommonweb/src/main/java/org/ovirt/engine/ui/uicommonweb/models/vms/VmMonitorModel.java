@@ -66,11 +66,11 @@ public class VmMonitorModel extends EntityModel {
     private GridTimer getRefreshTimer() {
         if (refreshTimer == null) {
             refreshTimer = new GridTimer("VmMonitorModel", getEventBus()) { //$NON-NLS-1$
-                        @Override
-                        public void execute() {
-                            refresh();
-                        }
-                    };
+                @Override
+                public void execute() {
+                    refresh();
+                }
+            };
             refreshTimer.setRefreshRate(1000);
         }
 

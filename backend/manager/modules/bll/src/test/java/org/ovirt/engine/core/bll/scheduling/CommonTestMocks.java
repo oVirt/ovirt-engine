@@ -35,9 +35,9 @@ public class CommonTestMocks {
 
     public static Class<?>[] commonClasses() {
         return new Class<?>[] {
-                CommonTestMocks.class,
-                Injector.class,
-                SessionDataContainer.class
+            CommonTestMocks.class,
+            Injector.class,
+            SessionDataContainer.class
         };
     }
 

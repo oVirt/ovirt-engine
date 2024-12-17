@@ -46,15 +46,15 @@ public class DiskMapper {
             } else if (disk.getStorageType() != null) {
                 DiskStorageType diskStorageType = disk.getStorageType();
                 switch (diskStorageType) {
-                case CINDER:
-                    engineDisk = new CinderDisk();
-                    break;
-                case IMAGE:
-                    engineDisk = new DiskImage();
-                    break;
-                case MANAGED_BLOCK_STORAGE:
-                    engineDisk = new ManagedBlockStorageDisk();
-                    break;
+                    case CINDER:
+                        engineDisk = new CinderDisk();
+                        break;
+                    case IMAGE:
+                        engineDisk = new DiskImage();
+                        break;
+                    case MANAGED_BLOCK_STORAGE:
+                        engineDisk = new ManagedBlockStorageDisk();
+                        break;
                 }
             }
             if (engineDisk == null) {
@@ -256,12 +256,12 @@ public class DiskMapper {
     @Mapping(from = DiskFormat.class, to = String.class)
     public static VolumeFormat map(DiskFormat diskFormat, VolumeFormat template) {
         switch (diskFormat) {
-        case COW:
-            return VolumeFormat.COW;
-        case RAW:
-            return VolumeFormat.RAW;
-        default:
-            return VolumeFormat.Unassigned;
+            case COW:
+                return VolumeFormat.COW;
+            case RAW:
+                return VolumeFormat.RAW;
+            default:
+                return VolumeFormat.Unassigned;
         }
     }
 
@@ -279,23 +279,23 @@ public class DiskMapper {
 
     public static QcowCompat mapQcowVersion(QcowVersion qcowVersion) {
         switch (qcowVersion) {
-        case QCOW2_V2:
-            return QcowCompat.QCOW2_V2;
-        case QCOW2_V3:
-            return QcowCompat.QCOW2_V3;
-        default:
-            return QcowCompat.Undefined;
+            case QCOW2_V2:
+                return QcowCompat.QCOW2_V2;
+            case QCOW2_V3:
+                return QcowCompat.QCOW2_V3;
+            default:
+                return QcowCompat.Undefined;
         }
     }
 
     public static QcowVersion mapQcowCompat(QcowCompat qcowCompat) {
         switch (qcowCompat) {
-        case QCOW2_V2:
-            return QcowVersion.QCOW2_V2;
-        case QCOW2_V3:
-            return QcowVersion.QCOW2_V3;
-        default:
-            return null;
+            case QCOW2_V2:
+                return QcowVersion.QCOW2_V2;
+            case QCOW2_V3:
+                return QcowVersion.QCOW2_V3;
+            default:
+                return null;
         }
     }
 
@@ -304,26 +304,26 @@ public class DiskMapper {
             ScsiGenericIO scsiGenericIO,
             org.ovirt.engine.core.common.businessentities.storage.ScsiGenericIO template) {
         switch (scsiGenericIO) {
-        case FILTERED:
-            return org.ovirt.engine.core.common.businessentities.storage.ScsiGenericIO.FILTERED;
-        case UNFILTERED:
-            return org.ovirt.engine.core.common.businessentities.storage.ScsiGenericIO.UNFILTERED;
-        case DISABLED:
-            return null;
-        default:
-            return null;
+            case FILTERED:
+                return org.ovirt.engine.core.common.businessentities.storage.ScsiGenericIO.FILTERED;
+            case UNFILTERED:
+                return org.ovirt.engine.core.common.businessentities.storage.ScsiGenericIO.UNFILTERED;
+            case DISABLED:
+                return null;
+            default:
+                return null;
         }
     }
 
     @Mapping(from = org.ovirt.engine.core.common.businessentities.storage.ScsiGenericIO.class, to = ScsiGenericIO.class)
     public static ScsiGenericIO map(org.ovirt.engine.core.common.businessentities.storage.ScsiGenericIO scsiGenericIO, ScsiGenericIO template) {
         switch (scsiGenericIO) {
-        case FILTERED:
-            return ScsiGenericIO.FILTERED;
-        case UNFILTERED:
-            return ScsiGenericIO.UNFILTERED;
-        default:
-            return null;
+            case FILTERED:
+                return ScsiGenericIO.FILTERED;
+            case UNFILTERED:
+                return ScsiGenericIO.UNFILTERED;
+            default:
+                return null;
         }
     }
 
@@ -348,27 +348,27 @@ public class DiskMapper {
             return null;
         }
         switch (status) {
-        case ILLEGAL:
-            return ImageStatus.ILLEGAL;
-        case LOCKED:
-            return ImageStatus.LOCKED;
-        case OK:
-            return ImageStatus.OK;
-        default:
-            return null;
+            case ILLEGAL:
+                return ImageStatus.ILLEGAL;
+            case LOCKED:
+                return ImageStatus.LOCKED;
+            case OK:
+                return ImageStatus.OK;
+            default:
+                return null;
         }
     }
 
     private static DiskStatus mapDiskStatus(ImageStatus status) {
         switch (status) {
-        case ILLEGAL:
-            return DiskStatus.ILLEGAL;
-        case LOCKED:
-            return DiskStatus.LOCKED;
-        case OK:
-            return DiskStatus.OK;
-        default:
-            return null;
+            case ILLEGAL:
+                return DiskStatus.ILLEGAL;
+            case LOCKED:
+                return DiskStatus.LOCKED;
+            case OK:
+                return DiskStatus.OK;
+            default:
+                return null;
         }
     }
 
@@ -397,24 +397,24 @@ public class DiskMapper {
     @Mapping(from = DiskBackupMode.class, to = org.ovirt.engine.core.common.businessentities.storage.DiskBackupMode.class)
     private static org.ovirt.engine.core.common.businessentities.storage.DiskBackupMode mapDiskBackupMode(DiskBackupMode diskBackupMode) {
         switch (diskBackupMode) {
-        case FULL:
-            return org.ovirt.engine.core.common.businessentities.storage.DiskBackupMode.Full;
-        case INCREMENTAL:
-            return org.ovirt.engine.core.common.businessentities.storage.DiskBackupMode.Incremental;
-        default:
-            return null;
+            case FULL:
+                return org.ovirt.engine.core.common.businessentities.storage.DiskBackupMode.Full;
+            case INCREMENTAL:
+                return org.ovirt.engine.core.common.businessentities.storage.DiskBackupMode.Incremental;
+            default:
+                return null;
         }
     }
 
     @Mapping(from = org.ovirt.engine.core.common.businessentities.storage.DiskBackupMode.class, to = DiskBackupMode.class)
     private static DiskBackupMode mapDiskBackupMode(org.ovirt.engine.core.common.businessentities.storage.DiskBackupMode diskBackupMode) {
         switch (diskBackupMode) {
-        case Full:
-            return DiskBackupMode.FULL;
-        case Incremental:
-            return DiskBackupMode.INCREMENTAL;
-        default:
-            return null;
+            case Full:
+                return DiskBackupMode.FULL;
+            case Incremental:
+                return DiskBackupMode.INCREMENTAL;
+            default:
+                return null;
         }
     }
 
@@ -435,18 +435,18 @@ public class DiskMapper {
             return null;
         }
         switch (diskInterface) {
-        case IDE:
-            return org.ovirt.engine.core.common.businessentities.storage.DiskInterface.IDE;
-        case SATA:
-            return org.ovirt.engine.core.common.businessentities.storage.DiskInterface.SATA;
-        case VIRTIO:
-            return org.ovirt.engine.core.common.businessentities.storage.DiskInterface.VirtIO;
-        case VIRTIO_SCSI:
-            return org.ovirt.engine.core.common.businessentities.storage.DiskInterface.VirtIO_SCSI;
-        case SPAPR_VSCSI:
-            return org.ovirt.engine.core.common.businessentities.storage.DiskInterface.SPAPR_VSCSI;
-        default:
-            throw new IllegalArgumentException("Unknown disk interface \"" + diskInterface + "\"");
+            case IDE:
+                return org.ovirt.engine.core.common.businessentities.storage.DiskInterface.IDE;
+            case SATA:
+                return org.ovirt.engine.core.common.businessentities.storage.DiskInterface.SATA;
+            case VIRTIO:
+                return org.ovirt.engine.core.common.businessentities.storage.DiskInterface.VirtIO;
+            case VIRTIO_SCSI:
+                return org.ovirt.engine.core.common.businessentities.storage.DiskInterface.VirtIO_SCSI;
+            case SPAPR_VSCSI:
+                return org.ovirt.engine.core.common.businessentities.storage.DiskInterface.SPAPR_VSCSI;
+            default:
+                throw new IllegalArgumentException("Unknown disk interface \"" + diskInterface + "\"");
         }
     }
 
@@ -455,18 +455,18 @@ public class DiskMapper {
             return null;
         }
         switch (diskInterface) {
-        case IDE:
-            return DiskInterface.IDE;
-        case SATA:
-            return DiskInterface.SATA;
-        case VirtIO:
-            return DiskInterface.VIRTIO;
-        case VirtIO_SCSI:
-            return DiskInterface.VIRTIO_SCSI;
-        case SPAPR_VSCSI:
-            return DiskInterface.SPAPR_VSCSI;
-        default:
-            throw new IllegalArgumentException("Unknown disk interface \"" + diskInterface + "\"");
+            case IDE:
+                return DiskInterface.IDE;
+            case SATA:
+                return DiskInterface.SATA;
+            case VirtIO:
+                return DiskInterface.VIRTIO;
+            case VirtIO_SCSI:
+                return DiskInterface.VIRTIO_SCSI;
+            case SPAPR_VSCSI:
+                return DiskInterface.SPAPR_VSCSI;
+            default:
+                throw new IllegalArgumentException("Unknown disk interface \"" + diskInterface + "\"");
         }
     }
 
@@ -475,28 +475,28 @@ public class DiskMapper {
             return null;
         }
         switch (contentType) {
-        case DATA:
-            return org.ovirt.engine.core.common.businessentities.storage.DiskContentType.DATA;
-        case ISO:
-            return org.ovirt.engine.core.common.businessentities.storage.DiskContentType.ISO;
-        case MEMORY_DUMP_VOLUME:
-            return org.ovirt.engine.core.common.businessentities.storage.DiskContentType.MEMORY_DUMP_VOLUME;
-        case MEMORY_METADATA_VOLUME:
-            return org.ovirt.engine.core.common.businessentities.storage.DiskContentType.MEMORY_METADATA_VOLUME;
-        case OVF_STORE:
-            return org.ovirt.engine.core.common.businessentities.storage.DiskContentType.OVF_STORE;
-        case HOSTED_ENGINE:
-            return org.ovirt.engine.core.common.businessentities.storage.DiskContentType.HOSTED_ENGINE;
-        case HOSTED_ENGINE_SANLOCK:
-            return org.ovirt.engine.core.common.businessentities.storage.DiskContentType.HOSTED_ENGINE_SANLOCK;
-        case HOSTED_ENGINE_METADATA:
-            return org.ovirt.engine.core.common.businessentities.storage.DiskContentType.HOSTED_ENGINE_METADATA;
-        case HOSTED_ENGINE_CONFIGURATION:
-            return org.ovirt.engine.core.common.businessentities.storage.DiskContentType.HOSTED_ENGINE_CONFIGURATION;
-        case BACKUP_SCRATCH:
-            return org.ovirt.engine.core.common.businessentities.storage.DiskContentType.BACKUP_SCRATCH;
-        default:
-            throw new IllegalArgumentException("Unknown disk content type \"" + contentType + "\"");
+            case DATA:
+                return org.ovirt.engine.core.common.businessentities.storage.DiskContentType.DATA;
+            case ISO:
+                return org.ovirt.engine.core.common.businessentities.storage.DiskContentType.ISO;
+            case MEMORY_DUMP_VOLUME:
+                return org.ovirt.engine.core.common.businessentities.storage.DiskContentType.MEMORY_DUMP_VOLUME;
+            case MEMORY_METADATA_VOLUME:
+                return org.ovirt.engine.core.common.businessentities.storage.DiskContentType.MEMORY_METADATA_VOLUME;
+            case OVF_STORE:
+                return org.ovirt.engine.core.common.businessentities.storage.DiskContentType.OVF_STORE;
+            case HOSTED_ENGINE:
+                return org.ovirt.engine.core.common.businessentities.storage.DiskContentType.HOSTED_ENGINE;
+            case HOSTED_ENGINE_SANLOCK:
+                return org.ovirt.engine.core.common.businessentities.storage.DiskContentType.HOSTED_ENGINE_SANLOCK;
+            case HOSTED_ENGINE_METADATA:
+                return org.ovirt.engine.core.common.businessentities.storage.DiskContentType.HOSTED_ENGINE_METADATA;
+            case HOSTED_ENGINE_CONFIGURATION:
+                return org.ovirt.engine.core.common.businessentities.storage.DiskContentType.HOSTED_ENGINE_CONFIGURATION;
+            case BACKUP_SCRATCH:
+                return org.ovirt.engine.core.common.businessentities.storage.DiskContentType.BACKUP_SCRATCH;
+            default:
+                throw new IllegalArgumentException("Unknown disk content type \"" + contentType + "\"");
         }
     }
 
@@ -505,28 +505,28 @@ public class DiskMapper {
             return null;
         }
         switch (contentType) {
-        case DATA:
-            return DiskContentType.DATA;
-        case ISO:
-            return DiskContentType.ISO;
-        case MEMORY_DUMP_VOLUME:
-            return DiskContentType.MEMORY_DUMP_VOLUME;
-        case MEMORY_METADATA_VOLUME:
-            return DiskContentType.MEMORY_METADATA_VOLUME;
-        case OVF_STORE:
-            return DiskContentType.OVF_STORE;
-        case HOSTED_ENGINE:
-            return DiskContentType.HOSTED_ENGINE;
-        case HOSTED_ENGINE_SANLOCK:
-            return DiskContentType.HOSTED_ENGINE_SANLOCK;
-        case HOSTED_ENGINE_METADATA:
-            return DiskContentType.HOSTED_ENGINE_METADATA;
-        case HOSTED_ENGINE_CONFIGURATION:
-            return DiskContentType.HOSTED_ENGINE_CONFIGURATION;
-        case BACKUP_SCRATCH:
-            return DiskContentType.BACKUP_SCRATCH;
-        default:
-            throw new IllegalArgumentException("Unknown disk content type \"" + contentType + "\"");
+            case DATA:
+                return DiskContentType.DATA;
+            case ISO:
+                return DiskContentType.ISO;
+            case MEMORY_DUMP_VOLUME:
+                return DiskContentType.MEMORY_DUMP_VOLUME;
+            case MEMORY_METADATA_VOLUME:
+                return DiskContentType.MEMORY_METADATA_VOLUME;
+            case OVF_STORE:
+                return DiskContentType.OVF_STORE;
+            case HOSTED_ENGINE:
+                return DiskContentType.HOSTED_ENGINE;
+            case HOSTED_ENGINE_SANLOCK:
+                return DiskContentType.HOSTED_ENGINE_SANLOCK;
+            case HOSTED_ENGINE_METADATA:
+                return DiskContentType.HOSTED_ENGINE_METADATA;
+            case HOSTED_ENGINE_CONFIGURATION:
+                return DiskContentType.HOSTED_ENGINE_CONFIGURATION;
+            case BACKUP_SCRATCH:
+                return DiskContentType.BACKUP_SCRATCH;
+            default:
+                throw new IllegalArgumentException("Unknown disk content type \"" + contentType + "\"");
         }
     }
 }

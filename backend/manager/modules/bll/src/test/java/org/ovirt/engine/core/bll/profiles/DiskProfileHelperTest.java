@@ -67,10 +67,8 @@ public class DiskProfileHelperTest {
 
         doReturn(ValidationResult.VALID).when(diskProfileHelper).isDiskProfileParentEntityValid(any(), any());
         doReturn(Guid.newGuid()).when(permissionDao).getEntityPermissions(any(), any(), any(), any());
-        doReturn(Collections.singletonList(diskProfile_a)).when(diskProfileDao).getAllForStorageDomain
-                (STORAGE_DOMAIN_1);
-        doReturn(Collections.singletonList(diskProfile_b)).when(diskProfileDao).getAllForStorageDomain
-                (STORAGE_DOMAIN_2);
+        doReturn(Collections.singletonList(diskProfile_a)).when(diskProfileDao).getAllForStorageDomain(STORAGE_DOMAIN_1);
+        doReturn(Collections.singletonList(diskProfile_b)).when(diskProfileDao).getAllForStorageDomain(STORAGE_DOMAIN_2);
     }
 
     private DiskImage createDisk() {

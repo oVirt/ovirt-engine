@@ -106,8 +106,7 @@ public class AmendImageGroupVolumesCommandTest extends BaseCommandTest {
     @Test
     public void testValidationFailsStoragePoolNotUp() {
         storagePool.setStatus(StoragePoolStatus.NotOperational);
-        ValidateTestUtils.runAndAssertValidateFailure
-                (command, EngineMessage.ACTION_TYPE_FAILED_STORAGE_POOL_STATUS_ILLEGAL);
+        ValidateTestUtils.runAndAssertValidateFailure(command, EngineMessage.ACTION_TYPE_FAILED_STORAGE_POOL_STATUS_ILLEGAL);
     }
 
     @Test

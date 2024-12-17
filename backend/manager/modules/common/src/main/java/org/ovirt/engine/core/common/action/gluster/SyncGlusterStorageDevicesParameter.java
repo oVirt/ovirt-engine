@@ -16,8 +16,8 @@ public class SyncGlusterStorageDevicesParameter extends VdsActionParameters {
     }
 
     public SyncGlusterStorageDevicesParameter(Guid vdsId, boolean forceAction) {
-     super(vdsId);
-     this.forceAction = forceAction;
+        super(vdsId);
+        this.forceAction = forceAction;
     }
 
     public boolean isForceAction() {

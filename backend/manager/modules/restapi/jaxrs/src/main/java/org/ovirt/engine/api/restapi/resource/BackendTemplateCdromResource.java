@@ -29,11 +29,11 @@ public class BackendTemplateCdromResource
     public Cdrom get() {
         GetVmTemplateParameters parameters = new GetVmTemplateParameters(templateId);
         VmTemplate entity = getEntity(
-           VmTemplate.class,
-           QueryType.GetVmTemplate,
-           parameters,
-           templateId.toString(),
-           true
+            VmTemplate.class,
+            QueryType.GetVmTemplate,
+            parameters,
+            templateId.toString(),
+            true
         );
         return addLinks(populate(map(entity), entity));
     }

@@ -60,7 +60,7 @@ public class VdsSpmIdMapDaoImpl extends BaseDao implements VdsSpmIdMapDao {
     }
 
     @Override
-    public VdsSpmIdMap get(Guid storagePoolId, int spmId ) {
+    public VdsSpmIdMap get(Guid storagePoolId, int spmId) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource().addValue("storage_pool_id",
                 storagePoolId).addValue("vds_spm_id", spmId);
         return getCallsHandler().executeRead("Getvds_spm_id_mapBystorage_pool_idAndByvds_spm_id",

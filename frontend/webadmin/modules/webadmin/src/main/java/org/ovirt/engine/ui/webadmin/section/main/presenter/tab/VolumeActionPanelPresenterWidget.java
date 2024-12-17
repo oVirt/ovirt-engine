@@ -128,28 +128,28 @@ public class VolumeActionPanelPresenterWidget extends ActionPanelPresenterWidget
                 };
         snapshotMenu.add(newSnapshotButton);
         WebAdminButtonDefinition<Void, GlusterVolumeEntity> editSnapshotScheduleButton =
-                new WebAdminButtonDefinition<Void, GlusterVolumeEntity>(constants.editVolumeSnapshotSchedule()) {
-                    @Override
-                    protected UICommand resolveCommand() {
-                        return getModel().getEditSnapshotScheduleCommand();
-                    }
-                };
+            new WebAdminButtonDefinition<Void, GlusterVolumeEntity>(constants.editVolumeSnapshotSchedule()) {
+                @Override
+                protected UICommand resolveCommand() {
+                    return getModel().getEditSnapshotScheduleCommand();
+                }
+            };
         snapshotMenu.add(editSnapshotScheduleButton);
 
         WebAdminButtonDefinition<Void, GlusterVolumeEntity> configureClusterSnapshotOptionsButton =
-                new WebAdminButtonDefinition<Void, GlusterVolumeEntity>(constants.configureClusterSnapshotOptions()) {
-            @Override
-            protected UICommand resolveCommand() {
-                return getModel().getConfigureClusterSnapshotOptionsCommand();
-            }
-        };
+            new WebAdminButtonDefinition<Void, GlusterVolumeEntity>(constants.configureClusterSnapshotOptions()) {
+                @Override
+                protected UICommand resolveCommand() {
+                    return getModel().getConfigureClusterSnapshotOptionsCommand();
+                }
+            };
         WebAdminButtonDefinition<Void, GlusterVolumeEntity> configureVolumeSnapshotOptionsButton =
-                new WebAdminButtonDefinition<Void, GlusterVolumeEntity>(constants.configureVolumeSnapshotOptions()) {
-            @Override
-            protected UICommand resolveCommand() {
-                return getModel().getConfigureVolumeSnapshotOptionsCommand();
-            }
-        };
+            new WebAdminButtonDefinition<Void, GlusterVolumeEntity>(constants.configureVolumeSnapshotOptions()) {
+                @Override
+                protected UICommand resolveCommand() {
+                    return getModel().getConfigureVolumeSnapshotOptionsCommand();
+                }
+            };
 
         snapshotMenu.add(configureClusterSnapshotOptionsButton);
         snapshotMenu.add(configureVolumeSnapshotOptionsButton);

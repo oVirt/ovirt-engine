@@ -452,7 +452,7 @@ public class VolumeModel extends Model {
         }
 
         getName().validateEntity(new IValidation[] { new NotEmptyValidation(), new LengthValidation(50),
-                new AsciiNameValidation() });
+            new AsciiNameValidation() });
 
         setMessage(null);
         boolean validTransportTypes = true;

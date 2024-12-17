@@ -76,7 +76,7 @@ public class MapVnicContext extends Context {
    /**
      * @return the last handler of the flow
      */
-   @SuppressWarnings("unchecked")
+    @SuppressWarnings("unchecked")
     public Class<Handler> getLastHandler() {
         return (Class<Handler>) flowTrace.peek().get(1);
     }

@@ -395,7 +395,7 @@ public class BackendVmResource
                 org.ovirt.engine.core.common.businessentities.VM.class,
                 QueryType.GetVmByVmId,
                 new IdQueryParameters(guid), "VM: id=" + guid);
-                CloneVmParameters cloneVmParameters = new CloneVmParameters(vm, action.getVm().getName());
+        CloneVmParameters cloneVmParameters = new CloneVmParameters(vm, action.getVm().getName());
         cloneVmParameters.setMakeCreatorExplicitOwner(isFiltered());
         if (action.isSetStorageDomain() && getStorageDomainId(action) != null) {
             cloneVmParameters.setDestStorageDomainId(getStorageDomainId(action));

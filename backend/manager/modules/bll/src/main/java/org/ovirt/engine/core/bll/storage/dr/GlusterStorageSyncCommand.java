@@ -153,12 +153,12 @@ public class GlusterStorageSyncCommand<T extends GlusterStorageSyncCommandParame
     @Override
     public AuditLogType getAuditLogTypeValue() {
         switch (getActionState()) {
-        case EXECUTE:
-            return AuditLogType.GLUSTER_STORAGE_DOMAIN_SYNC_STARTED;
-        case END_SUCCESS:
-            return AuditLogType.GLUSTER_STORAGE_DOMAIN_SYNCED;
-        default:
-            return AuditLogType.GLUSTER_STORAGE_DOMAIN_SYNC_FAILED;
+            case EXECUTE:
+                return AuditLogType.GLUSTER_STORAGE_DOMAIN_SYNC_STARTED;
+            case END_SUCCESS:
+                return AuditLogType.GLUSTER_STORAGE_DOMAIN_SYNCED;
+            default:
+                return AuditLogType.GLUSTER_STORAGE_DOMAIN_SYNC_FAILED;
         }
     }
 
@@ -187,21 +187,21 @@ public class GlusterStorageSyncCommand<T extends GlusterStorageSyncCommandParame
             return false;
         }
         switch (getParameters().getNextStep()) {
-        case GEO_REP:
-            GlusterVolumeGeoRepSessionParameters parameters = getGeoRepParameters();
-            getParameters().setNextStep(DRStep.REMOVE_TMP_SNAPSHOTS);
-            ActionReturnValue vdcRetValue = runInternalActionWithTasksContext(ActionType.GlusterStorageGeoRepSyncInternal, parameters);
-            if (!vdcRetValue.getSucceeded()) {
-                auditLogDirector.log(this, AuditLogType.GLUSTER_VOLUME_GEO_REP_START_FAILED_EXCEPTION);
-                endWithFailure();
-            }
-            persistCommandIfNeeded();
-            break;
-        case REMOVE_TMP_SNAPSHOTS:
-            removeDRSnapshots();
-            getParameters().setNextStep(null);
-            persistCommandIfNeeded();
-            break;
+            case GEO_REP:
+                GlusterVolumeGeoRepSessionParameters parameters = getGeoRepParameters();
+                getParameters().setNextStep(DRStep.REMOVE_TMP_SNAPSHOTS);
+                ActionReturnValue vdcRetValue = runInternalActionWithTasksContext(ActionType.GlusterStorageGeoRepSyncInternal, parameters);
+                if (!vdcRetValue.getSucceeded()) {
+                    auditLogDirector.log(this, AuditLogType.GLUSTER_VOLUME_GEO_REP_START_FAILED_EXCEPTION);
+                    endWithFailure();
+                }
+                persistCommandIfNeeded();
+                break;
+            case REMOVE_TMP_SNAPSHOTS:
+                removeDRSnapshots();
+                getParameters().setNextStep(null);
+                persistCommandIfNeeded();
+                break;
         }
         return true;
     }

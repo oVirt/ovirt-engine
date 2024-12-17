@@ -82,7 +82,7 @@ public class BackendUsersResource
             for (String domain : authzProvidersNames) {
                 Guid domainId = asGuid(domain.getBytes(StandardCharsets.UTF_8));
                 if (domainId.toString().equals(user.getDomain().getId())) {
-                   return domain;
+                    return domain;
                 }
             }
             throw new WebFaultException(null, "Domain: '" + user.getDomain().getId().toString() + "' does not exist.", Response.Status.BAD_REQUEST);
@@ -146,7 +146,7 @@ public class BackendUsersResource
         if (isFiltered()) {
             return mapDbUserCollection(getBackendCollection(QueryType.GetAllDbUsers, new QueryParametersBase(), SearchType.DBUser));
         } else {
-          return mapDbUserCollection(getBackendCollection(SearchType.DBUser, getSearchPattern()));
+            return mapDbUserCollection(getBackendCollection(SearchType.DBUser, getSearchPattern()));
         }
     }
 
@@ -189,15 +189,15 @@ public class BackendUsersResource
         } else if (user.isSetPrincipal()) {
             result = getEntity(DirectoryUser.class, QueryType.GetDirectoryUserByPrincipal, new GetDirectoryUserByPrincipalParameters(directoryName, user.getPrincipal()), user.getPrincipal());
         } else if (user.isSetUserName()) {
-                result = getEntity(
-                        DirectoryUser.class,
-                        SearchType.DirectoryUser,
-                        getDirectoryUserSearchPattern(
-                            AuthzUtils.getEntityNameWithoutAuthz(user.getUserName(), directoryName),
-                                user.getNamespace(),
-                                directoryName)
-                        );
-            }
+            result = getEntity(
+                    DirectoryUser.class,
+                    SearchType.DirectoryUser,
+                    getDirectoryUserSearchPattern(
+                         AuthzUtils.getEntityNameWithoutAuthz(user.getUserName(), directoryName),
+                            user.getNamespace(),
+                            directoryName)
+                    );
+        }
         return result;
     }
 

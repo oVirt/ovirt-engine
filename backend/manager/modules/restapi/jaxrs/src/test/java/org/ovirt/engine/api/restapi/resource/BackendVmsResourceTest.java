@@ -1116,28 +1116,28 @@ public class BackendVmsResourceTest
         setUpGetRngDeviceExpectations(1, 2);
         setUpGetTpmExpectations(2);
         setUpEntityQueryExpectations(QueryType.GetVmTemplate,
-                                     GetVmTemplateParameters.class,
-                                     new String[]{"Id"},
-                                     new Object[]{GUIDS[1]},
-                getTemplateEntity(1));
-                                     setUpEntityQueryExpectations(QueryType.GetClusterById,
-                                     IdQueryParameters.class,
-                                     new String[]{"Id"},
-                                     new Object[]{GUIDS[2]},
-                                     getClusterEntity());
+                                    GetVmTemplateParameters.class,
+                                    new String[]{"Id"},
+                                    new Object[]{GUIDS[1]},
+                                    getTemplateEntity(1));
+        setUpEntityQueryExpectations(QueryType.GetClusterById,
+                                    IdQueryParameters.class,
+                                    new String[]{"Id"},
+                                    new Object[]{GUIDS[2]},
+                                    getClusterEntity());
 
         setUpCreationExpectations(ActionType.AddVmFromTemplate,
-                                  AddVmParameters.class,
-                                  new String[] { "StorageDomainId", "CopyTemplatePermissions" },
-                                  new Object[] { GUIDS[0], copy },
-                                  true,
-                                  true,
-                                  GUIDS[2],
-                                  QueryType.GetVmByVmId,
-                                  IdQueryParameters.class,
-                                  new String[] { "Id" },
-                                  new Object[] { GUIDS[2] },
-                                  getEntity(2));
+                                AddVmParameters.class,
+                                new String[] { "StorageDomainId", "CopyTemplatePermissions" },
+                                new Object[] { GUIDS[0], copy },
+                                true,
+                                true,
+                                GUIDS[2],
+                                QueryType.GetVmByVmId,
+                                IdQueryParameters.class,
+                                new String[] { "Id" },
+                                new Object[] { GUIDS[2] },
+                                getEntity(2));
 
         Response response = collection.add(model);
         assertEquals(201, response.getStatus());

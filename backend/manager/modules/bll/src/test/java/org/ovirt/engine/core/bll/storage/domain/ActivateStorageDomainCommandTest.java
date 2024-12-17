@@ -113,8 +113,7 @@ public class ActivateStorageDomainCommandTest extends BaseCommandTest {
     }
 
     private void testActionDisallowed() {
-        ValidateTestUtils.runAndAssertValidateFailure
-                (cmd, EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_STATUS_ILLEGAL2);
+        ValidateTestUtils.runAndAssertValidateFailure(cmd, EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_STATUS_ILLEGAL2);
     }
 
     public void internalActionAllowed(StorageDomainStatus status) {
@@ -162,7 +161,7 @@ public class ActivateStorageDomainCommandTest extends BaseCommandTest {
 
     private void createUpVds() {
         when(vdsDao.getAllForStoragePoolAndStatus(any(), eq(VDSStatus.Up))).thenReturn
-                (Collections.singletonList(new VDS()));
+            (Collections.singletonList(new VDS()));
     }
 
     private void createCommand() {

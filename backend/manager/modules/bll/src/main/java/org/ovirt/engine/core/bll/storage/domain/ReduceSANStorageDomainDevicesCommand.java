@@ -237,13 +237,13 @@ public class ReduceSANStorageDomainDevicesCommand<T extends ReduceSANStorageDoma
     @Override
     public AuditLogType getAuditLogTypeValue() {
         switch (getActionState()) {
-        case EXECUTE:
-            return AuditLogType.USER_REDUCE_DOMAIN_DEVICES_STARTED;
-        case END_FAILURE:
-            return AuditLogType.USER_REDUCE_DOMAIN_DEVICES_FAILED;
-        case END_SUCCESS:
-            return getSucceeded() ? AuditLogType.USER_REDUCE_DOMAIN_DEVICES_SUCCEEDED
-                    : AuditLogType.USER_REDUCE_DOMAIN_DEVICES_FAILED;
+            case EXECUTE:
+                return AuditLogType.USER_REDUCE_DOMAIN_DEVICES_STARTED;
+            case END_FAILURE:
+                return AuditLogType.USER_REDUCE_DOMAIN_DEVICES_FAILED;
+            case END_SUCCESS:
+                return getSucceeded() ? AuditLogType.USER_REDUCE_DOMAIN_DEVICES_SUCCEEDED
+                        : AuditLogType.USER_REDUCE_DOMAIN_DEVICES_FAILED;
         }
 
         return null;

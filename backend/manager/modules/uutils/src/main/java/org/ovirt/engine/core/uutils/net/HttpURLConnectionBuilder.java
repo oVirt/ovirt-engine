@@ -139,7 +139,7 @@ public class HttpURLConnectionBuilder {
                 }
             } else {
                 tm = new TrustManager[] {
-                        new X509TrustManager() {
+                    new X509TrustManager() {
                             public java.security.cert.X509Certificate[] getAcceptedIssuers() {
                                 return new java.security.cert.X509Certificate[] {};
                             }

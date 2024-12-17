@@ -63,11 +63,11 @@ public class StorageDomainDaoTest extends BaseDaoTestCase<StorageDomainDao> {
 
     private StorageDomain existingDomain;
 
-     public static Stream<MockConfigDescriptor<?>> mockConfiguration() {
-         return Stream.of(
-                 MockConfigDescriptor.of(ConfigValues.PropagateDiskErrors, false)
-         );
-     }
+    public static Stream<MockConfigDescriptor<?>> mockConfiguration() {
+        return Stream.of(
+                MockConfigDescriptor.of(ConfigValues.PropagateDiskErrors, false)
+        );
+    }
 
 
     @BeforeEach

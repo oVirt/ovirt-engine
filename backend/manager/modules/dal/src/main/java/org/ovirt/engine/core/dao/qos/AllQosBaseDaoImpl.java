@@ -47,17 +47,17 @@ public class AllQosBaseDaoImpl extends QosBaseDaoImpl<QosBase> implements QosBas
         protected QosBase createQosEntity(ResultSet rs) throws SQLException {
             QosType qosType = QosType.forValue(rs.getInt("qos_type"));
             switch (qosType) {
-            case STORAGE:
-                return StorageQosDaoImpl.StorageDaoDbFacadaeImplMapper.MAPPER.createQosEntity(rs);
-            case CPU:
-                return CpuQosDaoImpl.CpuDaoDbFacadaeImplMapper.MAPPER.createQosEntity(rs);
-            case NETWORK:
-                return NetworkQoSDaoImpl.NetworkQosDaoDbFacadaeImplMapper.MAPPER.createQosEntity(rs);
-            case HOSTNETWORK:
-                return HostNetworkQosDaoImpl.HostNetworkQosDaoDbFacadaeImplMapper.MAPPER.createQosEntity(rs);
-            default:
-                log.debug("not handled/missing qos_type '{}'", qosType);
-                break;
+                case STORAGE:
+                    return StorageQosDaoImpl.StorageDaoDbFacadaeImplMapper.MAPPER.createQosEntity(rs);
+                case CPU:
+                    return CpuQosDaoImpl.CpuDaoDbFacadaeImplMapper.MAPPER.createQosEntity(rs);
+                case NETWORK:
+                    return NetworkQoSDaoImpl.NetworkQosDaoDbFacadaeImplMapper.MAPPER.createQosEntity(rs);
+                case HOSTNETWORK:
+                    return HostNetworkQosDaoImpl.HostNetworkQosDaoDbFacadaeImplMapper.MAPPER.createQosEntity(rs);
+                default:
+                    log.debug("not handled/missing qos_type '{}'", qosType);
+                    break;
             }
 
             return null;

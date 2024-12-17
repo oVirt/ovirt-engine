@@ -670,14 +670,14 @@ public class VmMapper extends VmBaseMapper {
 
     public static OriginType mapExternalVmProviderToOrigin(ExternalVmProviderType provider) {
         switch (provider) {
-        case KVM:
-            return OriginType.KVM;
-        case XEN:
-            return OriginType.XEN;
-        case VMWARE:
-            return OriginType.VMWARE;
-        default:
-            return null;
+            case KVM:
+                return OriginType.KVM;
+            case XEN:
+                return OriginType.XEN;
+            case VMWARE:
+                return OriginType.VMWARE;
+            default:
+                return null;
         }
     }
 
@@ -783,50 +783,50 @@ public class VmMapper extends VmBaseMapper {
 
     private static VmStatus mapVmStatus(VMStatus status) {
         switch (status) {
-        case Unassigned:
-            return VmStatus.UNASSIGNED;
-        case Down:
-            return VmStatus.DOWN;
-        case Up:
-            return VmStatus.UP;
-        case PoweringUp:
-            return VmStatus.POWERING_UP;
-        case Paused:
-            return VmStatus.PAUSED;
-        case MigratingFrom:
-            return VmStatus.MIGRATING;
-        case MigratingTo:
-            return VmStatus.MIGRATING;
-        case Unknown:
-            return VmStatus.UNKNOWN;
-        case NotResponding:
-            return VmStatus.NOT_RESPONDING;
-        case WaitForLaunch:
-            return VmStatus.WAIT_FOR_LAUNCH;
-        case RebootInProgress:
-            return VmStatus.REBOOT_IN_PROGRESS;
-        case SavingState:
-            return VmStatus.SAVING_STATE;
-        case RestoringState:
-            return VmStatus.RESTORING_STATE;
-        case Suspended:
-            return VmStatus.SUSPENDED;
-        case ImageLocked:
-            return VmStatus.IMAGE_LOCKED;
-        case PoweringDown:
-            return VmStatus.POWERING_DOWN;
-        default:
-            return null;
+            case Unassigned:
+                return VmStatus.UNASSIGNED;
+            case Down:
+                return VmStatus.DOWN;
+            case Up:
+                return VmStatus.UP;
+            case PoweringUp:
+                return VmStatus.POWERING_UP;
+            case Paused:
+                return VmStatus.PAUSED;
+            case MigratingFrom:
+                return VmStatus.MIGRATING;
+            case MigratingTo:
+                return VmStatus.MIGRATING;
+            case Unknown:
+                return VmStatus.UNKNOWN;
+            case NotResponding:
+                return VmStatus.NOT_RESPONDING;
+            case WaitForLaunch:
+                return VmStatus.WAIT_FOR_LAUNCH;
+            case RebootInProgress:
+                return VmStatus.REBOOT_IN_PROGRESS;
+            case SavingState:
+                return VmStatus.SAVING_STATE;
+            case RestoringState:
+                return VmStatus.RESTORING_STATE;
+            case Suspended:
+                return VmStatus.SUSPENDED;
+            case ImageLocked:
+                return VmStatus.IMAGE_LOCKED;
+            case PoweringDown:
+                return VmStatus.POWERING_DOWN;
+            default:
+                return null;
         }
     }
 
     @Mapping(from = AutoPinningPolicy.class, to = CpuPinningPolicy.class)
     public static org.ovirt.engine.core.common.businessentities.CpuPinningPolicy map(AutoPinningPolicy autoPinningPolicy) {
         switch (autoPinningPolicy) {
-        case ADJUST:
-            return org.ovirt.engine.core.common.businessentities.CpuPinningPolicy.RESIZE_AND_PIN_NUMA;
-        default:
-            return org.ovirt.engine.core.common.businessentities.CpuPinningPolicy.NONE;
+            case ADJUST:
+                return org.ovirt.engine.core.common.businessentities.CpuPinningPolicy.RESIZE_AND_PIN_NUMA;
+            default:
+                return org.ovirt.engine.core.common.businessentities.CpuPinningPolicy.NONE;
         }
     }
 
@@ -834,9 +834,9 @@ public class VmMapper extends VmBaseMapper {
     public static AutoPinningPolicy map(org.ovirt.engine.core.common.businessentities.CpuPinningPolicy cpuPinningPolicy, AutoPinningPolicy template) {
         switch (cpuPinningPolicy) {
             case RESIZE_AND_PIN_NUMA:
-            return AutoPinningPolicy.ADJUST;
-        default:
-            return AutoPinningPolicy.DISABLED;
+                return AutoPinningPolicy.ADJUST;
+            default:
+                return AutoPinningPolicy.DISABLED;
         }
     }
 
@@ -879,69 +879,69 @@ public class VmMapper extends VmBaseMapper {
         boot.setDevices(list);
         List<BootDevice> devices = list.getDevices();
         switch (bootSequence) {
-        case C:
-            devices.add(BootDevice.HD);
-            break;
-        case DC:
-            devices.add(BootDevice.CDROM);
-            devices.add(BootDevice.HD);
-            break;
-        case N:
-            devices.add(BootDevice.NETWORK);
-            break;
-        case CDN:
-            devices.add(BootDevice.HD);
-            devices.add(BootDevice.CDROM);
-            devices.add(BootDevice.NETWORK);
-            break;
-        case CND:
-            devices.add(BootDevice.HD);
-            devices.add(BootDevice.NETWORK);
-            devices.add(BootDevice.CDROM);
-            break;
-        case DCN:
-            devices.add(BootDevice.CDROM);
-            devices.add(BootDevice.HD);
-            devices.add(BootDevice.NETWORK);
-            break;
-        case DNC:
-            devices.add(BootDevice.CDROM);
-            devices.add(BootDevice.NETWORK);
-            devices.add(BootDevice.HD);
-            break;
-        case NCD:
-            devices.add(BootDevice.NETWORK);
-            devices.add(BootDevice.HD);
-            devices.add(BootDevice.CDROM);
-            break;
-        case NDC:
-            devices.add(BootDevice.NETWORK);
-            devices.add(BootDevice.CDROM);
-            devices.add(BootDevice.HD);
-            break;
-        case CD:
-            devices.add(BootDevice.HD);
-            devices.add(BootDevice.CDROM);
-            break;
-        case D:
-            devices.add(BootDevice.CDROM);
-            break;
-        case CN:
-            devices.add(BootDevice.HD);
-            devices.add(BootDevice.NETWORK);
-            break;
-        case DN:
-            devices.add(BootDevice.CDROM);
-            devices.add(BootDevice.NETWORK);
-            break;
-        case NC:
-            devices.add(BootDevice.NETWORK);
-            devices.add(BootDevice.HD);
-            break;
-        case ND:
-            devices.add(BootDevice.NETWORK);
-            devices.add(BootDevice.CDROM);
-            break;
+            case C:
+                devices.add(BootDevice.HD);
+                break;
+            case DC:
+                devices.add(BootDevice.CDROM);
+                devices.add(BootDevice.HD);
+                break;
+            case N:
+                devices.add(BootDevice.NETWORK);
+                break;
+            case CDN:
+                devices.add(BootDevice.HD);
+                devices.add(BootDevice.CDROM);
+                devices.add(BootDevice.NETWORK);
+                break;
+            case CND:
+                devices.add(BootDevice.HD);
+                devices.add(BootDevice.NETWORK);
+                devices.add(BootDevice.CDROM);
+                break;
+            case DCN:
+                devices.add(BootDevice.CDROM);
+                devices.add(BootDevice.HD);
+                devices.add(BootDevice.NETWORK);
+                break;
+            case DNC:
+                devices.add(BootDevice.CDROM);
+                devices.add(BootDevice.NETWORK);
+                devices.add(BootDevice.HD);
+                break;
+            case NCD:
+                devices.add(BootDevice.NETWORK);
+                devices.add(BootDevice.HD);
+                devices.add(BootDevice.CDROM);
+                break;
+            case NDC:
+                devices.add(BootDevice.NETWORK);
+                devices.add(BootDevice.CDROM);
+                devices.add(BootDevice.HD);
+                break;
+            case CD:
+                devices.add(BootDevice.HD);
+                devices.add(BootDevice.CDROM);
+                break;
+            case D:
+                devices.add(BootDevice.CDROM);
+                break;
+            case CN:
+                devices.add(BootDevice.HD);
+                devices.add(BootDevice.NETWORK);
+                break;
+            case DN:
+                devices.add(BootDevice.CDROM);
+                devices.add(BootDevice.NETWORK);
+                break;
+            case NC:
+                devices.add(BootDevice.NETWORK);
+                devices.add(BootDevice.HD);
+                break;
+            case ND:
+                devices.add(BootDevice.NETWORK);
+                devices.add(BootDevice.CDROM);
+                break;
         }
         return boot;
     }
@@ -958,66 +958,66 @@ public class VmMapper extends VmBaseMapper {
         List<BootDevice> devs = new ArrayList<>(devSet);
         if (devs.size() == 1) {
             switch (devs.get(0)) {
-            case CDROM:
-                return BootSequence.D;
-            case HD:
-                return BootSequence.C;
-            case NETWORK:
-                return BootSequence.N;
+                case CDROM:
+                    return BootSequence.D;
+                case HD:
+                    return BootSequence.C;
+                case NETWORK:
+                    return BootSequence.N;
             }
         } else if (devs.size() == 2) {
             switch (devs.get(0)) {
-            case CDROM:
-                switch (devs.get(1)) {
-                case HD:
-                    return BootSequence.DC;
-                case NETWORK:
-                    return BootSequence.DN;
-                }
-                break;
-            case HD:
-                switch (devs.get(1)) {
                 case CDROM:
-                    return BootSequence.CD;
-                case NETWORK:
-                    return BootSequence.CN;
-                }
-                break;
-            case NETWORK:
-                switch (devs.get(1)) {
+                    switch (devs.get(1)) {
+                        case HD:
+                            return BootSequence.DC;
+                        case NETWORK:
+                            return BootSequence.DN;
+                    }
+                    break;
                 case HD:
-                    return BootSequence.NC;
-                case CDROM:
-                    return BootSequence.ND;
-                }
-                break;
+                    switch (devs.get(1)) {
+                        case CDROM:
+                            return BootSequence.CD;
+                        case NETWORK:
+                            return BootSequence.CN;
+                    }
+                    break;
+                case NETWORK:
+                    switch (devs.get(1)) {
+                        case HD:
+                            return BootSequence.NC;
+                        case CDROM:
+                            return BootSequence.ND;
+                    }
+                    break;
             }
         } else if (devs.size() == 3) {
             switch (devs.get(0)) {
-            case CDROM:
-                switch (devs.get(1)) {
-                case HD:
-                    return BootSequence.DCN;
-                case NETWORK:
-                    return BootSequence.DNC;
-                }
-                break;
-            case HD:
-                switch (devs.get(1)) {
                 case CDROM:
-                    return BootSequence.CDN;
-                case NETWORK:
-                    return BootSequence.CND;
-                }
-                break;
-            case NETWORK:
-                switch (devs.get(1)) {
+                    switch (devs.get(1)) {
+                        case HD:
+                            return BootSequence.DCN;
+                        case NETWORK:
+                            return BootSequence.DNC;
+                    }
+                    break;
                 case HD:
-                    return BootSequence.NCD;
-                case CDROM:
-                    return BootSequence.NDC;
-                }
-                break;
+                    switch (devs.get(1)) {
+                        case CDROM:
+                            return BootSequence.CDN;
+                        case NETWORK:
+                            return BootSequence.CND;
+                    }
+                    break;
+                case NETWORK:
+                    switch (devs.get(1)) {
+                        case HD:
+                            return BootSequence.NCD;
+                        case CDROM:
+                            return BootSequence.NDC;
+                    }
+                    break;
             }
         }
         return null;
@@ -1226,11 +1226,11 @@ public class VmMapper extends VmBaseMapper {
 
     private static UsbPolicy getUsbPolicyAccordingToUsbType(UsbType usbType) {
         switch (usbType) {
-        case LEGACY:
-        case NATIVE:
-            return UsbPolicy.ENABLED_NATIVE;
-        default:
-            return null; // Should never get here
+            case LEGACY:
+            case NATIVE:
+                return UsbPolicy.ENABLED_NATIVE;
+            default:
+                return null; // Should never get here
         }
     }
 

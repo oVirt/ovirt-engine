@@ -69,7 +69,7 @@ public class MapNetworkAttachments {
     }
 
     private interface CalculateKey<I, K> {
-         K keyFrom(I instance);
+        K keyFrom(I instance);
     }
 
     private static class ByNetworkId implements CalculateKey<NetworkAttachment, Guid> {

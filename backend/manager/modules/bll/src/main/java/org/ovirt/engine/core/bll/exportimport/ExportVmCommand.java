@@ -312,23 +312,23 @@ public class ExportVmCommand<T extends MoveOrCopyParameters> extends MoveOrCopyT
 
         List<Guid> imageGroupIds = new ArrayList<>();
         for (Disk disk : getDisksBasedOnImage()) {
-                DiskImage diskImage = (DiskImage) disk;
-                diskImage.setParentId(VmTemplateHandler.BLANK_VM_TEMPLATE_ID);
-                diskImage.setImageTemplateId(VmTemplateHandler.BLANK_VM_TEMPLATE_ID);
-                diskImage.setStorageIds(new ArrayList<>(Collections.singletonList(storageDomainId)));
-                DiskImage diskForVolumeInfo = getDiskForVolumeInfo(diskImage);
-                diskImage.setVolumeFormat(diskForVolumeInfo.getVolumeFormat());
-                diskImage.setVolumeType(diskForVolumeInfo.getVolumeType());
-                VDSReturnValue vdsReturnValue = runVdsCommand(
-                                    VDSCommandType.GetImageInfo,
-                                    new GetImageInfoVDSCommandParameters(storagePoolId, storageDomainId, diskImage
-                                            .getId(), diskImage.getImageId()));
-                if (vdsReturnValue != null && vdsReturnValue.getSucceeded()) {
-                    DiskImage fromVdsm = (DiskImage) vdsReturnValue.getReturnValue();
-                    diskImage.setActualSizeInBytes(fromVdsm.getActualSizeInBytes());
-                }
-                vmImages.add(diskImage);
-                imageGroupIds.add(disk.getId());
+            DiskImage diskImage = (DiskImage) disk;
+            diskImage.setParentId(VmTemplateHandler.BLANK_VM_TEMPLATE_ID);
+            diskImage.setImageTemplateId(VmTemplateHandler.BLANK_VM_TEMPLATE_ID);
+            diskImage.setStorageIds(new ArrayList<>(Collections.singletonList(storageDomainId)));
+            DiskImage diskForVolumeInfo = getDiskForVolumeInfo(diskImage);
+            diskImage.setVolumeFormat(diskForVolumeInfo.getVolumeFormat());
+            diskImage.setVolumeType(diskForVolumeInfo.getVolumeType());
+            VDSReturnValue vdsReturnValue = runVdsCommand(
+                                VDSCommandType.GetImageInfo,
+                                new GetImageInfoVDSCommandParameters(storagePoolId, storageDomainId, diskImage
+                                    .getId(), diskImage.getImageId()));
+            if (vdsReturnValue != null && vdsReturnValue.getSucceeded()) {
+                DiskImage fromVdsm = (DiskImage) vdsReturnValue.getReturnValue();
+                diskImage.setActualSizeInBytes(fromVdsm.getActualSizeInBytes());
+            }
+            vmImages.add(diskImage);
+            imageGroupIds.add(disk.getId());
         }
 
         if (StringUtils.isEmpty(vm.getVmtName())) {
@@ -498,15 +498,15 @@ public class ExportVmCommand<T extends MoveOrCopyParameters> extends MoveOrCopyT
     @Override
     public AuditLogType getAuditLogTypeValue() {
         switch (getActionState()) {
-        case EXECUTE:
-            return getSucceeded() ? AuditLogType.IMPORTEXPORT_STARTING_EXPORT_VM
-                    : AuditLogType.IMPORTEXPORT_EXPORT_VM_FAILED;
+            case EXECUTE:
+                return getSucceeded() ? AuditLogType.IMPORTEXPORT_STARTING_EXPORT_VM
+                        : AuditLogType.IMPORTEXPORT_EXPORT_VM_FAILED;
 
-        case END_SUCCESS:
-            return getSucceeded() ? AuditLogType.IMPORTEXPORT_EXPORT_VM : AuditLogType.IMPORTEXPORT_EXPORT_VM_FAILED;
+            case END_SUCCESS:
+                return getSucceeded() ? AuditLogType.IMPORTEXPORT_EXPORT_VM : AuditLogType.IMPORTEXPORT_EXPORT_VM_FAILED;
 
-        default:
-            return AuditLogType.IMPORTEXPORT_EXPORT_VM_FAILED;
+            default:
+                return AuditLogType.IMPORTEXPORT_EXPORT_VM_FAILED;
         }
     }
 

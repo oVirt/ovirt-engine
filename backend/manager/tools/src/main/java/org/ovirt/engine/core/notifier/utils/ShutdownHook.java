@@ -38,7 +38,7 @@ public class ShutdownHook extends Thread {
 
     @Override
     public void run() {
-        log.info("Preparing for shutdown after receiving signal " );
+        log.info("Preparing for shutdown after receiving signal ");
         for (ScheduledFuture<?> scheduled : serviceHandlers) {
             scheduled.cancel(true);
         }

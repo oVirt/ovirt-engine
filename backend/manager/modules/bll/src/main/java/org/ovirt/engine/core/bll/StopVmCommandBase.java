@@ -122,10 +122,10 @@ public abstract class StopVmCommandBase<T extends StopVmParametersBase> extends 
                         buildDestroyVmVDSCommandParameters(getVm().getMigratingToVds()));
             } catch (EngineException e) {
                 switch (e.getErrorCode()) {
-                case noVM:
-                    break;
-                default:
-                    throw e;
+                    case noVM:
+                        break;
+                    default:
+                        throw e;
                 }
             }
 
@@ -136,13 +136,13 @@ public abstract class StopVmCommandBase<T extends StopVmParametersBase> extends 
                         buildDestroyVmVDSCommandParameters(getVdsId()));
             } catch (EngineException e) {
                 switch (e.getErrorCode()) {
-                case noVM:
-                    if (returnValueFromDestination == null) {
+                    case noVM:
+                        if (returnValueFromDestination == null) {
+                            throw e;
+                        }
+                        break;
+                    default:
                         throw e;
-                    }
-                    break;
-                default:
-                    throw e;
                 }
             }
 

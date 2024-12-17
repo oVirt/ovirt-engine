@@ -65,14 +65,14 @@ public class VolumeStatusCell extends AbstractCell<GlusterVolumeEntity> {
         ImageResource statusImage = null;
 
         switch (vStatus) {
-        case DOWN:
-            return downImage;
-        case UP :
-            return upImage;
-        case ALL_BRICKS_DOWN :
-            return allBricksDownImage;
-        case SOME_BRICKS_DOWN :
-            return volumeSomeBricksDownImage;
+            case DOWN:
+                return downImage;
+            case UP :
+                return upImage;
+            case ALL_BRICKS_DOWN :
+                return allBricksDownImage;
+            case SOME_BRICKS_DOWN :
+                return volumeSomeBricksDownImage;
         }
         return statusImage;
     }

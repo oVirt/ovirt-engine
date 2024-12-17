@@ -51,7 +51,7 @@ public class InternalAuthn implements Extension {
                                     Authn.AuthRecord.PRINCIPAL,
                                     adminUser
                                     )
-                    );
+            );
         } else {
             output.put(Authn.InvokeKeys.RESULT, Authn.AuthResult.CREDENTIALS_INVALID);
         }

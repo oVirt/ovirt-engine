@@ -83,14 +83,14 @@ public class VnicProfileModule extends AbstractGinModule {
 
         // Search-able Detail Models
         bind(new TypeLiteral<SearchableDetailModelProvider<VmTemplate, VnicProfileListModel, VnicProfileTemplateListModel>>() { })
-           .to(new TypeLiteral<SearchableDetailTabModelProvider<VmTemplate, VnicProfileListModel, VnicProfileTemplateListModel>>() { })
-           .in(Singleton.class);
+            .to(new TypeLiteral<SearchableDetailTabModelProvider<VmTemplate, VnicProfileListModel, VnicProfileTemplateListModel>>() { })
+            .in(Singleton.class);
         bind(new TypeLiteral<SearchableDetailModelProvider<VM, VnicProfileListModel, VnicProfileVmListModel>>() { })
             .to(new TypeLiteral<SearchableDetailTabModelProvider<VM, VnicProfileListModel, VnicProfileVmListModel>>() { })
             .in(Singleton.class);
         // Permission Detail Model
         bind(new TypeLiteral<SearchableDetailModelProvider<Permission, VnicProfileListModel, PermissionListModel<VnicProfileView>>>() { })
-           .to(new TypeLiteral<PermissionModelProvider<VnicProfileView, VnicProfileListModel>>() { }).in(Singleton.class);
+            .to(new TypeLiteral<PermissionModelProvider<VnicProfileView, VnicProfileListModel>>() { }).in(Singleton.class);
     }
 
 }

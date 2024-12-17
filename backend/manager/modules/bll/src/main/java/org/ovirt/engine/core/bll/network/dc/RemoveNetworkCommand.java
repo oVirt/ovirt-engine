@@ -200,17 +200,17 @@ public class RemoveNetworkCommand<T extends RemoveNetworkParameters> extends Net
     @Override
     public AuditLogType getAuditLogTypeValue() {
         switch (getActionState()) {
-        case EXECUTE:
-            if (!getSucceeded()) {
-                return NETWORK_REMOVE_NETWORK_START_ERROR;
-            } else if (skipHostSetupNetworks()) {
-                return NETWORK_REMOVE_NOTHING_TO_DO;
-            } else {
-                return NETWORK_REMOVE_NETWORK_STARTED;
-            }
-        case END_SUCCESS:
-            addCustomValues();
-            return NETWORK_REMOVE_NETWORK;
+            case EXECUTE:
+                if (!getSucceeded()) {
+                    return NETWORK_REMOVE_NETWORK_START_ERROR;
+                } else if (skipHostSetupNetworks()) {
+                    return NETWORK_REMOVE_NOTHING_TO_DO;
+                } else {
+                    return NETWORK_REMOVE_NETWORK_STARTED;
+                }
+            case END_SUCCESS:
+                addCustomValues();
+                return NETWORK_REMOVE_NETWORK;
         }
         addCustomValues();
         return NETWORK_REMOVE_NETWORK_FAILED;

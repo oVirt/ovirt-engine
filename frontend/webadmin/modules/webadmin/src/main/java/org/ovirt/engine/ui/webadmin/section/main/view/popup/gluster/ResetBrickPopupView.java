@@ -44,7 +44,7 @@ public class ResetBrickPopupView extends AbstractModelBoundPopupView<ResetBrickM
     @Override
     public void edit(final ResetBrickModel object) {
         driver.edit(object);
-        }
+    }
 
     @Override
     public void setMessage(String message) {

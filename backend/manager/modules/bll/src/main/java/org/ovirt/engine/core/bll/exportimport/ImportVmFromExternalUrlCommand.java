@@ -249,23 +249,23 @@ public class ImportVmFromExternalUrlCommand<P extends ImportVmFromExternalUrlPar
             ovaPath = getParameters().getUrl().replace("ova://", "");
         }
 
-         @Override
-         public boolean validate() {
-             if (!super.validate()) {
-                 return false;
-             }
+        @Override
+        public boolean validate() {
+            if (!super.validate()) {
+                return false;
+            }
 
-             if (getParameters().getProxyHostId() == null) {
-                 return failValidation(EngineMessage.ACTION_TYPE_FAILED_PROXY_HOST_MUST_BE_SPECIFIED);
-             }
+            if (getParameters().getProxyHostId() == null) {
+                return failValidation(EngineMessage.ACTION_TYPE_FAILED_PROXY_HOST_MUST_BE_SPECIFIED);
+            }
 
-             return true;
-         }
+            return true;
+        }
 
-         @Override
-         protected VolumeType getAutoDetectedVolumeType(DiskImage disk) {
-             return disk.getVolumeType();
-         }
+        @Override
+        protected VolumeType getAutoDetectedVolumeType(DiskImage disk) {
+            return disk.getVolumeType();
+        }
 
         @Override
         protected ActionType getImportActionType() {
@@ -299,14 +299,14 @@ public class ImportVmFromExternalUrlCommand<P extends ImportVmFromExternalUrlPar
             return VolumeFormat.RAW;
         } else if (storageType.isBlockDomain()) {
             switch (volumeType) {
-            case Sparse:
-                return VolumeFormat.COW;
+                case Sparse:
+                    return VolumeFormat.COW;
 
-            case Preallocated:
-                return VolumeFormat.RAW;
+                case Preallocated:
+                    return VolumeFormat.RAW;
 
-            default:
-                return VolumeFormat.Unassigned;
+                default:
+                    return VolumeFormat.Unassigned;
             }
         } else {
             return VolumeFormat.Unassigned;

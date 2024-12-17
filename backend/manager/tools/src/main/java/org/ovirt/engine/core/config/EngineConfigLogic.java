@@ -105,33 +105,33 @@ public class EngineConfigLogic {
         ConfigActionType actionType = parser.getConfigAction();
 
         switch (actionType) {
-        case ACTION_ALL:
-            printAllValues();
-            break;
-        case ACTION_LIST:
-            listKeys();
-            break;
-        case ACTION_GET:
-            printKey();
-            break;
-        case ACTION_SET:
-            persistValue();
-            break;
-        case ACTION_MERGE:
-            mergeValue();
-            break;
-        case ACTION_HELP:
-            printHelpForKey();
-            break;
-        case ACTION_RELOAD:
-            reloadConfigurations();
-            break;
-        case ACTION_DIFF:
-            checkDiff();
-            break;
-        default: // Should have already been discovered before execute
-            log.debug("execute: unable to recognize action: {}.", actionType);
-            throw new UnsupportedOperationException("Please tell me what to do: list? get? set? get-all? reload?");
+            case ACTION_ALL:
+                printAllValues();
+                break;
+            case ACTION_LIST:
+                listKeys();
+                break;
+            case ACTION_GET:
+                printKey();
+                break;
+            case ACTION_SET:
+                persistValue();
+                break;
+            case ACTION_MERGE:
+                mergeValue();
+                break;
+            case ACTION_HELP:
+                printHelpForKey();
+                break;
+            case ACTION_RELOAD:
+                reloadConfigurations();
+                break;
+            case ACTION_DIFF:
+                checkDiff();
+                break;
+            default: // Should have already been discovered before execute
+                log.debug("execute: unable to recognize action: {}.", actionType);
+                throw new UnsupportedOperationException("Please tell me what to do: list? get? set? get-all? reload?");
         }
     }
 

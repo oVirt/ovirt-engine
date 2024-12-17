@@ -76,10 +76,10 @@ public class MultipathHealthHandler {
                 multipathHealthMap.entrySet()
                         .stream()
                         .collect(Collectors.partitioningBy(entry -> {
-                                    Map<String, Object> internalValue =
+                            Map<String, Object> internalValue =
                                             (Map<String, Object>) entry.getValue();
-                                    return (Integer) internalValue.get(VdsProperties.MULTIPATH_VALID_PATHS) > 0;
-                                },
+                            return (Integer) internalValue.get(VdsProperties.MULTIPATH_VALID_PATHS) > 0;
+                        },
                                 Collectors.mapping(Map.Entry::getKey, Collectors.toList())));
 
         createAuditLog(multipathHealthMapPartition.get(Boolean.FALSE),

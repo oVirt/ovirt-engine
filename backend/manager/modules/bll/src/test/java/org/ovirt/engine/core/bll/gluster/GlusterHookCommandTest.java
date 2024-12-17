@@ -34,9 +34,9 @@ public abstract class GlusterHookCommandTest<T extends GlusterHookCommandBase<? 
         extends BaseCommandTest {
 
     protected static final Guid[] GUIDS = {new Guid("afce7a39-8e8c-4819-ba9c-796d316592e6"),
-                                             new Guid("afce7a39-8e8c-4819-ba9c-796d316592e7"),
-                                             new Guid("23f6d691-5dfb-472b-86dc-9e1d2d3c18f3"),
-                                             new Guid("2001751e-549b-4e7a-aff6-32d36856c125")};
+        new Guid("afce7a39-8e8c-4819-ba9c-796d316592e7"),
+        new Guid("23f6d691-5dfb-472b-86dc-9e1d2d3c18f3"),
+        new Guid("2001751e-549b-4e7a-aff6-32d36856c125")};
     protected static final Guid CLUSTER_ID = new Guid("b399944a-81ab-4ec5-8266-e19ba7c3c9d1");
     protected static final Guid HOOK_ID = new Guid("d2cb2f73-fab3-4a42-93f0-d5e4c069a43e");
 

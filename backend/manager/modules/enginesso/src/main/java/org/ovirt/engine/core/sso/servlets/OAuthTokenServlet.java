@@ -67,26 +67,26 @@ public class OAuthTokenServlet extends HttpServlet {
         String scope = SsoService.getScopeRequestParameter(request, "");
 
         switch (grantType) {
-        case "authorization_code":
-            issueTokenForAuthCode(request, response, scope);
-            break;
-        case "password":
-            if (SsoService.getSsoContext(request).getSsoLocalConfig().getBoolean("ENGINE_SSO_ENABLE_EXTERNAL_SSO")) {
-                ExternalOIDCService.issueTokenUsingExternalOIDC(ssoContext, request, response);
-            } else {
-                handlePasswordGrantType(request, response, scope);
-            }
-            break;
-        case "urn:ovirt:params:oauth:grant-type:http":
-            if (SsoService.getSsoContext(request).getSsoLocalConfig().getBoolean("ENGINE_SSO_ENABLE_EXTERNAL_SSO")) {
-                ExternalOIDCService.issueTokenUsingExternalOIDC(ssoContext, request, response);
-            } else {
-                issueTokenUsingHttpHeaders(request, response);
-            }
-            break;
-        default:
-            throw new OAuthException(SsoConstants.ERR_CODE_UNSUPPORTED_GRANT_TYPE,
-                    SsoConstants.ERR_CODE_UNSUPPORTED_GRANT_TYPE_MSG);
+            case "authorization_code":
+                issueTokenForAuthCode(request, response, scope);
+                break;
+            case "password":
+                if (SsoService.getSsoContext(request).getSsoLocalConfig().getBoolean("ENGINE_SSO_ENABLE_EXTERNAL_SSO")) {
+                    ExternalOIDCService.issueTokenUsingExternalOIDC(ssoContext, request, response);
+                } else {
+                    handlePasswordGrantType(request, response, scope);
+                }
+                break;
+            case "urn:ovirt:params:oauth:grant-type:http":
+                if (SsoService.getSsoContext(request).getSsoLocalConfig().getBoolean("ENGINE_SSO_ENABLE_EXTERNAL_SSO")) {
+                    ExternalOIDCService.issueTokenUsingExternalOIDC(ssoContext, request, response);
+                } else {
+                    issueTokenUsingHttpHeaders(request, response);
+                }
+                break;
+            default:
+                throw new OAuthException(SsoConstants.ERR_CODE_UNSUPPORTED_GRANT_TYPE,
+                        SsoConstants.ERR_CODE_UNSUPPORTED_GRANT_TYPE_MSG);
         }
     }
 

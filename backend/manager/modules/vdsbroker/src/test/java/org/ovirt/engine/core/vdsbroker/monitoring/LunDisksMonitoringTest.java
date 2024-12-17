@@ -160,14 +160,14 @@ public class LunDisksMonitoringTest {
     @SuppressWarnings("serial")
     private Map<Guid, Map<String, LUNs>> initInputFromVdsm() {
         return new HashMap<Guid, Map<String, LUNs>>() {{
-            put(VM_ID_1, new HashMap<String, LUNs>() {{
-                put(LUN_ID_1, lun1FromVdsm);
-                put(LUN_ID_2, lun2FromVdsm);
-            }});
-            put(VM_ID_2, new HashMap<String, LUNs>() {{
-                put(LUN_ID_3, lun3FromVdsm);
-                put(LUN_ID_4, lun4FromVdsm);
-            }});
-        }};
+                put(VM_ID_1, new HashMap<String, LUNs>() {{
+                        put(LUN_ID_1, lun1FromVdsm);
+                        put(LUN_ID_2, lun2FromVdsm);
+                    }});
+                put(VM_ID_2, new HashMap<String, LUNs>() {{
+                        put(LUN_ID_3, lun3FromVdsm);
+                        put(LUN_ID_4, lun4FromVdsm);
+                    }});
+            }};
     }
 }

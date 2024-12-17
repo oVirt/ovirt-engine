@@ -53,16 +53,16 @@ public class BackendQosResource extends AbstractBackendSubResource<Qos, QosBase>
 
     private ActionType updateActionTypeForQosType(QosType qosType) {
         switch (qosType) {
-        case STORAGE:
-            return ActionType.UpdateStorageQos;
-        case CPU:
-            return ActionType.UpdateCpuQos;
-        case NETWORK:
-            return ActionType.UpdateNetworkQoS;
-        case HOSTNETWORK:
-            return ActionType.UpdateHostNetworkQos;
-        default:
-            throw new IllegalArgumentException("Unsupported QoS type \"" + qosType + "\"");
+            case STORAGE:
+                return ActionType.UpdateStorageQos;
+            case CPU:
+                return ActionType.UpdateCpuQos;
+            case NETWORK:
+                return ActionType.UpdateNetworkQoS;
+            case HOSTNETWORK:
+                return ActionType.UpdateHostNetworkQos;
+            default:
+                throw new IllegalArgumentException("Unsupported QoS type \"" + qosType + "\"");
         }
     }
 

@@ -10,19 +10,19 @@ public class GlusterVolumeUtils {
         int count = 0;
         int brickCount = volume.getBricks().size();
         switch (status) {
-        case DOWN :
-            return VolumeStatus.DOWN;
-        case UP :
-            count = countDownBricks(volume);
-            if (count == 0) {
-                return VolumeStatus.UP;
-            } else if (count < brickCount) {
-                return VolumeStatus.SOME_BRICKS_DOWN;
-            } else {
-                return VolumeStatus.ALL_BRICKS_DOWN;
-            }
-        default :
-            return VolumeStatus.DOWN;
+            case DOWN :
+                return VolumeStatus.DOWN;
+            case UP :
+                count = countDownBricks(volume);
+                if (count == 0) {
+                    return VolumeStatus.UP;
+                } else if (count < brickCount) {
+                    return VolumeStatus.SOME_BRICKS_DOWN;
+                } else {
+                    return VolumeStatus.ALL_BRICKS_DOWN;
+                }
+            default :
+                return VolumeStatus.DOWN;
         }
     }
 

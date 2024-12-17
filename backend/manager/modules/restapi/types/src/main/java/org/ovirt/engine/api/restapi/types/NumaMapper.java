@@ -126,14 +126,14 @@ public class NumaMapper {
             return VmNumaNode.DEFAULT_NUMA_TUNE;
         }
         switch (mode) {
-        case STRICT:
-            return org.ovirt.engine.core.common.businessentities.NumaTuneMode.STRICT;
-        case INTERLEAVE:
-            return org.ovirt.engine.core.common.businessentities.NumaTuneMode.INTERLEAVE;
-        case PREFERRED:
-            return org.ovirt.engine.core.common.businessentities.NumaTuneMode.PREFERRED;
-        default:
-            return VmNumaNode.DEFAULT_NUMA_TUNE;
+            case STRICT:
+                return org.ovirt.engine.core.common.businessentities.NumaTuneMode.STRICT;
+            case INTERLEAVE:
+                return org.ovirt.engine.core.common.businessentities.NumaTuneMode.INTERLEAVE;
+            case PREFERRED:
+                return org.ovirt.engine.core.common.businessentities.NumaTuneMode.PREFERRED;
+            default:
+                return VmNumaNode.DEFAULT_NUMA_TUNE;
         }
     }
 
@@ -143,14 +143,14 @@ public class NumaMapper {
             return null;
         }
         switch (mode) {
-        case STRICT:
-            return NumaTuneMode.STRICT;
-        case INTERLEAVE:
-            return NumaTuneMode.INTERLEAVE;
-        case PREFERRED:
-            return NumaTuneMode.PREFERRED;
-        default:
-            return null;
+            case STRICT:
+                return NumaTuneMode.STRICT;
+            case INTERLEAVE:
+                return NumaTuneMode.INTERLEAVE;
+            case PREFERRED:
+                return NumaTuneMode.PREFERRED;
+            default:
+                return null;
         }
     }
 }

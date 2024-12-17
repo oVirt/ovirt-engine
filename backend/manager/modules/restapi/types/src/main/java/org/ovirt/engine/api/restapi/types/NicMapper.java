@@ -80,44 +80,44 @@ public class NicMapper {
     @Mapping(from = NicInterface.class, to = Integer.class)
     public static Integer map(NicInterface type) {
         switch (type) {
-        case RTL8139_VIRTIO:
-            return 0;
-        case RTL8139:
-            return 1;
-        case E1000:
-            return 2;
-        case VIRTIO:
-            return 3;
-        case SPAPR_VLAN:
-            return 4;
-        case PCI_PASSTHROUGH:
-            return 5;
-        case E1000E:
-            return 6;
-        default:
-            return -1;
+            case RTL8139_VIRTIO:
+                return 0;
+            case RTL8139:
+                return 1;
+            case E1000:
+                return 2;
+            case VIRTIO:
+                return 3;
+            case SPAPR_VLAN:
+                return 4;
+            case PCI_PASSTHROUGH:
+                return 5;
+            case E1000E:
+                return 6;
+            default:
+                return -1;
         }
     }
 
     @Mapping(from = Integer.class, to = NicInterface.class)
     public static NicInterface map(Integer type) {
         switch (type) {
-        case 0:
-            return NicInterface.RTL8139_VIRTIO;
-        case 1:
-            return NicInterface.RTL8139;
-        case 2:
-            return NicInterface.E1000;
-        case 3:
-            return NicInterface.VIRTIO;
-        case 4:
-            return NicInterface.SPAPR_VLAN;
-        case 5:
-            return NicInterface.PCI_PASSTHROUGH;
-        case 6:
-            return NicInterface.E1000E;
-        default:
-            return null;
+            case 0:
+                return NicInterface.RTL8139_VIRTIO;
+            case 1:
+                return NicInterface.RTL8139;
+            case 2:
+                return NicInterface.E1000;
+            case 3:
+                return NicInterface.VIRTIO;
+            case 4:
+                return NicInterface.SPAPR_VLAN;
+            case 5:
+                return NicInterface.PCI_PASSTHROUGH;
+            case 6:
+                return NicInterface.E1000E;
+            default:
+                return null;
         }
     }
 }

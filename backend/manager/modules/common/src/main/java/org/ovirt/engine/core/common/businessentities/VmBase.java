@@ -269,7 +269,7 @@ public class VmBase implements Queryable, BusinessEntity<Guid>, Nameable, Commen
     @Size(max = BusinessEntitiesDefinitions.GENERAL_MAX_SIZE)
     @Pattern(regexp = ValidationUtils.NO_TRIMMING_WHITE_SPACES_PATTERN,
             message = "ACTION_TYPE_FAILED_LINUX_BOOT_PARAMS_MAY_NOT_CONTAIN_TRIMMING_WHITESPACES", groups = { CreateEntity.class,
-                    UpdateEntity.class })
+                UpdateEntity.class })
     private String kernelUrl;
 
     @CopyOnNewVersion
@@ -278,7 +278,7 @@ public class VmBase implements Queryable, BusinessEntity<Guid>, Nameable, Commen
     @Size(max = BusinessEntitiesDefinitions.GENERAL_MAX_SIZE)
     @Pattern(regexp = ValidationUtils.NO_TRIMMING_WHITE_SPACES_PATTERN,
             message = "ACTION_TYPE_FAILED_LINUX_BOOT_PARAMS_MAY_NOT_CONTAIN_TRIMMING_WHITESPACES", groups = { CreateEntity.class,
-                    UpdateEntity.class })
+                UpdateEntity.class })
     private String kernelParams;
 
     @CopyOnNewVersion
@@ -287,7 +287,7 @@ public class VmBase implements Queryable, BusinessEntity<Guid>, Nameable, Commen
     @Size(max = BusinessEntitiesDefinitions.GENERAL_MAX_SIZE)
     @Pattern(regexp = ValidationUtils.NO_TRIMMING_WHITE_SPACES_PATTERN,
             message = "ACTION_TYPE_FAILED_LINUX_BOOT_PARAMS_MAY_NOT_CONTAIN_TRIMMING_WHITESPACES", groups = { CreateEntity.class,
-                    UpdateEntity.class })
+                UpdateEntity.class })
     private String initrdUrl;
 
     @CopyOnNewVersion

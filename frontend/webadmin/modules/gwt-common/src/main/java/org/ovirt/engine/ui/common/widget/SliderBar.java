@@ -430,106 +430,106 @@ public class SliderBar extends FocusPanel implements RequiresResize,
         super.onBrowserEvent(event);
         if (enabled) {
             switch (DOM.eventGetType(event)) {
-            // Unhighlight and cancel keyboard events
-            case Event.ONBLUR:
-                keyTimer.cancel();
-                if (slidingMouse) {
-                    DOM.releaseCapture(getElement());
-                    slidingMouse = false;
-                    slideKnob(event);
-                    stopSliding(true, true);
-                } else if (slidingKeyboard) {
-                    slidingKeyboard = false;
-                    stopSliding(true, true);
-                }
-                unhighlight();
-                break;
-
-            // Highlight on focus
-            case Event.ONFOCUS:
-                highlight();
-                break;
-
-            // Mousewheel events
-            case Event.ONMOUSEWHEEL:
-                int velocityY = DOM.eventGetMouseWheelVelocityY(event);
-                DOM.eventPreventDefault(event);
-                if (velocityY > 0) {
-                    shiftRight(1);
-                } else {
-                    shiftLeft(1);
-                }
-                break;
-
-            // Shift left or right on key press
-            case Event.ONKEYDOWN:
-                if (!slidingKeyboard) {
-                    int multiplier = 1;
-                    if (DOM.eventGetCtrlKey(event)) {
-                        multiplier = (int) (getTotalRange() / stepSize / 10);
+                // Unhighlight and cancel keyboard events
+                case Event.ONBLUR:
+                    keyTimer.cancel();
+                    if (slidingMouse) {
+                        DOM.releaseCapture(getElement());
+                        slidingMouse = false;
+                        slideKnob(event);
+                        stopSliding(true, true);
+                    } else if (slidingKeyboard) {
+                        slidingKeyboard = false;
+                        stopSliding(true, true);
                     }
+                    unhighlight();
+                    break;
 
-                    switch (DOM.eventGetKeyCode(event)) {
-                    case KeyCodes.KEY_HOME:
-                        DOM.eventPreventDefault(event);
-                        setCurrentValue(minValue);
-                        break;
-                    case KeyCodes.KEY_END:
-                        DOM.eventPreventDefault(event);
-                        setCurrentValue(maxValue);
-                        break;
-                    case KeyCodes.KEY_LEFT:
-                        DOM.eventPreventDefault(event);
-                        slidingKeyboard = true;
-                        startSliding(false, true);
-                        shiftLeft(multiplier);
-                        keyTimer.schedule(400, false, multiplier);
-                        break;
-                    case KeyCodes.KEY_RIGHT:
-                        DOM.eventPreventDefault(event);
-                        slidingKeyboard = true;
-                        startSliding(false, true);
-                        shiftRight(multiplier);
-                        keyTimer.schedule(400, true, multiplier);
-                        break;
-                    case 32:
-                        DOM.eventPreventDefault(event);
-                        setCurrentValue(minValue + getTotalRange() / 2);
-                        break;
+                // Highlight on focus
+                case Event.ONFOCUS:
+                    highlight();
+                    break;
+
+                // Mousewheel events
+                case Event.ONMOUSEWHEEL:
+                    int velocityY = DOM.eventGetMouseWheelVelocityY(event);
+                    DOM.eventPreventDefault(event);
+                    if (velocityY > 0) {
+                        shiftRight(1);
+                    } else {
+                        shiftLeft(1);
                     }
-                }
-                break;
-            // Stop shifting on key up
-            case Event.ONKEYUP:
-                keyTimer.cancel();
-                if (slidingKeyboard) {
-                    slidingKeyboard = false;
-                    stopSliding(true, true);
-                }
-                break;
+                    break;
 
-            // Mouse Events
-            case Event.ONMOUSEDOWN:
-                setFocus(true);
-                slidingMouse = true;
-                DOM.setCapture(getElement());
-                startSliding(true, true);
-                DOM.eventPreventDefault(event);
-                slideKnob(event);
-                break;
-            case Event.ONMOUSEUP:
-                if (slidingMouse) {
-                    DOM.releaseCapture(getElement());
-                    slidingMouse = false;
+                // Shift left or right on key press
+                case Event.ONKEYDOWN:
+                    if (!slidingKeyboard) {
+                        int multiplier = 1;
+                        if (DOM.eventGetCtrlKey(event)) {
+                            multiplier = (int) (getTotalRange() / stepSize / 10);
+                        }
+
+                        switch (DOM.eventGetKeyCode(event)) {
+                            case KeyCodes.KEY_HOME:
+                                DOM.eventPreventDefault(event);
+                                setCurrentValue(minValue);
+                                break;
+                            case KeyCodes.KEY_END:
+                                DOM.eventPreventDefault(event);
+                                setCurrentValue(maxValue);
+                                break;
+                            case KeyCodes.KEY_LEFT:
+                                DOM.eventPreventDefault(event);
+                                slidingKeyboard = true;
+                                startSliding(false, true);
+                                shiftLeft(multiplier);
+                                keyTimer.schedule(400, false, multiplier);
+                                break;
+                            case KeyCodes.KEY_RIGHT:
+                                DOM.eventPreventDefault(event);
+                                slidingKeyboard = true;
+                                startSliding(false, true);
+                                shiftRight(multiplier);
+                                keyTimer.schedule(400, true, multiplier);
+                                break;
+                            case 32:
+                                DOM.eventPreventDefault(event);
+                                setCurrentValue(minValue + getTotalRange() / 2);
+                                break;
+                        }
+                    }
+                    break;
+                // Stop shifting on key up
+                case Event.ONKEYUP:
+                    keyTimer.cancel();
+                    if (slidingKeyboard) {
+                        slidingKeyboard = false;
+                        stopSliding(true, true);
+                    }
+                    break;
+
+                // Mouse Events
+                case Event.ONMOUSEDOWN:
+                    setFocus(true);
+                    slidingMouse = true;
+                    DOM.setCapture(getElement());
+                    startSliding(true, true);
+                    DOM.eventPreventDefault(event);
                     slideKnob(event);
-                    stopSliding(true, true);
-                }
-                break;
-            case Event.ONMOUSEMOVE:
-                if (slidingMouse) {
-                    slideKnob(event);
-                }
-                break;
+                    break;
+                case Event.ONMOUSEUP:
+                    if (slidingMouse) {
+                        DOM.releaseCapture(getElement());
+                        slidingMouse = false;
+                        slideKnob(event);
+                        stopSliding(true, true);
+                    }
+                    break;
+                case Event.ONMOUSEMOVE:
+                    if (slidingMouse) {
+                        slideKnob(event);
+                    }
+                    break;
             }
         }
     }

@@ -257,14 +257,14 @@ public class VmSnapshotListViewItem extends PatternflyListViewItem<Snapshot> {
 
     private String getImageStatus(ImageStatus status) {
         switch (status) {
-        case OK:
-            return constants.up();
-        case LOCKED:
-            return constants.imageLocked();
-        case ILLEGAL:
-            return constants.illegalStatus();
-        default:
-            return constants.notAvailableLabel();
+            case OK:
+                return constants.up();
+            case LOCKED:
+                return constants.imageLocked();
+            case ILLEGAL:
+                return constants.illegalStatus();
+            default:
+                return constants.notAvailableLabel();
         }
     }
 

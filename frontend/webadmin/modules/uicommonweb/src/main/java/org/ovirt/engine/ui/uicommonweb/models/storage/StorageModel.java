@@ -638,26 +638,26 @@ public class StorageModel extends Model {
         validateListItems(getAvailableStorageTypeItems());
 
         getDescription().validateEntity(new IValidation[] {
-                new LengthValidation(BusinessEntitiesDefinitions.GENERAL_MAX_SIZE),
-                new SpecialAsciiI18NOrNoneValidation() });
+            new LengthValidation(BusinessEntitiesDefinitions.GENERAL_MAX_SIZE),
+            new SpecialAsciiI18NOrNoneValidation() });
 
         getComment().validateEntity(new IValidation[] { new SpecialAsciiI18NOrNoneValidation() });
 
         getWarningLowSpaceIndicator().validateEntity(new IValidation[]{
-                new NotEmptyValidation(), new IntegerValidation(0, StorageConstants.LOW_SPACE_THRESHOLD)
+            new NotEmptyValidation(), new IntegerValidation(0, StorageConstants.LOW_SPACE_THRESHOLD)
         });
 
         int maxAllowedSpace = Integer.MAX_VALUE;
 
-        if (!isNewStorage() && getStorage().getTotalDiskSize() != 0 ) {
+        if (!isNewStorage() && getStorage().getTotalDiskSize() != 0) {
             maxAllowedSpace = getStorage().getTotalDiskSize();
         }
         getCriticalSpaceActionBlocker().validateEntity(new IValidation[] {
-                new NotEmptyValidation(), new IntegerValidation(0, maxAllowedSpace)
+            new NotEmptyValidation(), new IntegerValidation(0, maxAllowedSpace)
         });
 
         getWarningLowConfirmedSpaceIndicator().validateEntity(new IValidation[]{
-                new NotEmptyValidation(), new IntegerValidation(0, StorageConstants.LOW_SPACE_THRESHOLD)
+            new NotEmptyValidation(), new IntegerValidation(0, StorageConstants.LOW_SPACE_THRESHOLD)
         });
 
         validateDiscardAfterDelete();
@@ -700,7 +700,7 @@ public class StorageModel extends Model {
     }
 
     public boolean isStorageActive() {
-         return
+        return
                 getStorage().getStorageDomainSharedStatus() == StorageDomainSharedStatus.Active
                 || getStorage().getStorageDomainSharedStatus() == StorageDomainSharedStatus.Mixed;
     }

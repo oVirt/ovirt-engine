@@ -79,22 +79,22 @@ public class PermissionListModelTable<E, P extends PermissionListModel<E>> exten
     }
 
     private void addRoleColumn() {
-            AbstractTextColumn<Permission> roleColumn = new AbstractTextColumn<Permission>() {
+        AbstractTextColumn<Permission> roleColumn = new AbstractTextColumn<Permission>() {
             @Override
-            public String getValue(Permission object) {
-                return object.getRoleName();
-            }
+                public String getValue(Permission object) {
+                    return object.getRoleName();
+                }
         };
         roleColumn.makeSortable();
         getTable().addColumn(roleColumn, constants.rolePermission(), "300px"); //$NON-NLS-1$
     }
 
     private void addCreationDateColum() {
-            AbstractTextColumn<Permission> creationDateColumn = new AbstractRenderedTextColumn<Permission, Date>(new FullDateTimeRenderer()) {
-                @Override
-                public Date getRawValue(Permission object) {
-                    return new Date(object.getCreationDate() * 1000); // GWT doesn't have TimeUnit.java
-                }
+        AbstractTextColumn<Permission> creationDateColumn = new AbstractRenderedTextColumn<Permission, Date>(new FullDateTimeRenderer()) {
+            @Override
+            public Date getRawValue(Permission object) {
+                return new Date(object.getCreationDate() * 1000); // GWT doesn't have TimeUnit.java
+            }
         };
         getTable().addColumn(creationDateColumn, constants.permissionsCreationDate(), "300px"); //$NON-NLS-1$
         creationDateColumn.makeSortable();

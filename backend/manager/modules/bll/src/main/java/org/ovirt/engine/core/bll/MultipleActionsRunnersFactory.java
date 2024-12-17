@@ -34,62 +34,62 @@ public class MultipleActionsRunnersFactory {
                                                              boolean isInternal, CommandContext commandContext) {
         MultipleActionsRunner runner;
         switch (actionType) {
-        case DeactivateStorageDomainWithOvfUpdate:
-            runner = new DeactivateStorageDomainsMultipleActionRunner(actionType, parameters, commandContext, isInternal);
-            break;
-        case AttachStorageDomainToPool:
-            runner = new AttachStorageDomainsMultipleActionRunner(actionType, parameters, commandContext, isInternal);
-            break;
-        case RunVm:
-            runner = new RunVMActionRunner(actionType, parameters, commandContext, isInternal);
-            break;
-        case MigrateVm:
-            runner = new MigrateVMActionRunner(actionType, parameters, commandContext, isInternal);
-            break;
-        case RemoveVmFromPool:
-            runner = new RemoveVmFromPoolRunner(actionType, parameters, commandContext, isInternal);
-            break;
-        case StartGlusterVolume:
-        case StopGlusterVolume:
-        case DeleteGlusterVolume:
-        case SetGlusterVolumeOption:
-        case ResetGlusterVolumeOptions:
-        case AddVds: // AddVds is called with multiple actions *only* in case of gluster clusters
-        case RemoveGlusterServer:
-        case EnableGlusterHook:
-        case DisableGlusterHook:
-        case DeleteGlusterVolumeSnapshot:
-            runner = new GlusterMultipleActionsRunner(actionType, parameters, commandContext, isInternal);
-            break;
-        case RemoveVds:
-            if (containsGlusterServer(parameters)) {
+            case DeactivateStorageDomainWithOvfUpdate:
+                runner = new DeactivateStorageDomainsMultipleActionRunner(actionType, parameters, commandContext, isInternal);
+                break;
+            case AttachStorageDomainToPool:
+                runner = new AttachStorageDomainsMultipleActionRunner(actionType, parameters, commandContext, isInternal);
+                break;
+            case RunVm:
+                runner = new RunVMActionRunner(actionType, parameters, commandContext, isInternal);
+                break;
+            case MigrateVm:
+                runner = new MigrateVMActionRunner(actionType, parameters, commandContext, isInternal);
+                break;
+            case RemoveVmFromPool:
+                runner = new RemoveVmFromPoolRunner(actionType, parameters, commandContext, isInternal);
+                break;
+            case StartGlusterVolume:
+            case StopGlusterVolume:
+            case DeleteGlusterVolume:
+            case SetGlusterVolumeOption:
+            case ResetGlusterVolumeOptions:
+            case AddVds: // AddVds is called with multiple actions *only* in case of gluster clusters
+            case RemoveGlusterServer:
+            case EnableGlusterHook:
+            case DisableGlusterHook:
+            case DeleteGlusterVolumeSnapshot:
                 runner = new GlusterMultipleActionsRunner(actionType, parameters, commandContext, isInternal);
-            } else {
+                break;
+            case RemoveVds:
+                if (containsGlusterServer(parameters)) {
+                    runner = new GlusterMultipleActionsRunner(actionType, parameters, commandContext, isInternal);
+                } else {
+                    runner = new PrevalidatingMultipleActionsRunner(actionType, parameters, commandContext, isInternal);
+                }
+
+                break;
+            case PersistentHostSetupNetworks:
+            case SyncAllHostNetworks:
+                runner = new ParallelMultipleActionsRunner(actionType, parameters, commandContext, isInternal);
+                break;
+            case AttachNetworkToCluster:
+            case DetachNetworkToCluster:
+            case UpdateNetworkOnCluster:
+                throw new UnsupportedOperationException("Multiple network attachments/detachments/updates should be run through ManageNetworkClustersCommand!");
+
+            case AddNetworkAttachment:
+            case UpdateNetworkAttachment:
+            case RemoveNetworkAttachment:
+                throw new UnsupportedOperationException("AddNetworkAttachment, UpdateNetworkAttachment, and RemoveNetworkAttachment cannot be run using MultipleActionsRunner");
+            case RemoveDiskProfile:
+            case RemoveCpuProfile:
+            case RemoveNetwork:
+                runner = new SequentialMultipleActionsRunner(actionType, parameters, commandContext, isInternal);
+                break;
+            default:
                 runner = new PrevalidatingMultipleActionsRunner(actionType, parameters, commandContext, isInternal);
-            }
-
-            break;
-        case PersistentHostSetupNetworks:
-        case SyncAllHostNetworks:
-            runner = new ParallelMultipleActionsRunner(actionType, parameters, commandContext, isInternal);
-            break;
-        case AttachNetworkToCluster:
-        case DetachNetworkToCluster:
-        case UpdateNetworkOnCluster:
-            throw new UnsupportedOperationException("Multiple network attachments/detachments/updates should be run through ManageNetworkClustersCommand!");
-
-        case AddNetworkAttachment:
-        case UpdateNetworkAttachment:
-        case RemoveNetworkAttachment:
-            throw new UnsupportedOperationException("AddNetworkAttachment, UpdateNetworkAttachment, and RemoveNetworkAttachment cannot be run using MultipleActionsRunner");
-        case RemoveDiskProfile:
-        case RemoveCpuProfile:
-        case RemoveNetwork:
-            runner = new SequentialMultipleActionsRunner(actionType, parameters, commandContext, isInternal);
-            break;
-        default:
-            runner = new PrevalidatingMultipleActionsRunner(actionType, parameters, commandContext, isInternal);
-            break;
+                break;
         }
         return Injector.injectMembers(runner);
     }

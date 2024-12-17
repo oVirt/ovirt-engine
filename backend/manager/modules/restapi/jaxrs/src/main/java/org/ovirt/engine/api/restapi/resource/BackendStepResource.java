@@ -98,28 +98,28 @@ public class BackendStepResource extends AbstractBackendActionableResource<org.o
             }
 
             switch (stepEntity.getStepType()) {
-            case REBALANCING_VOLUME:
-                GlusterVolumeTaskStatusEntity rebalanceStatusEntity = getEntity(GlusterVolumeTaskStatusEntity.class,
-                        QueryType.GetGlusterVolumeRebalanceStatus,
-                        new GlusterVolumeQueriesParameters(volume.getClusterId(), volume.getId()),
-                        null,
-                        true);
-                return rebalanceStatusEntity;
-            case REMOVING_BRICKS:
-                List<GlusterBrickEntity> bricks = new ArrayList<>();
-                for (GlusterBrickEntity brick: volume.getBricks()) {
-                    if (brick.getAsyncTask() != null && brick.getAsyncTask().getTaskId() != null) {
-                        bricks.add(brick);
+                case REBALANCING_VOLUME:
+                    GlusterVolumeTaskStatusEntity rebalanceStatusEntity = getEntity(GlusterVolumeTaskStatusEntity.class,
+                            QueryType.GetGlusterVolumeRebalanceStatus,
+                            new GlusterVolumeQueriesParameters(volume.getClusterId(), volume.getId()),
+                            null,
+                            true);
+                    return rebalanceStatusEntity;
+                case REMOVING_BRICKS:
+                    List<GlusterBrickEntity> bricks = new ArrayList<>();
+                    for (GlusterBrickEntity brick: volume.getBricks()) {
+                        if (brick.getAsyncTask() != null && brick.getAsyncTask().getTaskId() != null) {
+                            bricks.add(brick);
+                        }
                     }
-                }
-                GlusterVolumeTaskStatusEntity removeBricksStatusEntity = getEntity(GlusterVolumeTaskStatusEntity.class,
-                        QueryType.GetGlusterVolumeRemoveBricksStatus,
-                        new GlusterVolumeRemoveBricksQueriesParameters(volume.getClusterId(), volume.getId(), bricks),
-                        null,
-                        true);
-                return removeBricksStatusEntity;
-            default:
-                break;
+                    GlusterVolumeTaskStatusEntity removeBricksStatusEntity = getEntity(GlusterVolumeTaskStatusEntity.class,
+                            QueryType.GetGlusterVolumeRemoveBricksStatus,
+                            new GlusterVolumeRemoveBricksQueriesParameters(volume.getClusterId(), volume.getId(), bricks),
+                            null,
+                            true);
+                    return removeBricksStatusEntity;
+                default:
+                    break;
 
             }
             return null;

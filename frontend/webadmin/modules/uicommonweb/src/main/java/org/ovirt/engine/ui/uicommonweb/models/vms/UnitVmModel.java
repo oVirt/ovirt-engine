@@ -2050,16 +2050,16 @@ public class UnitVmModel extends Model implements HasValidatedTabs, ModelWithMig
         getNumaNodeCount().setEntity(0);
 
         setNumaSupportCommand(new UICommand("NumaSupport", new ICommandTarget() { //$NON-NLS-1$
-                    @Override
-                    public void executeCommand(UICommand command) {
-                        getBehavior().numaSupport();
-                    }
+            @Override
+            public void executeCommand(UICommand command) {
+                getBehavior().numaSupport();
+            }
 
-                    @Override
-                    public void executeCommand(UICommand uiCommand, Object... parameters) {
-                        getBehavior().numaSupport();
-                    }
-                }));
+            @Override
+            public void executeCommand(UICommand uiCommand, Object... parameters) {
+                getBehavior().numaSupport();
+            }
+        }));
 
         setAutoConverge(new ListModelWithClusterDefault<>());
         getAutoConverge().setItems(Arrays.asList(true, false));
@@ -3229,15 +3229,15 @@ public class UnitVmModel extends Model implements HasValidatedTabs, ModelWithMig
     public boolean validateNaming() {
         getName().validateEntity(
                 new IValidation[] {
-                        new NotEmptyValidation(),
-                        new LengthValidation(getBehavior().getMaxNameLength()),
-                        getBehavior().getNameAllowedCharactersIValidation()
+                    new NotEmptyValidation(),
+                    new LengthValidation(getBehavior().getMaxNameLength()),
+                    getBehavior().getNameAllowedCharactersIValidation()
                 });
 
         getDescription().validateEntity(
                 new IValidation[] {
-                        new LengthValidation(DESCRIPTION_MAX_LIMIT),
-                        new SpecialAsciiI18NOrNoneValidation()
+                    new LengthValidation(DESCRIPTION_MAX_LIMIT),
+                    new SpecialAsciiI18NOrNoneValidation()
                 });
 
         final boolean isValid = getName().getIsValid() && getDescription().getIsValid();
@@ -3258,9 +3258,9 @@ public class UnitVmModel extends Model implements HasValidatedTabs, ModelWithMig
 
     public boolean validateHwPart() {
         getTotalCPUCores().validateEntity(new IValidation[] {
-                new NotEmptyValidation(),
-                new IntegerValidation(1, behavior.maxCpus),
-                new TotalCpuCoresComposableValidation() });
+            new NotEmptyValidation(),
+            new IntegerValidation(1, behavior.maxCpus),
+            new TotalCpuCoresComposableValidation() });
 
         if (getIsAutoAssign().getEntity() != null && !getIsAutoAssign().getEntity()) {
             getDefaultHost().validateSelectedItem(new IValidation[] { new NotEmptyValidation() });
@@ -3314,7 +3314,7 @@ public class UnitVmModel extends Model implements HasValidatedTabs, ModelWithMig
 
         if (getIoThreadsEnabled().getEntity()) {
             getNumOfIoThreads().validateEntity(new IValidation[] {
-                    new NotNullIntegerValidation(1, AsyncDataProvider.getInstance().getMaxIoThreadsPerVm())
+                new NotNullIntegerValidation(1, AsyncDataProvider.getInstance().getMaxIoThreadsPerVm())
             });
         }
 

@@ -195,7 +195,7 @@ public class QuotaMapper {
 
         if (model.isSetMemoryLimit()) {
             double limit = model.getMemoryLimit();
-            quotaCluster.setMemSizeMB( (limit < 0) ? -1 : (long) (limit * 1024) );
+            quotaCluster.setMemSizeMB((limit < 0) ? -1 : (long) (limit * 1024));
         }
 
         // specific cluster

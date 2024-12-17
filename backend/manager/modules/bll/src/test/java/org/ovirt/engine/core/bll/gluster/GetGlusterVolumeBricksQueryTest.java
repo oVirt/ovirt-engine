@@ -18,7 +18,7 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.gluster.GlusterBrickDao;
 
 public class GetGlusterVolumeBricksQueryTest extends
-AbstractQueryTest<IdQueryParameters, GetGlusterVolumeBricksQuery<IdQueryParameters>> {
+    AbstractQueryTest<IdQueryParameters, GetGlusterVolumeBricksQuery<IdQueryParameters>> {
 
     @Mock
     GlusterBrickDao glusterBrickDaoMock;

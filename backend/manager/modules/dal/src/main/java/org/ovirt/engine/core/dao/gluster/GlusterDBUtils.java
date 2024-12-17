@@ -100,14 +100,14 @@ public class GlusterDBUtils {
                     interfaceDao.getAllInterfacesWithIpAddress(clusterId,
                             InetAddress.getByName(hostnameOrIp).getHostAddress());
             switch (ifaces.size()) {
-            case 0:
-                // not found
-                return null;
-            case 1:
-                return vdsStaticDao.get(ifaces.get(0).getVdsId());
-            default:
-                // multiple servers in the DB having this ip address!
-                throw new RuntimeException("There are multiple servers in DB having same IP address " + hostnameOrIp);
+                case 0:
+                    // not found
+                    return null;
+                case 1:
+                    return vdsStaticDao.get(ifaces.get(0).getVdsId());
+                default:
+                    // multiple servers in the DB having this ip address!
+                    throw new RuntimeException("There are multiple servers in DB having same IP address " + hostnameOrIp);
             }
         } catch (UnknownHostException e) {
             throw new RuntimeException(e);

@@ -110,7 +110,7 @@ public abstract class BaseNetworkProviderProxy<P extends OpenstackNetworkProvide
 
     @Override
     public void remove(String id) {
-            execute(getClient().networks().delete(id));
+        execute(getClient().networks().delete(id));
     }
 
     @Override

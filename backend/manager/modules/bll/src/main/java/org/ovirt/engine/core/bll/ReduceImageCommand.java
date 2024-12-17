@@ -270,14 +270,14 @@ public class ReduceImageCommand<T extends ImagesActionsParametersBase> extends B
     public AuditLogType getAuditLogTypeValue() {
         addAuditLogCustomValues();
         switch (getActionState()) {
-        case EXECUTE:
-            return getSucceeded() ?
-                    AuditLogType.UNASSIGNED
-                    : AuditLogType.USER_REDUCE_DISK_FINISHED_FAILURE;
-        default:
-            return getSucceeded() ?
-                    AuditLogType.USER_REDUCE_DISK_FINISHED_SUCCESS
-                    : AuditLogType.USER_REDUCE_DISK_FINISHED_FAILURE;
+            case EXECUTE:
+                return getSucceeded() ?
+                        AuditLogType.UNASSIGNED
+                        : AuditLogType.USER_REDUCE_DISK_FINISHED_FAILURE;
+            default:
+                return getSucceeded() ?
+                        AuditLogType.USER_REDUCE_DISK_FINISHED_SUCCESS
+                        : AuditLogType.USER_REDUCE_DISK_FINISHED_FAILURE;
         }
     }
 

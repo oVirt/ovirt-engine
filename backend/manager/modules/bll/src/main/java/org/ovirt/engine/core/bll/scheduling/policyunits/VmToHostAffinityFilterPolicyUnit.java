@@ -56,7 +56,7 @@ public class VmToHostAffinityFilterPolicyUnit extends PolicyUnitImpl {
                 .filter(ag -> ag.isVdsEnforcing() && ag.isVdsAffinityEnabled())
                 .collect(Collectors.toList());
 
-        if (FeatureSupported.isImplicitAffinityGroupSupported(context.getCluster().getCompatibilityVersion()) ) {
+        if (FeatureSupported.isImplicitAffinityGroupSupported(context.getCluster().getCompatibilityVersion())) {
             List<Label> labels = labelDao.getAllByEntityIds(Collections.singleton(vm.getId()));
             affinityGroups.addAll(AffinityRulesUtils.affinityGroupsFromLabels(labels, context.getCluster().getId()));
         }

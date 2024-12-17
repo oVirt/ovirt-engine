@@ -73,18 +73,18 @@ import org.ovirt.engine.core.utils.MockConfigExtension;
 public abstract class AbstractBackendBaseTest {
 
     protected static final Guid[] GUIDS = { new Guid("00000000-0000-0000-0000-000000000000"),
-            new Guid("11111111-1111-1111-1111-111111111111"),
-            new Guid("22222222-2222-2222-2222-222222222222"),
-            new Guid("33333333-3333-3333-3333-333333333333") };
+        new Guid("11111111-1111-1111-1111-111111111111"),
+        new Guid("22222222-2222-2222-2222-222222222222"),
+        new Guid("33333333-3333-3333-3333-333333333333") };
 
     /**
      * External identifiers used by directory users and groups.
      */
     protected static final String[] EXTERNAL_IDS = {
-            DirectoryEntryIdUtils.encode("0"),
-            DirectoryEntryIdUtils.encode("1"),
-            DirectoryEntryIdUtils.encode("2"),
-            DirectoryEntryIdUtils.encode("3"),
+        DirectoryEntryIdUtils.encode("0"),
+        DirectoryEntryIdUtils.encode("1"),
+        DirectoryEntryIdUtils.encode("2"),
+        DirectoryEntryIdUtils.encode("3"),
     };
 
     /**
@@ -95,7 +95,7 @@ public abstract class AbstractBackendBaseTest {
     protected static final Guid EVERYONE = new Guid("EEE00000-0000-0000-0000-123456789EEE");
     protected static final String[] NAMES = { "sedna", "eris", "orcus" };
     protected static final String[] DESCRIPTIONS = { "top notch entity", "a fine example",
-            "state of the art" };
+        "state of the art" };
     protected static final String URI_ROOT = "http://localhost:8088";
     protected static final String BASE_PATH = "/ovirt-engine/api";
     protected static final String URI_BASE = URI_ROOT + BASE_PATH;

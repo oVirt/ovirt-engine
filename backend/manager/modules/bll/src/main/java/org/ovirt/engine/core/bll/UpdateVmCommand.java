@@ -1247,7 +1247,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
             }
         }
 
-      if (isVirtioScsiEnabled()) {
+        if (isVirtioScsiEnabled()) {
             // Verify OS compatibility
             if (!validate(vmHandler.isOsTypeSupportedForVirtioScsi
                     (vmFromParams.getOs(), getEffectiveCompatibilityVersion()))) {

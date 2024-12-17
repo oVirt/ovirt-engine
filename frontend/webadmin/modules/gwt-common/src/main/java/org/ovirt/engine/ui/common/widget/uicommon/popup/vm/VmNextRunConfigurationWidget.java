@@ -123,7 +123,7 @@ public class VmNextRunConfigurationWidget extends AbstractModelBoundPopupWidget<
         applyNowVmLeaseMessage.setHTML(bulletedItem(messages.nextRunConfigurationVmLeaseValue()));
         vmUnpinnedMessage1.setHTML(bulletedItem(messages.unpinnedRunningVmWarningIncompatability()));
         vmUnpinnedMessage2.setHTML(bulletedItem(messages.unpinnedRunningVmWarningSecurity()));
-}
+    }
 
     private SafeHtml bulletedItem(String msg) {
         return templates.unorderedList(templates.listItem(SafeHtmlUtils.fromSafeConstant(msg)));

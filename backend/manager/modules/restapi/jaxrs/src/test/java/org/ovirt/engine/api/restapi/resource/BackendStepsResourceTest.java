@@ -26,9 +26,10 @@ import org.ovirt.engine.core.common.queries.QueryType;
 @MockitoSettings(strictness = Strictness.LENIENT)
 public class BackendStepsResourceTest extends AbstractBackendCollectionResourceTest<Step, org.ovirt.engine.core.common.job.Step, BackendStepsResource> {
 
-   public BackendStepsResourceTest() {
-       super(new BackendStepsResource(GUIDS[1]), null, "");
+    public BackendStepsResourceTest() {
+        super(new BackendStepsResource(GUIDS[1]), null, "");
     }
+
     @Override
     protected List<Step> getCollection() {
         return collection.list().getSteps();
@@ -72,7 +73,7 @@ public class BackendStepsResourceTest extends AbstractBackendCollectionResourceT
         assertEquals(DESCRIPTIONS[index], model.getDescription());
         assertTrue(model.isExternal());
         verifyLinks(model);
-     }
+    }
 
     protected List<org.ovirt.engine.core.common.job.Step> setUpSteps() {
         List<org.ovirt.engine.core.common.job.Step> steps = new ArrayList<>();

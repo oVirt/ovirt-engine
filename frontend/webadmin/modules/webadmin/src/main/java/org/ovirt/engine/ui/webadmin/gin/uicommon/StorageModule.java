@@ -505,22 +505,22 @@ public class StorageModule extends AbstractGinModule {
             final Provider<StorageDRListModel> modelProvider) {
 
         SearchableDetailTabModelProvider<StorageDomainDR, StorageListModel, StorageDRListModel> result =
-                new SearchableDetailTabModelProvider<StorageDomainDR, StorageListModel, StorageDRListModel>(
-                        eventBus, defaultConfirmPopupProvider) {
-            @Override
-            public AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(StorageDRListModel source,
-                    UICommand lastExecutedCommand,
-                    Model windowModel) {
-                if (lastExecutedCommand == getModel().getNewCommand()) {
-                    return storageDRPopupProvider.get();
-                } else if (lastExecutedCommand == getModel().getEditCommand()) {
-                    return storageDRPopupProvider.get();
-                } else {
-                    return super.getModelPopup(source, lastExecutedCommand, windowModel);
-                }
-            }
+            new SearchableDetailTabModelProvider<StorageDomainDR, StorageListModel, StorageDRListModel>(
+                eventBus, defaultConfirmPopupProvider) {
+                    @Override
+                    public AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(StorageDRListModel source,
+                        UICommand lastExecutedCommand,
+                        Model windowModel) {
+                        if (lastExecutedCommand == getModel().getNewCommand()) {
+                            return storageDRPopupProvider.get();
+                        } else if (lastExecutedCommand == getModel().getEditCommand()) {
+                            return storageDRPopupProvider.get();
+                        } else {
+                            return super.getModelPopup(source, lastExecutedCommand, windowModel);
+                        }
+                    }
 
-        };
+                };
         result.setMainModelProvider(mainModelProvider);
         result.setModelProvider(modelProvider);
         return result;
@@ -554,20 +554,20 @@ public class StorageModule extends AbstractGinModule {
             .to(new TypeLiteral<DetailTabModelProvider<StorageListModel, StorageGeneralModel>>() { }).in(Singleton.class);
         // Search-able Detail Models
         bind(new TypeLiteral<SearchableDetailModelProvider<VmTemplate, StorageListModel, StorageTemplateListModel>>() { })
-           .to(new TypeLiteral<SearchableDetailTabModelProvider<VmTemplate, StorageListModel, StorageTemplateListModel>>() { })
-           .in(Singleton.class);
+            .to(new TypeLiteral<SearchableDetailTabModelProvider<VmTemplate, StorageListModel, StorageTemplateListModel>>() { })
+            .in(Singleton.class);
         bind(new TypeLiteral<SearchableDetailModelProvider<VM, StorageListModel, StorageVmListModel>>() { })
-           .to(new TypeLiteral<SearchableDetailTabModelProvider<VM, StorageListModel, StorageVmListModel>>() { })
-           .in(Singleton.class);
+            .to(new TypeLiteral<SearchableDetailTabModelProvider<VM, StorageListModel, StorageVmListModel>>() { })
+            .in(Singleton.class);
         bind(new TypeLiteral<SearchableDetailModelProvider<VmBase, StorageListModel, StorageLeaseListModel>>() { })
                 .to(new TypeLiteral<SearchableDetailTabModelProvider<VmBase, StorageListModel, StorageLeaseListModel>>() { })
                 .in(Singleton.class);
         // Permission Detail Model
         bind(new TypeLiteral<SearchableDetailModelProvider<Permission, StorageListModel, PermissionListModel<StorageDomain>>>() { })
-           .to(new TypeLiteral<PermissionModelProvider<StorageDomain, StorageListModel>>() { }).in(Singleton.class);
+            .to(new TypeLiteral<PermissionModelProvider<StorageDomain, StorageListModel>>() { }).in(Singleton.class);
         // Permission Disk Profiles
         bind(new TypeLiteral<SearchableDetailModelProvider<Permission, DiskProfileListModel, PermissionListModel<DiskProfile>>>() { })
-           .to(new TypeLiteral<PermissionModelProvider<DiskProfile, DiskProfileListModel>>() { }).in(Singleton.class);
+            .to(new TypeLiteral<PermissionModelProvider<DiskProfile, DiskProfileListModel>>() { }).in(Singleton.class);
     }
 
 }

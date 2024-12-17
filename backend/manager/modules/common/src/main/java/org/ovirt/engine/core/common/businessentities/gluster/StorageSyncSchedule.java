@@ -55,9 +55,9 @@ public class StorageSyncSchedule implements Serializable {
             this.setFrequency(StorageSyncSchedule.Frequency.DAILY);
         } else {
             this.setFrequency(StorageSyncSchedule.Frequency.WEEKLY);
-             List<Day> dayList = new ArrayList<>();
-             for (String day: cronParts[5].split(",")) {
-                 dayList.add(StorageSyncSchedule.Day.valueOf(day));
+            List<Day> dayList = new ArrayList<>();
+            for (String day: cronParts[5].split(",")) {
+                dayList.add(StorageSyncSchedule.Day.valueOf(day));
             }
             this.setDays(dayList.toArray(new Day[dayList.size()]));
         }
@@ -112,18 +112,18 @@ public class StorageSyncSchedule implements Serializable {
     public String toCronExpression() {
         String cronExpression = "";
         switch (frequency) {
-        case DAILY:
-            if (mins != null && hour != null) {
-                cronExpression = StringFormat.format("0 %s %s * * ? *", mins, hour);
-            }
-            break;
-        case WEEKLY:
-            if (mins != null && hour != null && days != null) {
-                cronExpression = StringFormat.format("0 %s %s ? * %s *", mins, hour, toDaysCron());
-            }
-            break;
-        case NONE:
-            cronExpression = "";
+            case DAILY:
+                if (mins != null && hour != null) {
+                    cronExpression = StringFormat.format("0 %s %s * * ? *", mins, hour);
+                }
+                break;
+            case WEEKLY:
+                if (mins != null && hour != null && days != null) {
+                    cronExpression = StringFormat.format("0 %s %s ? * %s *", mins, hour, toDaysCron());
+                }
+                break;
+            case NONE:
+                cronExpression = "";
         }
         return cronExpression;
     }
@@ -134,14 +134,14 @@ public class StorageSyncSchedule implements Serializable {
         sb.append(frequency.name());
 
         switch (frequency) {
-        case WEEKLY:
-            sb.append(" on ").append(toDaysCron());
-            sb.append(" at ").append(StringFormat.format("%02d", hour)).append(":").append(StringFormat.format("%02d", mins));
-            break;
-        case DAILY:
-            sb.append(" at ").append(StringFormat.format("%02d", hour)).append(":").append(StringFormat.format("%02d", mins));
-            break;
-        case NONE:
+            case WEEKLY:
+                sb.append(" on ").append(toDaysCron());
+                sb.append(" at ").append(StringFormat.format("%02d", hour)).append(":").append(StringFormat.format("%02d", mins));
+                break;
+            case DAILY:
+                sb.append(" at ").append(StringFormat.format("%02d", hour)).append(":").append(StringFormat.format("%02d", mins));
+                break;
+            case NONE:
         }
         return sb.toString();
     }
@@ -164,7 +164,7 @@ public class StorageSyncSchedule implements Serializable {
         }
         StorageSyncSchedule other = (StorageSyncSchedule) obj;
         return Objects.equals(frequency, other.frequency)
-                && Arrays.equals(days, other.days )
+                && Arrays.equals(days, other.days)
                 && Objects.equals(hour, other.hour)
                 && Objects.equals(mins, other.mins);
     }

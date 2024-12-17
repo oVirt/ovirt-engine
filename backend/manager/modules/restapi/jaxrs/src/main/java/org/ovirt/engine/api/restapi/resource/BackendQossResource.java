@@ -55,31 +55,31 @@ public class BackendQossResource extends AbstractBackendCollectionResource<Qos, 
 
     private QosBase createNewQosEntityForQosType(QosType qosType) {
         switch (qosType) {
-        case STORAGE:
-            return new StorageQos();
-        case CPU:
-            return new CpuQos();
-        case NETWORK:
-            return new NetworkQoS();
-        case HOSTNETWORK:
-            return new HostNetworkQos();
-        default:
-            throw new IllegalArgumentException("Unsupported QoS type \"" + qosType + "\"");
+            case STORAGE:
+                return new StorageQos();
+            case CPU:
+                return new CpuQos();
+            case NETWORK:
+                return new NetworkQoS();
+            case HOSTNETWORK:
+                return new HostNetworkQos();
+            default:
+                throw new IllegalArgumentException("Unsupported QoS type \"" + qosType + "\"");
         }
     }
 
     private ActionType addActionTypeForQosType(QosType qosType) {
         switch (qosType) {
-        case STORAGE:
-            return ActionType.AddStorageQos;
-        case CPU:
-            return ActionType.AddCpuQos;
-        case NETWORK:
-            return ActionType.AddNetworkQoS;
-        case HOSTNETWORK:
-            return ActionType.AddHostNetworkQos;
-        default:
-            throw new IllegalArgumentException("Unsupported QoS type \"" + qosType + "\"");
+            case STORAGE:
+                return ActionType.AddStorageQos;
+            case CPU:
+                return ActionType.AddCpuQos;
+            case NETWORK:
+                return ActionType.AddNetworkQoS;
+            case HOSTNETWORK:
+                return ActionType.AddHostNetworkQos;
+            default:
+                throw new IllegalArgumentException("Unsupported QoS type \"" + qosType + "\"");
 
         }
     }

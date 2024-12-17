@@ -63,7 +63,7 @@ public abstract class AbstractBackendNetworksResourceTest<R extends AbstractBack
         networkCluster.setDefaultRoute(isDefaultRoute);
         when(entity.getCluster()).thenReturn(networkCluster);
         return setUpEntityExpectations(entity, index);
-     }
+    }
 
     static org.ovirt.engine.core.common.businessentities.network.Network setUpEntityExpectations(org.ovirt.engine.core.common.businessentities.network.Network entity, int index) {
         when(entity.getId()).thenReturn(GUIDS[index]);

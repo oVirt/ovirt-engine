@@ -44,36 +44,36 @@ public abstract class ChildCommandsCallbackBase implements CommandCallback {
         for (Guid childCmdId : childCmdIds) {
             CommandBase<?> child = getCommand(childCmdId);
             switch (commandCoordinatorUtil.getCommandStatus(childCmdId)) {
-            case NOT_STARTED:
-            case ACTIVE:
-                logWaitingForChildCommand(child, command);
-                return;
-            case EXECUTION_FAILED:
-                if (shouldExecuteEndMethod(child)) {
+                case NOT_STARTED:
+                case ACTIVE:
                     logWaitingForChildCommand(child, command);
                     return;
-                }
-                logChildCommandFailed(cmdId, childCmdId, CommandStatus.EXECUTION_FAILED);
-                anyFailed = true;
-                break;
-            case FAILED:
-                if (shouldWaitForEndMethodsCompletion(child, command)) {
-                    return;
-                }
-                logChildCommandFailed(cmdId, childCmdId, CommandStatus.FAILED);
-                anyFailed = true;
-                break;
-            case ENDED_WITH_FAILURE:
-            case UNKNOWN:
-                logChildCommandFailed(cmdId, childCmdId, CommandStatus.UNKNOWN);
-                anyFailed = true;
-                break;
-            case SUCCEEDED:
-                if (shouldWaitForEndMethodsCompletion(child, command)) {
-                    return;
-                }
-            default:
-                ++completedChildren;
+                case EXECUTION_FAILED:
+                    if (shouldExecuteEndMethod(child)) {
+                        logWaitingForChildCommand(child, command);
+                        return;
+                    }
+                    logChildCommandFailed(cmdId, childCmdId, CommandStatus.EXECUTION_FAILED);
+                    anyFailed = true;
+                    break;
+                case FAILED:
+                    if (shouldWaitForEndMethodsCompletion(child, command)) {
+                        return;
+                    }
+                    logChildCommandFailed(cmdId, childCmdId, CommandStatus.FAILED);
+                    anyFailed = true;
+                    break;
+                case ENDED_WITH_FAILURE:
+                case UNKNOWN:
+                    logChildCommandFailed(cmdId, childCmdId, CommandStatus.UNKNOWN);
+                    anyFailed = true;
+                    break;
+                case SUCCEEDED:
+                    if (shouldWaitForEndMethodsCompletion(child, command)) {
+                        return;
+                    }
+                default:
+                    ++completedChildren;
             }
         }
 

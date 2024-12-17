@@ -101,7 +101,7 @@ public class GlusterVolumeSnapshotModel extends EntityModel<GlusterVolumeEntity>
 
     private void validateSnapshotName() {
         getSnapshotName().validateEntity(new IValidation[] { new NotEmptyValidation(), new LengthValidation(128),
-                new AsciiNameValidation() });
+            new AsciiNameValidation() });
     }
 
     private void validateEndDate() {

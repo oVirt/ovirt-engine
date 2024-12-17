@@ -61,13 +61,13 @@ public abstract class AbstractSubTabAffinityGroupsView<I, M extends ListWithDeta
         getTable().addColumn(priorityColumn, constants.priorityAffinityGroup(), "100px"); //$NON-NLS-1$
 
         AbstractBooleanColumn<AffinityGroup> vmPolarityColumn =
-                new AbstractBooleanColumn<AffinityGroup>(constants.positiveAffinity(), constants.negativeAffinity()) {
+            new AbstractBooleanColumn<AffinityGroup>(constants.positiveAffinity(), constants.negativeAffinity()) {
 
-            @Override
-            protected Boolean getRawValue(AffinityGroup object) {
-                return object.getVmPolarityBooleanObject();
-            }
-        };
+                @Override
+                protected Boolean getRawValue(AffinityGroup object) {
+                    return object.getVmPolarityBooleanObject();
+                }
+            };
         vmPolarityColumn.makeSortable();
         getTable().addColumn(vmPolarityColumn, constants.polarityAffinityGroup(), "100px"); //$NON-NLS-1$
 

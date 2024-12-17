@@ -199,26 +199,26 @@ public class MenuView extends AbstractView implements MenuPresenterWidget.ViewDe
 
     private void updateBasedonMode(ApplicationMode applicationMode) {
         switch (applicationMode) {
-        case VirtOnly:
-        case AllModes:
-            clustersStorageAnchor.setVisible(false);
-            break;
-        case GlusterOnly:
-            computeSecondaryHeader.setVisible(false);
-            computePrimaryHeader.setVisible(false);
-            vmsAnchor.setVisible(false);
-            templatesAnchor.setVisible(false);
-            poolsAnchor.setVisible(false);
-            hostsAnchor.setVisible(false);
-            dataCentersAnchor.setVisible(false);
-            clustersAnchor.setVisible(false);
-            disksAnchor.setVisible(false);
-            providersAnchor.setVisible(false);
-            quotasAnchor.setVisible(false);
-            break;
-        default:
-            // Do nothing, we have all we need.
-            break;
+            case VirtOnly:
+            case AllModes:
+                clustersStorageAnchor.setVisible(false);
+                break;
+            case GlusterOnly:
+                computeSecondaryHeader.setVisible(false);
+                computePrimaryHeader.setVisible(false);
+                vmsAnchor.setVisible(false);
+                templatesAnchor.setVisible(false);
+                poolsAnchor.setVisible(false);
+                hostsAnchor.setVisible(false);
+                dataCentersAnchor.setVisible(false);
+                clustersAnchor.setVisible(false);
+                disksAnchor.setVisible(false);
+                providersAnchor.setVisible(false);
+                quotasAnchor.setVisible(false);
+                break;
+            default:
+                // Do nothing, we have all we need.
+                break;
         }
     }
 

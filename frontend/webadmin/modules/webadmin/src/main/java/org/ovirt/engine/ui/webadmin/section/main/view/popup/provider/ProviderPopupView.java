@@ -310,12 +310,12 @@ public class ProviderPopupView extends AbstractModelBoundPopupView<ProviderModel
 
         String passwordLabel;
         switch (providerModel.getType().getSelectedItem()) {
-        case KUBEVIRT:
-            passwordLabel = constants.kubevirtToken();
-            break;
-        default:
-            passwordLabel = constants.passwordProvider();
-            break;
+            case KUBEVIRT:
+                passwordLabel = constants.kubevirtToken();
+                break;
+            default:
+                passwordLabel = constants.passwordProvider();
+                break;
         }
         passwordEditor.setLabel(passwordLabel);
     }

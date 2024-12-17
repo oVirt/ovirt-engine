@@ -227,7 +227,7 @@ public class SsoContext implements Serializable {
     }
 
     public String getChangePasswordUrl() {
-      return changePasswordUrl;
+        return changePasswordUrl;
     }
 
     public void setScopeDependencies(Map<String, List<String>> scopeDependenciesMap) {

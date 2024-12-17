@@ -15,14 +15,14 @@ public class Ipv4BootProtocolMapper {
             return null;
         }
         switch (ipv4BootProtocol) {
-        case DHCP:
-            return BootProtocol.DHCP;
-        case STATIC_IP:
-            return BootProtocol.STATIC;
-        case NONE:
-            return BootProtocol.NONE;
-        default:
-            return null;
+            case DHCP:
+                return BootProtocol.DHCP;
+            case STATIC_IP:
+                return BootProtocol.STATIC;
+            case NONE:
+                return BootProtocol.NONE;
+            default:
+                return null;
         }
     }
 
@@ -31,20 +31,20 @@ public class Ipv4BootProtocolMapper {
             return null;
         }
         switch (bootProtocol) {
-        case DHCP:
-            return Ipv4BootProtocol.DHCP;
-        case STATIC:
-            return Ipv4BootProtocol.STATIC_IP;
-        case NONE:
-            return Ipv4BootProtocol.NONE;
-        default:
-            throw new WebApplicationException(
-                    Response.status(Status.BAD_REQUEST)
-                            .entity(
-                                    fault("Invalid value",
-                                            String.format("Boot protocol = '%s' is not applicable for IPv4.",
-                                                    bootProtocol)))
-                            .build());
+            case DHCP:
+                return Ipv4BootProtocol.DHCP;
+            case STATIC:
+                return Ipv4BootProtocol.STATIC_IP;
+            case NONE:
+                return Ipv4BootProtocol.NONE;
+            default:
+                throw new WebApplicationException(
+                        Response.status(Status.BAD_REQUEST)
+                                .entity(
+                                        fault("Invalid value",
+                                                String.format("Boot protocol = '%s' is not applicable for IPv4.",
+                                                        bootProtocol)))
+                                .build());
         }
     }
 

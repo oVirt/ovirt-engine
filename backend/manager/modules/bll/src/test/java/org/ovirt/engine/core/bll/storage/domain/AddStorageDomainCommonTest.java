@@ -135,23 +135,22 @@ public class AddStorageDomainCommonTest extends BaseCommandTest {
     @Test
     public void validateFailsNameExists() {
         when(sdsDao.getByName(sd.getName())).thenReturn(new StorageDomainStatic());
-        ValidateTestUtils.runAndAssertValidateFailure
-                (cmd, EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_NAME_ALREADY_EXIST);
+        ValidateTestUtils.runAndAssertValidateFailure(cmd,
+            EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_NAME_ALREADY_EXIST);
     }
 
     @Test
     public void validateFailsLongName() {
         sd.setStorageName(RandomUtils.instance().nextString(11));
-        ValidateTestUtils.runAndAssertValidateFailure
-                (cmd, EngineMessage.ACTION_TYPE_FAILED_NAME_LENGTH_IS_TOO_LONG);
+        ValidateTestUtils.runAndAssertValidateFailure(cmd, EngineMessage.ACTION_TYPE_FAILED_NAME_LENGTH_IS_TOO_LONG);
     }
 
     @Test
     public void validateFailsBlockIso() {
         sd.setStorageDomainType(StorageDomainType.ISO);
         sd.setStorageType(StorageType.FCP);
-        ValidateTestUtils.runAndAssertValidateFailure
-                (cmd, EngineMessage.ACTION_TYPE_FAILED_DOMAIN_TYPE_CAN_BE_CREATED_ONLY_ON_SPECIFIC_STORAGE_DOMAINS);
+        ValidateTestUtils.runAndAssertValidateFailure(cmd,
+            EngineMessage.ACTION_TYPE_FAILED_DOMAIN_TYPE_CAN_BE_CREATED_ONLY_ON_SPECIFIC_STORAGE_DOMAINS);
     }
 
     @Test
@@ -167,50 +166,50 @@ public class AddStorageDomainCommonTest extends BaseCommandTest {
     public void validateFailsExportOnBlock() {
         sd.setStorageDomainType(StorageDomainType.ImportExport);
         sd.setStorageType(StorageType.ISCSI);
-        ValidateTestUtils.runAndAssertValidateFailure
-                (cmd, EngineMessage.ACTION_TYPE_FAILED_DOMAIN_TYPE_CAN_BE_CREATED_ONLY_ON_SPECIFIC_STORAGE_DOMAINS);
+        ValidateTestUtils.runAndAssertValidateFailure(cmd,
+            EngineMessage.ACTION_TYPE_FAILED_DOMAIN_TYPE_CAN_BE_CREATED_ONLY_ON_SPECIFIC_STORAGE_DOMAINS);
     }
 
     @Test
     public void validateFailsMaster() {
         sd.setStorageDomainType(StorageDomainType.Master);
-        ValidateTestUtils.runAndAssertValidateFailure
-                (cmd, EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_TYPE_ILLEGAL);
+        ValidateTestUtils.runAndAssertValidateFailure(cmd,
+            EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_TYPE_ILLEGAL);
     }
 
     @Test
     public void validateFailsUnsupportedBlockOnlyFormat() {
         sd.setStorageFormat(StorageFormatType.V2);
-        ValidateTestUtils.runAndAssertValidateFailure
-                (cmd, EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_FORMAT_ILLEGAL_HOST);
+        ValidateTestUtils.runAndAssertValidateFailure(cmd,
+            EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_FORMAT_ILLEGAL_HOST);
     }
 
     @Test
     public void validateFailsUnsupportedIsoFormat() {
         sd.setStorageDomainType(StorageDomainType.ISO);
-        ValidateTestUtils.runAndAssertValidateFailure
-                (cmd, EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_FORMAT_ILLEGAL_HOST);
+        ValidateTestUtils.runAndAssertValidateFailure(cmd,
+            EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_FORMAT_ILLEGAL_HOST);
     }
 
     @Test
     public void validateFailsUnsupportedExportFormat() {
         sd.setStorageDomainType(StorageDomainType.ImportExport);
-        ValidateTestUtils.runAndAssertValidateFailure
-                (cmd, EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_FORMAT_ILLEGAL_HOST);
+        ValidateTestUtils.runAndAssertValidateFailure(cmd,
+            EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_FORMAT_ILLEGAL_HOST);
     }
 
     @Test
     public void validateFailsNoConnection() {
         when(sscDao.get(connId.toString())).thenReturn(null);
-        ValidateTestUtils.runAndAssertValidateFailure
-                (cmd, EngineMessage.ACTION_TYPE_FAILED_STORAGE_CONNECTION_NOT_EXIST);
+        ValidateTestUtils.runAndAssertValidateFailure(cmd,
+            EngineMessage.ACTION_TYPE_FAILED_STORAGE_CONNECTION_NOT_EXIST);
     }
 
     @Test
     public void validateFailsConnectionAlreadyUsed() {
         when(sdDao.getAllByConnectionId(connId)).thenReturn(Collections.singletonList(new StorageDomain()));
-        ValidateTestUtils.runAndAssertValidateFailure
-                (cmd, EngineMessage.ACTION_TYPE_FAILED_STORAGE_CONNECTION_BELONGS_TO_SEVERAL_STORAGE_DOMAINS);
+        ValidateTestUtils.runAndAssertValidateFailure(cmd,
+            EngineMessage.ACTION_TYPE_FAILED_STORAGE_CONNECTION_BELONGS_TO_SEVERAL_STORAGE_DOMAINS);
     }
 
     @Test
@@ -218,7 +217,7 @@ public class AddStorageDomainCommonTest extends BaseCommandTest {
         sd.setStorageDomainType(StorageDomainType.ISO);
         sd.setBackup(true);
         ValidateTestUtils.runAndAssertValidateFailure(cmd,
-                EngineMessage.ACTION_TYPE_FAILED_DOMAIN_TYPE_DOES_NOT_SUPPORT_BACKUP);
+            EngineMessage.ACTION_TYPE_FAILED_DOMAIN_TYPE_DOES_NOT_SUPPORT_BACKUP);
     }
 
     @Test
@@ -226,6 +225,6 @@ public class AddStorageDomainCommonTest extends BaseCommandTest {
         sd.setStorageDomainType(StorageDomainType.ImportExport);
         sd.setBackup(true);
         ValidateTestUtils.runAndAssertValidateFailure(cmd,
-                EngineMessage.ACTION_TYPE_FAILED_DOMAIN_TYPE_DOES_NOT_SUPPORT_BACKUP);
+            EngineMessage.ACTION_TYPE_FAILED_DOMAIN_TYPE_DOES_NOT_SUPPORT_BACKUP);
     }
 }

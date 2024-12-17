@@ -81,8 +81,8 @@ public class BackendAttachedStorageDomainsResourceTest
 
     static StorageServerConnections setUpStorageServerConnection() {
         StorageServerConnections cnx = new StorageServerConnections();
-            cnx.setId(GUIDS[0].toString());
-            cnx.setConnection("10.11.12.13" + ":" + "/1");
+        cnx.setId(GUIDS[0].toString());
+        cnx.setConnection("10.11.12.13" + ":" + "/1");
         return cnx;
     }
 
@@ -172,7 +172,7 @@ public class BackendAttachedStorageDomainsResourceTest
         Object[] paramValues = new Object[] { GUIDS[0].toString() };
         QueryReturnValue queryResult = new QueryReturnValue();
         when(backend.runQuery(eq(QueryType.GetStorageServerConnectionById), eqParams(StorageServerConnectionQueryParametersBase.class, addSession(paramNames), addSession(paramValues))))
-        .thenReturn(queryResult);
+            .thenReturn(queryResult);
         queryResult.setSucceeded(true);
         queryResult.setReturnValue(setUpStorageServerConnection());
         setUpQueryExpectations("");

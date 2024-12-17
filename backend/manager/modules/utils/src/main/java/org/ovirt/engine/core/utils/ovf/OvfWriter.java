@@ -163,11 +163,11 @@ public abstract class OvfWriter implements IOvfBuilder {
         _writer.writeStartElement("NetworkSection");
         _writer.writeElement("Info", "List of networks");
         vmBase.getInterfaces().stream().map(VmNetworkInterface::getNetworkName).filter(Objects::nonNull).distinct()
-        .forEach(network -> {
-            _writer.writeStartElement("Network");
-            _writer.writeAttributeString(OVF_PREFIX, getOvfUri(), "name", network);
-            _writer.writeEndElement();
-        });
+            .forEach(network -> {
+                _writer.writeStartElement("Network");
+                _writer.writeAttributeString(OVF_PREFIX, getOvfUri(), "name", network);
+                _writer.writeEndElement();
+            });
         _writer.writeEndElement();
     }
 
@@ -752,13 +752,13 @@ public abstract class OvfWriter implements IOvfBuilder {
 
     protected String getVolumeImageFormat(VolumeFormat format) {
         switch (format) {
-        case RAW:
-            return "http://www.vmware.com/specifications/vmdk.html#sparse";
-        case COW:
-            return "http://www.gnome.org/~markmc/qcow-image-format.html";
-        case Unassigned:
-        default:
-            return "";
+            case RAW:
+                return "http://www.vmware.com/specifications/vmdk.html#sparse";
+            case COW:
+                return "http://www.gnome.org/~markmc/qcow-image-format.html";
+            case Unassigned:
+            default:
+                return "";
         }
     }
 

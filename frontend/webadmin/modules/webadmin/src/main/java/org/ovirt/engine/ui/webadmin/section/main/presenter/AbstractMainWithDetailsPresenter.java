@@ -105,7 +105,7 @@ public abstract class AbstractMainWithDetailsPresenter<T, M extends ListWithDeta
 
                     // Let others know that the table selection has changed
                     fireTableSelectionChangeEvent();
-               }));
+                }));
         registerHandler(getEventBus().addHandler(ApplySearchStringEvent.getType(), event -> {
             applySearchString(event.getSearchString());
         }));
@@ -195,16 +195,16 @@ public abstract class AbstractMainWithDetailsPresenter<T, M extends ListWithDeta
         Set<FragmentParams> params = FragmentParams.getParams(currentPlace);
         params.forEach(param -> {
             switch (param) {
-            case SEARCH:
-                String search = currentPlace.getParameter(FragmentParams.SEARCH.getName(), "");
-                if (!"".equals(search)) {
-                    // We have a search parameter. The tokenizer has already run it through URL decode so we should be
-                    // able to simply pass it to setSearchString in the model.
-                    applySearchString(getModel().getDefaultSearchString() + search);
-                }
-                break;
-            default:
-                break;
+                case SEARCH:
+                    String search = currentPlace.getParameter(FragmentParams.SEARCH.getName(), "");
+                    if (!"".equals(search)) {
+                        // We have a search parameter. The tokenizer has already run it through URL decode so we should be
+                        // able to simply pass it to setSearchString in the model.
+                        applySearchString(getModel().getDefaultSearchString() + search);
+                    }
+                    break;
+                default:
+                    break;
             }
         });
     }

@@ -439,7 +439,7 @@ public class PoolListModel extends ListWithSimpleDetailsModel<Void, VmPool> {
 
         if (model.getIsHeadlessModeEnabled().getEntity()) {
             param.getVmStaticData().setDefaultDisplayType(DisplayType.none);
-       }
+        }
         BuilderExecutor.build(model, param, new UnitToGraphicsDeviceParamsBuilder());
 
         param.getVmStaticData().setUseHostCpuFlags(model.getHostCpu().getEntity());

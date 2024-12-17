@@ -576,25 +576,25 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
         }
 
         getHostListByCluster(cluster, asyncQuery(hosts -> {
-                    List<VDS> oldDefaultHosts = getModel().getDefaultHost().getSelectedItems();
-                    getModel().getDefaultHost().setItems(hosts);
+            List<VDS> oldDefaultHosts = getModel().getDefaultHost().getSelectedItems();
+            getModel().getDefaultHost().setItems(hosts);
 
-                    // attempt to preserve selection as much as possible
-                    if (oldDefaultHosts != null && !oldDefaultHosts.isEmpty()) {
-                        Set<VDS> oldSelectedIntersectionNewHosts = new HashSet<>(oldDefaultHosts);
-                        oldSelectedIntersectionNewHosts.retainAll(hosts);
-                        oldDefaultHosts = new ArrayList<>(oldSelectedIntersectionNewHosts);
-                    }
+            // attempt to preserve selection as much as possible
+            if (oldDefaultHosts != null && !oldDefaultHosts.isEmpty()) {
+                Set<VDS> oldSelectedIntersectionNewHosts = new HashSet<>(oldDefaultHosts);
+                oldSelectedIntersectionNewHosts.retainAll(hosts);
+                oldDefaultHosts = new ArrayList<>(oldSelectedIntersectionNewHosts);
+            }
 
-                    List<VDS> hostsToSelect = oldDefaultHosts != null && !oldDefaultHosts.isEmpty()
-                                      ? oldDefaultHosts
+            List<VDS> hostsToSelect = oldDefaultHosts != null && !oldDefaultHosts.isEmpty()
+                                    ? oldDefaultHosts
                                       : !hosts.isEmpty()
                                               ? Collections.singletonList(hosts.get(0))
                                               : Collections.emptyList();
-                    getModel().getDefaultHost().setSelectedItems(hostsToSelect);
-                    changeDefaultHost();
+            getModel().getDefaultHost().setSelectedItems(hostsToSelect);
+            changeDefaultHost();
 
-                }));
+        }));
     }
 
     protected void getHostListByCluster(Cluster cluster, AsyncQuery<List<VDS>> query) {
@@ -1454,15 +1454,14 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
                 QueryType.GetRngDevice,
                 new IdQueryParameters(templateId),
                 new AsyncQuery<QueryReturnValue>(returnValue -> {
-                            List<VmRngDevice> devs = returnValue.getReturnValue();
-                            getModel().getIsRngEnabled().setEntity(!devs.isEmpty());
-                            final VmRngDevice rngDevice = devs.isEmpty()
-                                    ? new VmRngDevice()
-                                    : devs.get(0);
-                            rngDevice.updateSourceByVersion(getModel().getCompatibilityVersion());
-                            getModel().setRngDevice(rngDevice);
-                        }
-                ));
+                    List<VmRngDevice> devs = returnValue.getReturnValue();
+                    getModel().getIsRngEnabled().setEntity(!devs.isEmpty());
+                    final VmRngDevice rngDevice = devs.isEmpty()
+                        ? new VmRngDevice()
+                        : devs.get(0);
+                    rngDevice.updateSourceByVersion(getModel().getCompatibilityVersion());
+                    getModel().setRngDevice(rngDevice);
+                }));
     }
 
     /*
@@ -1736,9 +1735,9 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
     }
 
     protected void updateStateless() {
-            getModel().getIsStateless()
-                    .setIsChangeable(!isLatestTemplateSelected(),
-                            constants.statelessVmFieldDisabledReason());
+        getModel().getIsStateless()
+            .setIsChangeable(!isLatestTemplateSelected(),
+                constants.statelessVmFieldDisabledReason());
     }
 
     protected boolean isSealByDefault(VmTemplate template) {
@@ -1844,20 +1843,20 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
      * since calling updateDefaultHost() for checking which hosts are available for current chosen cluster
      * may change "Host Auto Assign" mode, then we need this method to change "cpu-pass-through" value accordingly.
      */
-     protected boolean isHostCpuValueStillBasedOnTemp() {
-         return !getModel().getIsAutoAssign().getEntity()
-                 || getModel().getVmType().getSelectedItem() == VmType.HighPerformance;
-     }
+    protected boolean isHostCpuValueStillBasedOnTemp() {
+        return !getModel().getIsAutoAssign().getEntity()
+                || getModel().getVmType().getSelectedItem() == VmType.HighPerformance;
+    }
 
-     protected List<Integer> getOsValues(ArchitectureType architectureType, Version version) {
-         return AsyncDataProvider.getInstance().getOsIds(architectureType);
-     }
+    protected List<Integer> getOsValues(ArchitectureType architectureType, Version version) {
+        return AsyncDataProvider.getInstance().getOsIds(architectureType);
+    }
 
-     protected boolean isLatestTemplateSelected() {
-         return getModel().getTemplateWithVersion() != null
-                 && getModel().getTemplateWithVersion().getSelectedItem() != null
-                 && getModel().getTemplateWithVersion().getSelectedItem().isLatest();
-     }
+    protected boolean isLatestTemplateSelected() {
+        return getModel().getTemplateWithVersion() != null
+                && getModel().getTemplateWithVersion().getSelectedItem() != null
+                && getModel().getTemplateWithVersion().getSelectedItem().isLatest();
+    }
 
     protected void assignDefaultDisplayType() {
         if (getModel().getVmType() != null && getModel().getVmType().getSelectedItem() == VmType.Server
@@ -1868,10 +1867,10 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
     }
 
     protected DisplayType getDefaultDisplayType(Set<DisplayType> displayTypes) {
-         // We know displayTypes size is > 0
-         if (displayTypes.contains(DisplayType.vga)) {
-             return DisplayType.vga;
-         }
-         return displayTypes.iterator().next();
+        // We know displayTypes size is > 0
+        if (displayTypes.contains(DisplayType.vga)) {
+            return DisplayType.vga;
+        }
+        return displayTypes.iterator().next();
     }
 }

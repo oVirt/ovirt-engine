@@ -17,10 +17,10 @@ public class BackendIconsResourceTest
         extends AbstractBackendCollectionResourceTest<Icon, VmIcon, BackendIconsResource> {
 
     private static final String[] DATA_URLS = new String[] {
-            "data:image/png;base64,iVB0",
-            "data:image/png;base64,iVB1",
-            "data:image/png;base64,iVB2",
-            "data:image/png;base64,iVB3",
+        "data:image/png;base64,iVB0",
+        "data:image/png;base64,iVB1",
+        "data:image/png;base64,iVB2",
+        "data:image/png;base64,iVB3",
     };
 
     public BackendIconsResourceTest() {
@@ -51,7 +51,7 @@ public class BackendIconsResourceTest
     }
 
     public static void verifyIconModel(Icon model, int index) {
-        assertEquals(VmIcon.dataUrlToTypeAndData( DATA_URLS[index]).getFirst(), model.getMediaType());
+        assertEquals(VmIcon.dataUrlToTypeAndData(DATA_URLS[index]).getFirst(), model.getMediaType());
         assertEquals(VmIcon.dataUrlToTypeAndData(DATA_URLS[index]).getSecond(), model.getData());
         assertEquals(GUIDS[index].toString(), model.getId());
     }

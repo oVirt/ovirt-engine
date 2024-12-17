@@ -92,29 +92,29 @@ public class CommandCompensator {
                         (Class<BusinessEntity<Serializable>>) ReflectionUtils.getClassFor(snapshot.getEntityType());
 
                 switch (snapshot.getSnapshotType()) {
-                case CHANGED_STATUS_ONLY:
-                    BusinessEntitySnapshot.EntityStatusSnapshot entityStatusSnapshot =
-                            (BusinessEntitySnapshot.EntityStatusSnapshot) snapshotData;
-                    ((StatusAwareDao<Serializable, Enum<?>>) getDaoForEntity(entityClass)).updateStatus(
-                            entityStatusSnapshot.getId(), entityStatusSnapshot.getStatus());
-                    break;
-                case DELETED_OR_UPDATED_ENTITY:
-                    deletedOrUpdateEntity(entityClass, (BusinessEntity<Serializable>) snapshotData);
-                    break;
-                case UPDATED_ONLY_ENTITY:
-                    getDaoForEntity(entityClass).update((BusinessEntity<Serializable>) snapshotData);
-                    break;
-                case NEW_ENTITY_ID:
-                    getDaoForEntity(entityClass).remove(snapshotData);
-                    break;
-                case TRANSIENT_ENTITY:
-                    objectCompensation.compensate(commandType, (TransientCompensationBusinessEntity) snapshotData);
-                    break;
-                default:
-                    throw new IllegalArgumentException(String.format(
-                            "Unknown %s value, unable to compensate value %s.",
-                            BusinessEntitySnapshot.SnapshotType.class.getName(),
-                            snapshot.getSnapshotType()));
+                    case CHANGED_STATUS_ONLY:
+                        BusinessEntitySnapshot.EntityStatusSnapshot entityStatusSnapshot =
+                                (BusinessEntitySnapshot.EntityStatusSnapshot) snapshotData;
+                        ((StatusAwareDao<Serializable, Enum<?>>) getDaoForEntity(entityClass)).updateStatus(
+                                entityStatusSnapshot.getId(), entityStatusSnapshot.getStatus());
+                        break;
+                    case DELETED_OR_UPDATED_ENTITY:
+                        deletedOrUpdateEntity(entityClass, (BusinessEntity<Serializable>) snapshotData);
+                        break;
+                    case UPDATED_ONLY_ENTITY:
+                        getDaoForEntity(entityClass).update((BusinessEntity<Serializable>) snapshotData);
+                        break;
+                    case NEW_ENTITY_ID:
+                        getDaoForEntity(entityClass).remove(snapshotData);
+                        break;
+                    case TRANSIENT_ENTITY:
+                        objectCompensation.compensate(commandType, (TransientCompensationBusinessEntity) snapshotData);
+                        break;
+                    default:
+                        throw new IllegalArgumentException(String.format(
+                                "Unknown %s value, unable to compensate value %s.",
+                                BusinessEntitySnapshot.SnapshotType.class.getName(),
+                                snapshot.getSnapshotType()));
                 }
             }
             if (compensationContext == null) {

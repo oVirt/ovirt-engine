@@ -24,18 +24,18 @@ public class MigrationOptionsMapper {
         Integer customParallelMigrations = null;
         if (entity.getParallelMigrations() != null) {
             switch (entity.getParallelMigrations().intValue()) {
-            case -2:
-                parallelMigrations = ParallelMigrationsPolicy.AUTO;
-                break;
-            case -1:
-                parallelMigrations = ParallelMigrationsPolicy.AUTO_PARALLEL;
-                break;
-            case 0:
-                parallelMigrations = ParallelMigrationsPolicy.DISABLED;
-                break;
-            default:
-                parallelMigrations = ParallelMigrationsPolicy.CUSTOM;
-                customParallelMigrations = entity.getParallelMigrations();
+                case -2:
+                    parallelMigrations = ParallelMigrationsPolicy.AUTO;
+                    break;
+                case -1:
+                    parallelMigrations = ParallelMigrationsPolicy.AUTO_PARALLEL;
+                    break;
+                case 0:
+                    parallelMigrations = ParallelMigrationsPolicy.DISABLED;
+                    break;
+                default:
+                    parallelMigrations = ParallelMigrationsPolicy.CUSTOM;
+                    customParallelMigrations = entity.getParallelMigrations();
             }
         }
         template.setParallelMigrationsPolicy(parallelMigrations);
@@ -70,28 +70,28 @@ public class MigrationOptionsMapper {
             Integer parallelMigrations = null;
             final Integer customParallelMigrations = model.getCustomParallelMigrations();
             switch (model.getParallelMigrationsPolicy()) {
-            case INHERIT:
-                break;
-            case AUTO:
-                parallelMigrations = ParallelMigrationsType.AUTO.getValue();
-                break;
-            case AUTO_PARALLEL:
-                parallelMigrations = ParallelMigrationsType.AUTO_PARALLEL.getValue();
-                break;
-            case DISABLED:
-                parallelMigrations = ParallelMigrationsType.DISABLED.getValue();
-                break;
-            case CUSTOM:
-                if (customParallelMigrations != null && customParallelMigrations >= 1) {
-                    parallelMigrations = customParallelMigrations;
-                } else {
-                    // Artificial invalid value in case the (invalid) value collides with other
-                    // policy values. This will be caught and reported nicely in the backend.
-                    parallelMigrations = -Integer.MIN_VALUE;
-                }
-                break;
-            default:
-                throw new IllegalArgumentException("Unhandled parallel migration connections specification");
+                case INHERIT:
+                    break;
+                case AUTO:
+                    parallelMigrations = ParallelMigrationsType.AUTO.getValue();
+                    break;
+                case AUTO_PARALLEL:
+                    parallelMigrations = ParallelMigrationsType.AUTO_PARALLEL.getValue();
+                    break;
+                case DISABLED:
+                    parallelMigrations = ParallelMigrationsType.DISABLED.getValue();
+                    break;
+                case CUSTOM:
+                    if (customParallelMigrations != null && customParallelMigrations >= 1) {
+                        parallelMigrations = customParallelMigrations;
+                    } else {
+                        // Artificial invalid value in case the (invalid) value collides with other
+                        // policy values. This will be caught and reported nicely in the backend.
+                        parallelMigrations = -Integer.MIN_VALUE;
+                    }
+                    break;
+                default:
+                    throw new IllegalArgumentException("Unhandled parallel migration connections specification");
             }
             entity.setParallelMigrations(parallelMigrations);
         }

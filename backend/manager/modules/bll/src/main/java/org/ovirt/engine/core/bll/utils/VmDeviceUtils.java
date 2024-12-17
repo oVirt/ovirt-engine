@@ -920,13 +920,13 @@ public class VmDeviceUtils {
         }
 
         switch (oldVm.getUsbPolicy()) {
-        case ENABLED_NATIVE:
-            disableSpiceUsb(newVm.getId());
-            break;
+            case ENABLED_NATIVE:
+                disableSpiceUsb(newVm.getId());
+                break;
 
-        case DISABLED:
-            disableNormalUsb(newVm.getId());
-            break;
+            case DISABLED:
+                disableNormalUsb(newVm.getId());
+                break;
         }
 
         addDisableUsbControllers(newVm.getId());

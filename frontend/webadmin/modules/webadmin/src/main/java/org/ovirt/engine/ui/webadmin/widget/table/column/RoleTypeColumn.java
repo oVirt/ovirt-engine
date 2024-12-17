@@ -17,10 +17,10 @@ public class RoleTypeColumn extends AbstractImageResourceColumn<Role> {
     @Override
     public ImageResource getValue(Role role) {
         switch (role.getType()) {
-        case ADMIN:
-            return resources.adminImage();
-        case USER:
-            return resources.userImage();
+            case ADMIN:
+                return resources.adminImage();
+            case USER:
+                return resources.userImage();
         }
         return resources.adminImage();
     }

@@ -161,17 +161,17 @@ public class HibernateVmCommand<T extends VmOperationParameterBase> extends VmOp
     @Override
     public AuditLogType getAuditLogTypeValue() {
         switch (getActionState()) {
-        case EXECUTE:
-            return getSucceeded() ? AuditLogType.USER_SUSPEND_VM : AuditLogType.USER_FAILED_SUSPEND_VM;
-        case END_SUCCESS:
-            if (getSucceeded()) {
-                // no event should be displayed if the command ended successfully, the monitoring will log it
-                return AuditLogType.UNASSIGNED;
-            }
-        case END_FAILURE:
-        default:
-            return hibernateVdsProblematic ? AuditLogType.USER_SUSPEND_VM_FINISH_FAILURE_WILL_TRY_AGAIN
-                    : AuditLogType.USER_SUSPEND_VM_FINISH_FAILURE;
+            case EXECUTE:
+                return getSucceeded() ? AuditLogType.USER_SUSPEND_VM : AuditLogType.USER_FAILED_SUSPEND_VM;
+            case END_SUCCESS:
+                if (getSucceeded()) {
+                    // no event should be displayed if the command ended successfully, the monitoring will log it
+                    return AuditLogType.UNASSIGNED;
+                }
+            case END_FAILURE:
+            default:
+                return hibernateVdsProblematic ? AuditLogType.USER_SUSPEND_VM_FINISH_FAILURE_WILL_TRY_AGAIN
+                        : AuditLogType.USER_SUSPEND_VM_FINISH_FAILURE;
         }
     }
 
@@ -188,7 +188,7 @@ public class HibernateVmCommand<T extends VmOperationParameterBase> extends VmOp
         }
 
         if (!canRunActionOnNonManagedVm()) {
-           return false;
+            return false;
         }
 
         VMStatus vmStatus = getVm().getStatus();

@@ -45,10 +45,10 @@ public class BackendJobResource extends AbstractBackendActionableResource<Job, o
     public Job get() {
         IdQueryParameters params = new IdQueryParameters(guid);
         return performGet(QueryType.GetJobByJobId, params);
-     }
+    }
 
     @Override
     public StepsResource getStepsResource() {
-       return inject(new BackendStepsResource(guid));
+        return inject(new BackendStepsResource(guid));
     }
 }

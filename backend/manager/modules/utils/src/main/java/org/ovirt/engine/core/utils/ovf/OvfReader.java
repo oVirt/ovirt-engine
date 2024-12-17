@@ -153,7 +153,7 @@ public abstract class OvfReader implements IOvfBuilder {
 
         if (node.attributes.get("ovf:volume-format") != null &&
             !StringUtils.isEmpty(node.attributes.get("ovf:volume-format").getValue())) {
-                image.setVolumeFormat(VolumeFormat.valueOf(node.attributes.get("ovf:volume-format")
+            image.setVolumeFormat(VolumeFormat.valueOf(node.attributes.get("ovf:volume-format")
                         .getValue()));
         } else {
             image.setVolumeFormat(VolumeFormat.Unassigned);
@@ -161,14 +161,14 @@ public abstract class OvfReader implements IOvfBuilder {
 
         if (node.attributes.get("ovf:volume-type") != null &&
             !StringUtils.isEmpty(node.attributes.get("ovf:volume-type").getValue())) {
-                image.setVolumeType(VolumeType.valueOf(node.attributes.get("ovf:volume-type").getValue()));
+            image.setVolumeType(VolumeType.valueOf(node.attributes.get("ovf:volume-type").getValue()));
         } else {
             image.setVolumeType(getDefaultVolumeType());
         }
 
         if (node.attributes.get("ovf:incremental-backup") != null &&
                 Boolean.parseBoolean(node.attributes.get("ovf:incremental-backup").getValue())) {
-                    image.setBackup(DiskBackup.Incremental);
+            image.setBackup(DiskBackup.Incremental);
         } else {
             image.setBackup(DiskBackup.None);
         }
@@ -352,55 +352,55 @@ public abstract class OvfReader implements IOvfBuilder {
             String resourceType = selectSingleNode(item, "rasd:ResourceType", _xmlNS).innerText;
             resourceType = adjustHardwareResourceType(resourceType);
             switch (resourceType) {
-            case OvfHardware.CPU:
-                readCpuItem(item);
-                break;
+                case OvfHardware.CPU:
+                    readCpuItem(item);
+                    break;
 
-            case OvfHardware.Memory:
-                readMemoryItem(item);
-                break;
+                case OvfHardware.Memory:
+                    readMemoryItem(item);
+                    break;
 
-            case OvfHardware.DiskImage:
-                readDiskImageItem(item);
-                break;
+                case OvfHardware.DiskImage:
+                    readDiskImageItem(item);
+                    break;
 
-            case OvfHardware.Network:
-                /**
-                 *  If NIC items are found in the hardware section of the OVF, they are the real ones,
-                 *  so clear the NIC references found in the <NetworkSection> of the OVF which are used
-                 *  only to map networks, but should not be used to create NICs. Clear() is performed only
-                 *  upon finding the first NIC item.
-                 */
-                if (nicIdx == 0) {
-                    interfaces.clear();
-                }
-                readNetworkItem(item, ++nicIdx);
-                break;
+                case OvfHardware.Network:
+                    /**
+                     *  If NIC items are found in the hardware section of the OVF, they are the real ones,
+                     *  so clear the NIC references found in the <NetworkSection> of the OVF which are used
+                     *  only to map networks, but should not be used to create NICs. Clear() is performed only
+                     *  upon finding the first NIC item.
+                     */
+                    if (nicIdx == 0) {
+                        interfaces.clear();
+                    }
+                    readNetworkItem(item, ++nicIdx);
+                    break;
 
-            case OvfHardware.USB:
-                readUsbItem(item);
-                break;
+                case OvfHardware.USB:
+                    readUsbItem(item);
+                    break;
 
-            case OvfHardware.Monitor:
-                readMonitorItem(item);
-                break;
+                case OvfHardware.Monitor:
+                    readMonitorItem(item);
+                    break;
 
-            case OvfHardware.Graphics:
-                readManagedVmDevice(item, readDeviceId(item)); // so far graphics doesn't contain anything special
-                break;
+                case OvfHardware.Graphics:
+                    readManagedVmDevice(item, readDeviceId(item)); // so far graphics doesn't contain anything special
+                    break;
 
-            case OvfHardware.CD:
-                readCdItem(item);
-                break;
+                case OvfHardware.CD:
+                    readCdItem(item);
+                    break;
 
-            case OvfHardware.OTHER:
-                final VmDeviceGeneralType type = VmDeviceGeneralType
-                        .forValue(String.valueOf(selectSingleNode(item, VMD_TYPE, _xmlNS).innerText));
-                final VmDevice vmDevice = type == VmDeviceGeneralType.TPM
-                        ? readManagedVmDevice(item, readDeviceId(item))
-                        : readOtherHardwareItem(item, type);
-                readVirtioSerial = readVirtioSerial || VmDeviceType.VIRTIOSERIAL.getName().equals(vmDevice.getDevice());
-                break;
+                case OvfHardware.OTHER:
+                    final VmDeviceGeneralType type = VmDeviceGeneralType
+                            .forValue(String.valueOf(selectSingleNode(item, VMD_TYPE, _xmlNS).innerText));
+                    final VmDevice vmDevice = type == VmDeviceGeneralType.TPM
+                            ? readManagedVmDevice(item, readDeviceId(item))
+                            : readOtherHardwareItem(item, type);
+                    readVirtioSerial = readVirtioSerial || VmDeviceType.VIRTIOSERIAL.getName().equals(vmDevice.getDevice());
+                    break;
             }
         }
 
@@ -684,14 +684,14 @@ public abstract class OvfReader implements IOvfBuilder {
         // - existed before and valid only to non-windows, to mappings that is valid to both non-windows and windows
         // - existed before but got removed because similar time zone exist, to mapping that exists
         switch (timezone) {
-        case "America/Indianapolis":
-            return "America/New_York";
-        case "US Eastern Standard Time":
-            return "Eastern Standard Time";
-        case "Atlantic/Reykjavik":
-            return "Etc/GMT";
-        case "Iceland Standard Time":
-            return "Greenwich Standard Time";
+            case "America/Indianapolis":
+                return "America/New_York";
+            case "US Eastern Standard Time":
+                return "Eastern Standard Time";
+            case "Atlantic/Reykjavik":
+                return "Etc/GMT";
+            case "Iceland Standard Time":
+                return "Greenwich Standard Time";
         }
         return timezone;
     }

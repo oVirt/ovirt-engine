@@ -260,11 +260,11 @@ public class VmHandler implements BackendService {
     @PostConstruct
     public void init() {
         Class<?>[] inspectedClassNames = new Class<?>[] {
-                VmBase.class,
-                VM.class,
-                VmStatic.class,
-                VmDynamic.class,
-                VmManagementParametersBase.class };
+            VmBase.class,
+            VM.class,
+            VmStatic.class,
+            VmDynamic.class,
+            VmManagementParametersBase.class };
 
         updateVmsStatic =
                 new ObjectIdentityChecker(VmHandler.class, Arrays.asList(inspectedClassNames));
@@ -584,8 +584,8 @@ public class VmHandler implements BackendService {
         List<VmInit> all = vmInitDao.getVmInitByIds(ids);
 
         for (VmInit vmInit: all) {
-                vmInit.setPasswordAlreadyStored(!StringUtils.isEmpty(vmInit.getRootPassword()));
-                vmInit.setRootPassword(null);
+            vmInit.setPasswordAlreadyStored(!StringUtils.isEmpty(vmInit.getRootPassword()));
+            vmInit.setRootPassword(null);
         }
         return all;
     }
@@ -800,7 +800,7 @@ public class VmHandler implements BackendService {
      *            The cluster version.
      */
     public ValidationResult isGraphicsAndDisplaySupported
-        (int osId, Collection<GraphicsType> graphics, DisplayType displayType, BiosType biosType, Version clusterVersion) {
+    (int osId, Collection<GraphicsType> graphics, DisplayType displayType, BiosType biosType, Version clusterVersion) {
         if (!vmValidationUtils.isGraphicsAndDisplaySupported(osId, clusterVersion, graphics, displayType)) {
             return new ValidationResult(
                     EngineMessage.ACTION_TYPE_FAILED_ILLEGAL_VM_DISPLAY_TYPE_IS_NOT_SUPPORTED_BY_OS);
@@ -1643,34 +1643,34 @@ public class VmHandler implements BackendService {
         ValidationResult result = ValidationResult.VALID;
 
         switch (vmFromParams.getCpuPinningPolicy()) {
-        case MANUAL:
-            if (StringUtils.isBlank(vmFromParams.getCpuPinning())) {
-                result = new ValidationResult(EngineMessage.ACTION_TYPE_CANNOT_SET_MANUAL_PINNING);
-            }
-            break;
-        case RESIZE_AND_PIN_NUMA:
-            boolean singleCoreHostFound = vmFromParams.getDedicatedVmForVdsList()
-                    .stream()
-                    .map(vdsId -> vdsDynamicDao.get(vdsId))
-                    .anyMatch(vdsDynamic -> vdsDynamic.getCpuCores() / vdsDynamic.getCpuSockets() == 1);
-            if (singleCoreHostFound) {
-                result = new ValidationResult(EngineMessage.ACTION_TYPE_CANNOT_RESIZE_AND_PIN_SINGLE_CORE);
-            }
-            break;
-        case DEDICATED:
-            if (!FeatureSupported.isDedicatePolicySupported(version)) {
-                result = new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_DEDICATED_IS_NOT_SUPPORTED);
+            case MANUAL:
+                if (StringUtils.isBlank(vmFromParams.getCpuPinning())) {
+                    result = new ValidationResult(EngineMessage.ACTION_TYPE_CANNOT_SET_MANUAL_PINNING);
+                }
                 break;
-            }
+            case RESIZE_AND_PIN_NUMA:
+                boolean singleCoreHostFound = vmFromParams.getDedicatedVmForVdsList()
+                        .stream()
+                        .map(vdsId -> vdsDynamicDao.get(vdsId))
+                        .anyMatch(vdsDynamic -> vdsDynamic.getCpuCores() / vdsDynamic.getCpuSockets() == 1);
+                if (singleCoreHostFound) {
+                    result = new ValidationResult(EngineMessage.ACTION_TYPE_CANNOT_RESIZE_AND_PIN_SINGLE_CORE);
+                }
+                break;
+            case DEDICATED:
+                if (!FeatureSupported.isDedicatePolicySupported(version)) {
+                    result = new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_DEDICATED_IS_NOT_SUPPORTED);
+                    break;
+                }
 
-            boolean anyNodePinned =
-                vmFromParams.getvNumaNodeList().stream().anyMatch(numa -> !numa.getVdsNumaNodeList().isEmpty());
-            if (anyNodePinned) {
-                result = new ValidationResult(EngineMessage.ACTION_TYPE_CANNOT_SET_DEDICATED_PINNING_WITH_NUMA_NODES_PINNED);
-            }
-            break;
-        default:
-            break;
+                boolean anyNodePinned =
+                    vmFromParams.getvNumaNodeList().stream().anyMatch(numa -> !numa.getVdsNumaNodeList().isEmpty());
+                if (anyNodePinned) {
+                    result = new ValidationResult(EngineMessage.ACTION_TYPE_CANNOT_SET_DEDICATED_PINNING_WITH_NUMA_NODES_PINNED);
+                }
+                break;
+            default:
+                break;
         }
 
         return result;

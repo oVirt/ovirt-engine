@@ -232,7 +232,7 @@ public class AddPermissionCommand<T extends PermissionsOperationsParameters> ext
         // user from the directory service
         if (getParameters().getUser() != null && dbUser == null
                 || getParameters().getGroup() != null && dbGroup == null) {
-           permissionsSubject.add(new PermissionSubject(permission.getObjectId(),
+            permissionsSubject.add(new PermissionSubject(permission.getObjectId(),
                     permission.getObjectType(), ActionGroup.ADD_USERS_AND_GROUPS_FROM_DIRECTORY));
         }
         return permissionsSubject;

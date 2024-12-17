@@ -48,20 +48,20 @@ public class SubTabDataCenterNetworkView extends AbstractSubTabTableView<Storage
         getTable().enableColumnResizing();
 
         AbstractTextColumn<Network> nameColumn = new AbstractLinkColumn<Network>(
-                new FieldUpdater<Network, String>() {
-            @Override
-            public void update(int index, Network network, String value) {
-                Map<String, String> parameters = new HashMap<>();
-                parameters.put(FragmentParams.NAME.getName(), network.getName());
-                parameters.put(FragmentParams.DATACENTER.getName(),
-                        getModelProvider().getMainModel().getSelectedItem().getName());
-                getPlaceTransitionHandler().handlePlaceTransition(
-                        WebAdminApplicationPlaces.networkGeneralSubTabPlace, parameters);
-            }
-        }) {
-            @Override
-            public String getValue(Network object) {
-                return object.getName();
+            new FieldUpdater<Network, String>() {
+                @Override
+                public void update(int index, Network network, String value) {
+                    Map<String, String> parameters = new HashMap<>();
+                    parameters.put(FragmentParams.NAME.getName(), network.getName());
+                    parameters.put(FragmentParams.DATACENTER.getName(),
+                            getModelProvider().getMainModel().getSelectedItem().getName());
+                    getPlaceTransitionHandler().handlePlaceTransition(
+                            WebAdminApplicationPlaces.networkGeneralSubTabPlace, parameters);
+                }
+            }) {
+                @Override
+                public String getValue(Network object) {
+                    return object.getName();
             }
         };
         nameColumn.makeSortable();

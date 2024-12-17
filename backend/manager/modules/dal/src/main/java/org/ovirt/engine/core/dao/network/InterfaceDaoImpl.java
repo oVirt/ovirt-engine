@@ -331,32 +331,32 @@ public class InterfaceDaoImpl extends BaseDao implements InterfaceDao {
         public VdsNetworkInterface mapRow(ResultSet rs, int rowNum) throws SQLException {
             VdsNetworkInterface entity = createInterface(rs);
 
-                    entity.setSpeed((Integer) rs.getObject("speed"));
-                    entity.setMacAddress(rs.getString("mac_addr"));
-                    entity.setStatistics(HostNetworkStatisticsRowMapper.INSTANCE.mapRow(rs, rowNum));
-                    entity.setType((Integer) rs.getObject("type"));
-                    entity.setIpv4Gateway(rs.getString("gateway"));
-                    entity.setIpv4DefaultRoute(rs.getBoolean("ipv4_default_route"));
-                    entity.setIpv6Gateway(rs.getString("ipv6_gateway"));
-                    entity.setIpv4Subnet(rs.getString("subnet"));
-                    entity.setIpv6Prefix(getInteger(rs, "ipv6_prefix"));
-                    entity.setIpv4Address(rs.getString("addr"));
-                    entity.setIpv6Address(rs.getString("ipv6_address"));
-                    entity.setNetworkName(rs.getString("network_name"));
-                    entity.setName(rs.getString("name"));
-                    entity.setVdsId(getGuid(rs, "vds_id"));
-                    entity.setVdsName(rs.getString("vds_name"));
-                    entity.setId(getGuidDefaultEmpty(rs, "id"));
-                    entity.setIpv4BootProtocol(Ipv4BootProtocol.forValue(rs.getInt("boot_protocol")));
-                    entity.setIpv6BootProtocol(Ipv6BootProtocol.forValue(rs.getInt("ipv6_boot_protocol")));
-                    entity.setReportedSwitchType(SwitchType.parse(rs.getString("reported_switch_type")));
-                    entity.setMtu(rs.getInt("mtu"));
-                    entity.setBridged(rs.getBoolean("bridged"));
-                    entity.setQos(hostNetworkQosMapper.mapRow(rs, rowNum));
-                    entity.setLabels(SerializationFactory.getDeserializer().deserialize(rs.getString("labels"),
-                        HashSet.class));
-                    entity.setAdPartnerMac(rs.getString("ad_partner_mac"));
-                    entity.setAdAggregatorId(getInteger(rs, "ad_aggregator_id"));
+            entity.setSpeed((Integer) rs.getObject("speed"));
+            entity.setMacAddress(rs.getString("mac_addr"));
+            entity.setStatistics(HostNetworkStatisticsRowMapper.INSTANCE.mapRow(rs, rowNum));
+            entity.setType((Integer) rs.getObject("type"));
+            entity.setIpv4Gateway(rs.getString("gateway"));
+            entity.setIpv4DefaultRoute(rs.getBoolean("ipv4_default_route"));
+            entity.setIpv6Gateway(rs.getString("ipv6_gateway"));
+            entity.setIpv4Subnet(rs.getString("subnet"));
+            entity.setIpv6Prefix(getInteger(rs, "ipv6_prefix"));
+            entity.setIpv4Address(rs.getString("addr"));
+            entity.setIpv6Address(rs.getString("ipv6_address"));
+            entity.setNetworkName(rs.getString("network_name"));
+            entity.setName(rs.getString("name"));
+            entity.setVdsId(getGuid(rs, "vds_id"));
+            entity.setVdsName(rs.getString("vds_name"));
+            entity.setId(getGuidDefaultEmpty(rs, "id"));
+            entity.setIpv4BootProtocol(Ipv4BootProtocol.forValue(rs.getInt("boot_protocol")));
+            entity.setIpv6BootProtocol(Ipv6BootProtocol.forValue(rs.getInt("ipv6_boot_protocol")));
+            entity.setReportedSwitchType(SwitchType.parse(rs.getString("reported_switch_type")));
+            entity.setMtu(rs.getInt("mtu"));
+            entity.setBridged(rs.getBoolean("bridged"));
+            entity.setQos(hostNetworkQosMapper.mapRow(rs, rowNum));
+            entity.setLabels(SerializationFactory.getDeserializer().deserialize(rs.getString("labels"),
+                HashSet.class));
+            entity.setAdPartnerMac(rs.getString("ad_partner_mac"));
+            entity.setAdAggregatorId(getInteger(rs, "ad_aggregator_id"));
 
             return entity;
         }

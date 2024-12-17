@@ -41,24 +41,24 @@ public class ConnectStoragePoolVDSCommand<P extends ConnectStoragePoolVDSCommand
     protected void proceedConnectProxyReturnValue() {
         EngineError returnStatus = getReturnValueFromStatus(getReturnStatus());
         switch (returnStatus) {
-        case Done:
-        case StoragePoolMasterNotFound:
-        case StoragePoolTooManyMasters:
-        case StoragePoolWrongMaster:
-            super.proceedProxyReturnValue();
-            break;
-        case ReleaseLockFailure:
-        case AcquireHostIdFailure:
-        case ReleaseHostIdFailure:
-            VDSExceptionBase outEx = new VDSErrorException(String.format("Failed in vdscommand %1$s, error = %2$s",
-                    getCommandName(), getReturnStatus().message));
-            initializeVdsError(returnStatus);
-            getVDSReturnValue().setSucceeded(false);
-            throw outEx;
-        default:
-            getVDSReturnValue().setSucceeded(false);
-            initializeVdsError(returnStatus);
-            break;
+            case Done:
+            case StoragePoolMasterNotFound:
+            case StoragePoolTooManyMasters:
+            case StoragePoolWrongMaster:
+                super.proceedProxyReturnValue();
+                break;
+            case ReleaseLockFailure:
+            case AcquireHostIdFailure:
+            case ReleaseHostIdFailure:
+                VDSExceptionBase outEx = new VDSErrorException(String.format("Failed in vdscommand %1$s, error = %2$s",
+                        getCommandName(), getReturnStatus().message));
+                initializeVdsError(returnStatus);
+                getVDSReturnValue().setSucceeded(false);
+                throw outEx;
+            default:
+                getVDSReturnValue().setSucceeded(false);
+                initializeVdsError(returnStatus);
+                break;
         }
     }
 }

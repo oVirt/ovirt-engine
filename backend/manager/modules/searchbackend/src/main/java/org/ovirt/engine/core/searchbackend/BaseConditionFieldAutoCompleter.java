@@ -158,14 +158,14 @@ public class BaseConditionFieldAutoCompleter extends BaseAutoCompleter implement
 
         String rel;
         switch (relations) {
-        case "d":
-            rel = getLikeSyntax(caseSensitive);
-            break;
-        case "!=":
-            rel = "NOT " + getLikeSyntax(caseSensitive);
-            break;
-        default:
-            rel = relations;
+            case "d":
+                rel = getLikeSyntax(caseSensitive);
+                break;
+            case "!=":
+                rel = "NOT " + getLikeSyntax(caseSensitive);
+                break;
+            default:
+                rel = relations;
         }
 
         return columnNameDict.entrySet().stream().sorted(Map.Entry.comparingByValue())
@@ -313,15 +313,15 @@ public class BaseConditionFieldAutoCompleter extends BaseAutoCompleter implement
         if (result != null) {
             DateEnumForSearch dateEnumVal = DateEnumForSearch.forValue(result);
             switch (dateEnumVal) {
-            case Today:
-                formatedValue = DateTime.getNow();
-                break;
-            case Yesterday:
-                formatedValue = DateTime.getNow().addDays(-1);
-                break;
+                case Today:
+                    formatedValue = DateTime.getNow();
+                    break;
+                case Yesterday:
+                    formatedValue = DateTime.getNow().addDays(-1);
+                    break;
 
-            default:
-                break;
+                default:
+                    break;
             }
         } else {
             for (int i = -2; i > -8; i--) {
@@ -375,13 +375,13 @@ public class BaseConditionFieldAutoCompleter extends BaseAutoCompleter implement
 
     private static boolean isOperatorNegative(String operator) {
         switch (operator.trim().toUpperCase()) {
-        case "NOT LIKE":
-        case "NOT ILIKE":
-        case "!=":
-        case "<>":
-            return true;
-        default:
-            return false;
+            case "NOT LIKE":
+            case "NOT ILIKE":
+            case "!=":
+            case "<>":
+                return true;
+            default:
+                return false;
         }
     }
 

@@ -95,11 +95,11 @@ public class AddUnmanagedVmsCommandTest {
             }
             for (VmDevice vmDevice : vmStatic.getManagedDeviceMap().values()) {
                 if (vmDevice instanceof GraphicsDevice) {
-                   GraphicsDevice device = (GraphicsDevice) vmDevice;
-                   if (device.getGraphicsType() != GraphicsType.VNC ||
+                    GraphicsDevice device = (GraphicsDevice) vmDevice;
+                    if (device.getGraphicsType() != GraphicsType.VNC ||
                            vmStatic.getDefaultDisplayType() != DisplayType.vga) {
-                       return false;
-                   }
+                        return false;
+                    }
                 } else {
                     if (vmDevice.getType() != VmDeviceGeneralType.CONSOLE) {
                         return false;

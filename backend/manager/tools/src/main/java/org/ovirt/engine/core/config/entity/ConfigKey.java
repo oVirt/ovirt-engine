@@ -110,7 +110,7 @@ public class ConfigKey {
             .append(" to key ")
             .append(keyName)
             .append(". ")
-            .append(StringUtils.isNotEmpty(validationResult.getDetails()) ? validationResult.getDetails() : "");
+                .append(StringUtils.isNotEmpty(validationResult.getDetails()) ? validationResult.getDetails() : "");
             throw new InvalidParameterException(invalidParamMsg.toString());
         }
         this.value = valueHelper.setValue(value);

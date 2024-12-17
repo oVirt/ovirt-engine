@@ -37,17 +37,17 @@ public class BrickStatusColumn extends AbstractColumn<GlusterBrickEntity, Gluste
         String tooltip = null;
 
         switch (status) {
-        case DOWN:
-            tooltip = constants.down();
-            break;
-        case UP:
-            tooltip = constants.up();
-            break;
-        case UNKNOWN:
-            tooltip = constants.unknown();
-            break;
-        default:
-            tooltip = constants.down();
+            case DOWN:
+                tooltip = constants.down();
+                break;
+            case UP:
+                tooltip = constants.up();
+                break;
+            case UNKNOWN:
+                tooltip = constants.unknown();
+                break;
+            default:
+                tooltip = constants.down();
         }
 
         if (brick.getStatus() != GlusterStatus.DOWN && brick.getUnSyncedEntries() != null

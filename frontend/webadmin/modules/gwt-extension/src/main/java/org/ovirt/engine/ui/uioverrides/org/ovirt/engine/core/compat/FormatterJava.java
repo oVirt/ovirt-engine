@@ -66,66 +66,66 @@ public final class FormatterJava {
         // Returns true iff the Conversion is applicable to character.
         static boolean isCharacter(char c) {
             switch (c) {
-            case CHARACTER:
-            case CHARACTER_UPPER:
-                return true;
-            default:
-                return false;
+                case CHARACTER:
+                case CHARACTER_UPPER:
+                    return true;
+                default:
+                    return false;
             }
         }
 
         // Returns true iff the Conversion is a floating-point type.
         static boolean isFloat(char c) {
             switch (c) {
-            case SCIENTIFIC:
-            case SCIENTIFIC_UPPER:
-            case GENERAL:
-            case GENERAL_UPPER:
-            case DECIMAL_FLOAT:
-            case HEXADECIMAL_FLOAT:
-            case HEXADECIMAL_FLOAT_UPPER:
-                return true;
-            default:
-                return false;
+                case SCIENTIFIC:
+                case SCIENTIFIC_UPPER:
+                case GENERAL:
+                case GENERAL_UPPER:
+                case DECIMAL_FLOAT:
+                case HEXADECIMAL_FLOAT:
+                case HEXADECIMAL_FLOAT_UPPER:
+                    return true;
+                default:
+                    return false;
             }
         }
 
         // Returns true iff the Conversion is applicable to all objects.
         static boolean isGeneral(char c) {
             switch (c) {
-            case BOOLEAN:
-            case BOOLEAN_UPPER:
-            case STRING:
-            case STRING_UPPER:
-            case HASHCODE:
-            case HASHCODE_UPPER:
-                return true;
-            default:
-                return false;
+                case BOOLEAN:
+                case BOOLEAN_UPPER:
+                case STRING:
+                case STRING_UPPER:
+                case HASHCODE:
+                case HASHCODE_UPPER:
+                    return true;
+                default:
+                    return false;
             }
         }
 
         // Returns true iff the Conversion is an integer type.
         static boolean isInteger(char c) {
             switch (c) {
-            case DECIMAL_INTEGER:
-            case OCTAL_INTEGER:
-            case HEXADECIMAL_INTEGER:
-            case HEXADECIMAL_INTEGER_UPPER:
-                return true;
-            default:
-                return false;
+                case DECIMAL_INTEGER:
+                case OCTAL_INTEGER:
+                case HEXADECIMAL_INTEGER:
+                case HEXADECIMAL_INTEGER_UPPER:
+                    return true;
+                default:
+                    return false;
             }
         }
 
         // Returns true iff the Conversion does not require an argument
         static boolean isText(char c) {
             switch (c) {
-            case LINE_SEPARATOR:
-            case PERCENT_SIGN:
-                return true;
-            default:
-                return false;
+                case LINE_SEPARATOR:
+                case PERCENT_SIGN:
+                    return true;
+                default:
+                    return false;
             }
         }
 
@@ -185,53 +185,46 @@ public final class FormatterJava {
 
         static boolean isValid(char c) {
             switch (c) {
-            case HOUR_OF_DAY_0:
-            case HOUR_0:
-            case HOUR_OF_DAY:
-            case HOUR:
-            case MINUTE:
-            case NANOSECOND:
-            case MILLISECOND:
-            case MILLISECOND_SINCE_EPOCH:
-            case AM_PM:
-            case SECONDS_SINCE_EPOCH:
-            case SECOND:
-            case TIME:
-            case ZONE_NUMERIC:
-            case ZONE:
+                case HOUR_OF_DAY_0:
+                case HOUR_0:
+                case HOUR_OF_DAY:
+                case HOUR:
+                case MINUTE:
+                case NANOSECOND:
+                case MILLISECOND:
+                case MILLISECOND_SINCE_EPOCH:
+                case AM_PM:
+                case SECONDS_SINCE_EPOCH:
+                case SECOND:
+                case TIME:
+                case ZONE_NUMERIC:
+                case ZONE:
 
                 // Date
-            case NAME_OF_DAY_ABBREV:
-            case NAME_OF_DAY:
-            case NAME_OF_MONTH_ABBREV:
-            case NAME_OF_MONTH:
-            case CENTURY:
-            case DAY_OF_MONTH_0:
-            case DAY_OF_MONTH:
-                // * case ISO_WEEK_OF_YEAR_2:
-                // * case ISO_WEEK_OF_YEAR_4:
-            case NAME_OF_MONTH_ABBREV_X:
-            case DAY_OF_YEAR:
-            case MONTH:
-                // * case DAY_OF_WEEK_1:
-                // * case WEEK_OF_YEAR_SUNDAY:
-                // * case WEEK_OF_YEAR_MONDAY_01:
-                // * case DAY_OF_WEEK_0:
-                // * case WEEK_OF_YEAR_MONDAY:
-            case YEAR_2:
-            case YEAR_4:
+                case NAME_OF_DAY_ABBREV:
+                case NAME_OF_DAY:
+                case NAME_OF_MONTH_ABBREV:
+                case NAME_OF_MONTH:
+                case CENTURY:
+                case DAY_OF_MONTH_0:
+                case DAY_OF_MONTH:
+                case NAME_OF_MONTH_ABBREV_X:
+                case DAY_OF_YEAR:
+                case MONTH:
+                case YEAR_2:
+                case YEAR_4:
 
                 // Composites
-            case TIME_12_HOUR:
-            case TIME_24_HOUR:
+                case TIME_12_HOUR:
+                case TIME_24_HOUR:
+
                 // * case LOCALE_TIME:
-            case DATE_TIME:
-            case DATE:
-            case ISO_STANDARD_DATE:
-                // * case LOCALE_DATE:
-                return true;
-            default:
-                return false;
+                case DATE_TIME:
+                case DATE:
+                case ISO_STANDARD_DATE:
+                    return true;
+                default:
+                    return false;
             }
         }
     }
@@ -302,24 +295,24 @@ public final class FormatterJava {
         // parse those flags which may be provided by users
         private static Flags parse(char c) {
             switch (c) {
-            case '-':
-                return LEFT_JUSTIFY;
-            case '#':
-                return ALTERNATE;
-            case '+':
-                return PLUS;
-            case ' ':
-                return LEADING_SPACE;
-            case '0':
-                return ZERO_PAD;
-            case ',':
-                return GROUP;
-            case '(':
-                return PARENTHESES;
-            case '<':
-                return PREVIOUS;
-            default:
-                throw new IllegalArgumentException(String.valueOf(c));
+                case '-':
+                    return LEFT_JUSTIFY;
+                case '#':
+                    return ALTERNATE;
+                case '+':
+                    return PLUS;
+                case ' ':
+                    return LEADING_SPACE;
+                case '0':
+                    return ZERO_PAD;
+                case ',':
+                    return GROUP;
+                case '(':
+                    return PARENTHESES;
+                case '<':
+                    return PREVIOUS;
+                default:
+                    throw new IllegalArgumentException(String.valueOf(c));
             }
         }
 
@@ -568,38 +561,38 @@ public final class FormatterJava {
                 return;
             }
             switch (c) {
-            case Conversion.DECIMAL_INTEGER:
-            case Conversion.OCTAL_INTEGER:
-            case Conversion.HEXADECIMAL_INTEGER:
-                printInteger(arg);
-                break;
-            case Conversion.SCIENTIFIC:
-            case Conversion.GENERAL:
-            case Conversion.DECIMAL_FLOAT:
-            case Conversion.HEXADECIMAL_FLOAT:
-                printFloat(arg);
-                break;
-            case Conversion.CHARACTER:
-            case Conversion.CHARACTER_UPPER:
-                printCharacter(arg);
-                break;
-            case Conversion.BOOLEAN:
-                printBoolean(arg);
-                break;
-            case Conversion.STRING:
-                printString(arg);
-                break;
-            case Conversion.HASHCODE:
-                printHashCode(arg);
-                break;
-            case Conversion.LINE_SEPARATOR:
-                a.append(ls);
-                break;
-            case Conversion.PERCENT_SIGN:
-                a.append('%');
-                break;
-            default:
-                assert false;
+                case Conversion.DECIMAL_INTEGER:
+                case Conversion.OCTAL_INTEGER:
+                case Conversion.HEXADECIMAL_INTEGER:
+                    printInteger(arg);
+                    break;
+                case Conversion.SCIENTIFIC:
+                case Conversion.GENERAL:
+                case Conversion.DECIMAL_FLOAT:
+                case Conversion.HEXADECIMAL_FLOAT:
+                    printFloat(arg);
+                    break;
+                case Conversion.CHARACTER:
+                case Conversion.CHARACTER_UPPER:
+                    printCharacter(arg);
+                    break;
+                case Conversion.BOOLEAN:
+                    printBoolean(arg);
+                    break;
+                case Conversion.STRING:
+                    printString(arg);
+                    break;
+                case Conversion.HASHCODE:
+                    printHashCode(arg);
+                    break;
+                case Conversion.LINE_SEPARATOR:
+                    a.append(ls);
+                    break;
+                case Conversion.PERCENT_SIGN:
+                    a.append('%');
+                    break;
+                default:
+                    assert false;
             }
         }
 
@@ -741,26 +734,26 @@ public final class FormatterJava {
                 throw new IllegalArgumentException("invalid precision " + precision);
             }
             switch (c) {
-            case Conversion.PERCENT_SIGN:
-                if (f.valueOf() != Flags.LEFT_JUSTIFY.valueOf()
-                        && f.valueOf() != Flags.NONE.valueOf()) {
-                    throw new IllegalArgumentException(f.toString());
-                }
-                // '-' requires a width
-                if (width == -1 && f.contains(Flags.LEFT_JUSTIFY)) {
-                    throw new IllegalArgumentException(toString());
-                }
-                break;
-            case Conversion.LINE_SEPARATOR:
-                if (width != -1) {
-                    throw new IllegalArgumentException(" illegal width: " + width);
-                }
-                if (f.valueOf() != Flags.NONE.valueOf()) {
-                    throw new IllegalArgumentException(f.toString());
-                }
-                break;
-            default:
-                assert false;
+                case Conversion.PERCENT_SIGN:
+                    if (f.valueOf() != Flags.LEFT_JUSTIFY.valueOf()
+                            && f.valueOf() != Flags.NONE.valueOf()) {
+                        throw new IllegalArgumentException(f.toString());
+                    }
+                    // '-' requires a width
+                    if (width == -1 && f.contains(Flags.LEFT_JUSTIFY)) {
+                        throw new IllegalArgumentException(toString());
+                    }
+                    break;
+                case Conversion.LINE_SEPARATOR:
+                    if (width != -1) {
+                        throw new IllegalArgumentException(" illegal width: " + width);
+                    }
+                    if (f.valueOf() != Flags.NONE.valueOf()) {
+                        throw new IllegalArgumentException(f.toString());
+                    }
+                    break;
+                default:
+                    assert false;
             }
         }
 
@@ -1321,124 +1314,124 @@ public final class FormatterJava {
             Flags flags;
             char sep;
             switch (c) {
-            case DateTime.HOUR_OF_DAY_0: // 'H' (00 - 23)
-            case DateTime.HOUR_0: // 'I' (01 - 12)
-            case DateTime.HOUR_OF_DAY: // 'k' (0 - 23) -- like H
-            case DateTime.HOUR: // 'l' (1 - 12) -- like I
-                i = t.getHours();
-                if (c == DateTime.HOUR_0 || c == DateTime.HOUR) {
-                    i = i == 0 || i == 12 ? 12 : i % 12;
-                }
-                flags = c == DateTime.HOUR_OF_DAY_0
-                        || c == DateTime.HOUR_0
-                        ? Flags.ZERO_PAD
-                        : Flags.NONE;
-                sb.append(localizedMagnitude(null, i, flags, 2));
-                break;
-            case DateTime.MINUTE: // 'M' (00 - 59)
-                i = t.getMinutes();
-                flags = Flags.ZERO_PAD;
-                sb.append(localizedMagnitude(null, i, flags, 2));
-                break;
-            case DateTime.SECONDS_SINCE_EPOCH: // 's' (0 - 99...?)
-                flags = Flags.NONE;
-                sb.append(localizedMagnitude(null, t.getTime() / 1000, flags, width));
-                break;
-            case DateTime.SECOND: // 'S' (00 - 60 - leap second)
-                i = t.getSeconds();
-                flags = Flags.ZERO_PAD;
-                sb.append(localizedMagnitude(null, i, flags, 2));
-                break;
-            case DateTime.ZONE_NUMERIC: // 'z' ({-|+}####) - ls minus?
-                i = t.getTimezoneOffset();
-                boolean neg = i < 0;
-                sb.append(neg ? '-' : '+');
-                if (neg) {
-                    i = -i;
-                }
-                int min = i / 60000;
-                // combine minute and hour into a single integer
-                int offset = (min / 60) * 100 + (min % 60);
-                flags = Flags.ZERO_PAD;
+                case DateTime.HOUR_OF_DAY_0: // 'H' (00 - 23)
+                case DateTime.HOUR_0: // 'I' (01 - 12)
+                case DateTime.HOUR_OF_DAY: // 'k' (0 - 23) -- like H
+                case DateTime.HOUR: // 'l' (1 - 12) -- like I
+                    i = t.getHours();
+                    if (c == DateTime.HOUR_0 || c == DateTime.HOUR) {
+                        i = i == 0 || i == 12 ? 12 : i % 12;
+                    }
+                    flags = c == DateTime.HOUR_OF_DAY_0
+                            || c == DateTime.HOUR_0
+                            ? Flags.ZERO_PAD
+                            : Flags.NONE;
+                    sb.append(localizedMagnitude(null, i, flags, 2));
+                    break;
+                case DateTime.MINUTE: // 'M' (00 - 59)
+                    i = t.getMinutes();
+                    flags = Flags.ZERO_PAD;
+                    sb.append(localizedMagnitude(null, i, flags, 2));
+                    break;
+                case DateTime.SECONDS_SINCE_EPOCH: // 's' (0 - 99...?)
+                    flags = Flags.NONE;
+                    sb.append(localizedMagnitude(null, t.getTime() / 1000, flags, width));
+                    break;
+                case DateTime.SECOND: // 'S' (00 - 60 - leap second)
+                    i = t.getSeconds();
+                    flags = Flags.ZERO_PAD;
+                    sb.append(localizedMagnitude(null, i, flags, 2));
+                    break;
+                case DateTime.ZONE_NUMERIC: // 'z' ({-|+}####) - ls minus?
+                    i = t.getTimezoneOffset();
+                    boolean neg = i < 0;
+                    sb.append(neg ? '-' : '+');
+                    if (neg) {
+                        i = -i;
+                    }
+                    int min = i / 60000;
+                    // combine minute and hour into a single integer
+                    int offset = (min / 60) * 100 + (min % 60);
+                    flags = Flags.ZERO_PAD;
 
-                sb.append(localizedMagnitude(null, offset, flags, 4));
-                break;
-            case DateTime.CENTURY: // 'C' (00 - 99)
-            case DateTime.YEAR_2: // 'y' (00 - 99)
-            case DateTime.YEAR_4: // 'Y' (0000 - 9999)
-                i = t.getYear();
-                int size = 2;
-                switch (c) {
-                case DateTime.CENTURY:
-                    i /= 100;
+                    sb.append(localizedMagnitude(null, offset, flags, 4));
                     break;
-                case DateTime.YEAR_2:
-                    i %= 100;
+                case DateTime.CENTURY: // 'C' (00 - 99)
+                case DateTime.YEAR_2: // 'y' (00 - 99)
+                case DateTime.YEAR_4: // 'Y' (0000 - 9999)
+                    i = t.getYear();
+                    int size = 2;
+                    switch (c) {
+                        case DateTime.CENTURY:
+                            i /= 100;
+                            break;
+                        case DateTime.YEAR_2:
+                            i %= 100;
+                            break;
+                        case DateTime.YEAR_4:
+                            size = 4;
+                            break;
+                    }
+                    flags = Flags.ZERO_PAD;
+                    sb.append(localizedMagnitude(null, i, flags, size));
                     break;
-                case DateTime.YEAR_4:
-                    size = 4;
+                case DateTime.DAY_OF_MONTH_0: // 'd' (01 - 31)
+                case DateTime.DAY_OF_MONTH: // 'e' (1 - 31) -- like d
+                    i = t.getDate();
+                    flags = c == DateTime.DAY_OF_MONTH_0
+                            ? Flags.ZERO_PAD
+                            : Flags.NONE;
+                    sb.append(localizedMagnitude(null, i, flags, 2));
                     break;
-                }
-                flags = Flags.ZERO_PAD;
-                sb.append(localizedMagnitude(null, i, flags, size));
-                break;
-            case DateTime.DAY_OF_MONTH_0: // 'd' (01 - 31)
-            case DateTime.DAY_OF_MONTH: // 'e' (1 - 31) -- like d
-                i = t.getDate();
-                flags = c == DateTime.DAY_OF_MONTH_0
-                        ? Flags.ZERO_PAD
-                        : Flags.NONE;
-                sb.append(localizedMagnitude(null, i, flags, 2));
-                break;
-            case DateTime.MONTH: // 'm' (01 - 12)
-                i = t.getMonth();
-                flags = Flags.ZERO_PAD;
-                sb.append(localizedMagnitude(null, i, flags, 2));
-                break;
-            // Composites
-            case DateTime.TIME: // 'T' (24 hour hh:mm:ss - %tH:%tM:%tS)
-            case DateTime.TIME_24_HOUR: // 'R' (hh:mm same as %H:%M)
-                sep = ':';
-                print(sb, t, DateTime.HOUR_OF_DAY_0).append(sep);
-                print(sb, t, DateTime.MINUTE);
-                if (c == DateTime.TIME) {
-                    sb.append(sep);
-                    print(sb, t, DateTime.SECOND);
-                }
-                break;
-            case DateTime.TIME_12_HOUR: // 'r' (hh:mm:ss [AP]M)
-                sep = ':';
-                print(sb, t, DateTime.HOUR_0).append(sep);
-                print(sb, t, DateTime.MINUTE).append(sep);
-                print(sb, t, DateTime.SECOND).append(' ');
-                // this may be in wrong place for some locales
-                StringBuilder tsb = new StringBuilder();
-                print(tsb, t, DateTime.AM_PM);
-                sb.append(tsb.toString().toUpperCase());
-                break;
-            case DateTime.DATE_TIME: // 'c' (Sat Nov 04 12:02:33 EST 1999)
-                sep = ' ';
-                print(sb, t, DateTime.NAME_OF_DAY_ABBREV).append(sep);
-                print(sb, t, DateTime.NAME_OF_MONTH_ABBREV).append(sep);
-                print(sb, t, DateTime.DAY_OF_MONTH_0).append(sep);
-                print(sb, t, DateTime.TIME).append(sep);
-                print(sb, t, DateTime.ZONE).append(sep);
-                print(sb, t, DateTime.YEAR_4);
-                break;
-            case DateTime.DATE: // 'D' (mm/dd/yy)
-                sep = '/';
-                print(sb, t, DateTime.MONTH).append(sep);
-                print(sb, t, DateTime.DAY_OF_MONTH_0).append(sep);
-                print(sb, t, DateTime.YEAR_2);
-                break;
-            case DateTime.ISO_STANDARD_DATE: // 'F' (%Y-%m-%d)
-                sep = '-';
-                print(sb, t, DateTime.YEAR_4).append(sep);
-                print(sb, t, DateTime.MONTH).append(sep);
-                print(sb, t, DateTime.DAY_OF_MONTH_0);
-                break;
-            default:
-                throw new IllegalArgumentException("Format flag: '" + c + "' is not supported");
+                case DateTime.MONTH: // 'm' (01 - 12)
+                    i = t.getMonth();
+                    flags = Flags.ZERO_PAD;
+                    sb.append(localizedMagnitude(null, i, flags, 2));
+                    break;
+                // Composites
+                case DateTime.TIME: // 'T' (24 hour hh:mm:ss - %tH:%tM:%tS)
+                case DateTime.TIME_24_HOUR: // 'R' (hh:mm same as %H:%M)
+                    sep = ':';
+                    print(sb, t, DateTime.HOUR_OF_DAY_0).append(sep);
+                    print(sb, t, DateTime.MINUTE);
+                    if (c == DateTime.TIME) {
+                        sb.append(sep);
+                        print(sb, t, DateTime.SECOND);
+                    }
+                    break;
+                case DateTime.TIME_12_HOUR: // 'r' (hh:mm:ss [AP]M)
+                    sep = ':';
+                    print(sb, t, DateTime.HOUR_0).append(sep);
+                    print(sb, t, DateTime.MINUTE).append(sep);
+                    print(sb, t, DateTime.SECOND).append(' ');
+                    // this may be in wrong place for some locales
+                    StringBuilder tsb = new StringBuilder();
+                    print(tsb, t, DateTime.AM_PM);
+                    sb.append(tsb.toString().toUpperCase());
+                    break;
+                case DateTime.DATE_TIME: // 'c' (Sat Nov 04 12:02:33 EST 1999)
+                    sep = ' ';
+                    print(sb, t, DateTime.NAME_OF_DAY_ABBREV).append(sep);
+                    print(sb, t, DateTime.NAME_OF_MONTH_ABBREV).append(sep);
+                    print(sb, t, DateTime.DAY_OF_MONTH_0).append(sep);
+                    print(sb, t, DateTime.TIME).append(sep);
+                    print(sb, t, DateTime.ZONE).append(sep);
+                    print(sb, t, DateTime.YEAR_4);
+                    break;
+                case DateTime.DATE: // 'D' (mm/dd/yy)
+                    sep = '/';
+                    print(sb, t, DateTime.MONTH).append(sep);
+                    print(sb, t, DateTime.DAY_OF_MONTH_0).append(sep);
+                    print(sb, t, DateTime.YEAR_2);
+                    break;
+                case DateTime.ISO_STANDARD_DATE: // 'F' (%Y-%m-%d)
+                    sep = '-';
+                    print(sb, t, DateTime.YEAR_4).append(sep);
+                    print(sb, t, DateTime.MONTH).append(sep);
+                    print(sb, t, DateTime.DAY_OF_MONTH_0);
+                    break;
+                default:
+                    throw new IllegalArgumentException("Format flag: '" + c + "' is not supported");
             }
             return sb;
         }
@@ -1650,30 +1643,30 @@ public final class FormatterJava {
             int index = fs.index();
             try {
                 switch (index) {
-                case -2: // fixed string, "%n", or "%%"
-                    fs.print(null);
-                    break;
-                case -1: // relative index
-                    if (last < 0 || args != null && last > args.length - 1) {
-                        throw new IllegalArgumentException(fs.toString());
-                    }
-                    fs.print(args == null ? null : args[last]);
-                    break;
-                case 0: // ordinary index
-                    lasto++;
-                    last = lasto;
-                    if (args != null && lasto > args.length - 1) {
-                        throw new IllegalArgumentException(fs.toString());
-                    }
-                    fs.print(args == null ? null : args[lasto]);
-                    break;
-                default: // explicit index
-                    last = index - 1;
-                    if (args != null && last > args.length - 1) {
-                        throw new IllegalArgumentException(fs.toString());
-                    }
-                    fs.print(args == null ? null : args[last]);
-                    break;
+                    case -2: // fixed string, "%n", or "%%"
+                        fs.print(null);
+                        break;
+                    case -1: // relative index
+                        if (last < 0 || args != null && last > args.length - 1) {
+                            throw new IllegalArgumentException(fs.toString());
+                        }
+                        fs.print(args == null ? null : args[last]);
+                        break;
+                    case 0: // ordinary index
+                        lasto++;
+                        last = lasto;
+                        if (args != null && lasto > args.length - 1) {
+                            throw new IllegalArgumentException(fs.toString());
+                        }
+                        fs.print(args == null ? null : args[lasto]);
+                        break;
+                    default: // explicit index
+                        last = index - 1;
+                        if (args != null && last > args.length - 1) {
+                            throw new IllegalArgumentException(fs.toString());
+                        }
+                        fs.print(args == null ? null : args[last]);
+                        break;
                 }
             } catch (IOException x) {
                 lastException = x;

@@ -129,7 +129,7 @@ public class HttpClientBuilder {
             }
         } else {
             trustManager = new TrustManager[] {
-                    new X509TrustManager() {
+                new X509TrustManager() {
                         public X509Certificate[] getAcceptedIssuers() {
                             return new X509Certificate[] {};
                         }

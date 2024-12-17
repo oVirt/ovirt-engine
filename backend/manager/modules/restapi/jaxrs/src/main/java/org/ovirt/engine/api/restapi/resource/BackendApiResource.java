@@ -168,7 +168,7 @@ public class BackendApiResource
         Template template = new Template();
         String id = "00000000-0000-0000-0000-000000000000";
         template.setId(id);
-        template.setHref(getAbsolutePath( "templates", id));
+        template.setHref(getAbsolutePath("templates", id));
         return template;
     }
 

@@ -253,11 +253,11 @@ public class SsoSession implements Serializable, Cloneable {
     }
 
     public String getLoginErrorCode() {
-      return loginErrorCode;
+        return loginErrorCode;
     }
 
     public void setLoginErrorCode(String loginErrorCode) {
-      this.loginErrorCode = loginErrorCode;
+        this.loginErrorCode = loginErrorCode;
     }
 
     public String getLoginMessage() {

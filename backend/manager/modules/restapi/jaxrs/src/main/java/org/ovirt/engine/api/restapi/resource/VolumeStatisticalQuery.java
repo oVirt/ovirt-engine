@@ -15,7 +15,7 @@ public class VolumeStatisticalQuery extends AbstractStatisticalQuery<GlusterVolu
     private static final Statistic MEM_FREE_SIZE = create("memory.free.size", "Free size", GAUGE, BYTES, ValueType.INTEGER);
     private static final Statistic MEM_USED_SIZE = create("memory.used.size", "Used size", GAUGE, BYTES, ValueType.INTEGER);
 
-    public VolumeStatisticalQuery(GlusterVolume parent ) {
+    public VolumeStatisticalQuery(GlusterVolume parent) {
         this(null, parent);
     }
 

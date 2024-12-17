@@ -46,9 +46,9 @@ public class DiskStatisticalQuery extends AbstractStatisticalQuery<Disk, org.ovi
 
     public Statistic adopt(Statistic statistic) {
         // clone required because LinkHelper unsets the grandparent
-         statistic.setDisk(clone(parent));
-         return statistic;
-     }
+        statistic.setDisk(clone(parent));
+        return statistic;
+    }
 
     private Disk clone(Disk parent) {
         Disk disk = new Disk();

@@ -98,9 +98,9 @@ public class SSHD {
                                 channelSession,
                                 String.join(" ",
                                         new String[] {
-                                                "/bin/sh",
-                                                "-c",
-                                                command
+                                            "/bin/sh",
+                                            "-c",
+                                            command
                                         })));
     }
 

@@ -10,14 +10,14 @@ public class TpmSupportMapper {
         }
 
         switch (entity) {
-        case SUPPORTED:
-            return org.ovirt.engine.api.model.TpmSupport.SUPPORTED;
-        case REQUIRED:
-            return org.ovirt.engine.api.model.TpmSupport.REQUIRED;
-        case UNSUPPORTED:
-            return org.ovirt.engine.api.model.TpmSupport.UNSUPPORTED;
-        default:
-            return null;
+            case SUPPORTED:
+                return org.ovirt.engine.api.model.TpmSupport.SUPPORTED;
+            case REQUIRED:
+                return org.ovirt.engine.api.model.TpmSupport.REQUIRED;
+            case UNSUPPORTED:
+                return org.ovirt.engine.api.model.TpmSupport.UNSUPPORTED;
+            default:
+                return null;
         }
     }
 }

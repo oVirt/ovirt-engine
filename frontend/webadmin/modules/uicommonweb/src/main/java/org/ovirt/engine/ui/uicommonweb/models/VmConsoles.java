@@ -86,7 +86,7 @@ public interface VmConsoles {
      * Contains a localized message with error description.
      */
     class ConsoleConnectException extends Exception {
-       private final String localizedErrorMessage;
+        private final String localizedErrorMessage;
 
         public ConsoleConnectException(String localizedErrorMessage) {
             this.localizedErrorMessage = localizedErrorMessage;

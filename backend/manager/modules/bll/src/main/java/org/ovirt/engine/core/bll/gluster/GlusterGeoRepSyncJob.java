@@ -48,8 +48,8 @@ public class GlusterGeoRepSyncJob extends GlusterJob {
     private GlusterSchedulerDao scheduleDao;
 
     private static final GeoRepSessionStatus[] overridableStatuses = { GeoRepSessionStatus.ACTIVE,
-            GeoRepSessionStatus.INITIALIZING,
-            GeoRepSessionStatus.CREATED
+        GeoRepSessionStatus.INITIALIZING,
+        GeoRepSessionStatus.CREATED
     };
 
     @Override

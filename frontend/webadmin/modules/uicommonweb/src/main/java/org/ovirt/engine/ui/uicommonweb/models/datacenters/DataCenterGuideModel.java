@@ -541,7 +541,7 @@ public class DataCenterGuideModel extends GuideModel<StoragePool> implements ITa
                                 tempVar2.setMessage(ConstantsManager.getInstance().getMessages()
                                                             .nameCanContainOnlyMsg(nameMaxLength));
                                 storageModel1.getName().validateEntity(new IValidation[] {
-                                        new NotEmptyValidation(), tempVar2});
+                                    new NotEmptyValidation(), tempVar2});
                                 postOnAddStorage();
 
                             }));

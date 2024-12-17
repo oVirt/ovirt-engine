@@ -33,7 +33,7 @@ public class GetHostsWithMissingFlagsForClusterQuery<P extends IdQueryParameters
                 .filter(vds -> vds.getStatus() == VDSStatus.Up)
                 .filter(vds -> hasMissingServerCpuFlags(vds))
                 .collect(Collectors.toList());
-            getQueryReturnValue().setReturnValue(hostsOutOfSync);
+        getQueryReturnValue().setReturnValue(hostsOutOfSync);
     }
 
     protected boolean hasMissingServerCpuFlags(VDS vds) {

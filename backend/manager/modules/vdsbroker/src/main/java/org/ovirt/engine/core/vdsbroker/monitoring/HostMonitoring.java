@@ -590,7 +590,7 @@ public class HostMonitoring implements HostMonitoringInterface {
     private void fetchHostInterfaces() {
         List<VdsNetworkInterface> nics;
         if (vds.getInterfaces().isEmpty()) {
-             nics = interfaceDao.getAllInterfacesForVds(vds.getId());
+            nics = interfaceDao.getAllInterfacesForVds(vds.getId());
             vds.getInterfaces().addAll(nics);
         } else {
             nics = vds.getInterfaces();

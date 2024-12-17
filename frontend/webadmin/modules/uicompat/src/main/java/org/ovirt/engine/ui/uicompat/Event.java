@@ -141,8 +141,7 @@ public class Event<T extends EventArgs> {
         if (other == null) {
             return false;
         }
-        return getName().equals(other.getName())
-        && getOwnerType() == other.getOwnerType();
+        return getName().equals(other.getName()) && getOwnerType() == other.getOwnerType();
     }
 
     public List<IEventListener<? super T>> getListeners() {

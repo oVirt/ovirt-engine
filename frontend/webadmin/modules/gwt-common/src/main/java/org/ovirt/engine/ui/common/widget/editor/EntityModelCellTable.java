@@ -205,16 +205,16 @@ public class EntityModelCellTable<M extends ListModel> extends ElementIdCellTabl
 
         // Configure table selection model
         switch (selectionMode) {
-        case MULTIPLE:
-            setSelectionModel(new MultiSelectionModel<>(), DefaultSelectionEventManager.createCheckboxManager(0));
-            break;
-        case NONE:
-            setSelectionModel(new NoSelectionModel<>());
-            break;
-        case SINGLE:
-        default:
-            setSelectionModel(new SingleSelectionModel<>());
-            break;
+            case MULTIPLE:
+                setSelectionModel(new MultiSelectionModel<>(), DefaultSelectionEventManager.createCheckboxManager(0));
+                break;
+            case NONE:
+                setSelectionModel(new NoSelectionModel<>());
+                break;
+            case SINGLE:
+            default:
+                setSelectionModel(new SingleSelectionModel<>());
+                break;
         }
 
         addSelectionChangeHandler();

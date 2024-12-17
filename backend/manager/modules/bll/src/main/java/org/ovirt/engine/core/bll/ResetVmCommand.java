@@ -33,8 +33,8 @@ public class ResetVmCommand<T extends VmOperationParameterBase> extends VmOperat
     protected void perform() {
         VDSReturnValue returnValue =
                 runVdsCommand(VDSCommandType.ResetVm, new VdsAndVmIDVDSParametersBase(getVdsId(), getVmId()));
-            setActionReturnValue(returnValue.getReturnValue());
-            setSucceeded(returnValue.getSucceeded());
+        setActionReturnValue(returnValue.getReturnValue());
+        setSucceeded(returnValue.getSucceeded());
     }
 
     @Override

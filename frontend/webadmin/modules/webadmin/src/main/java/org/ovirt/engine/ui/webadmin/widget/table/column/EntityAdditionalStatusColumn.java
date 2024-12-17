@@ -17,16 +17,16 @@ public abstract class EntityAdditionalStatusColumn<S> extends AbstractSafeHtmlCo
 
     protected ImageResource getStatusImage(ExternalStatus externalStatus) {
         switch (externalStatus) {
-        case Info:
-            return resources.ExternalInfoStatusImage();
-        case Warning:
-            return resources.ExternalWarningStatusImage();
-        case Error:
-            return resources.ExternalErrorStatusImage();
-        case Failure:
-            return resources.ExternalFailureStatusImage();
-        default:
-            return null;
+            case Info:
+                return resources.ExternalInfoStatusImage();
+            case Warning:
+                return resources.ExternalWarningStatusImage();
+            case Error:
+                return resources.ExternalErrorStatusImage();
+            case Failure:
+                return resources.ExternalFailureStatusImage();
+            default:
+                return null;
         }
     }
 

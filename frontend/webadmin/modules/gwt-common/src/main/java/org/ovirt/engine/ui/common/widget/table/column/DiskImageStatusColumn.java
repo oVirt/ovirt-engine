@@ -17,14 +17,14 @@ public class DiskImageStatusColumn extends AbstractImageResourceColumn<DiskImage
     public ImageResource getValue(DiskImage diskImage) {
 
         switch (diskImage.getImageStatus()) {
-        case OK:
-            return resources.upImage();
-        case LOCKED:
-            return resources.waitImage();
-        case ILLEGAL:
-            return resources.logErrorImage();
-        default:
-            return null;
+            case OK:
+                return resources.upImage();
+            case LOCKED:
+                return resources.waitImage();
+            case ILLEGAL:
+                return resources.logErrorImage();
+            default:
+                return null;
         }
     }
 

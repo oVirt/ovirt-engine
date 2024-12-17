@@ -133,87 +133,87 @@ public abstract class OvfOvaWriter extends OvfWriter {
 
     protected int mapOsId(int ovfOsId) {
         switch (ovfOsId) {
-        case 1: // Windows XP
-            return 67;
-        case 1002:
-        case 2002:
-        case 5: // Other Linux
-            return 36;
-        case 3: // Windows 2003
-            return 69;
-        case 4: // Windows 2008
-            return 76;
-        case 10: // Windows 2003x64
-            return 70;
-        case 11: // Windows 7
-        case 12: // Windows 7x64
-            return 105;
-        case 16: // Windows 2008x64
-            return 77;
-        case 17: // Windows 2008R2x64
-            return 103;
-        case 20: // Windows 8
-            return 114;
-        case 21: // Windows 8x64
-            return 115;
-        case 23: // Windows 2012x64
-            return 113;
-        case 25: // Windows 2012R2x64
-            return 116;
-        case 26: // Windows 10
-            return 120;
-        case 27: // Windows 10x64
-            return 121;
-        case 29: // Windows 2016x64
-            return 117;
-        case 31: // Windows 2019x64
-            return 122;
-        case 35: // RedHat CoreOS
-            return 125;
-        case 1004:
-        case 1193: // Suse
-        case 2004:
-            return 83;
-        case 1252:
-        case 1253:
-        case 1254:
-        case 1255:
-        case 1256:
-        case 1257:
-        case 1005:
-        case 2005:
-            return 94; // Ubuntu
-        case 1300: // Debian 7
-        case 1301: // Debian 9
-            return 96;
-        case 1500: // FreeBSD
-            return 42;
-        case 1501: // FreeBSDx64
-            return 78;
-        case 7:
-        case 8:
-        case 9:
-        case 18:
-            return 79; // RHEL
-        case 15:
-        case 14:
-        case 13:
-        case 19:
-        case 24:
-        case 28:
-        case 33:
-        case 34:
-        case 1003:
-        case 1006:
-        case 1007:
-        case 1008:
-        case 1009:
-        case 2003:
-            return 80; // RHEL x64
-        case 1001:
-        case 2001:
-        default:
-            return 1; // Other
+            case 1: // Windows XP
+                return 67;
+            case 1002:
+            case 2002:
+            case 5: // Other Linux
+                return 36;
+            case 3: // Windows 2003
+                return 69;
+            case 4: // Windows 2008
+                return 76;
+            case 10: // Windows 2003x64
+                return 70;
+            case 11: // Windows 7
+            case 12: // Windows 7x64
+                return 105;
+            case 16: // Windows 2008x64
+                return 77;
+            case 17: // Windows 2008R2x64
+                return 103;
+            case 20: // Windows 8
+                return 114;
+            case 21: // Windows 8x64
+                return 115;
+            case 23: // Windows 2012x64
+                return 113;
+            case 25: // Windows 2012R2x64
+                return 116;
+            case 26: // Windows 10
+                return 120;
+            case 27: // Windows 10x64
+                return 121;
+            case 29: // Windows 2016x64
+                return 117;
+            case 31: // Windows 2019x64
+                return 122;
+            case 35: // RedHat CoreOS
+                return 125;
+            case 1004:
+            case 1193: // Suse
+            case 2004:
+                return 83;
+            case 1252:
+            case 1253:
+            case 1254:
+            case 1255:
+            case 1256:
+            case 1257:
+            case 1005:
+            case 2005:
+                return 94; // Ubuntu
+            case 1300: // Debian 7
+            case 1301: // Debian 9
+                return 96;
+            case 1500: // FreeBSD
+                return 42;
+            case 1501: // FreeBSDx64
+                return 78;
+            case 7:
+            case 8:
+            case 9:
+            case 18:
+                return 79; // RHEL
+            case 15:
+            case 14:
+            case 13:
+            case 19:
+            case 24:
+            case 28:
+            case 33:
+            case 34:
+            case 1003:
+            case 1006:
+            case 1007:
+            case 1008:
+            case 1009:
+            case 2003:
+                return 80; // RHEL x64
+            case 1001:
+            case 2001:
+            default:
+                return 1; // Other
         }
     }
 

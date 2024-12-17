@@ -36,20 +36,20 @@ public class QosMapper {
 
     private static void mapQosTypeToModel(QosBase entity, Qos model) {
         switch (entity.getQosType()) {
-        case STORAGE:
-            mapStorageQosToModel(entity, model);
-            break;
-        case CPU:
-            mapCpuQosToModel(entity, model);
-            break;
-        case NETWORK:
-            mapNetworkQosToModel(entity, model);
-            break;
-        case HOSTNETWORK:
-            mapHostNetworkQosToModel(entity, model);
-            break;
-        default:
-            throw new IllegalArgumentException("Unsupported QoS type");
+            case STORAGE:
+                mapStorageQosToModel(entity, model);
+                break;
+            case CPU:
+                mapCpuQosToModel(entity, model);
+                break;
+            case NETWORK:
+                mapNetworkQosToModel(entity, model);
+                break;
+            case HOSTNETWORK:
+                mapHostNetworkQosToModel(entity, model);
+                break;
+            default:
+                throw new IllegalArgumentException("Unsupported QoS type");
         }
     }
 
@@ -113,16 +113,16 @@ public class QosMapper {
 
     private static QosBase createNewQosEntityForQosType(QosType qosType) {
         switch (qosType) {
-        case STORAGE:
-            return new StorageQos();
-        case CPU:
-            return new CpuQos();
-        case NETWORK:
-            return new NetworkQoS();
-        case HOSTNETWORK:
-            return new HostNetworkQos();
-        default:
-            throw new IllegalArgumentException("Unsupported QoS type");
+            case STORAGE:
+                return new StorageQos();
+            case CPU:
+                return new CpuQos();
+            case NETWORK:
+                return new NetworkQoS();
+            case HOSTNETWORK:
+                return new HostNetworkQos();
+            default:
+                throw new IllegalArgumentException("Unsupported QoS type");
         }
     }
 
@@ -158,20 +158,20 @@ public class QosMapper {
         }
         if (qosType != null) {
             switch (qosType) {
-            case STORAGE:
-                mapStorageQosToEntity(model, (StorageQos) entity);
-                break;
-            case CPU:
-                mapCpuQosToEntity(model, (CpuQos) entity);
-                break;
-            case NETWORK:
-                mapNetworkQosToEntity(model, (NetworkQoS) entity);
-                break;
-            case HOSTNETWORK:
-                mapHostNetworkQosToEntity(model, (HostNetworkQos) entity);
-                break;
-            default:
-                break;
+                case STORAGE:
+                    mapStorageQosToEntity(model, (StorageQos) entity);
+                    break;
+                case CPU:
+                    mapCpuQosToEntity(model, (CpuQos) entity);
+                    break;
+                case NETWORK:
+                    mapNetworkQosToEntity(model, (NetworkQoS) entity);
+                    break;
+                case HOSTNETWORK:
+                    mapHostNetworkQosToEntity(model, (HostNetworkQos) entity);
+                    break;
+                default:
+                    break;
             }
         }
     }

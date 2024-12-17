@@ -91,7 +91,7 @@ public class GlusterHookSyncJob extends GlusterJob {
         }
     }
 
-    private void addOrUpdateHooks(Guid clusterId, List<Pair<VDS, VDSReturnValue>> pairResults ) {
+    private void addOrUpdateHooks(Guid clusterId, List<Pair<VDS, VDSReturnValue>> pairResults) {
 
         try {
             List<GlusterHookEntity> existingHooks = hooksDao.getByClusterId(clusterId);

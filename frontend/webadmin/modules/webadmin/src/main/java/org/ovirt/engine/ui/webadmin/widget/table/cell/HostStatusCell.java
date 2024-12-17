@@ -115,12 +115,12 @@ public class HostStatusCell extends AbstractCell<VDS> {
         if (ImageElement.TAG.equalsIgnoreCase(target.getTagName())) {
             // determine image based on its position within the wrapper <div>
             switch (JqueryUtils.index(target)) {
-            case 0:
-                // status image
-                return SafeHtmlUtils.fromSafeConstant(getStatusTooltipText(vds.getStatus()));
-            case 1:
-                // alert image
-                return getAlertTooltipText(vds);
+                case 0:
+                    // status image
+                    return SafeHtmlUtils.fromSafeConstant(getStatusTooltipText(vds.getStatus()));
+                case 1:
+                    // alert image
+                    return getAlertTooltipText(vds);
             }
         }
         return null;
@@ -128,40 +128,40 @@ public class HostStatusCell extends AbstractCell<VDS> {
 
     private String getStatusTooltipText(VDSStatus status) {
         switch (status) {
-        case Up:
-            return constants.up();
-        case Down:
-            return constants.down();
-        case Unassigned:
-            return constants.unassigned();
-        case Maintenance:
-            return constants.maintenance();
-        case NonResponsive:
-            return constants.nonResponsive();
-        case Error:
-            return constants.error();
-        case Installing:
-            return constants.installing();
-        case InstallFailed:
-            return constants.installFailed();
-        case Reboot:
-            return constants.reboot();
-        case PreparingForMaintenance:
-            return constants.preparingForMaintenance();
-        case NonOperational:
-            return constants.nonOperational();
-        case PendingApproval:
-            return constants.pendingApproval();
-        case Initializing:
-            return constants.initializing();
-        case Connecting:
-            return constants.connecting();
-        case InstallingOS:
-            return constants.installingOS();
-        case Kdumping:
-            return constants.kdumping();
-        default:
-            return null;
+            case Up:
+                return constants.up();
+            case Down:
+                return constants.down();
+            case Unassigned:
+                return constants.unassigned();
+            case Maintenance:
+                return constants.maintenance();
+            case NonResponsive:
+                return constants.nonResponsive();
+            case Error:
+                return constants.error();
+            case Installing:
+                return constants.installing();
+            case InstallFailed:
+                return constants.installFailed();
+            case Reboot:
+                return constants.reboot();
+            case PreparingForMaintenance:
+                return constants.preparingForMaintenance();
+            case NonOperational:
+                return constants.nonOperational();
+            case PendingApproval:
+                return constants.pendingApproval();
+            case Initializing:
+                return constants.initializing();
+            case Connecting:
+                return constants.connecting();
+            case InstallingOS:
+                return constants.installingOS();
+            case Kdumping:
+                return constants.kdumping();
+            default:
+                return null;
         }
     }
 

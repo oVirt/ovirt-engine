@@ -151,9 +151,9 @@ public class IPAddressConverter {
         int prefixAsInt = Integer.parseInt(prefix);
         int mask = prefixAsInt == 0 ? 0 : 0xffffffff ^ (1 << 32 - prefixAsInt) - 1;
         byte[] netmaskByteArray = new byte[] { (byte) (mask >>> 24),
-                (byte) (mask >>> 16),
-                (byte) (mask >>> 8),
-                (byte) mask };
+            (byte) (mask >>> 16),
+            (byte) (mask >>> 8),
+            (byte) mask };
         StringBuilder stringBuilder = new StringBuilder();
         for (int i = 0; i < netmaskByteArray.length; i++) {
             int octet = 0xFF & netmaskByteArray[i];

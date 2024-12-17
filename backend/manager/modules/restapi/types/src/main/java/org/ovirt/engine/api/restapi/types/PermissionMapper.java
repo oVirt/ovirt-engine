@@ -110,42 +110,42 @@ public class PermissionMapper {
     private static void setObjectId(Permission model, org.ovirt.engine.core.common.businessentities.Permission entity) {
         String id = entity.getObjectId().toString();
         switch (entity.getObjectType()) {
-        case System:
-            break;
-        case StoragePool :
-            model.setDataCenter(new DataCenter());
-            model.getDataCenter().setId(id);
-            break;
-        case Cluster:
-            model.setCluster(new Cluster());
-            model.getCluster().setId(id);
-            break;
-        case VDS :
-            model.setHost(new Host());
-            model.getHost().setId(id);
-            break;
-        case Storage :
-            model.setStorageDomain(new StorageDomain());
-            model.getStorageDomain().setId(id);
-            break;
-        case VM :
-            model.setVm(new Vm());
-            model.getVm().setId(id);
-            break;
-        case VmPool :
-            model.setVmPool(new VmPool());
-            model.getVmPool().setId(id);
-            break;
-        case VmTemplate :
-            model.setTemplate(new Template());
-            model.getTemplate().setId(id);
-            break;
-        case Disk :
-            model.setDisk(new Disk());
-            model.getDisk().setId(id);
-            break;
-        default:
-            assert false;
+            case System:
+                break;
+            case StoragePool :
+                model.setDataCenter(new DataCenter());
+                model.getDataCenter().setId(id);
+                break;
+            case Cluster:
+                model.setCluster(new Cluster());
+                model.getCluster().setId(id);
+                break;
+            case VDS :
+                model.setHost(new Host());
+                model.getHost().setId(id);
+                break;
+            case Storage :
+                model.setStorageDomain(new StorageDomain());
+                model.getStorageDomain().setId(id);
+                break;
+            case VM :
+                model.setVm(new Vm());
+                model.getVm().setId(id);
+                break;
+            case VmPool :
+                model.setVmPool(new VmPool());
+                model.getVmPool().setId(id);
+                break;
+            case VmTemplate :
+                model.setTemplate(new Template());
+                model.getTemplate().setId(id);
+                break;
+            case Disk :
+                model.setDisk(new Disk());
+                model.getDisk().setId(id);
+                break;
+            default:
+                assert false;
         }
     }
 }

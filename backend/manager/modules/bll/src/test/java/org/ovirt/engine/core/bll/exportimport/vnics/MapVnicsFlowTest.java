@@ -48,11 +48,11 @@ public class MapVnicsFlowTest {
         Pair someMappingsAndNullOvfs = testSomeMappingsAndNullOvfs();
 
         return Stream.of(
-            Arguments.of(nullMappingsAndNullOvfs.getFirst(), nullMappingsAndNullOvfs.getSecond() ),
-            Arguments.of(nullMappingsAndEmptyOvfs.getFirst(), nullMappingsAndEmptyOvfs.getSecond() ),
+            Arguments.of(nullMappingsAndNullOvfs.getFirst(), nullMappingsAndNullOvfs.getSecond()),
+            Arguments.of(nullMappingsAndEmptyOvfs.getFirst(), nullMappingsAndEmptyOvfs.getSecond()),
             Arguments.of(emptyMappingsAndEmptyOvfs.getFirst(), emptyMappingsAndEmptyOvfs.getSecond()),
-            Arguments.of(emptyMappingsAndNullOvfs.getFirst(), emptyMappingsAndNullOvfs.getSecond() ),
-            Arguments.of(someMappingsAndNullOvfs.getFirst(), someMappingsAndNullOvfs.getSecond() )
+            Arguments.of(emptyMappingsAndNullOvfs.getFirst(), emptyMappingsAndNullOvfs.getSecond()),
+            Arguments.of(someMappingsAndNullOvfs.getFirst(), someMappingsAndNullOvfs.getSecond())
         );
     }
 

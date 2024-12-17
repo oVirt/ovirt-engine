@@ -37,12 +37,12 @@ public class WebAdminPlaceManager extends ApplicationPlaceManager {
 
     PlaceRequest resolveMainSectionPlace(ApplicationMode uiMode) {
         switch (uiMode) {
-        case GlusterOnly:
-            return PlaceRequestFactory.get(WebAdminApplicationPlaces.volumeMainPlace);
-        case VirtOnly:
-        case AllModes:
-        default:
-            return defaultMainSectionRequest;
+            case GlusterOnly:
+                return PlaceRequestFactory.get(WebAdminApplicationPlaces.volumeMainPlace);
+            case VirtOnly:
+            case AllModes:
+            default:
+                return defaultMainSectionRequest;
         }
     }
 

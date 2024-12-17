@@ -51,21 +51,21 @@ public class DrawerNotification extends Div {
 
     private void setIconType(Span icon, AuditLog model) {
         switch (model.getSeverity()) {
-        case ALERT:
-            icon.addStyleName(PatternflyConstants.PFICON_WARNING_TRIANGLE_O);
-            break;
-        case ERROR:
-            icon.addStyleName(PatternflyConstants.PFICON_ERROR_CIRCLE_O);
-            break;
-        case NORMAL:
-            icon.addStyleName(PatternflyConstants.PFICON_INFO);
-            break;
-        case WARNING:
-            icon.addStyleName(PatternflyConstants.PFICON_WARNING_TRIANGLE_O);
-            break;
-        default:
-            icon.addStyleName(PatternflyConstants.PFICON_OK);
-            break;
+            case ALERT:
+                icon.addStyleName(PatternflyConstants.PFICON_WARNING_TRIANGLE_O);
+                break;
+            case ERROR:
+                icon.addStyleName(PatternflyConstants.PFICON_ERROR_CIRCLE_O);
+                break;
+            case NORMAL:
+                icon.addStyleName(PatternflyConstants.PFICON_INFO);
+                break;
+            case WARNING:
+                icon.addStyleName(PatternflyConstants.PFICON_WARNING_TRIANGLE_O);
+                break;
+            default:
+                icon.addStyleName(PatternflyConstants.PFICON_OK);
+                break;
         }
     }
 

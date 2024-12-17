@@ -1109,14 +1109,14 @@ public class AsyncDataProvider {
             return VolumeFormat.RAW;
         } else if (storageType.isBlockDomain()) {
             switch (volumeType) {
-            case Sparse:
-                return VolumeFormat.COW;
+                case Sparse:
+                    return VolumeFormat.COW;
 
-            case Preallocated:
-                return VolumeFormat.RAW;
+                case Preallocated:
+                    return VolumeFormat.RAW;
 
-            default:
-                return VolumeFormat.Unassigned;
+                default:
+                    return VolumeFormat.Unassigned;
             }
         } else if (storageType.isManagedBlockStorage()) {
             return volumeType == VolumeType.Preallocated ? VolumeFormat.RAW : VolumeFormat.Unassigned;
@@ -1128,21 +1128,21 @@ public class AsyncDataProvider {
     // NOTE: This logic is duplicated in ovirt-web-ui for disk and VM creation.  Any changes here should also be made there.
     public VolumeType getVolumeType(VolumeFormat volumeFormat, StorageType storageType, VM vm, Image diskImage) {
         switch (volumeFormat) {
-        case COW:
-            return VolumeType.Sparse;
-        case RAW:
-        default:
-            boolean copyPreallocatedFileBasedDiskSupported =
-                    vm != null ? isCopyPreallocatedFileBasedDiskSupported(vm.getCompatibilityVersion()) : false;
-            // if diskImage provided it means that we want to use the source image volume type,
-            // otherwise we set the volume type as sparse by default for file-based storage domain
-            VolumeType fileBasedVolumeType;
-            if (copyPreallocatedFileBasedDiskSupported) {
-                fileBasedVolumeType = diskImage != null ? diskImage.getVolumeType() : VolumeType.Sparse;
-            } else {
-                fileBasedVolumeType = VolumeType.Sparse;
-            }
-            return storageType.isFileDomain() ? fileBasedVolumeType : VolumeType.Preallocated;
+            case COW:
+                return VolumeType.Sparse;
+            case RAW:
+            default:
+                boolean copyPreallocatedFileBasedDiskSupported =
+                        vm != null ? isCopyPreallocatedFileBasedDiskSupported(vm.getCompatibilityVersion()) : false;
+                // if diskImage provided it means that we want to use the source image volume type,
+                // otherwise we set the volume type as sparse by default for file-based storage domain
+                VolumeType fileBasedVolumeType;
+                if (copyPreallocatedFileBasedDiskSupported) {
+                    fileBasedVolumeType = diskImage != null ? diskImage.getVolumeType() : VolumeType.Sparse;
+                } else {
+                    fileBasedVolumeType = VolumeType.Sparse;
+                }
+                return storageType.isFileDomain() ? fileBasedVolumeType : VolumeType.Preallocated;
         }
     }
 

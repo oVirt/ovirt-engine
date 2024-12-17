@@ -400,15 +400,15 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
      */
     protected boolean isDiskSupportedForPlugUnPlug(DiskVmElement diskVmElement, String diskAlias) {
         switch (diskVmElement.getDiskInterface()) {
-        case IDE:
-            addValidationMessageVariable("diskAlias", diskAlias);
-            addValidationMessageVariable("vmName", getVm().getName());
-            return failValidation(EngineMessage.HOT_PLUG_IDE_DISK_IS_NOT_SUPPORTED);
-        case SPAPR_VSCSI:
-            addValidationMessageVariable("diskAlias", diskAlias);
-            addValidationMessageVariable("vmName", getVm().getName());
-            return failValidation(EngineMessage.HOT_PLUG_SPAPR_VSCSI_DISK_IS_NOT_SUPPORTED);
-        default:
+            case IDE:
+                addValidationMessageVariable("diskAlias", diskAlias);
+                addValidationMessageVariable("vmName", getVm().getName());
+                return failValidation(EngineMessage.HOT_PLUG_IDE_DISK_IS_NOT_SUPPORTED);
+            case SPAPR_VSCSI:
+                addValidationMessageVariable("diskAlias", diskAlias);
+                addValidationMessageVariable("vmName", getVm().getName());
+                return failValidation(EngineMessage.HOT_PLUG_SPAPR_VSCSI_DISK_IS_NOT_SUPPORTED);
+            default:
         }
 
         Set<String> diskHotpluggableInterfaces = osRepository.getDiskHotpluggableInterfaces(getVm().getOs(),

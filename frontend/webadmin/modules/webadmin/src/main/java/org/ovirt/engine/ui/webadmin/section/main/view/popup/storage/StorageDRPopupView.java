@@ -110,7 +110,7 @@ public class StorageDRPopupView extends
                     public String render(StorageSyncSchedule.Frequency object) {
                         return EnumTranslator.getInstance().translate(object);
                     }
-        });
+                });
         geoRepSessionEditor = new ListModelListBoxEditor<>(new NullSafeRenderer<GlusterGeoRepSession>() {
             @Override
             protected String renderNullSafe(GlusterGeoRepSession geoRepSession) {

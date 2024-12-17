@@ -110,4 +110,4 @@ public class MallInfo implements Serializable {
     public void setKeepcost(int keepcost) {
         this.keepcost = keepcost;
     }
- }
+}

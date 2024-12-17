@@ -21,14 +21,14 @@ import org.ovirt.engine.core.utils.RandomUtils;
 
 public class GlusterBrickDetailMapperTest extends AbstractInvertibleMappingTest<GlusterBrick, GlusterVolumeAdvancedDetails, GlusterVolumeAdvancedDetails> {
 
-     public GlusterBrickDetailMapperTest() {
+    public GlusterBrickDetailMapperTest() {
         super(GlusterBrick.class, GlusterVolumeAdvancedDetails.class,
                 GlusterVolumeAdvancedDetails.class);
     }
 
     @Override
     protected void verify(GlusterBrick model, GlusterBrick transform) {
-       assertNotNull(transform);
+        assertNotNull(transform);
     }
 
     @Test
@@ -80,19 +80,19 @@ public class GlusterBrickDetailMapperTest extends AbstractInvertibleMappingTest<
     }
 
     private List<BrickDetails> getBrickDetails(int size, int clientListSize, int memPoolSize) {
-       ArrayList<BrickDetails> list = new ArrayList<>();
-       for (int i = 0; i < size; i++) {
-           BrickDetails details = new BrickDetails();
-           BrickProperties props = new BrickProperties();
-           props.setBlockSize(14556);
-           props.setPid(88888);
-           props.setMntOptions("rw");
-           details.setBrickProperties(props);
-           details.setClients(getClientList(clientListSize));
-           details.setMemoryStatus(getMemoryStatus(memPoolSize));
-           list.add(details);
-       }
-       return list;
+        ArrayList<BrickDetails> list = new ArrayList<>();
+        for (int i = 0; i < size; i++) {
+            BrickDetails details = new BrickDetails();
+            BrickProperties props = new BrickProperties();
+            props.setBlockSize(14556);
+            props.setPid(88888);
+            props.setMntOptions("rw");
+            details.setBrickProperties(props);
+            details.setClients(getClientList(clientListSize));
+            details.setMemoryStatus(getMemoryStatus(memPoolSize));
+            list.add(details);
+        }
+        return list;
     }
 
     private MemoryStatus getMemoryStatus(int listSize) {

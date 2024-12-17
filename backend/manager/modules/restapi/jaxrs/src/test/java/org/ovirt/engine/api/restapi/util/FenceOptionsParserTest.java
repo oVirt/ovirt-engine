@@ -40,7 +40,7 @@ public class FenceOptionsParserTest {
     @Test
     public void testParseMultiple() {
         List<Agent> ret = parse("foo:one=1,two=2,three=3;bar:ninetynine=99",
- "one=bool,two=int,three=bool,ninetynine=int");
+            "one=bool,two=int,three=bool,ninetynine=int");
         assertNotNull(ret);
         assertEquals(2, ret.size());
         verifyResult(ret.get(0),

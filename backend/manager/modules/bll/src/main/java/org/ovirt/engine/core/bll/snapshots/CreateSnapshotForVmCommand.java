@@ -224,15 +224,15 @@ public class CreateSnapshotForVmCommand<T extends CreateSnapshotForVmParameters>
     @Override
     public AuditLogType getAuditLogTypeValue() {
         switch (getActionState()) {
-        case EXECUTE:
-            return getSucceeded() ? AuditLogType.USER_CREATE_SNAPSHOT : AuditLogType.USER_FAILED_CREATE_SNAPSHOT;
+            case EXECUTE:
+                return getSucceeded() ? AuditLogType.USER_CREATE_SNAPSHOT : AuditLogType.USER_FAILED_CREATE_SNAPSHOT;
 
-        case END_SUCCESS:
-            return getSucceeded() ? AuditLogType.USER_CREATE_SNAPSHOT_FINISHED_SUCCESS
-                    : AuditLogType.USER_CREATE_SNAPSHOT_FINISHED_FAILURE;
+            case END_SUCCESS:
+                return getSucceeded() ? AuditLogType.USER_CREATE_SNAPSHOT_FINISHED_SUCCESS
+                        : AuditLogType.USER_CREATE_SNAPSHOT_FINISHED_FAILURE;
 
-        default:
-            return AuditLogType.USER_CREATE_SNAPSHOT_FINISHED_FAILURE;
+            default:
+                return AuditLogType.USER_CREATE_SNAPSHOT_FINISHED_FAILURE;
         }
     }
 

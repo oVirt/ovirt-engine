@@ -46,7 +46,7 @@ public class IPv4MaskValidatorTest {
     }
 
     public static Stream<Object[]> namesParams() {
-         Random random = new Random();
+        Random random = new Random();
 
         return Stream.of(
 

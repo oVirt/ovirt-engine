@@ -183,8 +183,8 @@ public class AddDiskCommandTest extends BaseCommandTest {
         mockMaxPciSlots();
 
         command.setStorageDomainId(Guid.Empty);
-        ValidateTestUtils.runAndAssertValidateFailure
-                (command, EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_NOT_SPECIFIED);
+        ValidateTestUtils.runAndAssertValidateFailure(command,
+            EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_NOT_SPECIFIED);
     }
 
     @Test
@@ -225,8 +225,8 @@ public class AddDiskCommandTest extends BaseCommandTest {
         command.getParameters().setStorageDomainId(storageId);
         command.getParameters().getDiskVmElement().setDiskInterface(null);
         assertFalse(command.validateInputs());
-        ValidateTestUtils.assertValidationMessages
-                ("Wrong validation method", command, EngineMessage.VALIDATION_DISK_INTERFACE_NOT_NULL);
+        ValidateTestUtils.assertValidationMessages("Wrong validation method",
+            command, EngineMessage.VALIDATION_DISK_INTERFACE_NOT_NULL);
     }
 
     @Test
@@ -241,8 +241,8 @@ public class AddDiskCommandTest extends BaseCommandTest {
         mockInterfaceList();
         mockMaxPciSlots();
         mockVm();
-        ValidateTestUtils.runAndAssertValidateFailure
-                (command, EngineMessage.ACTION_TYPE_FAILED_DISK_SIZE_ZERO);
+        ValidateTestUtils.runAndAssertValidateFailure(command,
+            EngineMessage.ACTION_TYPE_FAILED_DISK_SIZE_ZERO);
     }
 
     @Test
@@ -268,8 +268,7 @@ public class AddDiskCommandTest extends BaseCommandTest {
         mockVm();
         doReturn(mockStorageDomainValidatorWithoutSpace()).when(command).createStorageDomainValidator();
 
-        ValidateTestUtils.runAndAssertValidateFailure
-                (command, EngineMessage.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN);
+        ValidateTestUtils.runAndAssertValidateFailure(command, EngineMessage.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN);
     }
 
     /**
@@ -346,8 +345,8 @@ public class AddDiskCommandTest extends BaseCommandTest {
         mockMaxPciSlots();
         mockVm();
 
-        ValidateTestUtils.runAndAssertValidateFailure
-                (command, EngineMessage.SHAREABLE_DISK_IS_NOT_SUPPORTED_BY_VOLUME_FORMAT);
+        ValidateTestUtils.runAndAssertValidateFailure(command,
+            EngineMessage.SHAREABLE_DISK_IS_NOT_SUPPORTED_BY_VOLUME_FORMAT);
     }
 
     @Test
@@ -363,8 +362,8 @@ public class AddDiskCommandTest extends BaseCommandTest {
         mockStoragePoolIsoMap();
         mockMaxPciSlots();
 
-        ValidateTestUtils.runAndAssertValidateFailure
-                (command, EngineMessage.ACTION_TYPE_FAILED_SHAREABLE_DISKS_NOT_SUPPORTED_ON_GLUSTER_DOMAIN);
+        ValidateTestUtils.runAndAssertValidateFailure(command,
+            EngineMessage.ACTION_TYPE_FAILED_SHAREABLE_DISKS_NOT_SUPPORTED_ON_GLUSTER_DOMAIN);
     }
 
     /**
@@ -930,7 +929,7 @@ public class AddDiskCommandTest extends BaseCommandTest {
     private void clearValidationMessages() {
         command.getReturnValue()
         .getValidationMessages()
-        .clear();
+            .clear();
     }
 
     private void mockEntities(Guid storageId) {

@@ -1378,26 +1378,26 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
     private void initListBoxEditors() {
         // General tab
         dataCenterWithClusterEditor = new GroupedListModelListBoxEditor<>(
-                new GroupedListModelListBox<DataCenterWithCluster>(new NameRenderer<>()) {
+            new GroupedListModelListBox<DataCenterWithCluster>(new NameRenderer<>()) {
 
-            @Override
-            public String getModelLabel(DataCenterWithCluster model) {
-                return model.getCluster().getName();
-            }
+                @Override
+                public String getModelLabel(DataCenterWithCluster model) {
+                    return model.getCluster().getName();
+                }
 
-            @Override
-            public String getGroupLabel(DataCenterWithCluster model) {
-                return messages.hostDataCenter(model.getDataCenter().getName());
-            }
+                @Override
+                public String getGroupLabel(DataCenterWithCluster model) {
+                    return messages.hostDataCenter(model.getDataCenter().getName());
+                }
 
-            public Comparator<DataCenterWithCluster> getComparator() {
-                return Comparator
+                public Comparator<DataCenterWithCluster> getComparator() {
+                    return Comparator
                         .comparing((DataCenterWithCluster d) -> d.getDataCenter().getName(),
                                 Comparator.nullsLast(String.CASE_INSENSITIVE_ORDER))
                         .thenComparing(d -> d.getCluster().getName(),
                                 Comparator.nullsLast(String.CASE_INSENSITIVE_ORDER));
-            }
-        });
+                }
+            });
 
         quotaEditor = new ListModelTypeAheadListBoxEditor<>(
                 new ListModelTypeAheadListBoxEditor.NullSafeSuggestBoxRenderer<Quota>() {
@@ -1984,7 +1984,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
 
         vm.getIsAutoAssign().getEntityChangedEvent().addListener((ev, sender, args) -> {
             if (!isAutoAssignEditor.asRadioButton().getValue()) {
-                    specificHost.asRadioButton().setValue(true, true);
+                specificHost.asRadioButton().setValue(true, true);
             }
         });
 

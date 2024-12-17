@@ -27,12 +27,12 @@ public class PermissionTypeColumn extends AbstractImageResourceColumn<Permission
     @Override
     public ImageResource getValue(Permission user) {
         switch (user.getRoleType()) {
-        case ADMIN:
-            return resources.adminImage();
-        case USER:
-            return resources.userImage();
-        default:
-            return resources.userImage();
+            case ADMIN:
+                return resources.adminImage();
+            case USER:
+                return resources.userImage();
+            default:
+                return resources.userImage();
         }
     }
 

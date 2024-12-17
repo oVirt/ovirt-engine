@@ -246,16 +246,15 @@ public class ClusterGeneralModel extends EntityModel<Cluster> {
     private void updateConsoleAddressPartiallyOverridden(Cluster cluster) {
 
         AsyncQuery<QueryReturnValue> query = new AsyncQuery<>(returnValue -> {
-                boolean isConsistent = returnValue.getReturnValue();
-                setConsoleAddressPartiallyOverridden(!isConsistent);
-            }
-        );
+            boolean isConsistent = returnValue.getReturnValue();
+            setConsoleAddressPartiallyOverridden(!isConsistent);
+        });
 
         Frontend.getInstance().runQuery(
-                QueryType.IsDisplayAddressConsistentInCluster,
-                new IdQueryParameters(cluster.getId()),
-                query
-                );
+            QueryType.IsDisplayAddressConsistentInCluster,
+            new IdQueryParameters(cluster.getId()),
+            query
+        );
     }
 
     private void manageGlusterSwiftServices() {

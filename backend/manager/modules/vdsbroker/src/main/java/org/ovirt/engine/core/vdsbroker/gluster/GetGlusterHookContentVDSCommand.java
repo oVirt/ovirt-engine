@@ -13,7 +13,7 @@ public class GetGlusterHookContentVDSCommand<P extends GlusterHookVDSParameters>
 
     @Override
     protected Status getReturnStatus() {
-                 return returnValue.getStatus();
+        return returnValue.getStatus();
     }
 
     @Override

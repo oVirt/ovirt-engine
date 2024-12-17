@@ -68,7 +68,7 @@ public interface DiskImageDao extends ReadDao<DiskImage, Guid> {
      *            the snapshot id
      * @return the list of snapshots
      */
-     DiskImage getDiskSnapshotForVmSnapshot(Guid diskId, Guid vmSnapshotId);
+    DiskImage getDiskSnapshotForVmSnapshot(Guid diskId, Guid vmSnapshotId);
 
     /**
      * Retrieves all snapshots associated with the given image group.

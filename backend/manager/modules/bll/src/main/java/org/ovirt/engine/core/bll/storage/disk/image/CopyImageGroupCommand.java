@@ -90,18 +90,18 @@ public class CopyImageGroupCommand<T extends MoveOrCopyImageGroupParameters> ext
     @Override
     protected DiskImage getImage() {
         switch (getActionState()) {
-        case END_SUCCESS:
-        case END_FAILURE:
-            if (diskImage == null) {
-                List<DiskImage> diskImages =
-                        diskImageDao.getAllSnapshotsForImageGroup(getParameters().getImageGroupID());
-                diskImage = diskImages.isEmpty() ? null : diskImages.get(0);
-            }
+            case END_SUCCESS:
+            case END_FAILURE:
+                if (diskImage == null) {
+                    List<DiskImage> diskImages =
+                            diskImageDao.getAllSnapshotsForImageGroup(getParameters().getImageGroupID());
+                    diskImage = diskImages.isEmpty() ? null : diskImages.get(0);
+                }
 
-            return diskImage;
+                return diskImage;
 
-        default:
-            return super.getImage();
+            default:
+                return super.getImage();
         }
     }
 
@@ -136,11 +136,10 @@ public class CopyImageGroupCommand<T extends MoveOrCopyImageGroupParameters> ext
         if (performStorageOperation()) {
             // Add storage domain in db only if there is new entity in DB.
             if (!shouldUpdateStorageDisk() && getParameters().getAddImageDomainMapping()) {
-                imageStorageDomainMapDao.save
-                        (new ImageStorageDomainMap(getParameters().getImageId(),
-                                getParameters().getDestDomainId(),
-                                getParameters().getQuotaId(),
-                                getParameters().getDiskProfileId()));
+                imageStorageDomainMapDao.save(new ImageStorageDomainMap(getParameters().getImageId(),
+                    getParameters().getDestDomainId(),
+                    getParameters().getQuotaId(),
+                    getParameters().getDiskProfileId()));
             }
 
             setSucceeded(true);
@@ -316,14 +315,12 @@ public class CopyImageGroupCommand<T extends MoveOrCopyImageGroupParameters> ext
                     .getAllSnapshotsForImageGroup(getParameters().getDestImageGroupId());
             setSnapshotForShareableDisk(snapshots);
             for (DiskImage snapshot : snapshots) {
-                imageStorageDomainMapDao.remove
-                        (new ImageStorageDomainMapId(snapshot.getImageId(),
-                                snapshot.getStorageIds().get(0)));
-                imageStorageDomainMapDao.save
-                        (new ImageStorageDomainMap(snapshot.getImageId(),
-                                getParameters().getDestDomainId(),
-                                getParameters().getQuotaId(),
-                                getParameters().getDiskProfileId()));
+                imageStorageDomainMapDao.remove(new ImageStorageDomainMapId(snapshot.getImageId(),
+                    snapshot.getStorageIds().get(0)));
+                imageStorageDomainMapDao.save(new ImageStorageDomainMap(snapshot.getImageId(),
+                    getParameters().getDestDomainId(),
+                    getParameters().getQuotaId(),
+                    getParameters().getDiskProfileId()));
                 setQcowCompatForSnapshot(snapshot, null);
             }
         }
@@ -375,9 +372,8 @@ public class CopyImageGroupCommand<T extends MoveOrCopyImageGroupParameters> ext
 
         if (getParameters().getAddImageDomainMapping()) {
             // remove image-storage mapping
-            imageStorageDomainMapDao.remove
-                    (new ImageStorageDomainMapId(getParameters().getImageId(),
-                            getParameters().getDestDomainId()));
+            imageStorageDomainMapDao.remove(new ImageStorageDomainMapId(getParameters().getImageId(),
+                getParameters().getDestDomainId()));
         }
         revertTasks();
         setSucceeded(true);

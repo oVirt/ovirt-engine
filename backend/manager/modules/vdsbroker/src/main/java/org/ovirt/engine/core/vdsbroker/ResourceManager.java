@@ -177,15 +177,15 @@ public class ResourceManager implements BackendService {
         if (isInternal) {
             VDSStatus status = vds.getStatus();
             switch (vds.getStatus()) {
-            case Error:
-                status = VDSStatus.Up;
-                break;
-            case Reboot:
-            case NonResponsive:
-            case Connecting:
-            case Installing:
-                status = VDSStatus.Unassigned;
-                break;
+                case Error:
+                    status = VDSStatus.Up;
+                    break;
+                case Reboot:
+                case NonResponsive:
+                case Connecting:
+                case Installing:
+                    status = VDSStatus.Unassigned;
+                    break;
             }
             if (status != vds.getStatus()) {
                 vdsManager.setStatus(status, vds);

@@ -34,25 +34,25 @@ public class ConvertVmCallback implements CommandCallback {
     public void doPolling(Guid cmdId, List<Guid> childCmdIds) {
         V2VJobInfo jobInfo = getV2VJobInfo();
         switch (jobInfo.getStatus()) {
-        case STARTING:
-        case COPYING_DISK:
-            updateProgress(jobInfo);
-            break;
-        case DONE:
-            updateProgress("Finalizing", 100);
-            getCommand().setCommandStatus(CommandStatus.SUCCEEDED);
-            break;
-        case NOT_EXIST:
-            jobInfo.setDescription(JOB_DOES_NOT_EXIST_MSG);
-        case ERROR:
-            log.info("Conversion of VM from external environment failed: {}", jobInfo.getDescription());
-        case ABORTED:
-            updateProgress("Canceling", 0);
-            getCommand().setCommandStatus(CommandStatus.FAILED);
-            break;
-        case UNKNOWN:
-        case WAIT_FOR_START:
-        default:
+            case STARTING:
+            case COPYING_DISK:
+                updateProgress(jobInfo);
+                break;
+            case DONE:
+                updateProgress("Finalizing", 100);
+                getCommand().setCommandStatus(CommandStatus.SUCCEEDED);
+                break;
+            case NOT_EXIST:
+                jobInfo.setDescription(JOB_DOES_NOT_EXIST_MSG);
+            case ERROR:
+                log.info("Conversion of VM from external environment failed: {}", jobInfo.getDescription());
+            case ABORTED:
+                updateProgress("Canceling", 0);
+                getCommand().setCommandStatus(CommandStatus.FAILED);
+                break;
+            case UNKNOWN:
+            case WAIT_FOR_START:
+            default:
         }
     }
 

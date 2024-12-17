@@ -49,7 +49,7 @@ public class OvirtBreadCrumbsPresenterWidget<T, M extends SearchableListModel>
     }
 
     private SelectionModel<T> getSelectionModel() {
-       return getModel().getSelectionModel();
+        return getModel().getSelectionModel();
     }
 
     private M getModel() {

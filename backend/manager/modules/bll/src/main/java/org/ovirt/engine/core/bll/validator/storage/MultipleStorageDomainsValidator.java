@@ -206,7 +206,7 @@ public class MultipleStorageDomainsValidator {
      * first validation error if they aren't.
      */
     private ValidationResult validOrFirstFailure
-        (Function<Map.Entry<Guid, StorageDomainValidator>, ValidationResult> predicate) {
+    (Function<Map.Entry<Guid, StorageDomainValidator>, ValidationResult> predicate) {
         return domainValidators.entrySet()
                 .stream()
                 .map(predicate)

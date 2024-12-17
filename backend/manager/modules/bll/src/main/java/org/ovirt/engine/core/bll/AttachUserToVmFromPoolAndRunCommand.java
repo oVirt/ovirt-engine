@@ -286,16 +286,16 @@ public class AttachUserToVmFromPoolAndRunCommand<T extends AttachUserToVmFromPoo
     @Override
     public AuditLogType getAuditLogTypeValue() {
         switch (getActionState()) {
-        case EXECUTE:
-            return getSucceeded() ? AuditLogType.USER_ATTACH_USER_TO_VM_FROM_POOL
-                    : AuditLogType.USER_ATTACH_USER_TO_VM_FROM_POOL_FAILED;
+            case EXECUTE:
+                return getSucceeded() ? AuditLogType.USER_ATTACH_USER_TO_VM_FROM_POOL
+                        : AuditLogType.USER_ATTACH_USER_TO_VM_FROM_POOL_FAILED;
 
-        case END_SUCCESS:
-            return getSucceeded() ? AuditLogType.USER_ATTACH_USER_TO_VM_FROM_POOL_FINISHED_SUCCESS
-                    : AuditLogType.USER_ATTACH_USER_TO_VM_FROM_POOL_FINISHED_FAILURE;
+            case END_SUCCESS:
+                return getSucceeded() ? AuditLogType.USER_ATTACH_USER_TO_VM_FROM_POOL_FINISHED_SUCCESS
+                        : AuditLogType.USER_ATTACH_USER_TO_VM_FROM_POOL_FINISHED_FAILURE;
 
-        default:
-            return AuditLogType.USER_ATTACH_USER_TO_VM_FROM_POOL_FINISHED_FAILURE;
+            default:
+                return AuditLogType.USER_ATTACH_USER_TO_VM_FROM_POOL_FINISHED_FAILURE;
         }
     }
 

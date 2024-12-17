@@ -36,32 +36,32 @@ public class NewDiskModel extends AbstractDiskModel {
     private boolean descriptionDerivedFromLunId;
 
     private IEventListener<ValueEventArgs<LunModel>> lunSelectionChangedEventListener =
-            new IEventListener<ValueEventArgs<LunModel>> () {
-        @Override
-        public void eventRaised(Event<? extends ValueEventArgs<LunModel>> ev,
+        new IEventListener<ValueEventArgs<LunModel>> () {
+            @Override
+            public void eventRaised(Event<? extends ValueEventArgs<LunModel>> ev,
                 Object sender,
                 ValueEventArgs<LunModel> args) {
-            String description = getDescription().getEntity();
-            if (description == null || description.isEmpty() || descriptionDerivedFromLunId) {
-                LunModel selectedLunModel = args.getValue();
-                if (selectedLunModel.getLunId() != null) {
-                    int numOfChars = (Integer) AsyncDataProvider.getInstance().getConfigValuePreConverted(ConfigValues.PopulateDirectLUNDiskDescriptionWithLUNId);
-                    if (numOfChars == 0) {
-                        return;
+                String description = getDescription().getEntity();
+                if (description == null || description.isEmpty() || descriptionDerivedFromLunId) {
+                    LunModel selectedLunModel = args.getValue();
+                    if (selectedLunModel.getLunId() != null) {
+                        int numOfChars = (Integer) AsyncDataProvider.getInstance().getConfigValuePreConverted(ConfigValues.PopulateDirectLUNDiskDescriptionWithLUNId);
+                        if (numOfChars == 0) {
+                            return;
+                        }
+                        String newDescription;
+                        if (numOfChars <= -1 || numOfChars >= selectedLunModel.getLunId().length()) {
+                            newDescription = selectedLunModel.getLunId();
+                        } else {
+                            newDescription = selectedLunModel.getLunId().substring(selectedLunModel.getLunId().length() - numOfChars);
+                        }
+                        getDescription().setEntity(newDescription);
+                        descriptionDerivedFromLunId = true;
                     }
-                    String newDescription;
-                    if (numOfChars <= -1 || numOfChars >= selectedLunModel.getLunId().length()) {
-                        newDescription = selectedLunModel.getLunId();
-                    } else {
-                        newDescription = selectedLunModel.getLunId().substring(selectedLunModel.getLunId().length() - numOfChars);
-                    }
-                    getDescription().setEntity(newDescription);
-                    descriptionDerivedFromLunId = true;
                 }
+                updatePassDiscardChangeability();
             }
-            updatePassDiscardChangeability();
-        }
-    };
+        };
 
     @Override
     public void initialize() {

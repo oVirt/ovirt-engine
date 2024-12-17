@@ -11,17 +11,17 @@ public class HumanReadableTimeRenderer extends AbstractRenderer<Double> {
     public String render(Double time) {
         StringBuilder formatTime = new StringBuilder();
 
-        if ( time > SECONDS_IN_A_DAY) {
+        if (time > SECONDS_IN_A_DAY) {
             formatTime.append((int) (time / SECONDS_IN_A_DAY));
-            formatTime.append(" days " ); //$NON-NLS-1$
+            formatTime.append(" days "); //$NON-NLS-1$
             time = time % SECONDS_IN_A_DAY;
         }
-        if ( time > SECONDS_IN_AN_HOUR ) {
+        if (time > SECONDS_IN_AN_HOUR) {
             formatTime.append((int) (time / SECONDS_IN_AN_HOUR));
             formatTime.append(" h "); //$NON-NLS-1$
             time = time % SECONDS_IN_AN_HOUR;
         }
-        if ( time > SECONDS_IN_A_MINUTE) {
+        if (time > SECONDS_IN_A_MINUTE) {
             formatTime.append((int) (time / SECONDS_IN_A_MINUTE));
             formatTime.append(" m "); //$NON-NLS-1$
             time = time % SECONDS_IN_A_MINUTE;

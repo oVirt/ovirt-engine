@@ -293,30 +293,30 @@ public class DataCenterModule extends AbstractGinModule {
             final Provider<DataCenterListModel> mainModelProvider,
             final Provider<DataCenterHostNetworkQosListModel> modelProvider) {
         SearchableDetailTabModelProvider<HostNetworkQos, DataCenterListModel, DataCenterHostNetworkQosListModel> result =
-                new SearchableDetailTabModelProvider<HostNetworkQos, DataCenterListModel, DataCenterHostNetworkQosListModel>(eventBus,
-                        defaultConfirmPopupProvider) {
-            @Override
-            public AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(DataCenterHostNetworkQosListModel source,
+            new SearchableDetailTabModelProvider<HostNetworkQos, DataCenterListModel, DataCenterHostNetworkQosListModel>(eventBus,
+            defaultConfirmPopupProvider) {
+                @Override
+                public AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(DataCenterHostNetworkQosListModel source,
                     UICommand lastExecutedCommand,
                     Model windowModel) {
-                if (lastExecutedCommand.equals(getModel().getNewCommand())
-                        || lastExecutedCommand.equals(getModel().getEditCommand())) {
-                    return hostNetworkQosPopupProvider.get();
-                } else {
-                    return super.getModelPopup(source, lastExecutedCommand, windowModel);
+                        if (lastExecutedCommand.equals(getModel().getNewCommand())
+                            || lastExecutedCommand.equals(getModel().getEditCommand())) {
+                            return hostNetworkQosPopupProvider.get();
+                        } else {
+                            return super.getModelPopup(source, lastExecutedCommand, windowModel);
+                        }
                 }
-            }
 
-            @Override
-            public AbstractModelBoundPopupPresenterWidget<? extends ConfirmationModel, ?> getConfirmModelPopup(DataCenterHostNetworkQosListModel source,
+                @Override
+                public AbstractModelBoundPopupPresenterWidget<? extends ConfirmationModel, ?> getConfirmModelPopup(DataCenterHostNetworkQosListModel source,
                     UICommand lastExecutedCommand) {
-                if (lastExecutedCommand.equals(getModel().getRemoveCommand())) {
-                    return removeConfirmPopupProvider.get();
-                } else {
-                    return super.getConfirmModelPopup(source, lastExecutedCommand);
+                        if (lastExecutedCommand.equals(getModel().getRemoveCommand())) {
+                            return removeConfirmPopupProvider.get();
+                        } else {
+                            return super.getConfirmModelPopup(source, lastExecutedCommand);
+                        }
                 }
-            }
-        };
+            };
         result.setMainModelProvider(mainModelProvider);
         result.setModelProvider(modelProvider);
         return result;

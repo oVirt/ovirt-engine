@@ -29,10 +29,10 @@ public class BackendStorageServerConnectionResourceTest extends AbstractBackendS
         org.ovirt.engine.api.model.StorageType.ISCSI };
 
     protected static final StorageType[] STORAGE_TYPES_MAPPED = {
-            StorageType.NFS,
-            StorageType.LOCALFS,
-            StorageType.POSIXFS,
-            StorageType.ISCSI };
+        StorageType.NFS,
+        StorageType.LOCALFS,
+        StorageType.POSIXFS,
+        StorageType.ISCSI };
 
     public BackendStorageServerConnectionResourceTest() {
         super(new BackendStorageServerConnectionResource(GUIDS[3].toString(),

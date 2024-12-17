@@ -235,7 +235,7 @@ public class UpdateStorageServerConnectionCommand<T extends StorageServerConnect
                     }
                 }
                 if (!updatedDomains.isEmpty()) {
-                   updateStorageDomain(updatedDomains);
+                    updateStorageDomain(updatedDomains);
                 }
             }
         }
@@ -289,10 +289,10 @@ public class UpdateStorageServerConnectionCommand<T extends StorageServerConnect
     protected void updateStorageDomain(final List<StorageDomain> storageDomainsToUpdate) {
         executeInNewTransaction(() -> {
             for (StorageDomain domainToUpdate : storageDomainsToUpdate) {
-                    CompensationContext context = getCompensationContext();
-                    context.snapshotEntity(domainToUpdate.getStorageDynamicData());
-                    storageDomainDynamicDao.update(domainToUpdate.getStorageDynamicData());
-                    getCompensationContext().stateChanged();
+                CompensationContext context = getCompensationContext();
+                context.snapshotEntity(domainToUpdate.getStorageDynamicData());
+                storageDomainDynamicDao.update(domainToUpdate.getStorageDynamicData());
+                getCompensationContext().stateChanged();
             }
             return null;
         });
@@ -309,8 +309,8 @@ public class UpdateStorageServerConnectionCommand<T extends StorageServerConnect
     }
 
     protected boolean connectToStorage() {
-         Pair<Boolean, Integer> result = connectHostToStorage();
-         return result.getFirst();
+        Pair<Boolean, Integer> result = connectHostToStorage();
+        return result.getFirst();
     }
 
     protected void disconnectFromStorage() {
@@ -353,32 +353,31 @@ public class UpdateStorageServerConnectionCommand<T extends StorageServerConnect
         if (getConnection().getStorageType().isFileDomain()) {
            // lock the path to avoid at the same time if some other user tries to
            // add new storage connection to same path or edit another storage server connection to point to same path
-           locks.put(getConnection().getConnection(),
+            locks.put(getConnection().getConnection(),
                     LockMessagesMatchUtil.makeLockingPair(LockingGroup.STORAGE_CONNECTION,
                             EngineMessage.ACTION_TYPE_FAILED_OBJECT_LOCKED));
         } else {
           // for block domains, locking the target details
-          locks.put(getConnection().getConnection() + ";" + getConnection().getIqn() + ";" + getConnection().getPort() + ";" + getConnection().getUserName(),
-          LockMessagesMatchUtil.makeLockingPair(LockingGroup.STORAGE_CONNECTION,
+            locks.put(getConnection().getConnection() + ";" + getConnection().getIqn() + ";" + getConnection().getPort() + ";" + getConnection().getUserName(),
+                LockMessagesMatchUtil.makeLockingPair(LockingGroup.STORAGE_CONNECTION,
                     EngineMessage.ACTION_TYPE_FAILED_OBJECT_LOCKED));
 
-          //lock lun disks and domains, not VMs , no need to load from db.
-          if (getLuns() != null) {
-              for (LUNs lun : getLuns()) {
-                Guid diskId = lun.getDiskId();
-                Guid storageDomainId = lun.getStorageDomainId();
-                if (diskId != null) {
-                       locks.put(diskId.toString(), LockMessagesMatchUtil.makeLockingPair(LockingGroup.DISK,
-                       EngineMessage.ACTION_TYPE_FAILED_OBJECT_LOCKED));
-                }
-                if (storageDomainId != null) {
-                       locks.put(storageDomainId.toString(), LockMessagesMatchUtil.makeLockingPair(LockingGroup.STORAGE,
-                       EngineMessage.ACTION_TYPE_FAILED_OBJECT_LOCKED));
-                }
+            //lock lun disks and domains, not VMs , no need to load from db.
+            if (getLuns() != null) {
+                for (LUNs lun : getLuns()) {
+                    Guid diskId = lun.getDiskId();
+                    Guid storageDomainId = lun.getStorageDomainId();
+                    if (diskId != null) {
+                        locks.put(diskId.toString(), LockMessagesMatchUtil.makeLockingPair(LockingGroup.DISK,
+                            EngineMessage.ACTION_TYPE_FAILED_OBJECT_LOCKED));
+                    }
+                    if (storageDomainId != null) {
+                        locks.put(storageDomainId.toString(), LockMessagesMatchUtil.makeLockingPair(LockingGroup.STORAGE,
+                            EngineMessage.ACTION_TYPE_FAILED_OBJECT_LOCKED));
+                    }
 
-              }
-          }
-
+                }
+            }
         }
 
         // lock connection's id to avoid editing or removing this connection at the same time

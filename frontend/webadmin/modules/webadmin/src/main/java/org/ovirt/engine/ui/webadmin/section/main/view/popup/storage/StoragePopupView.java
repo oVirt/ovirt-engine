@@ -278,8 +278,8 @@ public class StoragePopupView extends AbstractModelBoundPopupView<StorageModel>
     }
 
     private Integer getWarningLowSpaceSize(StorageModel storageModel) {
-            Integer percentageValue = warningLowSpaceIndicatorEditor.asValueBox().getValue();
-            return percentageValue == null ? 0 : storageModel.getStorage().getTotalDiskSize() * percentageValue / 100;
+        Integer percentageValue = warningLowSpaceIndicatorEditor.asValueBox().getValue();
+        return percentageValue == null ? 0 : storageModel.getStorage().getTotalDiskSize() * percentageValue / 100;
     }
 
     private void initAdvancedParametersExpander() {

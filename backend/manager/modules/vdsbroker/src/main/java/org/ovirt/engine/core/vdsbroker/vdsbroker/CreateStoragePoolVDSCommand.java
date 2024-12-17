@@ -36,19 +36,19 @@ public class CreateStoragePoolVDSCommand<P extends CreateStoragePoolVDSCommandPa
     protected void proceedProxyReturnValue() {
         EngineError returnStatus = getReturnValueFromStatus(getReturnStatus());
         switch (returnStatus) {
-        // fail the operation without throwing exception
-        case StorageDomainAccessError:
-            getVDSReturnValue().setSucceeded(false);
-            VDSError tempVar = new VDSError();
-            tempVar.setCode(EngineError.StorageDomainAccessError);
-            tempVar.setMessage(getReturnStatus().message);
-            getVDSReturnValue().setVdsError(tempVar);
-            break;
+            // fail the operation without throwing exception
+            case StorageDomainAccessError:
+                getVDSReturnValue().setSucceeded(false);
+                VDSError tempVar = new VDSError();
+                tempVar.setCode(EngineError.StorageDomainAccessError);
+                tempVar.setMessage(getReturnStatus().message);
+                getVDSReturnValue().setVdsError(tempVar);
+                break;
 
-        default:
-            super.proceedProxyReturnValue();
-            initializeVdsError(returnStatus);
-            break;
+            default:
+                super.proceedProxyReturnValue();
+                initializeVdsError(returnStatus);
+                break;
         }
     }
 }

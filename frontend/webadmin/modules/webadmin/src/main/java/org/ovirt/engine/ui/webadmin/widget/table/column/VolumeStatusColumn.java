@@ -40,20 +40,20 @@ public class VolumeStatusColumn extends AbstractColumn<GlusterVolumeEntity, Glus
         VolumeStatus status = GlusterVolumeUtils.getVolumeStatus(volume);
         String tooltip = null;
         switch (status) {
-        case DOWN:
-            tooltip = constants.down();
-            break;
-        case UP:
-            tooltip = constants.up();
-            break;
-        case SOME_BRICKS_DOWN:
-            tooltip = constants.volumeBricksDown();
-            break;
-        case ALL_BRICKS_DOWN:
-            tooltip = constants.volumeAllBricksDown();
-            break;
-        default:
-            tooltip = constants.down();
+            case DOWN:
+                tooltip = constants.down();
+                break;
+            case UP:
+                tooltip = constants.up();
+                break;
+            case SOME_BRICKS_DOWN:
+                tooltip = constants.volumeBricksDown();
+                break;
+            case ALL_BRICKS_DOWN:
+                tooltip = constants.volumeAllBricksDown();
+                break;
+            default:
+                tooltip = constants.down();
         }
 
         if ((status == VolumeStatus.UP || status == VolumeStatus.SOME_BRICKS_DOWN)

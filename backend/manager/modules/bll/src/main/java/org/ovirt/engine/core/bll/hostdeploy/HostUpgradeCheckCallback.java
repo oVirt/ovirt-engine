@@ -69,20 +69,20 @@ public class HostUpgradeCheckCallback implements CommandCallback {
 
         // upgrade check command execution has started and its status should be examined
         switch (upgradeCommand.getCommandStatus()) {
-        case ACTIVE:
-        case NOT_STARTED:
-            return false;
-        case FAILED:
-        case EXECUTION_FAILED:
-        case ENDED_WITH_FAILURE:
-        case UNKNOWN:
-            rootCommand.setCommandStatus(CommandStatus.FAILED);
-            return true;
+            case ACTIVE:
+            case NOT_STARTED:
+                return false;
+            case FAILED:
+            case EXECUTION_FAILED:
+            case ENDED_WITH_FAILURE:
+            case UNKNOWN:
+                rootCommand.setCommandStatus(CommandStatus.FAILED);
+                return true;
 
-        case SUCCEEDED:
-        case ENDED_SUCCESSFULLY:
-            rootCommand.setCommandStatus(CommandStatus.SUCCEEDED);
-            return true;
+            case SUCCEEDED:
+            case ENDED_SUCCESSFULLY:
+                rootCommand.setCommandStatus(CommandStatus.SUCCEEDED);
+                return true;
         }
 
         return true;

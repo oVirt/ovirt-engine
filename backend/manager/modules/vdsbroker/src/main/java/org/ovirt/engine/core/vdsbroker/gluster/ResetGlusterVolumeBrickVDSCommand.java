@@ -12,7 +12,7 @@ public class ResetGlusterVolumeBrickVDSCommand<P extends ResetGlusterVolumeBrick
         status = getBroker().glusterVolumeResetBrickStart(getParameters().getVolumeName(),
                 getParameters().getExistingBrickDir());
         if (status.status.code == 0) {
-             status = getBroker().glusterVolumeResetBrickCommitForce(getParameters().getVolumeName(),
+            status = getBroker().glusterVolumeResetBrickCommitForce(getParameters().getVolumeName(),
                     getParameters().getExistingBrickDir());
         }
         proceedProxyReturnValue();

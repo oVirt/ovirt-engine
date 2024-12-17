@@ -52,9 +52,9 @@ public class ConvertVmVDSCommand<T extends ConvertVmVDSParameters> extends VdsBr
         List<Map<String, String>> disks = new ArrayList<>();
         for (final DiskImage disk : getParameters().getDisks()) {
             disks.add(new HashMap<String, String>() {{
-                put(VdsProperties.ImageId, disk.getId().toString());
-                put(VdsProperties.VolumeId, disk.getImageId().toString());
-            }});
+                    put(VdsProperties.ImageId, disk.getId().toString());
+                    put(VdsProperties.VolumeId, disk.getImageId().toString());
+                }});
         }
         return disks;
     }

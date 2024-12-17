@@ -146,13 +146,13 @@ public class MappingLocator {
                 // REVISIT support non-static mapping methods also
                 return to.cast(method.invoke(null, from, template));
             } catch (InvocationTargetException ite) {
-              if (ite.getTargetException() instanceof MalformedIdException) {
-                   throw (MalformedIdException) ite.getTargetException();
-              } else if (ite.getTargetException() instanceof WebApplicationException) {
-                  throw (WebApplicationException) ite.getTargetException();
-              } else {
-                  throw new MappingException(ite);
-              }
+                if (ite.getTargetException() instanceof MalformedIdException) {
+                    throw (MalformedIdException) ite.getTargetException();
+                } else if (ite.getTargetException() instanceof WebApplicationException) {
+                    throw (WebApplicationException) ite.getTargetException();
+                } else {
+                    throw new MappingException(ite);
+                }
             } catch (IllegalAccessException e) {
                 throw new MappingException(e);
             }

@@ -13,7 +13,7 @@ import org.ovirt.engine.core.dao.EventDao;
  * This query returns the event-subscription for the specified user and event.
  */
 public class GetEventSubscriptionQuery <P extends GetEventSubscriptionQueryParameters>
-extends QueriesCommandBase<P> {
+    extends QueriesCommandBase<P> {
 
     @Inject
     private EventDao eventDao;

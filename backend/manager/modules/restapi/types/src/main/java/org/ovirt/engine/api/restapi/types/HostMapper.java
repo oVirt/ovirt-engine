@@ -451,52 +451,52 @@ public class HostMapper {
     @Mapping(from = VDSStatus.class, to = HostStatus.class)
     public static HostStatus map(VDSStatus entityStatus, HostStatus template) {
         switch (entityStatus) {
-        case Unassigned:
-            return HostStatus.UNASSIGNED;
-        case Down:
-            return HostStatus.DOWN;
-        case Maintenance:
-            return HostStatus.MAINTENANCE;
-        case Up:
-            return HostStatus.UP;
-        case NonResponsive:
-            return HostStatus.NON_RESPONSIVE;
-        case Error:
-            return HostStatus.ERROR;
-        case Installing:
-            return HostStatus.INSTALLING;
-        case InstallFailed:
-            return HostStatus.INSTALL_FAILED;
-        case Reboot:
-            return HostStatus.REBOOT;
-        case PreparingForMaintenance:
-            return HostStatus.PREPARING_FOR_MAINTENANCE;
-        case NonOperational:
-            return HostStatus.NON_OPERATIONAL;
-        case PendingApproval:
-            return HostStatus.PENDING_APPROVAL;
-        case Initializing:
-            return HostStatus.INITIALIZING;
-        case Connecting:
-            return HostStatus.CONNECTING;
-        case InstallingOS:
-            return HostStatus.INSTALLING_OS;
-        case Kdumping:
-            return HostStatus.KDUMPING;
-        default:
-            return null;
+            case Unassigned:
+                return HostStatus.UNASSIGNED;
+            case Down:
+                return HostStatus.DOWN;
+            case Maintenance:
+                return HostStatus.MAINTENANCE;
+            case Up:
+                return HostStatus.UP;
+            case NonResponsive:
+                return HostStatus.NON_RESPONSIVE;
+            case Error:
+                return HostStatus.ERROR;
+            case Installing:
+                return HostStatus.INSTALLING;
+            case InstallFailed:
+                return HostStatus.INSTALL_FAILED;
+            case Reboot:
+                return HostStatus.REBOOT;
+            case PreparingForMaintenance:
+                return HostStatus.PREPARING_FOR_MAINTENANCE;
+            case NonOperational:
+                return HostStatus.NON_OPERATIONAL;
+            case PendingApproval:
+                return HostStatus.PENDING_APPROVAL;
+            case Initializing:
+                return HostStatus.INITIALIZING;
+            case Connecting:
+                return HostStatus.CONNECTING;
+            case InstallingOS:
+                return HostStatus.INSTALLING_OS;
+            case Kdumping:
+                return HostStatus.KDUMPING;
+            default:
+                return null;
         }
     }
 
     @Mapping(from = VDSType.class, to = HostType.class)
     public static HostType map(VDSType type, HostType template) {
         switch (type) {
-        case VDS:
-            return HostType.RHEL;
-        case oVirtNode:
-            return HostType.OVIRT_NODE;
-        default:
-            return null;
+            case VDS:
+                return HostType.RHEL;
+            case oVirtNode:
+                return HostType.OVIRT_NODE;
+            default:
+                return null;
         }
     }
 
@@ -517,14 +517,14 @@ public class HostMapper {
 
     private static VdsOperationActionParameters.AuthenticationMethod mapSshAuthenticationMethod(SshAuthenticationMethod method) {
         switch (method) {
-        case PASSWORD:
-            return VdsOperationActionParameters.AuthenticationMethod.Password;
+            case PASSWORD:
+                return VdsOperationActionParameters.AuthenticationMethod.Password;
 
-        case PUBLICKEY:
-            return VdsOperationActionParameters.AuthenticationMethod.PublicKey;
+            case PUBLICKEY:
+                return VdsOperationActionParameters.AuthenticationMethod.PublicKey;
 
-        default:
-            return VdsOperationActionParameters.AuthenticationMethod.Password;
+            default:
+                return VdsOperationActionParameters.AuthenticationMethod.Password;
         }
     }
 
@@ -540,7 +540,7 @@ public class HostMapper {
                     }
                 }
                 if (action.getSsh().getUser().isSetUserName()) {
-                      params.getvds().setSshUsername(action.getSsh().getUser().getUserName());
+                    params.getvds().setSshUsername(action.getSsh().getUser().getUserName());
                 }
             }
             if (action.getSsh().isSetPort()) {
@@ -576,7 +576,7 @@ public class HostMapper {
                     }
                 }
                 if (host.getSsh().getUser().isSetUserName()) {
-                      params.getvds().setSshUsername(host.getSsh().getUser().getUserName());
+                    params.getvds().setSshUsername(host.getSsh().getUser().getUserName());
                 }
             }
             if (host.getSsh().isSetPort()) {
@@ -663,17 +663,17 @@ public class HostMapper {
         AutoNumaStatus result = null;
         if (autoNumaStatus != null) {
             switch (autoNumaStatus) {
-            case DISABLE:
-                result = AutoNumaStatus.DISABLE;
-                break;
-            case ENABLE:
-                result = AutoNumaStatus.ENABLE;
-                break;
-            case UNKNOWN:
-                result = AutoNumaStatus.UNKNOWN;
-                break;
-            default:
-                break;
+                case DISABLE:
+                    result = AutoNumaStatus.DISABLE;
+                    break;
+                case ENABLE:
+                    result = AutoNumaStatus.ENABLE;
+                    break;
+                case UNKNOWN:
+                    result = AutoNumaStatus.UNKNOWN;
+                    break;
+                default:
+                    break;
             }
         }
         return result;
@@ -717,14 +717,14 @@ public class HostMapper {
     @Mapping(from = FenceProxySourceType.class, to = PmProxyType.class)
     private static PmProxyType map(FenceProxySourceType fenceProxySource, PmProxyType template) {
         switch (fenceProxySource) {
-        case CLUSTER :
-            return PmProxyType.CLUSTER;
-        case DC:
-            return PmProxyType.DC;
-        case OTHER_DC:
-            return PmProxyType.OTHER_DC;
-        default:
-            return null;
+            case CLUSTER :
+                return PmProxyType.CLUSTER;
+            case DC:
+                return PmProxyType.DC;
+            case OTHER_DC:
+                return PmProxyType.OTHER_DC;
+            default:
+                return null;
         }
     }
 
@@ -736,4 +736,4 @@ public class HostMapper {
         cpuUnit.setCpuId(vdsCpuUnit.getCpu());
         return cpuUnit;
     }
- }
+}

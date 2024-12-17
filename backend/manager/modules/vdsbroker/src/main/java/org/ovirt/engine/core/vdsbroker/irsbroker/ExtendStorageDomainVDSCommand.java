@@ -28,13 +28,13 @@ public class ExtendStorageDomainVDSCommand<P extends ExtendStorageDomainVDSComma
     protected void proceedProxyReturnValue() {
         EngineError returnStatus = getReturnValueFromStatus(getReturnStatus());
         switch (returnStatus) {
-        case DeviceNotFound:
-            getVDSReturnValue().setSucceeded(false);
-            break;
-        default:
-            super.proceedProxyReturnValue();
-            initializeVdsError(returnStatus);
-            break;
+            case DeviceNotFound:
+                getVDSReturnValue().setSucceeded(false);
+                break;
+            default:
+                super.proceedProxyReturnValue();
+                initializeVdsError(returnStatus);
+                break;
         }
     }
 }

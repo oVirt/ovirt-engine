@@ -16,9 +16,9 @@ class SyntaxContainerTest {
      */
     @ParameterizedTest
     @ValueSource(strings = {
-            "Users: type=user and vm.id=12345678-1234-1234-1234-1234-123456789012",
-            "Users: type=user and tag = foo",
-            "Hosts: tag=foo"
+        "Users: type=user and vm.id=12345678-1234-1234-1234-1234-123456789012",
+        "Users: type=user and tag = foo",
+        "Hosts: tag=foo"
     })
     void searchUsingTags(String searchText) {
         SyntaxChecker sc = new SyntaxChecker();
@@ -34,13 +34,13 @@ class SyntaxContainerTest {
      */
     @ParameterizedTest
     @ValueSource(strings = {
-            "Users:",
-            "Users: type=user",
-            "Users: type=group",
-            "Hosts:",
-            "Vms:",
-            "Datacenters:",
-            "Clusters:"
+        "Users:",
+        "Users: type=user",
+        "Users: type=group",
+        "Hosts:",
+        "Vms:",
+        "Datacenters:",
+        "Clusters:"
     })
     void searchNotUsingTags(String searchText) {
         SyntaxChecker sc = new SyntaxChecker();

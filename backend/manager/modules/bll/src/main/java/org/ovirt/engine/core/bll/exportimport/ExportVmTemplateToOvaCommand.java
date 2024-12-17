@@ -94,18 +94,18 @@ public class ExportVmTemplateToOvaCommand<T extends ExportOvaParameters> extends
     @Override
     public AuditLogType getAuditLogTypeValue() {
         switch (getActionState()) {
-        case EXECUTE:
-            return getSucceeded() ?
-                    AuditLogType.IMPORTEXPORT_STARTING_EXPORT_TEMPLATE_TO_OVA
-                    : AuditLogType.IMPORTEXPORT_EXPORT_TEMPLATE_TO_OVA_FAILED;
+            case EXECUTE:
+                return getSucceeded() ?
+                        AuditLogType.IMPORTEXPORT_STARTING_EXPORT_TEMPLATE_TO_OVA
+                        : AuditLogType.IMPORTEXPORT_EXPORT_TEMPLATE_TO_OVA_FAILED;
 
-        case END_SUCCESS:
-            return getSucceeded() ?
-                    AuditLogType.IMPORTEXPORT_EXPORT_TEMPLATE_TO_OVA
-                    : AuditLogType.IMPORTEXPORT_EXPORT_TEMPLATE_TO_OVA_FAILED;
+            case END_SUCCESS:
+                return getSucceeded() ?
+                        AuditLogType.IMPORTEXPORT_EXPORT_TEMPLATE_TO_OVA
+                        : AuditLogType.IMPORTEXPORT_EXPORT_TEMPLATE_TO_OVA_FAILED;
 
-        default:
-            return AuditLogType.IMPORTEXPORT_EXPORT_TEMPLATE_TO_OVA_FAILED;
+            default:
+                return AuditLogType.IMPORTEXPORT_EXPORT_TEMPLATE_TO_OVA_FAILED;
         }
     }
 

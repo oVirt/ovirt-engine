@@ -67,7 +67,7 @@ public class ImportHostedEngineStorageDomainCommand<T extends StorageDomainManag
     private StorageDomain heStorageDomain;
 
     static final StorageType[] SUPPORTED_DOMAIN_TYPES =
-            { StorageType.NFS, StorageType.FCP, StorageType.GLUSTERFS, StorageType.ISCSI };
+        { StorageType.NFS, StorageType.FCP, StorageType.GLUSTERFS, StorageType.ISCSI };
 
     public ImportHostedEngineStorageDomainCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
@@ -116,17 +116,17 @@ public class ImportHostedEngineStorageDomainCommand<T extends StorageDomainManag
 
         ActionType actionType = null;
         switch (heStorageDomain.getStorageType()) {
-        case NFS:
-        case GLUSTERFS:
-            actionType = ActionType.AddExistingFileStorageDomain;
-            addStorageServerConnection();
-            break;
-        case ISCSI:
-            discoverBlockConnectionDetails();
-        case FCP:
-            actionType = ActionType.AddExistingBlockStorageDomain;
-            removeHostedEngineLunDisk();
-            break;
+            case NFS:
+            case GLUSTERFS:
+                actionType = ActionType.AddExistingFileStorageDomain;
+                addStorageServerConnection();
+                break;
+            case ISCSI:
+                discoverBlockConnectionDetails();
+            case FCP:
+                actionType = ActionType.AddExistingBlockStorageDomain;
+                removeHostedEngineLunDisk();
+                break;
         }
 
         if (getSucceeded()) {

@@ -132,14 +132,14 @@ public class FenceAgentExecutor {
 
     private Object getActionText(FenceActionType action) {
         switch (action) {
-        case START:
-            return "fence action: 'Start'";
-        case STOP:
-            return "fence action: 'Stop'";
-        case STATUS:
-            return "fence status-check";
-        default:
-            return ""; // won't happen
+            case START:
+                return "fence action: 'Start'";
+            case STOP:
+                return "fence action: 'Stop'";
+            case STATUS:
+                return "fence status-check";
+            default:
+                return ""; // won't happen
         }
     }
 

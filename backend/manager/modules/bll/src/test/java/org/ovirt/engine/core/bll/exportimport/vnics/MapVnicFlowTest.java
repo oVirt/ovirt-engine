@@ -164,7 +164,7 @@ public class MapVnicFlowTest {
     public void testSetB() {
 
         mock();
-        dataPoints.allProfileCombinations.forEach( dataPoint -> {
+        dataPoints.allProfileCombinations.forEach(dataPoint -> {
             printDataPointDetails(null, (ExternalVnicProfileMapping) dataPoint[1], testCount++, "set B");
             testInner((VmNetworkInterface) dataPoint[0], (ExternalVnicProfileMapping) dataPoint[1], (VmNetworkInterface) dataPoint[2]);
         });

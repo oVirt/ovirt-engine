@@ -14,7 +14,7 @@ public class ObjectDescriptor {
         if (object instanceof Iterable) {
             toStringBuilder((Iterable<Object>) object, builder);
         } else if (object instanceof Object[]) {
-                toStringBuilder(Arrays.asList((Object[]) object), builder);
+            toStringBuilder(Arrays.asList((Object[]) object), builder);
         } else if (object instanceof Map) {
             toStringBuilder((Map<String, Object>) object, builder);
         } else {

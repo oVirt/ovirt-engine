@@ -242,21 +242,21 @@ public abstract class PoolModelBehaviorBase extends VmModelBehaviorBase<PoolMode
         getModel().getNumOfDesktops().validateEntity(
 
                 new IValidation[] {
-                        new NotEmptyValidation(),
-                        new LengthValidation(4),
-                        new IntegerValidation(isNew ? 1 : 0, isNew ? maxAllowedVms : maxAllowedVms - assignedVms)
+                    new NotEmptyValidation(),
+                    new LengthValidation(4),
+                    new IntegerValidation(isNew ? 1 : 0, isNew ? maxAllowedVms : maxAllowedVms - assignedVms)
                 });
 
         getModel().getPrestartedVms().validateEntity(
                 new IValidation[] {
-                        new NotEmptyValidation(),
-                        new IntegerValidation(0, futureNumOfDesktops)
+                    new NotEmptyValidation(),
+                    new IntegerValidation(0, futureNumOfDesktops)
                 });
 
         getModel().getMaxAssignedVmsPerUser().validateEntity(
                 new IValidation[] {
-                        new NotEmptyValidation(),
-                        new IntegerValidation(1, futureNumOfDesktops)
+                    new NotEmptyValidation(),
+                    new IntegerValidation(1, futureNumOfDesktops)
                 });
 
         getModel().setValidTab(TabName.GENERAL_TAB, getModel().isValidTab(TabName.GENERAL_TAB)

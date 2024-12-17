@@ -86,10 +86,10 @@ public class SetupNetworksBondModel extends Model {
 
     public boolean validate(boolean customBondNameSupported) {
         getBond().validateSelectedItem(new IValidation[] { new NotEmptyValidation(),
-                new LengthValidation(BusinessEntitiesDefinitions.HOST_NIC_NAME_LENGTH),
-                customBondNameSupported ?
-                        CUSTOM_BOND_NAME_VALIDATION :
-                        NUM_ONLY_BOND_NAME_VALIDATION });
+            new LengthValidation(BusinessEntitiesDefinitions.HOST_NIC_NAME_LENGTH),
+            customBondNameSupported ?
+                CUSTOM_BOND_NAME_VALIDATION :
+                NUM_ONLY_BOND_NAME_VALIDATION });
         getCustomBondEditor().setIsValid(true);
         if (getBondingOptions().getSelectedItem().getKey().equals(CUSTOM_BONDING_MODE)) {
             getCustomBondEditor().validateEntity(new IValidation[] { new KeyValueFormatValidation() });

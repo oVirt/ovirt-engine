@@ -76,8 +76,8 @@ public class DaysOfMonthSelector extends Composite implements TakesValue<String>
             className = style.selectedFlexTableCell();
         }
         daysOfMonth.getCellFormatter()
-        .getElement(getRowForTheDay(date), getColumnForTheDay(date))
-        .setClassName(className);
+            .getElement(getRowForTheDay(date), getColumnForTheDay(date))
+            .setClassName(className);
     }
 
     private void showDaysOfMonth() {

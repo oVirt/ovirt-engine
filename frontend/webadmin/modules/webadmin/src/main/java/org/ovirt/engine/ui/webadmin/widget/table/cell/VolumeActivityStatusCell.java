@@ -34,43 +34,43 @@ public class VolumeActivityStatusCell<T extends GlusterTaskSupport> extends Abst
 
         if (taskType == GlusterTaskType.REBALANCE) {
             switch (value.getAsyncTask().getStatus()) {
-            case STARTED:
-                taskImage = resources.rebalanceRunning();
-                break;
-            case ABORTED:
-                taskImage = resources.rebalanceStoppped();
-                break;
-            case FAILED:
-                taskImage = resources.rebalanceFailed();
-                break;
-            case FINISHED:
-                taskImage = resources.rebalanceCompleted();
-                break;
-            case UNKNOWN:
-                taskImage = resources.questionMarkImage();
-                break;
-            default:
-                taskImage = null;
+                case STARTED:
+                    taskImage = resources.rebalanceRunning();
+                    break;
+                case ABORTED:
+                    taskImage = resources.rebalanceStoppped();
+                    break;
+                case FAILED:
+                    taskImage = resources.rebalanceFailed();
+                    break;
+                case FINISHED:
+                    taskImage = resources.rebalanceCompleted();
+                    break;
+                case UNKNOWN:
+                    taskImage = resources.questionMarkImage();
+                    break;
+                default:
+                    taskImage = null;
             }
         } else if (taskType == GlusterTaskType.REMOVE_BRICK) {
             switch (value.getAsyncTask().getStatus()) {
-            case STARTED:
-                taskImage = resources.removeBrickRunning();
-                break;
-            case ABORTED:
-                taskImage = resources.removeBrickStopped();
-                break;
-            case FAILED:
-                taskImage = resources.removeBrickFailed();
-                break;
-            case FINISHED:
-                taskImage = resources.removeBrickCommitRequired();
-                break;
-            case UNKNOWN:
-                taskImage = resources.questionMarkImage();
-                break;
-            default:
-                taskImage = null;
+                case STARTED:
+                    taskImage = resources.removeBrickRunning();
+                    break;
+                case ABORTED:
+                    taskImage = resources.removeBrickStopped();
+                    break;
+                case FAILED:
+                    taskImage = resources.removeBrickFailed();
+                    break;
+                case FINISHED:
+                    taskImage = resources.removeBrickCommitRequired();
+                    break;
+                case UNKNOWN:
+                    taskImage = resources.questionMarkImage();
+                    break;
+                default:
+                    taskImage = null;
             }
         }
 

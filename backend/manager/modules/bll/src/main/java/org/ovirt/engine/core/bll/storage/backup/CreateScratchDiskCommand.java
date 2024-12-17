@@ -200,7 +200,7 @@ public class CreateScratchDiskCommand<T extends AddDiskParameters> extends Comma
                 return AuditLogType.VM_BACKUP_SCRATCH_DISK_CREATION_FAILED;
             default:
                 return AuditLogType.VM_BACKUP_SCRATCH_DISK_CREATION_FAILED;
-            }
+        }
     }
 
     @Override

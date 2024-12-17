@@ -381,7 +381,7 @@ public abstract class MoveOrCopyDiskModel extends DisksAllocationModel implement
             }
 
             diskModel.getAlias().validateEntity(new IValidation[] { new NotEmptyValidation(), new I18NNameValidation(),
-                    new LengthValidation(255)});
+                new LengthValidation(255)});
             isValid &= diskModel.getAlias().getIsValid();
 
         }

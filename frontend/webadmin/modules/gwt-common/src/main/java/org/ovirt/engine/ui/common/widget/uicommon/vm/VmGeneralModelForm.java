@@ -166,7 +166,7 @@ public class VmGeneralModelForm extends AbstractModelBoundFormWidget<VmGeneralMo
                 return !(fqdn == null || fqdn.isEmpty());
             }
         });
-        formBuilder.addFormItem(new FormItem(constants.timeZoneVm(), timeZone, 9, 2 ) {
+        formBuilder.addFormItem(new FormItem(constants.timeZoneVm(), timeZone, 9, 2) {
             @Override
             public boolean getIsAvailable() {
                 return getModel().getHasTimeZone();

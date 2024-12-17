@@ -154,7 +154,7 @@ public abstract class AbstractSubTabTree<M extends SearchableListModel, R, N> ex
         tree.clear();
 
         if (rootItems == null) {
-                return;
+            return;
         }
 
         for (R root : rootItems) {

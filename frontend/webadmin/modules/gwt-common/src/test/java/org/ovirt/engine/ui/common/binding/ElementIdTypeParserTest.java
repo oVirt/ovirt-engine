@@ -93,16 +93,16 @@ public class ElementIdTypeParserTest {
         stubPassingField(ownerTypeParentField, ownerTypeParentFieldType, "ownerTypeParentField"); //$NON-NLS-1$
 
         Set<? extends JClassType> ownerTypeParentFieldTypeFlattenedSupertypeHierarchy =
-                Collections.singleton(ownerTypeParentFieldType);
+            Collections.singleton(ownerTypeParentFieldType);
         doReturn(ownerTypeParentFieldTypeFlattenedSupertypeHierarchy).when(ownerTypeParentFieldType)
-                .getFlattenedSupertypeHierarchy();
+            .getFlattenedSupertypeHierarchy();
         when(ownerTypeParentFieldType.getFields()).thenReturn(new JField[] {
-                ownerTypeParentFieldTypeSubField1, ownerTypeParentFieldTypeSubField2 });
+            ownerTypeParentFieldTypeSubField1, ownerTypeParentFieldTypeSubField2 });
 
         stubPassingField(ownerTypeParentFieldTypeSubField1, ownerTypeParentFieldTypeSubField1Type,
-                "ownerTypeParentFieldTypeSubField1"); //$NON-NLS-1$
+            "ownerTypeParentFieldTypeSubField1"); //$NON-NLS-1$
         stubPassingField(ownerTypeParentFieldTypeSubField2, mock(JClassType.class),
-                "ownerTypeParentFieldTypeSubField2"); //$NON-NLS-1$
+            "ownerTypeParentFieldTypeSubField2"); //$NON-NLS-1$
     }
 
     void stubPassingField(JField field, JClassType fieldType, String fieldName) {

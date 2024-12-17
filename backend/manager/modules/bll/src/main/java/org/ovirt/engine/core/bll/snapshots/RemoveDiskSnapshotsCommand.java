@@ -433,8 +433,8 @@ public class RemoveDiskSnapshotsCommand<T extends RemoveDiskSnapshotsParameters>
             }
         } catch (InterruptedException | ExecutionException e) {
             log.error("Error removing snapshots for Cinder disks");
-             endWithFailure();
-             getParameters().setTaskGroupSuccess(false);
+            endWithFailure();
+            getParameters().setTaskGroupSuccess(false);
         }
     }
 
@@ -578,14 +578,14 @@ public class RemoveDiskSnapshotsCommand<T extends RemoveDiskSnapshotsParameters>
     public AuditLogType getAuditLogTypeValue() {
         addAuditLogCustomValues();
         switch (getActionState()) {
-        case EXECUTE:
-            return AuditLogType.USER_REMOVE_DISK_SNAPSHOT;
+            case EXECUTE:
+                return AuditLogType.USER_REMOVE_DISK_SNAPSHOT;
 
-        case END_SUCCESS:
-            return AuditLogType.USER_REMOVE_DISK_SNAPSHOT_FINISHED_SUCCESS;
+            case END_SUCCESS:
+                return AuditLogType.USER_REMOVE_DISK_SNAPSHOT_FINISHED_SUCCESS;
 
-        case END_FAILURE:
-            return AuditLogType.USER_REMOVE_DISK_SNAPSHOT_FINISHED_FAILURE;
+            case END_FAILURE:
+                return AuditLogType.USER_REMOVE_DISK_SNAPSHOT_FINISHED_FAILURE;
         }
         return AuditLogType.UNASSIGNED;
     }

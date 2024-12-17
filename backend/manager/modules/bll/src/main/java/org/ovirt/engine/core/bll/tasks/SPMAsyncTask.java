@@ -183,27 +183,27 @@ public class SPMAsyncTask implements SPMTask {
     public void updateTask(AsyncTaskStatus returnTaskStatus) {
         try {
             switch (getState()) {
-            case Polling:
-                // Get the returned task
-                returnTaskStatus = checkTaskExist(returnTaskStatus);
-                if (returnTaskStatus.getStatus() != getLastTaskStatus().getStatus()) {
-                    addLogStatusTask(returnTaskStatus);
-                }
-                setLastTaskStatus(returnTaskStatus);
+                case Polling:
+                    // Get the returned task
+                    returnTaskStatus = checkTaskExist(returnTaskStatus);
+                    if (returnTaskStatus.getStatus() != getLastTaskStatus().getStatus()) {
+                        addLogStatusTask(returnTaskStatus);
+                    }
+                    setLastTaskStatus(returnTaskStatus);
 
-                if (!getLastTaskStatus().getTaskIsRunning()) {
+                    if (!getLastTaskStatus().getTaskIsRunning()) {
+                        handleEndedTask();
+                    }
+                    break;
+
+                case Ended:
                     handleEndedTask();
-                }
-                break;
+                    break;
 
-            case Ended:
-                handleEndedTask();
-                break;
-
-            // Try to clear task which failed to be cleared before SPM and DB
-            case ClearFailed:
-                clearAsyncTask();
-                break;
+                // Try to clear task which failed to be cleared before SPM and DB
+                case ClearFailed:
+                    clearAsyncTask();
+                    break;
             }
         } catch (RuntimeException e) {
             log.error("BaseAsyncTask::PollAndUpdateTask: Handling task '{}' (State '{}', Parent Command '{}'."

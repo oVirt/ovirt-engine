@@ -44,8 +44,8 @@ public class VmStaticDaoTest extends BaseGenericDaoTestCase<Guid, VmStatic, VmSt
     }
 
     protected static final Guid[] HOST_GUIDS = { FixturesTool.HOST_WITH_NO_VFS_CONFIGS_ID,
-            FixturesTool.HOST_ID,
-            FixturesTool.GLUSTER_BRICK_SERVER1};
+        FixturesTool.HOST_ID,
+        FixturesTool.GLUSTER_BRICK_SERVER1};
 
     private static final String RUNNING_NAME_WITH_LEASE_ON_STORAGE_DOMAIN = "rhel5-pool-57";
 

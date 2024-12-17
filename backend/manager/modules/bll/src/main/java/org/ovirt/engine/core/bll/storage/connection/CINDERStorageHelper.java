@@ -108,7 +108,7 @@ public class CINDERStorageHelper extends StorageHelperBase {
     }
 
     public Pair<Boolean, EngineFault> registerLibvirtSecrets
-            (StorageDomain storageDomain, VDS vds, List<LibvirtSecret> libvirtSecrets) {
+    (StorageDomain storageDomain, VDS vds, List<LibvirtSecret> libvirtSecrets) {
         VDSReturnValue returnValue;
         if (!libvirtSecrets.isEmpty()) {
             try {

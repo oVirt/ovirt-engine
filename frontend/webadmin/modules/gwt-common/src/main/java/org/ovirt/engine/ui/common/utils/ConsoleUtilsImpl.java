@@ -42,16 +42,16 @@ public class ConsoleUtilsImpl implements ConsoleUtils {
     @Override
     public boolean isBrowserPluginSupported(ConsoleProtocol protocol) {
         switch (protocol) {
-        case RDP:
-            if (clientAgentType.os.equalsIgnoreCase("Windows")//$NON-NLS-1$
-                    && clientAgentType.isIE()
-                    && clientAgentType.version >= 7.0
-                    || clientAgentType.isIE11()) {
-                return true;
-            }
-            return false;
-        default:
-            return false;
+            case RDP:
+                if (clientAgentType.os.equalsIgnoreCase("Windows")//$NON-NLS-1$
+                        && clientAgentType.isIE()
+                        && clientAgentType.version >= 7.0
+                        || clientAgentType.isIE11()) {
+                    return true;
+                }
+                return false;
+            default:
+                return false;
         }
     }
 

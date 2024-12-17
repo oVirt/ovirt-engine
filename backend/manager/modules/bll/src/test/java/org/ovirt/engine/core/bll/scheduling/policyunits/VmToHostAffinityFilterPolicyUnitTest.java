@@ -75,8 +75,7 @@ public class VmToHostAffinityFilterPolicyUnitTest extends VmToHostAffinityPolicy
         List<AffinityGroup> affinityGroups = Arrays.asList(negative_enforcing_group);
         doReturn(affinityGroups).when(affinityGroupDao).getAllAffinityGroupsWithFlatLabelsByVmId(any());
 
-        assertThat(unit.filter(context, hosts, vm, new PerHostMessages())).contains
-                (host_not_in_affinity_group);
+        assertThat(unit.filter(context, hosts, vm, new PerHostMessages())).contains(host_not_in_affinity_group);
     }
 
     @Test

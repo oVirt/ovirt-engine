@@ -287,7 +287,7 @@ public class ExtendImageSizeCommand<T extends ExtendImageSizeParameters> extends
 
             for (Pair<VM, VmDevice> pair : attachedVmsInfo) {
                 if (Boolean.TRUE.equals(pair.getSecond().isPlugged()) && pair.getSecond().getSnapshotId() == null) {
-                   vmsDiskPluggedTo.add(pair.getFirst());
+                    vmsDiskPluggedTo.add(pair.getFirst());
                 }
             }
         }

@@ -495,16 +495,16 @@ public class VmBaseMapper {
         model.setMultiQueuesEnabled(entity.isMultiQueuesEnabled());
 
         switch (entity.getVirtioScsiMultiQueues()) {
-        case -1:
-            model.setVirtioScsiMultiQueuesEnabled(true);
-            break;
-        case 0:
-            model.setVirtioScsiMultiQueuesEnabled(false);
-            break;
-        default:
-            model.setVirtioScsiMultiQueuesEnabled(true);
-            model.setVirtioScsiMultiQueues(entity.getVirtioScsiMultiQueues());
-            break;
+            case -1:
+                model.setVirtioScsiMultiQueuesEnabled(true);
+                break;
+            case 0:
+                model.setVirtioScsiMultiQueuesEnabled(false);
+                break;
+            default:
+                model.setVirtioScsiMultiQueuesEnabled(true);
+                model.setVirtioScsiMultiQueues(entity.getVirtioScsiMultiQueues());
+                break;
         }
 
         if (entity.isUseHostCpuFlags()) {
@@ -601,14 +601,14 @@ public class VmBaseMapper {
             return null;
         }
         switch (type) {
-        case DESKTOP:
-            return org.ovirt.engine.core.common.businessentities.VmType.Desktop;
-        case SERVER:
-            return org.ovirt.engine.core.common.businessentities.VmType.Server;
-        case HIGH_PERFORMANCE:
-            return org.ovirt.engine.core.common.businessentities.VmType.HighPerformance;
-        default:
-            throw new IllegalArgumentException("Unknown virtual machine type \"" + type + "\"");
+            case DESKTOP:
+                return org.ovirt.engine.core.common.businessentities.VmType.Desktop;
+            case SERVER:
+                return org.ovirt.engine.core.common.businessentities.VmType.Server;
+            case HIGH_PERFORMANCE:
+                return org.ovirt.engine.core.common.businessentities.VmType.HighPerformance;
+            default:
+                throw new IllegalArgumentException("Unknown virtual machine type \"" + type + "\"");
         }
     }
 
@@ -617,14 +617,14 @@ public class VmBaseMapper {
             return null;
         }
         switch (type) {
-        case Desktop:
-            return VmType.DESKTOP;
-        case Server:
-            return VmType.SERVER;
-        case HighPerformance:
-            return VmType.HIGH_PERFORMANCE;
-        default:
-            throw new IllegalArgumentException("Unknown virtual machine type \"" + type + "\"");
+            case Desktop:
+                return VmType.DESKTOP;
+            case Server:
+                return VmType.SERVER;
+            case HighPerformance:
+                return VmType.HIGH_PERFORMANCE;
+            default:
+                throw new IllegalArgumentException("Unknown virtual machine type \"" + type + "\"");
         }
     }
 
@@ -632,14 +632,14 @@ public class VmBaseMapper {
     public static MigrationSupport map(VmAffinity vmAffinity, MigrationSupport template) {
         if (vmAffinity != null) {
             switch (vmAffinity) {
-            case MIGRATABLE:
-                return MigrationSupport.MIGRATABLE;
-            case USER_MIGRATABLE:
-                return MigrationSupport.IMPLICITLY_NON_MIGRATABLE;
-            case PINNED:
-                return MigrationSupport.PINNED_TO_HOST;
-            default:
-                return null;
+                case MIGRATABLE:
+                    return MigrationSupport.MIGRATABLE;
+                case USER_MIGRATABLE:
+                    return MigrationSupport.IMPLICITLY_NON_MIGRATABLE;
+                case PINNED:
+                    return MigrationSupport.PINNED_TO_HOST;
+                default:
+                    return null;
             }
         }
         return null;
@@ -649,14 +649,14 @@ public class VmBaseMapper {
     public static VmAffinity map(MigrationSupport migrationSupport, VmAffinity template) {
         if (migrationSupport != null) {
             switch (migrationSupport) {
-            case MIGRATABLE:
-                return VmAffinity.MIGRATABLE;
-            case IMPLICITLY_NON_MIGRATABLE:
-                return VmAffinity.USER_MIGRATABLE;
-            case PINNED_TO_HOST:
-                return VmAffinity.PINNED;
-            default:
-                return null;
+                case MIGRATABLE:
+                    return VmAffinity.MIGRATABLE;
+                case IMPLICITLY_NON_MIGRATABLE:
+                    return VmAffinity.USER_MIGRATABLE;
+                case PINNED_TO_HOST:
+                    return VmAffinity.PINNED;
+                default:
+                    return null;
             }
         }
         return null;

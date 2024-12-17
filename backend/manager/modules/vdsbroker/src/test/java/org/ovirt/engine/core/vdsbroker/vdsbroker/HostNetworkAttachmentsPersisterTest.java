@@ -224,7 +224,7 @@ public class HostNetworkAttachmentsPersisterTest {
 
     private void callPersistNetworkAttachmentsAndVerifyThatNetworkAttachmentIsSynced(NetworkAttachment attachment,
             HostNetworkAttachmentsPersister persister) {
-        when(networkAttachmentDao.getAllForHost(eq(hostId))).thenReturn(Collections.singletonList( attachment));
+        when(networkAttachmentDao.getAllForHost(eq(hostId))).thenReturn(Collections.singletonList(attachment));
 
         persister.persistNetworkAttachments();
         verify(networkAttachmentDao).getAllForHost(any());

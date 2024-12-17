@@ -178,8 +178,8 @@ public class DiskValidatorTest {
 
     @Test
     public void testDiskAttachedToAnyNonDownVMWithProblems() {
-        testDiskAttachedToAnyNonDownVMWithProblems
-                (false, "anotherPausedPlugged,runningSnapshotPlugged,vmPausedPlugged");
+        testDiskAttachedToAnyNonDownVMWithProblems(false,
+            "anotherPausedPlugged,runningSnapshotPlugged,vmPausedPlugged");
     }
 
     @Test

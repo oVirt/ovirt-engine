@@ -307,19 +307,19 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
                 // if the returned exception is such that shoudn't trigger the re-run process,
                 // re-throw it. otherwise, continue (the vm will be down and a re-run will be triggered)
                 switch (e.getErrorCode()) {
-                case Done: // should never get here with errorCode = 'Done' though
-                case exist:
-                    cleanupPassthroughVnics();
-                    reportCompleted();
-                    throw e;
-                case VDS_NETWORK_ERROR: // probably wrong xml format sent.
-                case PROVIDER_FAILURE:
-                case HOST_DEVICES_TAKEN_BY_OTHER_VM:
-                case INVALID_HA_VM_LEASE:
-                    runningFailed();
-                    throw e;
-                default:
-                    log.warn("Failed to run VM '{}': {}", getVmName(), e.getMessage());
+                    case Done: // should never get here with errorCode = 'Done' though
+                    case exist:
+                        cleanupPassthroughVnics();
+                        reportCompleted();
+                        throw e;
+                    case VDS_NETWORK_ERROR: // probably wrong xml format sent.
+                    case PROVIDER_FAILURE:
+                    case HOST_DEVICES_TAKEN_BY_OTHER_VM:
+                    case INVALID_HA_VM_LEASE:
+                        runningFailed();
+                        throw e;
+                    default:
+                        log.warn("Failed to run VM '{}': {}", getVmName(), e.getMessage());
                 }
 
             } finally {
@@ -384,14 +384,14 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
     @Override
     protected void executeVmCommand() {
         switch (getVm().getOrigin()) {
-        case KUBEVIRT:
-            runKubevirtVm();
-            break;
-        default:
-            getVmManager().setPowerOffTimeout(System.nanoTime());
-            setActionReturnValue(VMStatus.Down);
-            initVm();
-            perform();
+            case KUBEVIRT:
+                runKubevirtVm();
+                break;
+            default:
+                getVmManager().setPowerOffTimeout(System.nanoTime());
+                setActionReturnValue(VMStatus.Down);
+                initVm();
+                perform();
         }
     }
 
@@ -428,13 +428,13 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
         }
 
         switch (getVm().getStatus()) {
-        case Paused:
-            return setFlow(RunVmFlow.RESUME_PAUSE);
+            case Paused:
+                return setFlow(RunVmFlow.RESUME_PAUSE);
 
-        case Suspended:
-            return setFlow(RunVmFlow.RESUME_HIBERNATE);
+            case Suspended:
+                return setFlow(RunVmFlow.RESUME_HIBERNATE);
 
-        default:
+            default:
         }
 
         if (isRunAsStateless()) {
@@ -460,22 +460,22 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
 
     protected void perform() {
         switch (getFlow()) {
-        case RESUME_PAUSE:
-            resumeVm();
-            break;
+            case RESUME_PAUSE:
+                resumeVm();
+                break;
 
-        case REMOVE_STATELESS_IMAGES:
-            removeStatlessSnapshot();
-            break;
+            case REMOVE_STATELESS_IMAGES:
+                removeStatlessSnapshot();
+                break;
 
-        case CREATE_STATELESS_IMAGES:
-            createStatelessSnapshot();
-            break;
+            case CREATE_STATELESS_IMAGES:
+                createStatelessSnapshot();
+                break;
 
-        case RESUME_HIBERNATE:
-        case RUN:
-        default:
-            runVm();
+            case RESUME_HIBERNATE:
+            case RUN:
+            default:
+                runVm();
         }
     }
 
@@ -683,61 +683,61 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
     @Override
     public AuditLogType getAuditLogTypeValue() {
         switch (getActionState()) {
-        case EXECUTE:
-            if (getFlow() == RunVmFlow.REMOVE_STATELESS_IMAGES) {
-                return AuditLogType.USER_RUN_VM_FAILURE_STATELESS_SNAPSHOT_LEFT;
-            }
-            if (getFlow() == RunVmFlow.RESUME_PAUSE) {
-                return getSucceeded() ? AuditLogType.USER_RESUME_VM : AuditLogType.USER_FAILED_RESUME_VM;
-            } else if (isInternalExecution()) {
-                if (getSucceeded()) {
-                    boolean isStateless = isStatelessSnapshotExistsForVm();
-                    if (isStateless) {
-                        return AuditLogType.VDS_INITIATED_RUN_VM_AS_STATELESS;
-                    } else if (getFlow() == RunVmFlow.CREATE_STATELESS_IMAGES) {
-                        return AuditLogType.VDS_INITIATED_RUN_AS_STATELESS_VM_NOT_YET_RUNNING;
-                    } else {
-                        return AuditLogType.VDS_INITIATED_RUN_VM;
+            case EXECUTE:
+                if (getFlow() == RunVmFlow.REMOVE_STATELESS_IMAGES) {
+                    return AuditLogType.USER_RUN_VM_FAILURE_STATELESS_SNAPSHOT_LEFT;
+                }
+                if (getFlow() == RunVmFlow.RESUME_PAUSE) {
+                    return getSucceeded() ? AuditLogType.USER_RESUME_VM : AuditLogType.USER_FAILED_RESUME_VM;
+                } else if (isInternalExecution()) {
+                    if (getSucceeded()) {
+                        boolean isStateless = isStatelessSnapshotExistsForVm();
+                        if (isStateless) {
+                            return AuditLogType.VDS_INITIATED_RUN_VM_AS_STATELESS;
+                        } else if (getFlow() == RunVmFlow.CREATE_STATELESS_IMAGES) {
+                            return AuditLogType.VDS_INITIATED_RUN_AS_STATELESS_VM_NOT_YET_RUNNING;
+                        } else {
+                            return AuditLogType.VDS_INITIATED_RUN_VM;
+                        }
                     }
+
+                    return AuditLogType.VDS_INITIATED_RUN_VM_FAILED;
+                } else {
+                    addCustomValue("DueToError", " ");
+                    return getSucceeded() ?
+                            getActionReturnValue() == VMStatus.Up ?
+                                isVmRunningOnNonDefaultVds() ?
+                                        AuditLogType.USER_RUN_VM_ON_NON_DEFAULT_VDS
+                                        : isStatelessSnapshotExistsForVm() ?
+                                                AuditLogType.USER_RUN_VM_AS_STATELESS
+                                                : AuditLogType.USER_RUN_VM
+                                    : _isRerun ?
+                                            AuditLogType.VDS_INITIATED_RUN_VM
+                                            : getVm().isRunAndPause() ?
+                                                    AuditLogType.USER_INITIATED_RUN_VM_AND_PAUSE
+                                                    : getFlow() == RunVmFlow.CREATE_STATELESS_IMAGES ?
+                                                            AuditLogType.USER_INITIATED_RUN_VM
+                                                            : AuditLogType.USER_STARTED_VM
+                            : _isRerun ? AuditLogType.USER_INITIATED_RUN_VM_FAILED : AuditLogType.USER_FAILED_RUN_VM;
                 }
 
-                return AuditLogType.VDS_INITIATED_RUN_VM_FAILED;
-            } else {
-                addCustomValue("DueToError", " ");
-                return getSucceeded() ?
-                        getActionReturnValue() == VMStatus.Up ?
-                               isVmRunningOnNonDefaultVds() ?
-                                       AuditLogType.USER_RUN_VM_ON_NON_DEFAULT_VDS
-                                       : isStatelessSnapshotExistsForVm() ?
-                                               AuditLogType.USER_RUN_VM_AS_STATELESS
-                                               : AuditLogType.USER_RUN_VM
-                                : _isRerun ?
-                                        AuditLogType.VDS_INITIATED_RUN_VM
-                                        : getVm().isRunAndPause() ?
-                                                AuditLogType.USER_INITIATED_RUN_VM_AND_PAUSE
-                                                : getFlow() == RunVmFlow.CREATE_STATELESS_IMAGES ?
-                                                        AuditLogType.USER_INITIATED_RUN_VM
-                                                        : AuditLogType.USER_STARTED_VM
-                        : _isRerun ? AuditLogType.USER_INITIATED_RUN_VM_FAILED : AuditLogType.USER_FAILED_RUN_VM;
-            }
+            case END_SUCCESS:
+                // if not running as stateless, or if succeeded running as
+                // stateless,
+                // command should be with 'CommandShouldBeLogged = false':
+                return isStatelessSnapshotExistsForVm() && !getSucceeded() ?
+                        AuditLogType.USER_RUN_VM_AS_STATELESS_FINISHED_FAILURE : AuditLogType.UNASSIGNED;
 
-        case END_SUCCESS:
-            // if not running as stateless, or if succeeded running as
-            // stateless,
-            // command should be with 'CommandShouldBeLogged = false':
-            return isStatelessSnapshotExistsForVm() && !getSucceeded() ?
-                    AuditLogType.USER_RUN_VM_AS_STATELESS_FINISHED_FAILURE : AuditLogType.UNASSIGNED;
+            case END_FAILURE:
+                // if not running as stateless, command should
+                // be with 'CommandShouldBeLogged = false':
+                return isStatelessSnapshotExistsForVm() ?
+                        AuditLogType.USER_RUN_VM_AS_STATELESS_FINISHED_FAILURE : AuditLogType.UNASSIGNED;
 
-        case END_FAILURE:
-            // if not running as stateless, command should
-            // be with 'CommandShouldBeLogged = false':
-            return isStatelessSnapshotExistsForVm() ?
-                    AuditLogType.USER_RUN_VM_AS_STATELESS_FINISHED_FAILURE : AuditLogType.UNASSIGNED;
-
-        default:
-            // all other cases should be with 'CommandShouldBeLogged =
-            // false':
-            return AuditLogType.UNASSIGNED;
+            default:
+                // all other cases should be with 'CommandShouldBeLogged =
+                // false':
+                return AuditLogType.UNASSIGNED;
         }
     }
 

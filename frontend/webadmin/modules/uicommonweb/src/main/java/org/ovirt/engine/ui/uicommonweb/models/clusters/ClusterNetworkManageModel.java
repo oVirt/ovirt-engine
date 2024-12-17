@@ -53,7 +53,7 @@ public class ClusterNetworkManageModel extends ListModel<ClusterNetworkModel> {
         if (!isMultiCluster()) {
             for (ClusterNetworkModel clusterNetworkManageModel : getItems()) {
                 if (clusterNetworkManageModel.isDisplayNetwork()) {
-                   return clusterNetworkManageModel;
+                    return clusterNetworkManageModel;
                 }
             }
         }
@@ -116,9 +116,9 @@ public class ClusterNetworkManageModel extends ListModel<ClusterNetworkModel> {
             }
         }
         model.setManagement(value);
-   }
+    }
 
-   private ClusterNetworkModel getGlusterNetwork() {
+    private ClusterNetworkModel getGlusterNetwork() {
         return glusterNetwork;
     }
 

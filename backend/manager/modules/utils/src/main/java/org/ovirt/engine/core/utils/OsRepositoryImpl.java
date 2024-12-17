@@ -73,19 +73,19 @@ public enum OsRepositoryImpl implements OsRepository {
 
     private void validateTree() {
         try {
-                String[] uniqueNames = preferences.node("/os").childrenNames();
-                for (String uniqueName : Arrays.asList(uniqueNames)) {
-                    Preferences node = getKeyNode(uniqueName, "derivedFrom", null);
-                    String id = getKeyNode(uniqueName, "id", null).get("value", "0");
-                    if (node != null) {
-                        String derivedFrom = node.get("value", null);
-                        if (derivedFrom != null && !idToUnameLookup.containsValue(derivedFrom)) {
-                            idToUnameLookup.remove(Integer.valueOf(id));
-                            preferences.node("/os/" + uniqueName).removeNode();
-                            log.warn("Illegal parent for os '{}'", uniqueName);
-                        }
+            String[] uniqueNames = preferences.node("/os").childrenNames();
+            for (String uniqueName : Arrays.asList(uniqueNames)) {
+                Preferences node = getKeyNode(uniqueName, "derivedFrom", null);
+                String id = getKeyNode(uniqueName, "id", null).get("value", "0");
+                if (node != null) {
+                    String derivedFrom = node.get("value", null);
+                    if (derivedFrom != null && !idToUnameLookup.containsValue(derivedFrom)) {
+                        idToUnameLookup.remove(Integer.valueOf(id));
+                        preferences.node("/os/" + uniqueName).removeNode();
+                        log.warn("Illegal parent for os '{}'", uniqueName);
                     }
                 }
+            }
         } catch (BackingStoreException e) {
             log.warn("Failed to validate Os Repository due to {}", e.getMessage());
             log.debug("Exception", e);

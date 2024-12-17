@@ -60,7 +60,7 @@ public abstract class GlusterCapacityCell<P extends Serializable> extends Abstra
     }
 
     private double getPercentageUsage(Double freeSize, Double totalSize) {
-        return ((totalSize - freeSize) * 100 ) / totalSize;
+        return ((totalSize - freeSize) * 100) / totalSize;
     }
 
     protected void setFreeSize(Double freeSize) {

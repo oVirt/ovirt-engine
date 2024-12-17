@@ -40,13 +40,13 @@ public class BackendStorageDomainTemplateResource
     @Override
     public Template get() {
         switch (parent.getStorageDomainType()) {
-        case Data:
-        case Master:
-            return getFromDataDomain();
-        case ImportExport:
-            return getFromExportDomain();
-        default:
-            return null;
+            case Data:
+            case Master:
+                return getFromDataDomain();
+            case ImportExport:
+                return getFromExportDomain();
+            default:
+                return null;
         }
     }
 

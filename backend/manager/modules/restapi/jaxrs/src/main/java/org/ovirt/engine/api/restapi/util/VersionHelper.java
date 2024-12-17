@@ -13,14 +13,14 @@ public class VersionHelper {
         Version version = new Version();
         String[] parts = text.split("\\.", -1);
         switch (parts.length) {
-        case 4:
-            version.setRevision(Integer.parseInt(parts[3]));
-        case 3:
-            version.setBuild(Integer.parseInt(parts[2]));
-        case 2:
-            version.setMinor(Integer.parseInt(parts[1]));
-        case 1:
-            version.setMajor(Integer.parseInt(parts[0]));
+            case 4:
+                version.setRevision(Integer.parseInt(parts[3]));
+            case 3:
+                version.setBuild(Integer.parseInt(parts[2]));
+            case 2:
+                version.setMinor(Integer.parseInt(parts[1]));
+            case 1:
+                version.setMajor(Integer.parseInt(parts[0]));
         }
         return version;
     }

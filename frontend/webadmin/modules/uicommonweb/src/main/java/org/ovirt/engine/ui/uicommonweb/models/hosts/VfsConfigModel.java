@@ -98,7 +98,7 @@ public class VfsConfigModel extends EntityModel<HostNicVfsConfig> {
 
     public boolean validate() {
         numOfVfs.validateEntity(new IValidation[] { new NotEmptyValidation(),
-                new IntegerValidation(0, getMaxNumOfVfs().getEntity()) });
+            new IntegerValidation(0, getMaxNumOfVfs().getEntity()) });
 
         labelsModel.validate();
 

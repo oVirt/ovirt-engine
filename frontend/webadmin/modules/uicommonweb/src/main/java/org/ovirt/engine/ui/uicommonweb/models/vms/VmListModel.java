@@ -1169,7 +1169,7 @@ public class VmListModel<E> extends VmBaseListModel<E, VM>
                 }
                 postExportInitStorageDomains(selectedEntity);
             }),
-        selectedEntity.getId());
+            selectedEntity.getId());
     }
 
     @Override
@@ -2224,14 +2224,14 @@ public class VmListModel<E> extends VmBaseListModel<E, VM>
         setWindow(model);
 
         model.getCommands().add(new UICommand(CMD_CONFIGURE_VMS_TO_IMPORT, this)
-        .setIsExecutionAllowed(false)
-        .setTitle(ConstantsManager.getInstance().getConstants().next())
-        .setIsDefault(true)
+            .setIsExecutionAllowed(false)
+            .setTitle(ConstantsManager.getInstance().getConstants().next())
+            .setIsDefault(true)
         );
 
         model.getCommands().add(new UICommand(CMD_CANCEL, this)
-        .setTitle(ConstantsManager.getInstance().getConstants().cancel())
-        .setIsCancel(true)
+            .setTitle(ConstantsManager.getInstance().getConstants().cancel())
+            .setIsCancel(true)
         );
 
         model.initImportModels(
@@ -2266,7 +2266,7 @@ public class VmListModel<E> extends VmBaseListModel<E, VM>
                 ,
                 new UICommand(CMD_CANCEL, this).setIsCancel(true)
                     .setTitle(ConstantsManager.getInstance().getConstants().cancel())
-                );
+        );
     }
 
     private void cloneVm() {
@@ -2482,50 +2482,50 @@ public class VmListModel<E> extends VmBaseListModel<E, VM>
 
             AsyncDataProvider.getInstance().getVmChangedFieldsForNextRun(editedVm, getcurrentVm(), getUpdateVmParameters(false), new AsyncQuery<>(
                     new AsyncCallback<QueryReturnValue>() {
-                @Override
-                public void onSuccess(QueryReturnValue returnValue) {
-                    List<String> changedFields = returnValue.getReturnValue();
-                    final boolean cpuHotPluggable = VmCommonUtils.isCpusToBeHotpluggedOrUnplugged(selectedItem, getcurrentVm());
-                    final boolean isHeadlessModeChanged = isHeadlessModeChanged(editedVm, getUpdateVmParameters(false));
-                    final boolean memoryHotPluggable =
+                    @Override
+                    public void onSuccess(QueryReturnValue returnValue) {
+                        List<String> changedFields = returnValue.getReturnValue();
+                        final boolean cpuHotPluggable = VmCommonUtils.isCpusToBeHotpluggedOrUnplugged(selectedItem, getcurrentVm());
+                        final boolean isHeadlessModeChanged = isHeadlessModeChanged(editedVm, getUpdateVmParameters(false));
+                        final boolean memoryHotPluggable =
                             VmCommonUtils.isMemoryToBeHotplugged(selectedItem, getcurrentVm());
-                    final boolean minAllocatedMemoryChanged = selectedItem.getMinAllocatedMem() != getcurrentVm().getMinAllocatedMem();
-                    final boolean vmLeaseUpdated = VmCommonUtils.isVmLeaseToBeHotPluggedOrUnplugged(selectedItem, getcurrentVm());
-                    if (isHeadlessModeChanged) {
-                        changedFields.add(constants.headlessMode());
+                        final boolean minAllocatedMemoryChanged = selectedItem.getMinAllocatedMem() != getcurrentVm().getMinAllocatedMem();
+                        final boolean vmLeaseUpdated = VmCommonUtils.isVmLeaseToBeHotPluggedOrUnplugged(selectedItem, getcurrentVm());
+                        if (isHeadlessModeChanged) {
+                            changedFields.add(constants.headlessMode());
+                        }
+
+                        // provide warnings if isVmUnpinned()
+                        if (!changedFields.isEmpty() || isVmUnpinned() || memoryHotPluggable || cpuHotPluggable || vmLeaseUpdated) {
+                            confirmModel = new VmNextRunConfigurationModel();
+                            if (isVmUnpinned()) {
+                                confirmModel.setVmUnpinned();
+                            }
+                            confirmModel.setTitle(ConstantsManager.getInstance().getConstants().editNextRunConfigurationTitle());
+                            confirmModel.setHelpTag(HelpTag.edit_next_run_configuration);
+                            confirmModel.setHashName("edit_next_run_configuration"); //$NON-NLS-1$
+                            confirmModel.setChangedFields(changedFields);
+                            confirmModel.setCpuPluggable(cpuHotPluggable);
+                            confirmModel.setMemoryPluggable(memoryHotPluggable);
+                            // it can be plugged only together with the memory, never alone
+                            confirmModel.setMinAllocatedMemoryPluggable(memoryHotPluggable && minAllocatedMemoryChanged);
+                            confirmModel.setVmLeaseUpdated(vmLeaseUpdated);
+                        } else {
+                            required = false;
+                        }
+                        callback.run();
                     }
 
-                    // provide warnings if isVmUnpinned()
-                    if (!changedFields.isEmpty() || isVmUnpinned() || memoryHotPluggable || cpuHotPluggable || vmLeaseUpdated) {
-                        confirmModel = new VmNextRunConfigurationModel();
-                        if (isVmUnpinned()) {
-                            confirmModel.setVmUnpinned();
+                    private boolean isVmUnpinned() {
+                        if (selectedItem.isRunning()) {
+                            if (selectedItem.getMigrationSupport() == MigrationSupport.PINNED_TO_HOST
+                                && getcurrentVm().getMigrationSupport() != MigrationSupport.PINNED_TO_HOST) {
+                                return true;
+                            }
                         }
-                        confirmModel.setTitle(ConstantsManager.getInstance().getConstants().editNextRunConfigurationTitle());
-                        confirmModel.setHelpTag(HelpTag.edit_next_run_configuration);
-                        confirmModel.setHashName("edit_next_run_configuration"); //$NON-NLS-1$
-                        confirmModel.setChangedFields(changedFields);
-                        confirmModel.setCpuPluggable(cpuHotPluggable);
-                        confirmModel.setMemoryPluggable(memoryHotPluggable);
-                        // it can be plugged only together with the memory, never alone
-                        confirmModel.setMinAllocatedMemoryPluggable(memoryHotPluggable && minAllocatedMemoryChanged);
-                        confirmModel.setVmLeaseUpdated(vmLeaseUpdated);
-                    } else {
-                        required = false;
+                        return false;
                     }
-                    callback.run();
-                }
-
-                private boolean isVmUnpinned() {
-                    if (selectedItem.isRunning()) {
-                        if (selectedItem.getMigrationSupport() == MigrationSupport.PINNED_TO_HOST
-                            && getcurrentVm().getMigrationSupport() != MigrationSupport.PINNED_TO_HOST) {
-                            return true;
-                        }
-                    }
-                    return false;
-                }
-            }));
+                }));
         }
 
         @Override

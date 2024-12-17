@@ -25,25 +25,25 @@ public class GetVmFromConfigurationQuery<P extends GetVmFromConfigurationQueryPa
         }
 
         switch (getParameters().getConfigurationType()) {
-        case OVF:
-            try {
-                getQueryReturnValue().setReturnValue(ovfHelper.readVmFromOvf(getParameters().getVmConfiguration()).getVm());
-            } catch (OvfReaderException e) {
-                log.warn("failed to parse a given ovf configuration: \n" + getParameters().getVmConfiguration(), e);
-                getQueryReturnValue().setSucceeded(false);
-                getQueryReturnValue().setExceptionString("failed to parse a given ovf configuration " + e.getMessage());
-            }
-            break;
+            case OVF:
+                try {
+                    getQueryReturnValue().setReturnValue(ovfHelper.readVmFromOvf(getParameters().getVmConfiguration()).getVm());
+                } catch (OvfReaderException e) {
+                    log.warn("failed to parse a given ovf configuration: \n" + getParameters().getVmConfiguration(), e);
+                    getQueryReturnValue().setSucceeded(false);
+                    getQueryReturnValue().setExceptionString("failed to parse a given ovf configuration " + e.getMessage());
+                }
+                break;
 
-        case OVA:
-            try {
-                getQueryReturnValue().setReturnValue(ovfHelper.readVmFromOva(getParameters().getVmConfiguration()));
-            } catch (OvfReaderException e) {
-                log.warn("failed to parse a given ovf configuration: \n" + getParameters().getVmConfiguration(), e);
-                getQueryReturnValue().setSucceeded(false);
-                getQueryReturnValue().setExceptionString("failed to parse a given ovf configuration " + e.getMessage());
-            }
-            break;
+            case OVA:
+                try {
+                    getQueryReturnValue().setReturnValue(ovfHelper.readVmFromOva(getParameters().getVmConfiguration()));
+                } catch (OvfReaderException e) {
+                    log.warn("failed to parse a given ovf configuration: \n" + getParameters().getVmConfiguration(), e);
+                    getQueryReturnValue().setSucceeded(false);
+                    getQueryReturnValue().setExceptionString("failed to parse a given ovf configuration " + e.getMessage());
+                }
+                break;
         }
     }
 }

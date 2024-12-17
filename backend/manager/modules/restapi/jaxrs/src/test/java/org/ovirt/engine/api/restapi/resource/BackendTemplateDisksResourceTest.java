@@ -36,7 +36,7 @@ public class BackendTemplateDisksResourceTest
     private static final Guid TEMPLATE_ID = GUIDS[1];
 
     public BackendTemplateDisksResourceTest() {
-        super(new BackendTemplateDisksResource(TEMPLATE_ID), null, null );
+        super(new BackendTemplateDisksResource(TEMPLATE_ID), null, null);
     }
 
     @Override

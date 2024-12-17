@@ -63,7 +63,7 @@ public abstract class BaseProviderProxy implements ProviderProxy {
             try {
                 result = CertificateChain.completeChain(
                         CertificateChain.getSSLPeerCertificates(url),
-                        CertificateChain.keyStoreToTrustAnchors( ExternalTrustStoreInitializer.getTrustStore()));
+                        CertificateChain.keyStoreToTrustAnchors(ExternalTrustStoreInitializer.getTrustStore()));
             } catch (IOException | GeneralSecurityException e) {
                 log.error("Failed to communicate with external provider '{}' due to error '{}'",
                         hostProvider.getName(),

@@ -85,8 +85,7 @@ public class ImageStorageDomainMapDaoTest extends BaseDaoTestCase<ImageStorageDo
         ImageStorageDomainMap imageStorageDomainMap = dao.getAllByImageId(EXISTING_IMAGE_ID).get(0);
         Guid quotaId = imageStorageDomainMap.getQuotaId();
         // test that the current quota doesn't equal with the new quota
-        assertNotEquals
-                (FixturesTool.DEFAULT_QUOTA_GENERAL, quotaId, "Same source and dest quota id, cannot perform test");
+        assertNotEquals(FixturesTool.DEFAULT_QUOTA_GENERAL, quotaId, "Same source and dest quota id, cannot perform test");
         // change quota to the new quota 91
         dao.updateQuotaForImageAndSnapshots(FixturesTool.IMAGE_GROUP_ID, FixturesTool.STORAGE_DOMAIN_SCALE_SD5, FixturesTool.DEFAULT_QUOTA_GENERAL);
         // fetch the image again

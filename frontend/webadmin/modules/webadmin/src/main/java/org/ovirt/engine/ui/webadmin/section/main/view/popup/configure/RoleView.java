@@ -80,7 +80,7 @@ public class RoleView extends Composite {
             RoleActionPanelPresenterWidget roleActionPanel,
             RolePermissionModelProvider permissionModelProvider,
             RolePermissionActionPanelPresenterWidget permissionActionPanel) {
-         this.roleModelProvider = roleModelProvider;
+        this.roleModelProvider = roleModelProvider;
         this.permissionModelProvider = permissionModelProvider;
 
         // We need to instantiate the tables first, then set the element id, and then set the columns so the

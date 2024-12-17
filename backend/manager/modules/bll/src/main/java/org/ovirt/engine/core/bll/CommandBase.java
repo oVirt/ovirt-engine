@@ -310,8 +310,8 @@ public abstract class CommandBase<T extends ActionParametersBase>
      * @return true if it is possible to run rollback using command
      */
     protected boolean canPerformRollbackUsingCommand
-            (ActionType commandType,
-                    ActionParametersBase params) {
+    (ActionType commandType,
+        ActionParametersBase params) {
         return true;
     }
 

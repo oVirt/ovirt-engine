@@ -142,42 +142,42 @@ public class StepMapper {
             to = ExternalSystemType.class)
     public static ExternalSystemType map(org.ovirt.engine.core.common.job.ExternalSystemType type) {
         switch (type) {
-        case VDSM:
-            return ExternalSystemType.VDSM;
-        case GLUSTER:
-            return ExternalSystemType.GLUSTER;
-        default:
-            return null;
+            case VDSM:
+                return ExternalSystemType.VDSM;
+            case GLUSTER:
+                return ExternalSystemType.GLUSTER;
+            default:
+                return null;
         }
     }
 
     private static StepStatus mapStepStatus(JobExecutionStatus status) {
         switch (status) {
-        case STARTED:
-            return StepStatus.STARTED;
-        case FINISHED:
-            return StepStatus.FINISHED;
-        case FAILED:
-            return StepStatus.FAILED;
-        case ABORTED:
-            return StepStatus.ABORTED;
-        default:
-            return StepStatus.UNKNOWN;
+            case STARTED:
+                return StepStatus.STARTED;
+            case FINISHED:
+                return StepStatus.FINISHED;
+            case FAILED:
+                return StepStatus.FAILED;
+            case ABORTED:
+                return StepStatus.ABORTED;
+            default:
+                return StepStatus.UNKNOWN;
         }
     }
 
     private static JobExecutionStatus mapStepStatus(StepStatus status) {
         switch (status) {
-        case STARTED:
-            return JobExecutionStatus.STARTED;
-        case FINISHED:
-            return JobExecutionStatus.FINISHED;
-        case FAILED:
-            return JobExecutionStatus.FAILED;
-        case ABORTED:
-            return JobExecutionStatus.ABORTED;
-        default:
-            return JobExecutionStatus.UNKNOWN;
+            case STARTED:
+                return JobExecutionStatus.STARTED;
+            case FINISHED:
+                return JobExecutionStatus.FINISHED;
+            case FAILED:
+                return JobExecutionStatus.FAILED;
+            case ABORTED:
+                return JobExecutionStatus.ABORTED;
+            default:
+                return JobExecutionStatus.UNKNOWN;
         }
     }
 }

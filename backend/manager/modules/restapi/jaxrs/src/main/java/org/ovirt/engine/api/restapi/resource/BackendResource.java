@@ -151,7 +151,7 @@ public class BackendResource extends BaseBackendResource {
         try {
             List<T> results = asCollection(clz, new ArrayList<T>());
             QueryReturnValue result = runQuery(query, queryParams);
-            if (result != null ) {
+            if (result != null) {
                 if (!result.getSucceeded()) {
                     backendFailure(result.getExceptionString());
                 }

@@ -587,7 +587,7 @@ public class ColumnResizeCellTable<T> extends DataGrid<T> implements HasResizabl
 
     private void storeVisibleByUserRequestList(Set<Column<T, ?>> toBeStored) {
         String key = getVisibleByUserRequestListKey();
-        if ( key == null) {
+        if (key == null) {
             return;
         }
 

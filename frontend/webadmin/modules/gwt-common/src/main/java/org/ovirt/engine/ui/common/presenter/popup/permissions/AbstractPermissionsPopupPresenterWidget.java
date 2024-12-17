@@ -111,8 +111,8 @@ public abstract class AbstractPermissionsPopupPresenterWidget<V extends Abstract
         model.getProfile().getSelectedItemChangedEvent().addListener((ev, sender, args) -> model.populateNamespaces());
 
         model.getNamespace().getItemsChangedEvent().addListener((ev, sender, args) -> getView().getSearchButton()
-        .getCommand()
-        .setIsExecutionAllowed(model.availableNamespaces()));
+            .getCommand()
+            .setIsExecutionAllowed(model.availableNamespaces()));
 
         model.getIsRoleListHiddenModel().getPropertyChangedEvent().addListener((ev, sender, args) -> getView().hideRoleSelection(Boolean.parseBoolean(model.getIsRoleListHiddenModel()
                 .getEntity().toString())));

@@ -94,51 +94,51 @@ public class HostUpgradeCallback implements CommandCallback {
 
         switch (host.getStatus()) {
 
-        // Wait till moving to maintenance ends
-        case PreparingForMaintenance:
-            break;
+            // Wait till moving to maintenance ends
+            case PreparingForMaintenance:
+                break;
 
-        // Invoke the upgrade action
-        case Maintenance:
-            // if child command ids is empty the host is already in maintenance so no need to check for
-            // MaintenanceNumberOfVdssCommand status. So upgrade can be started
-            if (childCmdIds.isEmpty()) {
-                logAndinvokeHostUpgrade(rootCommand, parameters);
+            // Invoke the upgrade action
+            case Maintenance:
+                // if child command ids is empty the host is already in maintenance so no need to check for
+                // MaintenanceNumberOfVdssCommand status. So upgrade can be started
+                if (childCmdIds.isEmpty()) {
+                    logAndinvokeHostUpgrade(rootCommand, parameters);
+                    break;
+                }
+                switch (getMaintenanceCmdStatus(childCmdIds)) {
+                    case FAILED:
+                    case ENDED_WITH_FAILURE:
+                        log.info("Host '{}' is on maintenance mode. But not invoking Upgrade process because moving to " +
+                                "maintenance completed with failure, please see logs for details.",
+                                getHostName(parameters.getVdsId()));
+                        handleActionFailed(rootCommand, parameters);
+                        break;
+                    case SUCCEEDED:
+                    case ENDED_SUCCESSFULLY:
+                        logAndinvokeHostUpgrade(rootCommand, parameters);
+                        break;
+                    case UNKNOWN:
+                        log.info("Host '{}' is on maintenance mode. But not invoking Upgrade process because moving to " +
+                                        "maintenance command is in UNKNOWN status.",
+                                getHostName(parameters.getVdsId()));
+                        break;
+                    default:
+                        log.info("Host '{}' is on maintenance mode. But not invoking Upgrade process because moving to " +
+                                        "maintenance command is in unhandled status '{}'.",
+                                getHostName(parameters.getVdsId()),
+                                host.getStatus());
+                        break;
+                }
                 break;
-            }
-            switch (getMaintenanceCmdStatus(childCmdIds)) {
-            case FAILED:
-            case ENDED_WITH_FAILURE:
-                log.info("Host '{}' is on maintenance mode. But not invoking Upgrade process because moving to " +
-                        "maintenance completed with failure, please see logs for details.",
-                        getHostName(parameters.getVdsId()));
-                handleActionFailed(rootCommand, parameters);
-                break;
-            case SUCCEEDED:
-            case ENDED_SUCCESSFULLY:
-                logAndinvokeHostUpgrade(rootCommand, parameters);
-                break;
-            case UNKNOWN:
-                log.info("Host '{}' is on maintenance mode. But not invoking Upgrade process because moving to " +
-                                "maintenance command is in UNKNOWN status.",
-                        getHostName(parameters.getVdsId()));
-                break;
+
+            // Any other status implies maintenance action failed, and the callback cannot proceed with the upgrade
             default:
-                log.info("Host '{}' is on maintenance mode. But not invoking Upgrade process because moving to " +
-                                "maintenance command is in unhandled status '{}'.",
-                        getHostName(parameters.getVdsId()),
-                        host.getStatus());
+                if (isMaintenanceCommandExecuted(childCmdIds) || hasMaintenanceCmdFailed(childCmdIds)) {
+                    handleActionFailed(rootCommand, parameters);
+                }
+
                 break;
-            }
-            break;
-
-        // Any other status implies maintenance action failed, and the callback cannot proceed with the upgrade
-        default:
-            if (isMaintenanceCommandExecuted(childCmdIds) || hasMaintenanceCmdFailed(childCmdIds)) {
-                handleActionFailed(rootCommand, parameters);
-            }
-
-            break;
         }
     }
 
@@ -172,20 +172,20 @@ public class HostUpgradeCallback implements CommandCallback {
 
         // upgrade command execution has started and its status should be examined
         switch (upgradeCommand.getCommandStatus()) {
-        case ACTIVE:
-        case NOT_STARTED:
-            return false;
-        case FAILED:
-        case EXECUTION_FAILED:
-        case ENDED_WITH_FAILURE:
-        case UNKNOWN:
-            rootCommand.setCommandStatus(CommandStatus.FAILED);
-            return true;
+            case ACTIVE:
+            case NOT_STARTED:
+                return false;
+            case FAILED:
+            case EXECUTION_FAILED:
+            case ENDED_WITH_FAILURE:
+            case UNKNOWN:
+                rootCommand.setCommandStatus(CommandStatus.FAILED);
+                return true;
 
-        case SUCCEEDED:
-        case ENDED_SUCCESSFULLY:
-            rootCommand.setCommandStatus(CommandStatus.SUCCEEDED);
-            return true;
+            case SUCCEEDED:
+            case ENDED_SUCCESSFULLY:
+                rootCommand.setCommandStatus(CommandStatus.SUCCEEDED);
+                return true;
         }
 
         return true;

@@ -19,13 +19,13 @@ public class HSMClearTaskVDSCommand<P extends HSMTaskGuidBaseVDSCommandParameter
         EngineError returnStatus = getReturnValueFromStatus(getReturnStatus());
 
         switch (returnStatus) {
-        case UnknownTask:
-            log.error("Trying to remove unknown task '{}'", getParameters().getTaskId());
-            return;
-        case TaskStateError:
-            initializeVdsError(returnStatus);
-            getVDSReturnValue().setSucceeded(false);
-            return;
+            case UnknownTask:
+                log.error("Trying to remove unknown task '{}'", getParameters().getTaskId());
+                return;
+            case TaskStateError:
+                initializeVdsError(returnStatus);
+                getVDSReturnValue().setSucceeded(false);
+                return;
         }
         super.proceedProxyReturnValue();
     }

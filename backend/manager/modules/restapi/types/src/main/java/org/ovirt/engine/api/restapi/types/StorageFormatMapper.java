@@ -11,19 +11,19 @@ public class StorageFormatMapper {
             return null;
         }
         switch (model) {
-        case V1:
-            return StorageFormat.V1;
-        case V2:
-            return StorageFormat.V2;
-        case V3:
-            return StorageFormat.V3;
-        case V4:
-            return StorageFormat.V4;
-        case V5:
+            case V1:
+                return StorageFormat.V1;
+            case V2:
+                return StorageFormat.V2;
+            case V3:
+                return StorageFormat.V3;
+            case V4:
+                return StorageFormat.V4;
+            case V5:
                 return StorageFormat.V5;
-        default:
-            assert false : "unknown storage-format value: " + model.toString();
-            return null;
+            default:
+                assert false : "unknown storage-format value: " + model.toString();
+                return null;
         }
     }
 
@@ -33,19 +33,19 @@ public class StorageFormatMapper {
             return null;
         }
         switch (model) {
-        case V1:
-            return StorageFormatType.V1;
-        case V2:
-            return StorageFormatType.V2;
-        case V3:
-            return StorageFormatType.V3;
-        case V4:
-            return StorageFormatType.V4;
-        case V5:
-            return StorageFormatType.V5;
-        default:
-            assert false : "unknown storage-format value: " + model.toString();
-            return null;
+            case V1:
+                return StorageFormatType.V1;
+            case V2:
+                return StorageFormatType.V2;
+            case V3:
+                return StorageFormatType.V3;
+            case V4:
+                return StorageFormatType.V4;
+            case V5:
+                return StorageFormatType.V5;
+            default:
+                assert false : "unknown storage-format value: " + model.toString();
+                return null;
         }
     }
 }

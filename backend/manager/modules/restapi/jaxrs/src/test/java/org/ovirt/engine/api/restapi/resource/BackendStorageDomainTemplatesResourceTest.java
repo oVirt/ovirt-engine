@@ -99,24 +99,24 @@ public class BackendStorageDomainTemplatesResourceTest
                                      setUpStorageDomain(domainType));
 
         switch (domainType) {
-        case Data:
-            setUpEntityQueryExpectations(QueryType.GetVmTemplatesFromStorageDomain,
-                                         GetVmTemplatesFromStorageDomainParameters.class,
-                                         new String[] { "Id" },
-                                         new Object[] { STORAGE_DOMAIN_ID },
-                                         setUpTemplates(),
-                                         failure);
-            break;
-        case ImportExport:
-            setUpEntityQueryExpectations(QueryType.GetTemplatesFromExportDomain,
-                                         GetAllFromExportDomainQueryParameters.class,
-                                         new String[] { "StoragePoolId", "StorageDomainId"},
-                                         new Object[] { DATA_CENTER_ID, STORAGE_DOMAIN_ID},
-                                         setUpExportTemplates(),
-                                         failure);
-            break;
-        default:
-            break;
+            case Data:
+                setUpEntityQueryExpectations(QueryType.GetVmTemplatesFromStorageDomain,
+                                            GetVmTemplatesFromStorageDomainParameters.class,
+                                            new String[] { "Id" },
+                                            new Object[] { STORAGE_DOMAIN_ID },
+                                            setUpTemplates(),
+                                            failure);
+                break;
+            case ImportExport:
+                setUpEntityQueryExpectations(QueryType.GetTemplatesFromExportDomain,
+                                            GetAllFromExportDomainQueryParameters.class,
+                                            new String[] { "StoragePoolId", "StorageDomainId"},
+                                            new Object[] { DATA_CENTER_ID, STORAGE_DOMAIN_ID},
+                                            setUpExportTemplates(),
+                                            failure);
+                break;
+            default:
+                break;
         }
     }
 

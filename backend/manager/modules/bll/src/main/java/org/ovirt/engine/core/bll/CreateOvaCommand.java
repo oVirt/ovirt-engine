@@ -99,32 +99,32 @@ public class CreateOvaCommand<T extends CreateOvaParameters> extends CommandBase
 
     private Pair<String, Version> createOvf(Collection<DiskImage> disks) {
         switch (getParameters().getEntityType()) {
-        case TEMPLATE:
-            VmTemplate template = vmTemplateDao.get(getParameters().getEntityId());
-            vmHandler.updateVmInitFromDB(template, true);
-            vmDeviceUtils.setVmDevices(template);
-            template.setVmExternalData(getVmExternalData());
-            List<VmNetworkInterface> interfaces = vmNetworkInterfaceDao.getAllForTemplate(template.getId());
-            template.setInterfaces(interfaces);
-            FullEntityOvfData fullEntityOvfData = new FullEntityOvfData(template);
-            fullEntityOvfData.setDiskImages(new ArrayList<>(disks));
-            fullEntityOvfData.setInterfaces(interfaces);
-            return new Pair<>(ovfManager.exportOva(template, fullEntityOvfData, template.getCompatibilityVersion()),
-                    template.getCompatibilityVersion());
+            case TEMPLATE:
+                VmTemplate template = vmTemplateDao.get(getParameters().getEntityId());
+                vmHandler.updateVmInitFromDB(template, true);
+                vmDeviceUtils.setVmDevices(template);
+                template.setVmExternalData(getVmExternalData());
+                List<VmNetworkInterface> interfaces = vmNetworkInterfaceDao.getAllForTemplate(template.getId());
+                template.setInterfaces(interfaces);
+                FullEntityOvfData fullEntityOvfData = new FullEntityOvfData(template);
+                fullEntityOvfData.setDiskImages(new ArrayList<>(disks));
+                fullEntityOvfData.setInterfaces(interfaces);
+                return new Pair<>(ovfManager.exportOva(template, fullEntityOvfData, template.getCompatibilityVersion()),
+                        template.getCompatibilityVersion());
 
-        default:
-            VM vm = vmDao.get(getParameters().getEntityId());
-            vmHandler.updateVmInitFromDB(vm.getStaticData(), true);
-            vmHandler.updateNumaNodesFromDb(vm);
-            vm.setVmExternalData(getVmExternalData());
-            interfaces = vmNetworkInterfaceDao.getAllForVm(vm.getId());
-            vm.setInterfaces(interfaces);
-            vmDeviceUtils.setVmDevices(vm.getStaticData());
-            fullEntityOvfData = new FullEntityOvfData(vm);
-            fullEntityOvfData.setDiskImages(new ArrayList<>(disks));
-            fullEntityOvfData.setInterfaces(interfaces);
-            return new Pair<>(ovfManager.exportOva(vm, fullEntityOvfData, vm.getCompatibilityVersion()),
-                    vm.getCompatibilityVersion());
+            default:
+                VM vm = vmDao.get(getParameters().getEntityId());
+                vmHandler.updateVmInitFromDB(vm.getStaticData(), true);
+                vmHandler.updateNumaNodesFromDb(vm);
+                vm.setVmExternalData(getVmExternalData());
+                interfaces = vmNetworkInterfaceDao.getAllForVm(vm.getId());
+                vm.setInterfaces(interfaces);
+                vmDeviceUtils.setVmDevices(vm.getStaticData());
+                fullEntityOvfData = new FullEntityOvfData(vm);
+                fullEntityOvfData.setDiskImages(new ArrayList<>(disks));
+                fullEntityOvfData.setInterfaces(interfaces);
+                return new Pair<>(ovfManager.exportOva(vm, fullEntityOvfData, vm.getCompatibilityVersion()),
+                        vm.getCompatibilityVersion());
         }
     }
 
@@ -300,18 +300,18 @@ public class CreateOvaCommand<T extends CreateOvaParameters> extends CommandBase
     @Override
     public boolean performNextOperation(int completedChildCount) {
         switch (getParameters().getPhase()) {
-        case MEASURE:
-            getParameters().setPhase(CreateOvaParameters.Phase.PACK_OVA);
-            break;
+            case MEASURE:
+                getParameters().setPhase(CreateOvaParameters.Phase.PACK_OVA);
+                break;
 
-        case PACK_OVA:
-            getParameters().setPhase(CreateOvaParameters.Phase.TEARDOWN);
-            break;
+            case PACK_OVA:
+                getParameters().setPhase(CreateOvaParameters.Phase.TEARDOWN);
+                break;
 
-        case TEARDOWN:
-            return false;
+            case TEARDOWN:
+                return false;
 
-        default:
+            default:
         }
 
         persistCommandIfNeeded();
@@ -321,17 +321,17 @@ public class CreateOvaCommand<T extends CreateOvaParameters> extends CommandBase
 
     private void executeNextOperation() {
         switch (getParameters().getPhase()) {
-        case MEASURE:
-            fillDiskApparentSize(getParameters().getDisks(), getParameters().getDiskIdToPath());
-            break;
+            case MEASURE:
+                fillDiskApparentSize(getParameters().getDisks(), getParameters().getDiskIdToPath());
+                break;
 
-        case PACK_OVA:
-            packOva();
-            break;
+            case PACK_OVA:
+                packOva();
+                break;
 
-        case TEARDOWN:
-            teardown();
-            break;
+            case TEARDOWN:
+                teardown();
+                break;
         }
     }
 

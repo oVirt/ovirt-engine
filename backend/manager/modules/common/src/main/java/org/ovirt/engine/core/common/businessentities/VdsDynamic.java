@@ -455,7 +455,7 @@ public class VdsDynamic implements BusinessEntityWithStatus<Guid, VDSStatus> {
     }
 
     public String getSoftwareVersion() {
-       return softwareVersion;
+        return softwareVersion;
     }
 
     public void setSoftwareVersion(String value) {
@@ -896,7 +896,7 @@ public class VdsDynamic implements BusinessEntityWithStatus<Guid, VDSStatus> {
         return inFenceFlow;
     }
 
-    public void setInFenceFlow( boolean isInFenceFlow) {
+    public void setInFenceFlow(boolean isInFenceFlow) {
         this.inFenceFlow = isInFenceFlow;
     }
 

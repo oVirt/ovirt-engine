@@ -118,8 +118,8 @@ public class Label implements Serializable, BusinessEntity<Guid>, Nameable, Quer
      * Jackson, GWT or for de-serialization.
      */
     private Label() {
-       this.hosts = new HashSet<>();
-       this.vms = new HashSet<>();
+        this.hosts = new HashSet<>();
+        this.vms = new HashSet<>();
     }
 
     /**

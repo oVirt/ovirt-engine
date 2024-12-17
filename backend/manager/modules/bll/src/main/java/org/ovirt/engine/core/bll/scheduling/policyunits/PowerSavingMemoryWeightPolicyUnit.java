@@ -26,8 +26,8 @@ import org.ovirt.engine.core.compat.Guid;
                         + " more likely to be selected)",
         type = PolicyUnitType.WEIGHT,
         parameters = {
-                PolicyUnitParameter.LOW_MEMORY_LIMIT_FOR_OVER_UTILIZED,
-                PolicyUnitParameter.HIGH_MEMORY_LIMIT_FOR_UNDER_UTILIZED
+            PolicyUnitParameter.LOW_MEMORY_LIMIT_FOR_OVER_UTILIZED,
+            PolicyUnitParameter.HIGH_MEMORY_LIMIT_FOR_UNDER_UTILIZED
         }
 )
 public class PowerSavingMemoryWeightPolicyUnit extends PolicyUnitImpl {

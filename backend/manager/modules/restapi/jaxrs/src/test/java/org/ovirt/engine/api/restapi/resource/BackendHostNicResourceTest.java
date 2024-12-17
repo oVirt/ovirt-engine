@@ -153,14 +153,14 @@ public class BackendHostNicResourceTest
         List<Statistic> statistics = query.getStatistics(entity);
         verifyStatistics(statistics,
                 new String[] { "data.current.rx", "data.current.tx", "data.current.rx.bps",
-                        "data.current.tx.bps", "errors.total.rx", "errors.total.tx",
-                        "data.total.rx", "data.total.tx" },
+                    "data.current.tx.bps", "errors.total.rx", "errors.total.tx",
+                    "data.total.rx", "data.total.tx" },
                 new BigDecimal[] { asDec(RxTxCalculator.percent2bytes(SPEED, RECEIVE_RATE)),
-                        asDec(RxTxCalculator.percent2bytes(SPEED, TRANSMIT_RATE)),
-                        asDec(RxTxCalculator.percent2bits(SPEED, RECEIVE_RATE)),
-                        asDec(RxTxCalculator.percent2bits(SPEED, TRANSMIT_RATE)),
-                        asDec(RECEIVE_DROPS), asDec(TRANSMIT_DROPS),
-                        asDec(RECEIVED_BYTES), asDec(TRANSMITTED_BYTES) });
+                    asDec(RxTxCalculator.percent2bytes(SPEED, TRANSMIT_RATE)),
+                    asDec(RxTxCalculator.percent2bits(SPEED, RECEIVE_RATE)),
+                    asDec(RxTxCalculator.percent2bits(SPEED, TRANSMIT_RATE)),
+                    asDec(RECEIVE_DROPS), asDec(TRANSMIT_DROPS),
+                    asDec(RECEIVED_BYTES), asDec(TRANSMITTED_BYTES) });
         Statistic adopted = query.adopt(new Statistic());
         assertTrue(adopted.isSetHostNic());
         assertEquals(NIC_ID.toString(), adopted.getHostNic().getId());

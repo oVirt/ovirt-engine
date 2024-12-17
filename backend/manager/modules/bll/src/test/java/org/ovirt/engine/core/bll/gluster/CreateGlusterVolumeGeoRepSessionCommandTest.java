@@ -62,10 +62,9 @@ public class CreateGlusterVolumeGeoRepSessionCommandTest extends BaseCommandTest
     @Spy
     @InjectMocks
     CreateGlusterVolumeGeoRepSessionCommand command =
-            new CreateGlusterVolumeGeoRepSessionCommand
-                    (new GlusterVolumeGeoRepSessionParameters
-                            (masterVolumeId, slaveVolumeName, Guid.newGuid(), null, null, false),
-                     null);
+        new CreateGlusterVolumeGeoRepSessionCommand
+        (new GlusterVolumeGeoRepSessionParameters(masterVolumeId, slaveVolumeName, Guid.newGuid(), null, null, false),
+            null);
 
 
     @Test

@@ -74,7 +74,7 @@ public class UnmanagedNetworkValidator {
             Collection<VdsNetworkInterface> existingInterfaces,
             BusinessEntityMap<Network> networkBusinessEntityMap) {
 
-       for (String removedUnmanagedNetworkName : removedUnmanagedNetworks) {
+        for (String removedUnmanagedNetworkName : removedUnmanagedNetworks) {
 
             Network network = networkBusinessEntityMap.get(removedUnmanagedNetworkName);
             if (network != null) {
@@ -128,7 +128,7 @@ public class UnmanagedNetworkValidator {
         return ValidationResult.VALID;
     }
 
-    Set<String> filterNicsWithUnmanagedNetworks( List<VdsNetworkInterface> existingInterfaces, Collection<String> removedUnmanagedNetworks) {
+    Set<String> filterNicsWithUnmanagedNetworks(List<VdsNetworkInterface> existingInterfaces, Collection<String> removedUnmanagedNetworks) {
         Set<String> nicsWithUnmanagedNetworks = new HashSet<>();
         for (VdsNetworkInterface nic : existingInterfaces) {
             if (nic.getNetworkImplementationDetails() != null && !nic.getNetworkImplementationDetails().isManaged()) {

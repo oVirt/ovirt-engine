@@ -21,4 +21,4 @@ public class BackendVmCheckpointDiskResource
     protected Disk getDisk() {
         return performGet(QueryType.GetDiskByDiskId, new IdQueryParameters(guid));
     }
- }
+}

@@ -27,36 +27,36 @@ public class HotPlugNicVDSCommand<P extends VmNicDeviceVDSParameters> extends Ho
         result = getBroker().hotPlugNic(createParametersStruct());
         proceedProxyReturnValue();
         setReturnValue(result);
-     }
+    }
 
-     @Override
-     protected Status getReturnStatus() {
-         return result.getStatus();
-     }
+    @Override
+    protected Status getReturnStatus() {
+        return result.getStatus();
+    }
 
-     @Override
-     protected Object getReturnValueFromBroker() {
-         return result;
-     }
+    @Override
+    protected Object getReturnValueFromBroker() {
+        return result;
+    }
 
-     @Override
-     protected String generateDomainXml() {
-         VmNic nic = getParameters().getNic();
-         VmDevice vmDevice = getParameters().getVmDevice();
-         LibvirtVmXmlBuilder builder = new LibvirtVmXmlBuilder(
-                 getParameters().getVm(),
-                 getVds().getId(),
-                 nic,
-                 vmDevice,
-                 vmInfoBuildUtils,
-                 nic.isPassthrough() ?
-                         Collections.singletonMap(nic.getId(), vmDevice.getHostDevice())
-                         : Collections.emptyMap());
-         String libvirtXml = builder.buildHotplugNic();
-         String prettyLibvirtXml = XmlUtils.prettify(libvirtXml);
-         if (prettyLibvirtXml != null) {
-             log.info("NIC hot-plug: {}", prettyLibvirtXml);
-         }
-         return libvirtXml;
-     }
+    @Override
+    protected String generateDomainXml() {
+        VmNic nic = getParameters().getNic();
+        VmDevice vmDevice = getParameters().getVmDevice();
+        LibvirtVmXmlBuilder builder = new LibvirtVmXmlBuilder(
+                getParameters().getVm(),
+                getVds().getId(),
+                nic,
+                vmDevice,
+                vmInfoBuildUtils,
+                nic.isPassthrough() ?
+                        Collections.singletonMap(nic.getId(), vmDevice.getHostDevice())
+                        : Collections.emptyMap());
+        String libvirtXml = builder.buildHotplugNic();
+        String prettyLibvirtXml = XmlUtils.prettify(libvirtXml);
+        if (prettyLibvirtXml != null) {
+            log.info("NIC hot-plug: {}", prettyLibvirtXml);
+        }
+        return libvirtXml;
+    }
 }

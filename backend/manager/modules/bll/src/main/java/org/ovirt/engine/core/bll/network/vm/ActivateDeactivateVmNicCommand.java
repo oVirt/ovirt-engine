@@ -262,14 +262,14 @@ public class ActivateDeactivateVmNicCommand<T extends ActivateDeactivateVmNicPar
         vmDevicesLock.lock();
         try {
             switch (getParameters().getAction()) {
-            case PLUG:
-                plugNic();
-                break;
-            case UNPLUG:
-                unplugNic();
-                break;
-            default:
-                throw new RuntimeException("Coding error: unknown enum value");
+                case PLUG:
+                    plugNic();
+                    break;
+                case UNPLUG:
+                    unplugNic();
+                    break;
+                default:
+                    throw new RuntimeException("Coding error: unknown enum value");
             }
 
             var success = handleFailoverIfNeeded();
@@ -454,7 +454,7 @@ public class ActivateDeactivateVmNicCommand<T extends ActivateDeactivateVmNicPar
     }
 
     private Provider<?> getProvider() {
-        if (provider == null ) {
+        if (provider == null) {
             Network network = getNetwork();
             if (network != null && network.isExternal()) {
                 provider = providerDao.get(network.getProvidedBy().getProviderId());
@@ -510,14 +510,14 @@ public class ActivateDeactivateVmNicCommand<T extends ActivateDeactivateVmNicPar
 
     private void revertAfterFailoverOperationFail() {
         switch (getParameters().getAction()) {
-        case PLUG:
-            getParameters().setAction(PlugAction.UNPLUG);
-            unplugNic();
-            break;
-        case UNPLUG:
-            getParameters().setAction(PlugAction.PLUG);
-            plugNic();
-            break;
+            case PLUG:
+                getParameters().setAction(PlugAction.UNPLUG);
+                unplugNic();
+                break;
+            case UNPLUG:
+                getParameters().setAction(PlugAction.PLUG);
+                plugNic();
+                break;
         }
     }
 

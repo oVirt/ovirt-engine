@@ -84,17 +84,17 @@ public class RpmVersionUtils {
      * numbers. Characters which are not alpha numeric should be treated as delimiters
      */
     protected static StringBuilder[] fillCompsArray(String part) {
-       if (part == null) {
+        if (part == null) {
             return null;
-       }
-       StringBuilder[] comps = new StringBuilder[part.length()];
-       char[] chars = part.toCharArray();
-       int arrayIndex = 0;
-       int index = 0;
-       int state = 0; //0 - start , 1 - alphabetic, 2 - numeric - 3 other
-       StringBuilder current = new StringBuilder();
+        }
+        StringBuilder[] comps = new StringBuilder[part.length()];
+        char[] chars = part.toCharArray();
+        int arrayIndex = 0;
+        int index = 0;
+        int state = 0; //0 - start , 1 - alphabetic, 2 - numeric - 3 other
+        StringBuilder current = new StringBuilder();
         // The maximum number of segments is the number of characters in the string
-       while (index < part.length()) {
+        while (index < part.length()) {
             // The current character is letter
             if (isLetter(chars[index])) {
                 if (state == 2) {

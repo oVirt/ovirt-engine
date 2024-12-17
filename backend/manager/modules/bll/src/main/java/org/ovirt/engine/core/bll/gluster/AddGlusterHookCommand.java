@@ -128,7 +128,7 @@ public class AddGlusterHookCommand<T extends GlusterHookManageParameters> extend
             for (Pair<GlusterServerHook, VDSReturnValue> pairResult : pairResults) {
 
                 VDSReturnValue retValue = pairResult.getSecond();
-                if (!retValue.getSucceeded() ) {
+                if (!retValue.getSucceeded()) {
                     errors.add(retValue.getVdsError().getMessage());
                 } else {
                     //hook added successfully, so remove from gluster server hooks table

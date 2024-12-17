@@ -180,25 +180,25 @@ public class UploadImageModel extends Model implements ICommandTarget {
                                 QueryType.GetStorageDomainListById,
                                 new IdQueryParameters(limitToStorageDomainId),
                                 new AsyncQuery<QueryReturnValue>(returnValue -> {
-                            ArrayList<StorageDomain> domains = returnValue.getReturnValue();
-                            if (!domains.isEmpty()) {
-                                StorageDomain storageDomain = domains.get(0);
-                                // Set the selected item on the storage domains list.
-                                List<StorageDomain> availableDomains = new ArrayList<>();
-                                availableDomains.add(storageDomain);
-                                getStorageDomain().setItems(availableDomains);
-                                Guid dcId = storageDomain.getStoragePoolId();
-                                if (!Guid.isNullOrEmpty(dcId)) {
-                                    // Set selected data center if the list of data centers is populated.
-                                    if (!selectDataCenter(dcId)) {
-                                        // If the data center is not there then need to listen to the data centers list
-                                        // change to update the selected data center.
-                                        getDataCenter().getItemsChangedEvent()
-                                                .addListener((ev, sender, args) -> selectDataCenter(dcId));
+                                    ArrayList<StorageDomain> domains = returnValue.getReturnValue();
+                                    if (!domains.isEmpty()) {
+                                        StorageDomain storageDomain = domains.get(0);
+                                        // Set the selected item on the storage domains list.
+                                        List<StorageDomain> availableDomains = new ArrayList<>();
+                                        availableDomains.add(storageDomain);
+                                        getStorageDomain().setItems(availableDomains);
+                                        Guid dcId = storageDomain.getStoragePoolId();
+                                        if (!Guid.isNullOrEmpty(dcId)) {
+                                            // Set selected data center if the list of data centers is populated.
+                                            if (!selectDataCenter(dcId)) {
+                                                // If the data center is not there then need to listen to the data centers list
+                                                // change to update the selected data center.
+                                                getDataCenter().getItemsChangedEvent()
+                                                    .addListener((ev, sender, args) -> selectDataCenter(dcId));
+                                            }
+                                        }
                                     }
-                                }
-                            }
-                        }));
+                                }));
                     }
                     getStorageDomain().setIsChangeable(isChangeable);
                     getStorageType().setIsChangeable(false);
@@ -577,7 +577,7 @@ public class UploadImageModel extends Model implements ICommandTarget {
     }
 
     public static void pauseUploads(List<? extends Disk> disks) {
-                ArrayList<ActionParametersBase> list = new ArrayList<>();
+        ArrayList<ActionParametersBase> list = new ArrayList<>();
         for (Disk disk : disks) {
             ImageTransfer updates = new ImageTransfer();
             updates.setPhase(ImageTransferPhase.PAUSED_USER);

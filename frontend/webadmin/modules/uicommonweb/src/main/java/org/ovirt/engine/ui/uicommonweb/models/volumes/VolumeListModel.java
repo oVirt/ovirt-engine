@@ -874,7 +874,7 @@ public class VolumeListModel extends ListWithSimpleDetailsModel<Void, GlusterVol
                     snapshotModel.stopProgress();
                 }), volumeEntity.getClusterId());
 
-   }
+    }
 
     private void onCreateSnapshot() {
         final GlusterVolumeSnapshotModel snapshotModel = (GlusterVolumeSnapshotModel) getWindow();
@@ -907,32 +907,32 @@ public class VolumeListModel extends ListWithSimpleDetailsModel<Void, GlusterVol
         schedule.setClusterId(volumeEntity.getClusterId());
         schedule.setVolumeId(volumeEntity.getId());
         switch (snapshotModel.getRecurrence().getSelectedItem()) {
-        case INTERVAL:
-            schedule.setRecurrence(GlusterVolumeSnapshotScheduleRecurrence.INTERVAL);
-            schedule.setInterval(Integer.valueOf(snapshotModel.getInterval().getSelectedItem()));
-            break;
-        case HOURLY:
-            schedule.setRecurrence(GlusterVolumeSnapshotScheduleRecurrence.HOURLY);
-            break;
-        case DAILY:
-            schedule.setRecurrence(GlusterVolumeSnapshotScheduleRecurrence.DAILY);
-            schedule.setExecutionTime(getExecutionTime(snapshotModel));
-            break;
-        case WEEKLY:
-            schedule.setRecurrence(GlusterVolumeSnapshotScheduleRecurrence.WEEKLY);
-            schedule.setExecutionTime(getExecutionTime(snapshotModel));
-            StringBuilder sb = new StringBuilder();
-            for (DayOfWeek day : snapshotModel.getDaysOfTheWeek().getSelectedItem()) {
-                sb.append(day.name().substring(0, 3));
-                sb.append(','); //$NON-NLS-1$
-            }
-            schedule.setDays(sb.toString());
-            break;
-        case MONTHLY:
-            schedule.setRecurrence(GlusterVolumeSnapshotScheduleRecurrence.MONTHLY);
-            schedule.setExecutionTime(getExecutionTime(snapshotModel));
-            schedule.setDays(snapshotModel.getDaysOfMonth().getSelectedItem());
-            break;
+            case INTERVAL:
+                schedule.setRecurrence(GlusterVolumeSnapshotScheduleRecurrence.INTERVAL);
+                schedule.setInterval(Integer.valueOf(snapshotModel.getInterval().getSelectedItem()));
+                break;
+            case HOURLY:
+                schedule.setRecurrence(GlusterVolumeSnapshotScheduleRecurrence.HOURLY);
+                break;
+            case DAILY:
+                schedule.setRecurrence(GlusterVolumeSnapshotScheduleRecurrence.DAILY);
+                schedule.setExecutionTime(getExecutionTime(snapshotModel));
+                break;
+            case WEEKLY:
+                schedule.setRecurrence(GlusterVolumeSnapshotScheduleRecurrence.WEEKLY);
+                schedule.setExecutionTime(getExecutionTime(snapshotModel));
+                StringBuilder sb = new StringBuilder();
+                for (DayOfWeek day : snapshotModel.getDaysOfTheWeek().getSelectedItem()) {
+                    sb.append(day.name().substring(0, 3));
+                    sb.append(','); //$NON-NLS-1$
+                }
+                schedule.setDays(sb.toString());
+                break;
+            case MONTHLY:
+                schedule.setRecurrence(GlusterVolumeSnapshotScheduleRecurrence.MONTHLY);
+                schedule.setExecutionTime(getExecutionTime(snapshotModel));
+                schedule.setDays(snapshotModel.getDaysOfMonth().getSelectedItem());
+                break;
         }
 
         Date startAt = snapshotModel.getStartAt().getEntity();
@@ -983,8 +983,8 @@ public class VolumeListModel extends ListWithSimpleDetailsModel<Void, GlusterVol
         Frontend.getInstance().runAction(ActionType.CreateGlusterVolumeSnapshot,
                 parameter,
                 result -> {
-                          VolumeListModel localModel =
-                            (VolumeListModel) result.getState();
+                    VolumeListModel localModel =
+                        (VolumeListModel) result.getState();
                     snapshotModel.stopProgress();
                     localModel.postSnapshotAction(result.getReturnValue());
                 },
@@ -1039,26 +1039,26 @@ public class VolumeListModel extends ListWithSimpleDetailsModel<Void, GlusterVol
                             item -> item.getKey().startsWith(schedule.getTimeZone())));
                 }
                 switch (schedule.getRecurrence()) {
-                case INTERVAL:
-                    snapshotModel.getInterval().setSelectedItem(String.valueOf(schedule.getInterval()));
-                    break;
-                case HOURLY:
-                    break;
-                case DAILY:
-                    snapshotModel.getExecutionTime().setEntity(getExecutionTimeValue(schedule));
-                    break;
-                case WEEKLY:
-                    List<DayOfWeek> daysList = new ArrayList<>();
-                    for (String day : schedule.getDays().split(",")) { //$NON-NLS-1$
-                        daysList.add(getDayOfWeek(day));
-                    }
-                    snapshotModel.getDaysOfTheWeek().setSelectedItem(daysList);
-                    snapshotModel.getExecutionTime().setEntity(getExecutionTimeValue(schedule));
-                    break;
-                case MONTHLY:
-                    snapshotModel.getDaysOfMonth().setSelectedItem(schedule.getDays());
-                    snapshotModel.getExecutionTime().setEntity(getExecutionTimeValue(schedule));
-                    break;
+                    case INTERVAL:
+                        snapshotModel.getInterval().setSelectedItem(String.valueOf(schedule.getInterval()));
+                        break;
+                    case HOURLY:
+                        break;
+                    case DAILY:
+                        snapshotModel.getExecutionTime().setEntity(getExecutionTimeValue(schedule));
+                        break;
+                    case WEEKLY:
+                        List<DayOfWeek> daysList = new ArrayList<>();
+                        for (String day : schedule.getDays().split(",")) { //$NON-NLS-1$
+                            daysList.add(getDayOfWeek(day));
+                        }
+                        snapshotModel.getDaysOfTheWeek().setSelectedItem(daysList);
+                        snapshotModel.getExecutionTime().setEntity(getExecutionTimeValue(schedule));
+                        break;
+                    case MONTHLY:
+                        snapshotModel.getDaysOfMonth().setSelectedItem(schedule.getDays());
+                        snapshotModel.getExecutionTime().setEntity(getExecutionTimeValue(schedule));
+                        break;
                 }
 
                 snapshotModel.getStartAt().setEntity(schedule.getStartDate());
@@ -1067,22 +1067,22 @@ public class VolumeListModel extends ListWithSimpleDetailsModel<Void, GlusterVol
 
             private DayOfWeek getDayOfWeek(String day) {
                 switch (day) {
-                case "Sun": //$NON-NLS-1$
-                    return DayOfWeek.Sunday;
-                case "Mon": //$NON-NLS-1$
-                    return DayOfWeek.Monday;
-                case "Tue": //$NON-NLS-1$
-                    return DayOfWeek.Tuesday;
-                case "Wed": //$NON-NLS-1$
-                    return DayOfWeek.Wednesday;
-                case "Thu": //$NON-NLS-1$
-                    return DayOfWeek.Thursday;
-                case "Fri": //$NON-NLS-1$
-                    return DayOfWeek.Friday;
-                case "Sat": //$NON-NLS-1$
-                    return DayOfWeek.Saturday;
-                default:
-                    return null;
+                    case "Sun": //$NON-NLS-1$
+                        return DayOfWeek.Sunday;
+                    case "Mon": //$NON-NLS-1$
+                        return DayOfWeek.Monday;
+                    case "Tue": //$NON-NLS-1$
+                        return DayOfWeek.Tuesday;
+                    case "Wed": //$NON-NLS-1$
+                        return DayOfWeek.Wednesday;
+                    case "Thu": //$NON-NLS-1$
+                        return DayOfWeek.Thursday;
+                    case "Fri": //$NON-NLS-1$
+                        return DayOfWeek.Friday;
+                    case "Sat": //$NON-NLS-1$
+                        return DayOfWeek.Saturday;
+                    default:
+                        return null;
                 }
             }
 

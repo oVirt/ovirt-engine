@@ -59,5 +59,5 @@ public class ExternalNetworkSyncService implements BackendService {
                 .forEach(providerId -> {
                     backendInternal.runInternalAction(ActionType.SyncNetworkProvider, new IdParameters(providerId));
                 });
-        }
+    }
 }

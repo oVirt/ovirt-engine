@@ -78,7 +78,7 @@ public class GetTlvsByHostNicIdQueryTest extends AbstractQueryTest<IdQueryParame
     }
 
     private VdsNetworkInterface createNic(ExpectedError expectedError, Guid vdsId) {
-         switch (expectedError) {
+        switch (expectedError) {
             case NIC_ID_NIC:
                 VdsNetworkInterface vdsIface = new VdsNetworkInterface();
                 vdsIface.setVdsId(vdsId);

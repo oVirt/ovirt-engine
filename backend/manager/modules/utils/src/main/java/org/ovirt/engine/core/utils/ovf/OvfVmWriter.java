@@ -39,10 +39,10 @@ public class OvfVmWriter extends OvfOvirtWriter {
         super.writeGeneralData();
         _writer.writeElement(TEMPLATE_ID, vm.getVmtGuid().toString());
         _writer.writeElement(TEMPLATE_NAME, vm.getVmtName());
-        if (vm.getInstanceTypeId() != null ) {
+        if (vm.getInstanceTypeId() != null) {
             _writer.writeElement(INSTANCE_TYPE_ID, vm.getInstanceTypeId().toString());
         }
-        if (vm.getImageTypeId() != null ) {
+        if (vm.getImageTypeId() != null) {
             _writer.writeElement(IMAGE_TYPE_ID, vm.getImageTypeId().toString());
         }
         _writer.writeElement(IS_INITIALIZED, String.valueOf(vm.isInitialized()));

@@ -153,9 +153,9 @@ public class RsdlBuilder {
 
     @Override
     public String toString() {
-            return "RSDL Href: " + getHref() +
-                               ", Description:" + getDescription() +
-                               ", Links: " + (rsdl != null ? rsdl.isSetLinks() ? rsdl.getLinks().getLinks().size() : "0" : "0") + ".";
+        return "RSDL Href: " + getHref() +
+                           ", Description:" + getDescription() +
+                           ", Links: " + (rsdl != null ? rsdl.isSetLinks() ? rsdl.getLinks().getLinks().size() : "0" : "0") + ".";
     }
 
     public class LinkBuilder {
@@ -649,7 +649,7 @@ public class RsdlBuilder {
         if (action.getRequest().getUrlparams() != null && !action.getRequest().getUrlparams().isEmpty()) {
             link.getRequest().setUrl(new Url());
             ParametersSet ps = new ParametersSet();
-        for (Object key : action.getRequest().getUrlparams().keySet()) {
+            for (Object key : action.getRequest().getUrlparams().keySet()) {
                 Parameter param = new Parameter();
                 param.setName(key.toString());
                 Object value = action.getRequest().getUrlparams().get(key);
@@ -814,7 +814,7 @@ public class RsdlBuilder {
                 && link2.getRequest().getBody().isRequired() != null
                 && Boolean.FALSE.equals(link1.getRequest().getBody().isRequired())
                 && Boolean.FALSE.equals(link2.getRequest().getBody().isRequired())
-           ) {
+            ) {
             if (link1ParamType != null && link2ParamType == null) {
                 return link2;
             }

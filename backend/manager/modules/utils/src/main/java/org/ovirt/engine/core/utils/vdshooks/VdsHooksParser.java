@@ -69,53 +69,53 @@ public class VdsHooksParser {
                 break;
             }
             switch (state) {
-            case START_MAP:
-                // If the character is not "}" - then this is a character of a key in the map,
-                // Change to "parsing key" state
-                if (current != '}') {
-                    state = ParsingState.KEY;
-                    keyBuilder = new StringBuilder();
-                    handleKey(keyBuilder, current);
-                } else {
-                    endIndex = counter;
-                }
-                break;
-            case KEY:
-                // If the character is = - it means the character is the start of a value which is either a recursive
-                // map or a string
-                // Switch to "parsing value" state
-                if (current == '=') {
-                    state = ParsingState.VALUE;
-                    if (chars[counter + 1] != '{') {
-                        value = new StringBuilder();
+                case START_MAP:
+                    // If the character is not "}" - then this is a character of a key in the map,
+                    // Change to "parsing key" state
+                    if (current != '}') {
+                        state = ParsingState.KEY;
+                        keyBuilder = new StringBuilder();
+                        handleKey(keyBuilder, current);
+                    } else {
+                        endIndex = counter;
                     }
-                } else { // Otherwise - continue to parse the key
-                    handleKey(keyBuilder, current);
-                }
-                break;
-            case VALUE:
-                // If the character is "{" - this means this is the start of a recursive (inner) map
-                if (current == '{') {
-                    // Parse the inner map, and advance the counter to the end of the map, so its characters will not be
-                    // re-parsed
-                    value = parseMap(chars, counter);
-                    counter = ((ParsingResult) value).getEndIndex();
+                    break;
+                case KEY:
+                    // If the character is = - it means the character is the start of a value which is either a recursive
+                    // map or a string
+                    // Switch to "parsing value" state
+                    if (current == '=') {
+                        state = ParsingState.VALUE;
+                        if (chars[counter + 1] != '{') {
+                            value = new StringBuilder();
+                        }
+                    } else { // Otherwise - continue to parse the key
+                        handleKey(keyBuilder, current);
+                    }
+                    break;
+                case VALUE:
+                    // If the character is "{" - this means this is the start of a recursive (inner) map
+                    if (current == '{') {
+                        // Parse the inner map, and advance the counter to the end of the map, so its characters will not be
+                        // re-parsed
+                        value = parseMap(chars, counter);
+                        counter = ((ParsingResult) value).getEndIndex();
 
-                } else if (current == ',') {
-                    // If the character is "," it means that this is the beginning of a next pair of key and value -
-                    // return to "parsing key" state
-                    value = putValueInMap(keyBuilder, value, resultMap);
-                    keyBuilder = new StringBuilder();
-                    state = ParsingState.KEY;
-                } else if (current == '}') {
-                    // If the character is "}" this is the closing of the map - change the value of endIndex not to be
-                    // -1
-                    endIndex = counter;
-                    value = putValueInMap(keyBuilder, value, resultMap);
-                } else {
-                    handleValue((StringBuilder) value, current);
-                }
-                break;
+                    } else if (current == ',') {
+                        // If the character is "," it means that this is the beginning of a next pair of key and value -
+                        // return to "parsing key" state
+                        value = putValueInMap(keyBuilder, value, resultMap);
+                        keyBuilder = new StringBuilder();
+                        state = ParsingState.KEY;
+                    } else if (current == '}') {
+                        // If the character is "}" this is the closing of the map - change the value of endIndex not to be
+                        // -1
+                        endIndex = counter;
+                        value = putValueInMap(keyBuilder, value, resultMap);
+                    } else {
+                        handleValue((StringBuilder) value, current);
+                    }
+                    break;
 
             }
         }

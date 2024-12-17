@@ -265,13 +265,13 @@ public abstract class RunVmCommandBase<T extends VmOperationParameterBase> exten
     protected void endExecutionMonitoring() {
         ExecutionContext executionContext = getExecutionContext();
         switch (executionContext.getExecutionMethod()) {
-        case AsJob:
-            executionHandler.endJob(executionContext, false);
-            break;
-        case AsStep:
-            executionHandler.endStep(executionContext, executionContext.getStep(), false);
-            break;
-        default:
+            case AsJob:
+                executionHandler.endJob(executionContext, false);
+                break;
+            case AsStep:
+                executionHandler.endStep(executionContext, executionContext.getStep(), false);
+                break;
+            default:
         }
     }
 

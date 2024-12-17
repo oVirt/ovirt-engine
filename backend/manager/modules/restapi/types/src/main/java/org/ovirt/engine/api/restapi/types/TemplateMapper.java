@@ -127,14 +127,14 @@ public class TemplateMapper extends VmBaseMapper {
 
     private static TemplateStatus mapTemplateStatus(VmTemplateStatus status) {
         switch (status) {
-        case OK:
-            return TemplateStatus.OK;
-        case Locked:
-            return TemplateStatus.LOCKED;
-        case Illegal:
-            return TemplateStatus.ILLEGAL;
-        default:
-            return null;
+            case OK:
+                return TemplateStatus.OK;
+            case Locked:
+                return TemplateStatus.LOCKED;
+            case Illegal:
+                return TemplateStatus.ILLEGAL;
+            default:
+                return null;
         }
     }
 }

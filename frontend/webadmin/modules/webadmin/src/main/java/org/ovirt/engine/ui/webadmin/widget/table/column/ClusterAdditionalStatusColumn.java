@@ -77,7 +77,7 @@ public class ClusterAdditionalStatusColumn extends EntityAdditionalStatusColumn<
         }
 
         if (images.isEmpty()) {
-          return SafeHtmlUtils.EMPTY_SAFE_HTML;
+            return SafeHtmlUtils.EMPTY_SAFE_HTML;
         }
         SafeHtmlBuilder entityImages = new SafeHtmlBuilder();
         entityImages.append(images.remove(0));
@@ -143,7 +143,7 @@ public class ClusterAdditionalStatusColumn extends EntityAdditionalStatusColumn<
         }
 
         if (tooltips.isEmpty()) {
-          return SafeHtmlUtils.EMPTY_SAFE_HTML;
+            return SafeHtmlUtils.EMPTY_SAFE_HTML;
         }
         SafeHtmlBuilder entityTooltip = new SafeHtmlBuilder();
         entityTooltip.append(tooltips.remove(0));

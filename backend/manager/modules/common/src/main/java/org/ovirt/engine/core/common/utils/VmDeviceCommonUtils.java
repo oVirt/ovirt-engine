@@ -106,69 +106,69 @@ public class VmDeviceCommonUtils {
         devices.forEach(device -> device.setBootOrder(0));
 
         switch (bootSequence) {
-        case C:
-            bootOrder = setDiskBootOrder(devices, bootOrder, deviceIdToDiskVmElement);
-            break;
-        case CD:
-            bootOrder = setDiskBootOrder(devices, bootOrder, deviceIdToDiskVmElement);
-            bootOrder = setCDBootOrder(devices, bootOrder);
-            break;
-        case CDN:
-            bootOrder = setDiskBootOrder(devices, bootOrder, deviceIdToDiskVmElement);
-            bootOrder = setCDBootOrder(devices, bootOrder);
-            bootOrder = setNetworkBootOrder(devices, bootOrder, interfaces);
-            break;
-        case CN:
-            bootOrder = setDiskBootOrder(devices, bootOrder, deviceIdToDiskVmElement);
-            bootOrder = setNetworkBootOrder(devices, bootOrder, interfaces);
-            break;
-        case CND:
-            bootOrder = setDiskBootOrder(devices, bootOrder, deviceIdToDiskVmElement);
-            bootOrder = setNetworkBootOrder(devices, bootOrder, interfaces);
-            bootOrder = setCDBootOrder(devices, bootOrder);
-            break;
-        case D:
-            bootOrder = setCDBootOrder(devices, bootOrder);
-            break;
-        case DC:
-            bootOrder = setCDBootOrder(devices, bootOrder);
-            bootOrder = setDiskBootOrder(devices, bootOrder, deviceIdToDiskVmElement);
-            break;
-        case DCN:
-            bootOrder = setCDBootOrder(devices, bootOrder);
-            bootOrder = setDiskBootOrder(devices, bootOrder, deviceIdToDiskVmElement);
-            bootOrder = setNetworkBootOrder(devices, bootOrder, interfaces);
-            break;
-        case DN:
-            bootOrder = setCDBootOrder(devices, bootOrder);
-            bootOrder = setNetworkBootOrder(devices, bootOrder, interfaces);
-            break;
-        case DNC:
-            bootOrder = setCDBootOrder(devices, bootOrder);
-            bootOrder = setNetworkBootOrder(devices, bootOrder, interfaces);
-            bootOrder = setDiskBootOrder(devices, bootOrder, deviceIdToDiskVmElement);
-            break;
-        case N:
-            bootOrder = setNetworkBootOrder(devices, bootOrder, interfaces);
-            break;
-        case NC:
-            bootOrder = setNetworkBootOrder(devices, bootOrder, interfaces);
-            bootOrder = setDiskBootOrder(devices, bootOrder, deviceIdToDiskVmElement);
-            break;
-        case NCD:
-            bootOrder = setNetworkBootOrder(devices, bootOrder, interfaces);
-            bootOrder = setDiskBootOrder(devices, bootOrder, deviceIdToDiskVmElement);
-            bootOrder = setCDBootOrder(devices, bootOrder);
-            break;
-        case ND:
-            bootOrder = setNetworkBootOrder(devices, bootOrder, interfaces);
-            bootOrder = setCDBootOrder(devices, bootOrder);
-            break;
-        case NDC:
-            bootOrder = setNetworkBootOrder(devices, bootOrder, interfaces);
-            bootOrder = setCDBootOrder(devices, bootOrder);
-            bootOrder = setDiskBootOrder(devices, bootOrder, deviceIdToDiskVmElement);
-            break;
+            case C:
+                bootOrder = setDiskBootOrder(devices, bootOrder, deviceIdToDiskVmElement);
+                break;
+            case CD:
+                bootOrder = setDiskBootOrder(devices, bootOrder, deviceIdToDiskVmElement);
+                bootOrder = setCDBootOrder(devices, bootOrder);
+                break;
+            case CDN:
+                bootOrder = setDiskBootOrder(devices, bootOrder, deviceIdToDiskVmElement);
+                bootOrder = setCDBootOrder(devices, bootOrder);
+                bootOrder = setNetworkBootOrder(devices, bootOrder, interfaces);
+                break;
+            case CN:
+                bootOrder = setDiskBootOrder(devices, bootOrder, deviceIdToDiskVmElement);
+                bootOrder = setNetworkBootOrder(devices, bootOrder, interfaces);
+                break;
+            case CND:
+                bootOrder = setDiskBootOrder(devices, bootOrder, deviceIdToDiskVmElement);
+                bootOrder = setNetworkBootOrder(devices, bootOrder, interfaces);
+                bootOrder = setCDBootOrder(devices, bootOrder);
+                break;
+            case D:
+                bootOrder = setCDBootOrder(devices, bootOrder);
+                break;
+            case DC:
+                bootOrder = setCDBootOrder(devices, bootOrder);
+                bootOrder = setDiskBootOrder(devices, bootOrder, deviceIdToDiskVmElement);
+                break;
+            case DCN:
+                bootOrder = setCDBootOrder(devices, bootOrder);
+                bootOrder = setDiskBootOrder(devices, bootOrder, deviceIdToDiskVmElement);
+                bootOrder = setNetworkBootOrder(devices, bootOrder, interfaces);
+                break;
+            case DN:
+                bootOrder = setCDBootOrder(devices, bootOrder);
+                bootOrder = setNetworkBootOrder(devices, bootOrder, interfaces);
+                break;
+            case DNC:
+                bootOrder = setCDBootOrder(devices, bootOrder);
+                bootOrder = setNetworkBootOrder(devices, bootOrder, interfaces);
+                bootOrder = setDiskBootOrder(devices, bootOrder, deviceIdToDiskVmElement);
+                break;
+            case N:
+                bootOrder = setNetworkBootOrder(devices, bootOrder, interfaces);
+                break;
+            case NC:
+                bootOrder = setNetworkBootOrder(devices, bootOrder, interfaces);
+                bootOrder = setDiskBootOrder(devices, bootOrder, deviceIdToDiskVmElement);
+                break;
+            case NCD:
+                bootOrder = setNetworkBootOrder(devices, bootOrder, interfaces);
+                bootOrder = setDiskBootOrder(devices, bootOrder, deviceIdToDiskVmElement);
+                bootOrder = setCDBootOrder(devices, bootOrder);
+                break;
+            case ND:
+                bootOrder = setNetworkBootOrder(devices, bootOrder, interfaces);
+                bootOrder = setCDBootOrder(devices, bootOrder);
+                break;
+            case NDC:
+                bootOrder = setNetworkBootOrder(devices, bootOrder, interfaces);
+                bootOrder = setCDBootOrder(devices, bootOrder);
+                bootOrder = setDiskBootOrder(devices, bootOrder, deviceIdToDiskVmElement);
+                break;
         }
     }
 
@@ -444,12 +444,12 @@ public class VmDeviceCommonUtils {
      */
     public static int getCdDeviceIndex(String cdInterface) {
         switch (cdInterface) {
-        case "scsi":
-        case "ide":
-        case "sata":
-            return 2;
-        default:
-            return -1;
+            case "scsi":
+            case "ide":
+            case "sata":
+                return 2;
+            default:
+                return -1;
         }
     }
 
@@ -461,13 +461,13 @@ public class VmDeviceCommonUtils {
      */
     public static int getCdPayloadDeviceIndex(String cdInterface) {
         switch (cdInterface) {
-        case "scsi":
-        case "sata":
-            return 1;
-        case "ide":
-            return 3;
-        default:
-            return -1;
+            case "scsi":
+            case "sata":
+                return 1;
+            case "ide":
+                return 3;
+            default:
+                return -1;
         }
     }
 

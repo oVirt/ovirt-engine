@@ -24,7 +24,7 @@ public class VmPool implements Queryable, BusinessEntity<Guid>, Nameable, Commen
     @NotNull(message = "VALIDATION_VM_POOLS_NAME_NOT_NULL", groups = { CreateEntity.class, UpdateEntity.class })
     @Size(min = 1, max = BusinessEntitiesDefinitions.VM_POOL_NAME_SIZE)
     @Pattern(regexp = ValidationUtils.POOL_NAME_PATTERN, message = "ACTION_TYPE_FAILED_INVALID_POOL_NAME", groups = { CreateEntity.class,
-            UpdateEntity.class })
+        UpdateEntity.class })
     private String name;
 
     @Size(max = BusinessEntitiesDefinitions.GENERAL_MAX_SIZE)

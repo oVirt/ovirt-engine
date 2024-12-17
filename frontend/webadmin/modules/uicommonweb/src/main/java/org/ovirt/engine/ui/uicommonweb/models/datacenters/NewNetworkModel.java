@@ -145,7 +145,7 @@ public class NewNetworkModel extends NetworkModel {
         updateClusterAttachments();
     }
 
-   private void updatePortIsolationChangeabilityAndValue() {
+    private void updatePortIsolationChangeabilityAndValue() {
         boolean portIsolationAllowed = getIsVmNetwork().getEntity() && !getExternal().getEntity();
         getPortIsolation().setIsChangeable(portIsolationAllowed);
         if (!portIsolationAllowed) {

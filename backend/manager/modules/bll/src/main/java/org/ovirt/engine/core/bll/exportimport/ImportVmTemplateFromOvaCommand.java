@@ -114,17 +114,17 @@ public class ImportVmTemplateFromOvaCommand<T extends ImportVmTemplateFromOvaPar
     @Override
     public boolean performNextOperation(int completedChildCount) {
         switch (getParameters().getImportPhase()) {
-        case CREATE_DISKS:
-            getParameters().setImportPhase(Phase.CONVERT);
-            if (getParameters().getProxyHostId() == null) {
-                getParameters().setProxyHostId(selectProxyHost());
-            }
-            break;
+            case CREATE_DISKS:
+                getParameters().setImportPhase(Phase.CONVERT);
+                if (getParameters().getProxyHostId() == null) {
+                    getParameters().setProxyHostId(selectProxyHost());
+                }
+                break;
 
-        case CONVERT:
-            return false;
+            case CONVERT:
+                return false;
 
-        default:
+            default:
         }
 
         persistCommandIfNeeded();
@@ -135,9 +135,9 @@ public class ImportVmTemplateFromOvaCommand<T extends ImportVmTemplateFromOvaPar
     @SuppressWarnings("incomplete-switch")
     private void executeNextOperation() {
         switch (getParameters().getImportPhase()) {
-        case CONVERT:
-            convert();
-            break;
+            case CONVERT:
+                convert();
+                break;
         }
     }
 

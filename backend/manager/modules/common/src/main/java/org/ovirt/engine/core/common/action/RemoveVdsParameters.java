@@ -15,8 +15,8 @@ public class RemoveVdsParameters extends VdsActionParameters {
     }
 
     public RemoveVdsParameters(Guid vdsId, boolean forceAction) {
-     super(vdsId);
-     this.forceAction = forceAction;
+        super(vdsId);
+        this.forceAction = forceAction;
     }
 
     public boolean isForceAction() {

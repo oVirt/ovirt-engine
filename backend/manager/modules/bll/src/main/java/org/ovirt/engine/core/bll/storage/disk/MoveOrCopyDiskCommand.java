@@ -419,11 +419,10 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
     }
 
     private void addStorageDomainMapForCopiedTemplateDisk() {
-        imageStorageDomainMapDao.save
-                (new ImageStorageDomainMap(getParameters().getImageId(),
-                        getParameters().getDestDomainId(),
-                        getParameters().getQuotaId(),
-                        getImage().getDiskProfileId()));
+        imageStorageDomainMapDao.save(new ImageStorageDomainMap(getParameters().getImageId(),
+            getParameters().getDestDomainId(),
+            getParameters().getQuotaId(),
+            getImage().getDiskProfileId()));
     }
 
     private void endCommandActions() {
@@ -468,21 +467,21 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
     @Override
     public AuditLogType getAuditLogTypeValue() {
         switch (getActionState()) {
-        case EXECUTE:
-            return getSucceeded() ? isMoveOperation() ? AuditLogType.USER_MOVED_DISK
-                    : AuditLogType.USER_COPIED_DISK
-                    : isMoveOperation() ? AuditLogType.USER_FAILED_MOVED_VM_DISK
-                            : AuditLogType.USER_FAILED_COPY_DISK;
+            case EXECUTE:
+                return getSucceeded() ? isMoveOperation() ? AuditLogType.USER_MOVED_DISK
+                        : AuditLogType.USER_COPIED_DISK
+                        : isMoveOperation() ? AuditLogType.USER_FAILED_MOVED_VM_DISK
+                                : AuditLogType.USER_FAILED_COPY_DISK;
 
-        case END_SUCCESS:
-            return getSucceeded() ? isMoveOperation() ? AuditLogType.USER_MOVED_DISK_FINISHED_SUCCESS
-                    : AuditLogType.USER_COPIED_DISK_FINISHED_SUCCESS
-                    : isMoveOperation() ? AuditLogType.USER_MOVED_DISK_FINISHED_FAILURE
-                            : AuditLogType.USER_COPIED_DISK_FINISHED_FAILURE;
+            case END_SUCCESS:
+                return getSucceeded() ? isMoveOperation() ? AuditLogType.USER_MOVED_DISK_FINISHED_SUCCESS
+                        : AuditLogType.USER_COPIED_DISK_FINISHED_SUCCESS
+                        : isMoveOperation() ? AuditLogType.USER_MOVED_DISK_FINISHED_FAILURE
+                                : AuditLogType.USER_COPIED_DISK_FINISHED_FAILURE;
 
-        default:
-            return isMoveOperation() ? AuditLogType.USER_MOVED_DISK_FINISHED_FAILURE
-                    : AuditLogType.USER_COPIED_DISK_FINISHED_FAILURE;
+            default:
+                return isMoveOperation() ? AuditLogType.USER_MOVED_DISK_FINISHED_FAILURE
+                        : AuditLogType.USER_COPIED_DISK_FINISHED_FAILURE;
         }
     }
 

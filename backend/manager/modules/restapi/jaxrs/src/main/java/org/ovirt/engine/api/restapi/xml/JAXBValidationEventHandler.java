@@ -17,11 +17,11 @@ public class JAXBValidationEventHandler implements ValidationEventHandler {
     @Override
     public boolean handleEvent(ValidationEvent event) {
         switch (event.getSeverity()) {
-        case ValidationEvent.ERROR:
-        case ValidationEvent.FATAL_ERROR:
-            return false;
-        default:
-            return true;
+            case ValidationEvent.ERROR:
+            case ValidationEvent.FATAL_ERROR:
+                return false;
+            default:
+                return true;
         }
     }
 }

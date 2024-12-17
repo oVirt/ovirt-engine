@@ -508,19 +508,19 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
 
 
     @Override
-     public String getEntityType() {
+    public String getEntityType() {
         return VdcObjectType.VmTemplate.getVdcObjectTranslation();
-     }
+    }
 
-     @Override
-     public String getEntityOldName() {
+    @Override
+    public String getEntityOldName() {
         return oldTemplate.getName();
-     }
+    }
 
-     @Override
-     public String getEntityNewName() {
-         return getParameters().getVmTemplateData().getName();
-     }
+    @Override
+    public String getEntityNewName() {
+        return getParameters().getVmTemplateData().getName();
+    }
 
     @Override
     public void setEntityId(AuditLogable logable) {

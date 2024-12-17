@@ -25,7 +25,7 @@ public class DiscoverSendTargetsQuery<P extends DiscoverSendTargetsQueryParamete
         } catch (RuntimeException e) {
             if (e instanceof EngineException) {
                 EngineException engineException = (EngineException) e;
-                if (engineException.getErrorCode() == EngineError.iSCSIDiscoveryError ) {
+                if (engineException.getErrorCode() == EngineError.iSCSIDiscoveryError) {
                     handleException(engineException, false);
                     return;
                 }

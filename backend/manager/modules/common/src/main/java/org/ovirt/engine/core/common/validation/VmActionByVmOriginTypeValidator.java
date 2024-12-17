@@ -43,7 +43,7 @@ public class VmActionByVmOriginTypeValidator {
     }
 
     public static boolean isCommandAllowed(VM vm, ActionType actionType) {
-        return !( vm.isHostedEngine() && !COMMANDS_ALLOWED_ON_HOSTED_ENGINE.contains(actionType) ||
-                vm.isExternalVm() && !COMMANDS_ALLOWED_ON_EXTERNAL_VMS.contains(actionType) );
+        return !(vm.isHostedEngine() && !COMMANDS_ALLOWED_ON_HOSTED_ENGINE.contains(actionType) ||
+                vm.isExternalVm() && !COMMANDS_ALLOWED_ON_EXTERNAL_VMS.contains(actionType));
     }
 }

@@ -121,7 +121,6 @@ public class AddVmFromSnapshotCommandTest extends AddVmCommandTestBase<AddVmFrom
         Snapshot snap = new Snapshot();
         snap.setType(Snapshot.SnapshotType.REGULAR);
         when(snapshotDao.get(SOURCE_SNAPSHOT_ID)).thenReturn(snap);
-        ValidateTestUtils.runAndAssertValidateFailure
-                (cmd, EngineMessage.ACTION_TYPE_FAILED_VM_SNAPSHOT_HAS_NO_CONFIGURATION);
+        ValidateTestUtils.runAndAssertValidateFailure(cmd, EngineMessage.ACTION_TYPE_FAILED_VM_SNAPSHOT_HAS_NO_CONFIGURATION);
     }
 }

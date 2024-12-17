@@ -104,16 +104,16 @@ public class TaskWidget extends Composite {
 
     public static ProgressBarType getProgressBarType(JobExecutionStatus status) {
         switch (status) {
-        case ABORTED:
-            return ProgressBarType.WARNING;
-        case FAILED:
-            return ProgressBarType.DANGER;
-        case FINISHED:
-            return ProgressBarType.SUCCESS;
-        case STARTED:
-            return ProgressBarType.INFO;
-        default:
-            return ProgressBarType.DEFAULT;
+            case ABORTED:
+                return ProgressBarType.WARNING;
+            case FAILED:
+                return ProgressBarType.DANGER;
+            case FINISHED:
+                return ProgressBarType.SUCCESS;
+            case STARTED:
+                return ProgressBarType.INFO;
+            default:
+                return ProgressBarType.DEFAULT;
         }
     }
 

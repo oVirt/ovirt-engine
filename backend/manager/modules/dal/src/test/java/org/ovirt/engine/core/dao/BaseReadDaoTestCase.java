@@ -13,7 +13,7 @@ import org.junit.jupiter.api.Test;
 import org.ovirt.engine.core.common.businessentities.BusinessEntity;
 
 public abstract class BaseReadDaoTestCase<ID extends Serializable, T extends BusinessEntity<ID>,
-D extends ReadDao<T, ID>> extends BaseDaoTestCase<D> {
+    D extends ReadDao<T, ID>> extends BaseDaoTestCase<D> {
 
     protected T existingEntity;
 

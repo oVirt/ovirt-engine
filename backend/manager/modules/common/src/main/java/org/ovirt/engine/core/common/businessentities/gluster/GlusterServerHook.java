@@ -54,11 +54,11 @@ public class GlusterServerHook implements Serializable {
     }
 
     public void setStatus(String status) {
-       if (status != null) {
-           this.status = GlusterHookStatus.valueOf(status);
-       } else {
-           this.status = null;
-       }
+        if (status != null) {
+            this.status = GlusterHookStatus.valueOf(status);
+        } else {
+            this.status = null;
+        }
     }
 
     public GlusterHookContentType getContentType() {

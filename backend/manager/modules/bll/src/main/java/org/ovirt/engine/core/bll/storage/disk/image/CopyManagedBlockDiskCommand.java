@@ -126,23 +126,22 @@ public class CopyManagedBlockDiskCommand<T extends CopyImageGroupWithDataCommand
     @Override
     public boolean performNextOperation(int completedChildCount) {
         switch (getParameters().getStage()) {
-        case LEASE_CREATION:
-            if (!saveLease()) {
+            case LEASE_CREATION:
+                if (!saveLease()) {
                     setCommandStatus(CommandStatus.FAILED);
-            }
-
-            getParameters().setStage(CopyImageGroupWithDataCommandParameters.CopyStage.DATA_COPY);
-            break;
-        case DATA_COPY:
-            copyData();
-            getParameters().setStage(CopyImageGroupWithDataCommandParameters.CopyStage.DETACH_VOLUME);
-            break;
-        case DETACH_VOLUME:
-            detachVolume();
-            getParameters().setStage(CopyImageGroupWithDataCommandParameters.CopyStage.UPDATE_VOLUME);
-            break;
-        case UPDATE_VOLUME:
-            return false;
+                }
+                getParameters().setStage(CopyImageGroupWithDataCommandParameters.CopyStage.DATA_COPY);
+                break;
+            case DATA_COPY:
+                copyData();
+                getParameters().setStage(CopyImageGroupWithDataCommandParameters.CopyStage.DETACH_VOLUME);
+                break;
+            case DETACH_VOLUME:
+                detachVolume();
+                getParameters().setStage(CopyImageGroupWithDataCommandParameters.CopyStage.UPDATE_VOLUME);
+                break;
+            case UPDATE_VOLUME:
+                return false;
         }
 
         persistCommandIfNeeded();

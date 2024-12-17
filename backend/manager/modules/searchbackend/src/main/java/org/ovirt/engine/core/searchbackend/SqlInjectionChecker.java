@@ -74,8 +74,8 @@ public abstract class SqlInjectionChecker {
             String token = st.nextToken();
             if (token.equals(QUOTE_STR)) {
                 if (singleQuoteFound) {
-                singleQuoteFound = false; // closing '
-                continue;
+                    singleQuoteFound = false; // closing '
+                    continue;
                 } else if (!doubleQuoteFound) { // ignore single quote inside double quotes
                     singleQuoteFound = true; // opening '
                     continue;
@@ -114,26 +114,26 @@ public abstract class SqlInjectionChecker {
             char next = BLANK;
             for (Character c : sourceArray) {
                 switch (c) {
-                case QUOTE:
-                case PERCENT: // Those values should be formatted as \' or \%
-                    if (i > 0 && prev == BACKSLASH) {
+                    case QUOTE:
+                    case PERCENT: // Those values should be formatted as \' or \%
+                        if (i > 0 && prev == BACKSLASH) {
+                            sb.append(c);
+                        } else {
+                            sb.append(BACKSLASH);
+                            sb.append(c);
+                        }
+                        break;
+                    case BACKSLASH: // A backslash should be formatted as \\
+                        if (i > 0 && prev == BACKSLASH || next == QUOTE || next == PERCENT || next == BACKSLASH) {
+                            sb.append(c);
+                        } else {
+                            sb.append(BACKSLASH);
+                            sb.append(BACKSLASH);
+                        }
+                        break;
+                    default: // regular , copy character as is
                         sb.append(c);
-                    } else {
-                        sb.append(BACKSLASH);
-                        sb.append(c);
-                    }
-                    break;
-                case BACKSLASH: // A backslash should be formatted as \\
-                    if (i > 0 && prev == BACKSLASH || next == QUOTE || next == PERCENT || next == BACKSLASH) {
-                        sb.append(c);
-                    } else {
-                        sb.append(BACKSLASH);
-                        sb.append(BACKSLASH);
-                    }
-                    break;
-                default: // regular , copy character as is
-                    sb.append(c);
-                    break;
+                        break;
                 }
                 prev = c;
                 i++;

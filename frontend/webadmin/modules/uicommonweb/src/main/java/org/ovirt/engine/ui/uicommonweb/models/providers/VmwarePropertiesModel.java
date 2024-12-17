@@ -40,18 +40,18 @@ public class VmwarePropertiesModel extends ProxyHostPropertiesModel {
             setIsValid(true);
         } else {
             getvCenter().validateEntity(new IValidation[] {
-                    new NotEmptyValidation(),
-                    new LengthValidation(255),
-                    new HostAddressValidation() });
+                new NotEmptyValidation(),
+                new LengthValidation(255),
+                new HostAddressValidation() });
             getEsx().validateEntity(new IValidation[]{
-                    new NotEmptyValidation(),
-                    new LengthValidation(255),
-                    new HostAddressValidation()});
+                new NotEmptyValidation(),
+                new LengthValidation(255),
+                new HostAddressValidation()});
             vmwareDatacenter.validateEntity(new IValidation[]{
-                    new NotEmptyValidation()});
+                new NotEmptyValidation()});
             setIsValid(getvCenter().getIsValid()
-                    && getEsx().getIsValid()
-                    && getVmwareDatacenter().getIsValid());
+                && getEsx().getIsValid()
+                && getVmwareDatacenter().getIsValid());
         }
 
         return getIsValid();

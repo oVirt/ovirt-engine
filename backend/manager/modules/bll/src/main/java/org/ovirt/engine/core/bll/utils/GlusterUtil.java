@@ -253,7 +253,7 @@ public class GlusterUtil {
             networkName = result.get().getKey();
 
         } else {
-          return null;
+            return null;
         }
         hostGlusterIpMap.put(currentHostVds, getIpAddressForHost(currentHostVds.getId(),
                 networkName));
@@ -389,29 +389,29 @@ public class GlusterUtil {
         String retStr = "";
 
         switch (schedule.getRecurrence()) {
-        case INTERVAL:
-            int interval = schedule.getInterval();
-            retStr = String.format("0 */%s * * * ? *", interval);
-            break;
-        case HOURLY:
-            retStr = "0 0 0/1 1/1 * ? *";
-            break;
-        case DAILY:
-            Time execTime = schedule.getExecutionTime();
-            retStr = String.format("0 %s %s * * ? *", execTime.getMinutes(), execTime.getHours());
-            break;
-        case WEEKLY:
-            String days = schedule.getDays();
-            Time execTime1 = schedule.getExecutionTime();
-            retStr = String.format("0 %s %s ? * %s *", execTime1.getMinutes(), execTime1.getHours(), days);
-            break;
-        case MONTHLY:
-            String days1 = schedule.getDays();
-            Time execTime2 = schedule.getExecutionTime();
-            retStr = String.format("0 %s %s %s * ? *", execTime2.getMinutes(), execTime2.getHours(), days1);
-            break;
-        case UNKNOWN:
-            return null;
+            case INTERVAL:
+                int interval = schedule.getInterval();
+                retStr = String.format("0 */%s * * * ? *", interval);
+                break;
+            case HOURLY:
+                retStr = "0 0 0/1 1/1 * ? *";
+                break;
+            case DAILY:
+                Time execTime = schedule.getExecutionTime();
+                retStr = String.format("0 %s %s * * ? *", execTime.getMinutes(), execTime.getHours());
+                break;
+            case WEEKLY:
+                String days = schedule.getDays();
+                Time execTime1 = schedule.getExecutionTime();
+                retStr = String.format("0 %s %s ? * %s *", execTime1.getMinutes(), execTime1.getHours(), days);
+                break;
+            case MONTHLY:
+                String days1 = schedule.getDays();
+                Time execTime2 = schedule.getExecutionTime();
+                retStr = String.format("0 %s %s %s * ? *", execTime2.getMinutes(), execTime2.getHours(), days1);
+                break;
+            case UNKNOWN:
+                return null;
         }
 
         return retStr;
@@ -588,7 +588,7 @@ public class GlusterUtil {
 
             }
         } else {
-                return EngineMessage.ACTION_TYPE_FAILED_INVALID_GLUSTER_OPTIONS;
+            return EngineMessage.ACTION_TYPE_FAILED_INVALID_GLUSTER_OPTIONS;
         }
         return null;
     }

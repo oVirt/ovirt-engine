@@ -29,8 +29,8 @@ public class BackendStorageDomainDiskSnapshotsResource
 
     @Override
     public DiskSnapshots list() {
-            return mapCollection(getBackendCollection(QueryType.GetAllDiskSnapshotsByStorageDomainId,
-                    new DiskSnapshotsQueryParameters(this.storageDomainId, includeActive(), includeTemplate())));
+        return mapCollection(getBackendCollection(QueryType.GetAllDiskSnapshotsByStorageDomainId,
+                new DiskSnapshotsQueryParameters(this.storageDomainId, includeActive(), includeTemplate())));
     }
 
     protected DiskSnapshots mapCollection(List<Disk> entities) {

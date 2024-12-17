@@ -354,11 +354,11 @@ public abstract class AbstractActionTable<E, T> extends AbstractActionPanel<T> i
                 HasData<T> display = event.getDisplay();
                 SelectionModel<? super T> selectionModel = display.getSelectionModel();
                 if (selectionModel == null) {
-                  return;
+                    return;
                 }
                 T value = event.getValue();
                 if (!this.selectionModel.asMultiSelectionModel().isMultiSelectEnabled() &&
-                   !this.selectionModel.asMultiSelectionModel().isMultiRangeSelectEnabled()) {
+                    !this.selectionModel.asMultiSelectionModel().isMultiRangeSelectEnabled()) {
                     selectionModel.setSelected(value, true);
                 }
             }

@@ -138,7 +138,7 @@ public class GlusterHooksDaoImpl extends MassOperationsGenericDao<GlusterHookEnt
                 createIdParameterMapper(id));
     }
 
-       @Override
+    @Override
     public void removeAll(Collection<Guid> ids) {
         getCallsHandler().executeModification("DeleteGlusterHooksByIds",
                 getCustomMapSqlParameterSource().addValue("ids", StringUtils.join(ids, ',')));

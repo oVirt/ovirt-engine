@@ -23,8 +23,7 @@ public class BackendImageTransferResource extends
     }
 
     @Override
-    public
-    ImageTransfer get() {
+    public ImageTransfer get() {
         return performGet(QueryType.GetImageTransferById, new IdQueryParameters(guid));
     }
 

@@ -384,16 +384,16 @@ public abstract class VnicProfileModel extends Model {
         Frontend.getInstance().runQuery(QueryType.GetDeviceCustomProperties,
                 params,
                 new AsyncQuery<QueryReturnValue>(returnValue -> {
-                            if (returnValue != null) {
-                                Map<String, String> customPropertiesList = returnValue.getReturnValue();
+                    if (returnValue != null) {
+                        Map<String, String> customPropertiesList = returnValue.getReturnValue();
 
-                                getCustomPropertySheet().setKeyValueMap(customPropertiesList);
-                                getCustomPropertySheet().setIsChangeable(!customPropertiesList.isEmpty());
+                        getCustomPropertySheet().setKeyValueMap(customPropertiesList);
+                        getCustomPropertySheet().setIsChangeable(!customPropertiesList.isEmpty());
 
-                                initCustomProperties();
-                            }
-                            removeAsyncOperationProgress();
-                        }));
+                        initCustomProperties();
+                    }
+                    removeAsyncOperationProgress();
+                }));
     }
 
     public void initNetworkQoSList(Guid dcId) {
@@ -512,7 +512,8 @@ public abstract class VnicProfileModel extends Model {
 
     public boolean validate() {
         getName().validateEntity(new IValidation[] { new NotEmptyValidation(),
-                new LengthValidation(BusinessEntitiesDefinitions.NETWORK_NAME_SIZE) });
+            new LengthValidation(BusinessEntitiesDefinitions.NETWORK_NAME_SIZE)
+        });
 
         return getName().getIsValid() && getCustomPropertySheet().validate();
     }

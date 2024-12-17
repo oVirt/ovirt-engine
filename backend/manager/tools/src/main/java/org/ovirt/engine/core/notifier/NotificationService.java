@@ -127,7 +127,7 @@ public class NotificationService implements Runnable {
                 // Add configurations subscription
                 firstMatchSimpleFilter.addFilterEntries(
                         configurationFilters
-                        );
+                );
 
                 for (AuditLogEvent event : eventsManager.getAuditLogEvents()) {
                     firstMatchSimpleFilter.processEvent(event);
@@ -160,7 +160,7 @@ public class NotificationService implements Runnable {
         firstMatchSimpleFilter.clearFilterEntries();
         firstMatchSimpleFilter.addFilterEntries(
                 configurationFilters
-                );
+        );
         if (failedQueries == 0) {
             try {
                 firstMatchSimpleFilter.processEvent(eventsManager.createDBDownEvent());

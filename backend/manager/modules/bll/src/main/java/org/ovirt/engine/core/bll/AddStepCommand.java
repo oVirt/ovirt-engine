@@ -54,19 +54,19 @@ public abstract class AddStepCommand<T extends AddStepParameters> extends Comman
         ExecutionContext context = new ExecutionContext();
         context.setMonitored(true);
         if (parentStep == null) { // A step that is directly under a job
-                context.setJob(job);
-                context.setExecutionMethod(ExecutionMethod.AsJob);
-                jobRepository.loadJobSteps(job);
-                Step step = executionHandler.addStep(context, getParameters().getStepType(), getParameters().getDescription(), true);
-                setActionReturnValue(step.getId());
-                setSucceeded(true);
+            context.setJob(job);
+            context.setExecutionMethod(ExecutionMethod.AsJob);
+            jobRepository.loadJobSteps(job);
+            Step step = executionHandler.addStep(context, getParameters().getStepType(), getParameters().getDescription(), true);
+            setActionReturnValue(step.getId());
+            setSucceeded(true);
         } else { // this is a sub-step
-                context.setStep(parentStep);
-                context.setExecutionMethod(ExecutionMethod.AsStep);
-                jobRepository.loadParentStepSteps(parentStep);
-                Step step = executionHandler.addSubStep(context, parentStep, getParameters().getStepType(), getParameters().getDescription(), true);
-                setActionReturnValue(step.getId());
-                setSucceeded(true);
+            context.setStep(parentStep);
+            context.setExecutionMethod(ExecutionMethod.AsStep);
+            jobRepository.loadParentStepSteps(parentStep);
+            Step step = executionHandler.addSubStep(context, parentStep, getParameters().getStepType(), getParameters().getDescription(), true);
+            setActionReturnValue(step.getId());
+            setSucceeded(true);
         }
     }
 }

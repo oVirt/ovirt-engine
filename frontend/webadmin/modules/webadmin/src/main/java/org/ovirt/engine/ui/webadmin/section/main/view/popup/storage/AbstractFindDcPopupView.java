@@ -48,7 +48,7 @@ public class AbstractFindDcPopupView extends AbstractModelBoundPopupView<ListMod
                 return entity.isLocal() ? constants.storageTypeLocal() : constants.storageTypeShared();
             }
         }
-        , constants.storgeTypeDc());
+            , constants.storgeTypeDc());
     }
 
     @Override

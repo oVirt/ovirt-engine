@@ -28,7 +28,7 @@ public class CommandEnumTestUtils {
     }
 
     public static <E extends Enum<E>, C> void testCommandClassHasEnum
-            (Class<E> enumClass, Class<C> commandClass, String suffix) {
+    (Class<E> enumClass, Class<C> commandClass, String suffix) {
 
         final Reflections reflections = new Reflections(CommandsFactory.getCommandPackages());
         Set<Class<? extends C>> commands = reflections.getSubTypesOf(commandClass);

@@ -143,14 +143,14 @@ public class IscsiStorageView extends AbstractStorageView<IscsiStorageModel> imp
         // Set labels above table
         if (!object.getContainer().isNewStorage()) {
             switch (object.getContainer().getStorage().getStatus()) {
-            case Maintenance:
-                mainLabel.setText(constants.storageIscsiRemoveLUNsLabel());
-                subLabel.setText(constants.storageIscsiAvailableActionsOnMaintenanceLabel());
-                break;
-            case Active:
-                mainLabel.setText(constants.storageIscsiActionsLabel());
-                subLabel.setText(constants.storageIscsiAvailableActionsForActiveDomainsLabel());
-                break;
+                case Maintenance:
+                    mainLabel.setText(constants.storageIscsiRemoveLUNsLabel());
+                    subLabel.setText(constants.storageIscsiAvailableActionsOnMaintenanceLabel());
+                    break;
+                case Active:
+                    mainLabel.setText(constants.storageIscsiActionsLabel());
+                    subLabel.setText(constants.storageIscsiAvailableActionsForActiveDomainsLabel());
+                    break;
             }
         }
 

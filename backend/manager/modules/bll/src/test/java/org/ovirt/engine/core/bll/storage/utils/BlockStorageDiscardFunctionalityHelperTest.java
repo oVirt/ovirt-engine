@@ -192,11 +192,11 @@ public class BlockStorageDiscardFunctionalityHelperTest {
     public void testGetLunsThatBreakDiscardAfterDeleteSupportDiscardAfterDeleteBreaks() {
         storageDomain.setDiscardAfterDelete(true);
         LUNs lunThatBreaksDiscardSupport = createLunWithDiscardSupport(0L);
-                assertGetLunsThatBreakDiscardAfterDeleteSupportContainsExpectedLuns(
-                Arrays.asList(
-                        createLunWithDiscardSupport(1024L),
-                        lunThatBreaksDiscardSupport),
-                        Collections.singletonList(lunThatBreaksDiscardSupport));
+        assertGetLunsThatBreakDiscardAfterDeleteSupportContainsExpectedLuns(
+            Arrays.asList(
+                createLunWithDiscardSupport(1024L),
+                lunThatBreaksDiscardSupport),
+                Collections.singletonList(lunThatBreaksDiscardSupport));
     }
 
     @Test

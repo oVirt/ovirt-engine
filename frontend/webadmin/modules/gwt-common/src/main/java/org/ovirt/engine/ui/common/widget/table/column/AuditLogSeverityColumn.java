@@ -17,15 +17,15 @@ public class AuditLogSeverityColumn extends AbstractImageResourceColumn<AuditLog
     @Override
     public ImageResource getValue(AuditLog log) {
         switch (log.getSeverity()) {
-        case NORMAL:
-            return resources.logNormalImage();
-        case WARNING:
-            return resources.logWarningImage();
-        case ERROR:
-            return resources.logErrorImage();
-        case ALERT:
-        default:
-            return resources.alertConfigureImage();
+            case NORMAL:
+                return resources.logNormalImage();
+            case WARNING:
+                return resources.logWarningImage();
+            case ERROR:
+                return resources.logErrorImage();
+            case ALERT:
+            default:
+                return resources.alertConfigureImage();
         }
     }
 

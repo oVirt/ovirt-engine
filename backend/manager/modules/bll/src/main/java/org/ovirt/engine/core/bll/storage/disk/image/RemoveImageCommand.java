@@ -315,14 +315,14 @@ public class RemoveImageCommand<T extends RemoveImageParameters> extends BaseIma
             return;
         }
         switch (getParameters().getDbOperationScope()) {
-        case IMAGE:
-            removeImageFromDB();
-            break;
-        case MAPPING:
-            removeImageMapping();
-            break;
-        case NONE:
-            break;
+            case IMAGE:
+                removeImageFromDB();
+                break;
+            case MAPPING:
+                removeImageMapping();
+                break;
+            case NONE:
+                break;
         }
     }
 

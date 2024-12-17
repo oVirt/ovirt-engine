@@ -32,6 +32,6 @@ public class ReloadConfigurationsCommand<T extends ActionParametersBase> extends
 
     @Override
     public AuditLogType getAuditLogTypeValue() {
-            return getSucceeded() ? AuditLogType.RELOAD_CONFIGURATIONS_SUCCESS : AuditLogType.RELOAD_CONFIGURATIONS_FAILURE;
+        return getSucceeded() ? AuditLogType.RELOAD_CONFIGURATIONS_SUCCESS : AuditLogType.RELOAD_CONFIGURATIONS_FAILURE;
     }
 }

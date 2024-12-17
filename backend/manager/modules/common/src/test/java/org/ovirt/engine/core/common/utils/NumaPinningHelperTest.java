@@ -244,25 +244,25 @@ class NumaPinningHelperTest {
         host.setCpuCores(32);
         return host;
     }
-     private VdsNumaNode createHostNumaNodeWithCpus(int index, long freeMem, List<Integer> cpus) {
+    private VdsNumaNode createHostNumaNodeWithCpus(int index, long freeMem, List<Integer> cpus) {
         VdsNumaNode vdsNumaNode = createHostNumaNode(index, freeMem);
         vdsNumaNode.setCpuIds(cpus);
         return vdsNumaNode;
-     }
+    }
 
-     private static VmNumaNode createVmNumaNode(int index) {
-         VmNumaNode vmNumaNode = new VmNumaNode();
-         vmNumaNode.setId(Guid.newGuid());
-         vmNumaNode.setIndex(index);
-         vmNumaNode.setMemTotal(1000);
-         return vmNumaNode;
-     }
+    private static VmNumaNode createVmNumaNode(int index) {
+        VmNumaNode vmNumaNode = new VmNumaNode();
+        vmNumaNode.setId(Guid.newGuid());
+        vmNumaNode.setIndex(index);
+        vmNumaNode.setMemTotal(1000);
+        return vmNumaNode;
+    }
 
-     private static VdsNumaNode createVdsNumaNode(int index) {
-         VdsNumaNode vdsNumaNode = new VdsNumaNode();
-         vdsNumaNode.setIndex(index);
-         vdsNumaNode.setId(Guid.newGuid());
-         vdsNumaNode.setMemTotal(2000);
-         return vdsNumaNode;
-     }
+    private static VdsNumaNode createVdsNumaNode(int index) {
+        VdsNumaNode vdsNumaNode = new VdsNumaNode();
+        vdsNumaNode.setIndex(index);
+        vdsNumaNode.setId(Guid.newGuid());
+        vdsNumaNode.setMemTotal(2000);
+        return vdsNumaNode;
+    }
 }

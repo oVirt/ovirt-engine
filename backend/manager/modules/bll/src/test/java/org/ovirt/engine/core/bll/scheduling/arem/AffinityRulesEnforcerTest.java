@@ -609,7 +609,7 @@ public class AffinityRulesEnforcerTest {
     }
 
     private AffinityGroup createAffinityGroup(Cluster cluster, EntityAffinityRule vmAffinityRule, final
-    VM... vmList) {
+        VM... vmList) {
         AffinityGroup ag =
                 new AffinityGroup();
         ag.setId(Guid.newGuid());

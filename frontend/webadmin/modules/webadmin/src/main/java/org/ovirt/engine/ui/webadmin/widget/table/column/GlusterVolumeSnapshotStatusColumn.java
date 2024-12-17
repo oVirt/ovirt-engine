@@ -41,17 +41,17 @@ public class GlusterVolumeSnapshotStatusColumn extends AbstractColumn<GlusterVol
         String tooltip;
 
         switch (status) {
-        case ACTIVATED:
-            tooltip = constants.up();
-            break;
-        case DEACTIVATED:
-            tooltip = constants.down();
-            break;
-        case UNKNOWN:
-            tooltip = constants.unknown();
-            break;
-        default:
-            tooltip = constants.down();
+            case ACTIVATED:
+                tooltip = constants.up();
+                break;
+            case DEACTIVATED:
+                tooltip = constants.down();
+                break;
+            case UNKNOWN:
+                tooltip = constants.unknown();
+                break;
+            default:
+                tooltip = constants.down();
         }
 
         return SafeHtmlUtils.fromSafeConstant(tooltip);

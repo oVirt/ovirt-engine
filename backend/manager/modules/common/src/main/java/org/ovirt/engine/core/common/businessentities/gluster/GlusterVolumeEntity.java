@@ -518,7 +518,7 @@ public class GlusterVolumeEntity implements Queryable, BusinessEntityWithStatus<
 
     @Override
     public GlusterAsyncTask getAsyncTask() {
-       return asyncTask;
+        return asyncTask;
     }
 
     @Override

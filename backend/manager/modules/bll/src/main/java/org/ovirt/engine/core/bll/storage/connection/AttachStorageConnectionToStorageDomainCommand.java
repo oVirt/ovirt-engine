@@ -98,7 +98,7 @@ public class AttachStorageConnectionToStorageDomainCommand<T extends AttachDetac
         return dummyLun;
     }
 
-@Override
+    @Override
     protected Map<String, Pair<String, String>> getExclusiveLocks() {
         Map<String, Pair<String, String>> locks = new HashMap<>();
         // lock connection's id to avoid removing this connection at the same time

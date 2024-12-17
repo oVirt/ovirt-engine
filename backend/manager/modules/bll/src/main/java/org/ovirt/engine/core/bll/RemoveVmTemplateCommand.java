@@ -405,12 +405,12 @@ public class RemoveVmTemplateCommand<T extends VmTemplateManagementParameters> e
     @Override
     public AuditLogType getAuditLogTypeValue() {
         switch (getActionState()) {
-        case EXECUTE:
-            return getSucceeded() ? AuditLogType.USER_REMOVE_VM_TEMPLATE : AuditLogType.USER_FAILED_REMOVE_VM_TEMPLATE;
-        case END_FAILURE:
-        case END_SUCCESS:
-        default:
-            return AuditLogType.USER_REMOVE_VM_TEMPLATE_FINISHED;
+            case EXECUTE:
+                return getSucceeded() ? AuditLogType.USER_REMOVE_VM_TEMPLATE : AuditLogType.USER_FAILED_REMOVE_VM_TEMPLATE;
+            case END_FAILURE:
+            case END_SUCCESS:
+            default:
+                return AuditLogType.USER_REMOVE_VM_TEMPLATE_FINISHED;
         }
     }
 
