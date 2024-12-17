@@ -43,12 +43,12 @@ public class InstanceTypeModelProvider extends SearchableTabModelProvider<Instan
 
     @Override
     public AbstractModelBoundPopupPresenterWidget<? extends ConfirmationModel, ?> getConfirmModelPopup(InstanceTypeListModel source,
-            UICommand lastExecutedCommand) {
-            if (lastExecutedCommand == getModel().getDeleteInstanceTypeCommand()) {
-                return removeConfirmPopupProvider.get();
-            } else {
-                return super.getConfirmModelPopup(source, lastExecutedCommand);
-            }
+        UICommand lastExecutedCommand) {
+        if (lastExecutedCommand == getModel().getDeleteInstanceTypeCommand()) {
+            return removeConfirmPopupProvider.get();
+        } else {
+            return super.getConfirmModelPopup(source, lastExecutedCommand);
+        }
     }
 
 }

@@ -103,7 +103,7 @@ public class MappingTestHelper {
             takesInteger(m) ||
             takesLong(m) ||
             takesDouble(m)
-        );
+            );
     }
 
     private static void random(Method m, Object model) throws Exception {
@@ -234,6 +234,6 @@ public class MappingTestHelper {
     private static Object garble(Method m) {
         return m.getName().endsWith("Id") ? GuidUtils.asGuid(UUID.randomUUID().toString()).toString()
                 : new String(new byte[] { (byte) (65 + rand(26)), (byte) (65 + rand(26)),
-                        (byte) (65 + rand(26)) });
+                    (byte) (65 + rand(26)) });
     }
 }

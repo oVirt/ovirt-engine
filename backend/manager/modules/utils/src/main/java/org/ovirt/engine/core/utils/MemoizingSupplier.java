@@ -11,14 +11,14 @@ public class MemoizingSupplier<T> implements Supplier<T> {
     private T value;
 
     public MemoizingSupplier(Supplier<T> delegate) {
-      this.delegate = delegate;
+        this.delegate = delegate;
     }
 
     public T get() {
-      if (!initialized) {
-        value = delegate.get();
-        initialized = true;
-      }
-      return value;
+        if (!initialized) {
+            value = delegate.get();
+            initialized = true;
+        }
+        return value;
     }
 }

@@ -154,8 +154,8 @@ public class ImportRepoImageModel extends ImportExportRepoImageBaseModel {
     public boolean validate() {
         getTemplateName().validateEntity(
                 new IValidation[] {
-                        new LengthValidation(BusinessEntitiesDefinitions.VM_TEMPLATE_NAME_SIZE),
-                        new I18NExtraNameOrNoneValidation()
+                    new LengthValidation(BusinessEntitiesDefinitions.VM_TEMPLATE_NAME_SIZE),
+                    new I18NExtraNameOrNoneValidation()
                 });
         return getTemplateName().getIsValid();
     }

@@ -33,8 +33,8 @@ public class KVMPropertiesModel extends ProxyHostPropertiesModel {
             setIsValid(true);
         } else {
             getUrl().validateEntity(new IValidation[] {
-                    new NotEmptyValidation(),
-                    new LengthValidation(255) });
+                new NotEmptyValidation(),
+                new LengthValidation(255) });
             setIsValid(getUrl().getIsValid());
         }
 
@@ -47,9 +47,9 @@ public class KVMPropertiesModel extends ProxyHostPropertiesModel {
 
     KVMVmProviderProperties getKVMVmProviderProperties(Guid dataCenterId) {
         return new KVMVmProviderProperties(
-                getUrl().getEntity(),
-                dataCenterId,
-                getProxyHost().getSelectedItem() != null ? getProxyHost().getSelectedItem().getId() : null);
+            getUrl().getEntity(),
+            dataCenterId,
+            getProxyHost().getSelectedItem() != null ? getProxyHost().getSelectedItem().getId() : null);
     }
 
     public void init(Provider<KVMVmProviderProperties> provider) {

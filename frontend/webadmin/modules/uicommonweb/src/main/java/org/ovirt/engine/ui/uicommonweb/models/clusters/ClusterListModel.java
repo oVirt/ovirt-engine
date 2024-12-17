@@ -464,27 +464,27 @@ public class ClusterListModel<E> extends ListWithSimpleDetailsModel<E, Cluster> 
                 .setEntity(OptimizationType.ALLOW_OVERBOOKING == cluster.getOptimizationType());
 
         AsyncDataProvider.getInstance().getAllowClusterWithVirtGlusterEnabled(new AsyncQuery<>(isVirtGlusterAllowed -> {
-                    AsyncDataProvider.getInstance().getVolumeList(clusterModel.asyncQuery(volumes -> {
-                        if (volumes.size() > 0) {
-                            clusterModel.getEnableGlusterService().setIsChangeable(false);
-                            if (!isVirtGlusterAllowed) {
-                                clusterModel.getEnableOvirtService().setIsChangeable(false);
-                            }
-                        }
-                    }), cluster.getName());
-                    if (cluster.getClusterHostsAndVms().getVms() > 0) {
+            AsyncDataProvider.getInstance().getVolumeList(clusterModel.asyncQuery(volumes -> {
+                if (volumes.size() > 0) {
+                    clusterModel.getEnableGlusterService().setIsChangeable(false);
+                    if (!isVirtGlusterAllowed) {
                         clusterModel.getEnableOvirtService().setIsChangeable(false);
-                        if (!isVirtGlusterAllowed) {
-                            clusterModel.getEnableGlusterService().setIsChangeable(false);
-                        }
                     }
-                    if (cluster.getClusterHostsAndVms().getHosts() > 0) {
-                        clusterModel.getEnableTrustedService().setIsChangeable(false);
-                        clusterModel.getEnableTrustedService().setChangeProhibitionReason(
-                                ConstantsManager.getInstance()
-                                        .getConstants()
-                                        .trustedServiceDisabled());
-                    }
+                }
+            }), cluster.getName());
+            if (cluster.getClusterHostsAndVms().getVms() > 0) {
+                clusterModel.getEnableOvirtService().setIsChangeable(false);
+                if (!isVirtGlusterAllowed) {
+                    clusterModel.getEnableGlusterService().setIsChangeable(false);
+                }
+            }
+            if (cluster.getClusterHostsAndVms().getHosts() > 0) {
+                clusterModel.getEnableTrustedService().setIsChangeable(false);
+                clusterModel.getEnableTrustedService().setChangeProhibitionReason(
+                    ConstantsManager.getInstance()
+                        .getConstants()
+                        .trustedServiceDisabled());
+            }
         }));
 
         clusterModel.refreshMigrationPolicies();

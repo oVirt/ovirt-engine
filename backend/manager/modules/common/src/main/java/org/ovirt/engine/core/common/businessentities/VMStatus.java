@@ -198,26 +198,26 @@ public enum VMStatus implements Identifiable {
      */
     public boolean isPoweringUpOrMigrating() {
         switch (this) {
-        // VM is powering UP
-        case WaitForLaunch:
-        case PoweringUp:
+            // VM is powering UP
+            case WaitForLaunch:
+            case PoweringUp:
 
-        // If there is a reason why the VM was paused,
-        // others should wait for it.
-        case Paused:
+            // If there is a reason why the VM was paused,
+            // others should wait for it.
+            case Paused:
 
-        // The VM was restarted during startup,
-        case RebootInProgress:
+            // The VM was restarted during startup,
+            case RebootInProgress:
 
-        // User can trigger a migration when the VM is 'PoweringUp'.
-        // Other VMs should wait for migration to finish.
-        case MigratingTo:
-        case MigratingFrom:
-        case RestoringState:
-            return true;
+            // User can trigger a migration when the VM is 'PoweringUp'.
+            // Other VMs should wait for migration to finish.
+            case MigratingTo:
+            case MigratingFrom:
+            case RestoringState:
+                return true;
 
-        default:
-            return false;
+            default:
+                return false;
         }
     }
 

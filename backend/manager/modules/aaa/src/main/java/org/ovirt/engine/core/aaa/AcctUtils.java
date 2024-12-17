@@ -37,8 +37,7 @@ public class AcctUtils {
             String authzName,
             String user,
             String message,
-            Object... msgArgs
-            ) {
+            Object... msgArgs) {
         ExtMap input = new ExtMap();
         input.put(Acct.InvokeKeys.REASON, reportReason);
         input.put(Acct.InvokeKeys.PRINCIPAL_RECORD,
@@ -52,7 +51,7 @@ public class AcctUtils {
                                 Acct.InvokeKeys.MESSAGE,
                                 String.format(message, msgArgs)
                         )
-                );
+        );
         report(input);
     }
 

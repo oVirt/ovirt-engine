@@ -72,16 +72,16 @@ public class ExistingNonClusterModelBehavior extends NonClusterModelBehaviorBase
             }
         }), entity.getId());
 
-       Frontend.getInstance().runQuery(QueryType.GetRngDevice, new IdQueryParameters(entity.getId()),
-               new AsyncQuery<QueryReturnValue>(returnValue -> {
-                   List<VmDevice> rngDevices = returnValue.getReturnValue();
-                   getModel().getIsRngEnabled().setEntity(!rngDevices.isEmpty());
-                   if (!rngDevices.isEmpty()) {
-                       VmRngDevice rngDevice = new VmRngDevice(rngDevices.get(0));
-                       getModel().setRngDevice(rngDevice);
-                   }
-               }
-       ));
+        Frontend.getInstance().runQuery(QueryType.GetRngDevice, new IdQueryParameters(entity.getId()),
+                new AsyncQuery<QueryReturnValue>(returnValue -> {
+                    List<VmDevice> rngDevices = returnValue.getReturnValue();
+                    getModel().getIsRngEnabled().setEntity(!rngDevices.isEmpty());
+                    if (!rngDevices.isEmpty()) {
+                        VmRngDevice rngDevice = new VmRngDevice(rngDevices.get(0));
+                        getModel().setRngDevice(rngDevice);
+                    }
+                }
+        ));
         getModel().getEmulatedMachine().setSelectedItem(entity.getCustomEmulatedMachine());
         getModel().getCustomCpu().setSelectedItem(entity.getCustomCpuName());
         getModel().getMigrationMode().setSelectedItem(entity.getMigrationSupport());

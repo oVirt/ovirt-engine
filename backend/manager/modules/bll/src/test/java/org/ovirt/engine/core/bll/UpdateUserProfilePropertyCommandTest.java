@@ -74,11 +74,11 @@ class UpdateUserProfilePropertyCommandTest extends BaseCommandTest {
 
         verify(userProfileDaoMock).update(
                 argThat((UserProfileProperty outputProp) -> {
-                            checkAssertsForSshProp(inputProp, outputProp);
-                            checkAssertsForGenericProp(inputProp, outputProp);
-                            return true;
-                        }
-                ));
+                    checkAssertsForSshProp(inputProp, outputProp);
+                    checkAssertsForGenericProp(inputProp, outputProp);
+                    return true;
+                }
+        ));
         verify(userProfileDaoMock).get(propertyId);
         verifyNoMoreInteractions(userProfileDaoMock);
         assertTrue(updateCommand.getReturnValue().getSucceeded());

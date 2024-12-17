@@ -399,20 +399,20 @@ public class StorageListModel extends ListWithSimpleDetailsModel<Void, StorageDo
 
     private IStorageModel getStorageModelByStorage(StorageDomain storage) {
         switch (storage.getStorageType()) {
-        case NFS:
-            return new NfsStorageModel();
-        case FCP:
-            return new FcpStorageModel();
-        case ISCSI:
-            return new IscsiStorageModel();
-        case LOCALFS:
-            return new LocalStorageModel();
-        case POSIXFS:
-            return new PosixStorageModel();
-        case GLUSTERFS:
-            return new GlusterStorageModel();
-        case MANAGED_BLOCK_STORAGE:
-            return new ManagedBlockStorageModel();
+            case NFS:
+                return new NfsStorageModel();
+            case FCP:
+                return new FcpStorageModel();
+            case ISCSI:
+                return new IscsiStorageModel();
+            case LOCALFS:
+                return new LocalStorageModel();
+            case POSIXFS:
+                return new PosixStorageModel();
+            case GLUSTERFS:
+                return new GlusterStorageModel();
+            case MANAGED_BLOCK_STORAGE:
+                return new ManagedBlockStorageModel();
         }
         return null;
     }
@@ -550,7 +550,7 @@ public class StorageListModel extends ListWithSimpleDetailsModel<Void, StorageDo
                     tempVar2.setMessage(ConstantsManager.getInstance().getMessages()
                                                 .nameCanContainOnlyMsg(nameMaxLength));
                     storageModel.getName().validateEntity(new IValidation[] {
-                            new NotEmptyValidation(), tempVar2});
+                        new NotEmptyValidation(), tempVar2});
                     postStorageNameValidation();
 
                 }));
@@ -1474,20 +1474,20 @@ public class StorageListModel extends ListWithSimpleDetailsModel<Void, StorageDo
         params.setForce(force);
         Frontend.getInstance().runAction(ActionType.AddSANStorageDomain, params,
                 result -> {
-                        StorageListModel storageListModel = (StorageListModel) result.getState();
-                        StorageModel storageModel = (StorageModel) storageListModel.getWindow();
-                        storageListModel.storageModel = storageModel.getCurrentStorageItem();
-                        if (!result.getReturnValue().getSucceeded()) {
-                            storageListModel.onFinish(storageListModel.context, false, storageListModel.storageModel);
-                            return;
-                        }
+                    StorageListModel storageListModel = (StorageListModel) result.getState();
+                    StorageModel storageModel = (StorageModel) storageListModel.getWindow();
+                    storageListModel.storageModel = storageModel.getCurrentStorageItem();
+                    if (!result.getReturnValue().getSucceeded()) {
+                        storageListModel.onFinish(storageListModel.context, false, storageListModel.storageModel);
+                        return;
+                    }
 
-                        StoragePool dataCenter = storageModel.getDataCenter().getSelectedItem();
-                        if (!dataCenter.getId().equals(StorageModel.UnassignedDataCenterId)) {
-                            ActionReturnValue returnValue = result.getReturnValue();
-                            Guid storageId = returnValue.getActionReturnValue();
-                            storageListModel.attachStorageToDataCenter(storageId, dataCenter.getId(), storageModel.getActivateDomain().getEntity());
-                        }
+                    StoragePool dataCenter = storageModel.getDataCenter().getSelectedItem();
+                    if (!dataCenter.getId().equals(StorageModel.UnassignedDataCenterId)) {
+                        ActionReturnValue returnValue = result.getReturnValue();
+                        Guid storageId = returnValue.getActionReturnValue();
+                        storageListModel.attachStorageToDataCenter(storageId, dataCenter.getId(), storageModel.getActivateDomain().getEntity());
+                    }
 
                     storageListModel.onFinish(storageListModel.context, true, storageListModel.storageModel);
                 }, this);
@@ -1887,10 +1887,10 @@ public class StorageListModel extends ListWithSimpleDetailsModel<Void, StorageDo
                                 cleanConnection(fileConnection, hostId);
                             }
                         }),
-        hostId,
-        domainType,
-        storageType,
-        path);
+            hostId,
+            domainType,
+            storageType,
+            path);
     }
 
     public void addExistingFileStorageDomain() {

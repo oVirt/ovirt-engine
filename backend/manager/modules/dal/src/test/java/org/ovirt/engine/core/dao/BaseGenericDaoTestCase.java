@@ -16,7 +16,7 @@ import org.ovirt.engine.core.utils.MockConfigDescriptor;
 import org.ovirt.engine.core.utils.MockedConfig;
 
 public abstract class BaseGenericDaoTestCase<ID extends Serializable, T extends BusinessEntity<ID>,
-D extends GenericDao<T, ID>> extends BaseReadDaoTestCase<ID, T, D> {
+    D extends GenericDao<T, ID>> extends BaseReadDaoTestCase<ID, T, D> {
     public BaseGenericDaoTestCase() {
         super();
     }

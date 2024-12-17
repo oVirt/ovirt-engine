@@ -39,7 +39,7 @@ public class BackendTemplateGraphicsConsolesResource
                         populate(VmMapper.map(graphicsInfo, null), entity),
                         Template.class
                 ))
-            );
+        );
 
         return consoles;
     }

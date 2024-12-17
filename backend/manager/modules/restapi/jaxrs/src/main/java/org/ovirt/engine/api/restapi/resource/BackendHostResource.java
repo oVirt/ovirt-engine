@@ -506,7 +506,7 @@ public class BackendHostResource extends AbstractBackendActionableResource<Host,
                     storageServerConnections.add(connectionDetails);
                 }
             }
-       } else {
+        } else {
             // For FC we don't need to do anything.
         }
         GetUnregisteredBlockStorageDomainsParameters unregisteredBlockStorageDomainsParameters =
@@ -633,18 +633,18 @@ public class BackendHostResource extends AbstractBackendActionableResource<Host,
         FenceType fenceType = validateEnum(FenceType.class, action.getFenceType().toUpperCase());
 
         switch (fenceType) {
-        case MANUAL:
-            return fenceManually(action);
-        case RESTART:
-            return fenceRestart(action);
-        case START:
-            return fence(action, ActionType.StartVds);
-        case STOP:
-            return fence(action, ActionType.StopVds);
-        case STATUS:
-            return getFenceStatus(action);
-        default:
-            return null;
+            case MANUAL:
+                return fenceManually(action);
+            case RESTART:
+                return fenceRestart(action);
+            case START:
+                return fence(action, ActionType.StartVds);
+            case STOP:
+                return fence(action, ActionType.StopVds);
+            case STATUS:
+                return getFenceStatus(action);
+            default:
+                return null;
         }
     }
 

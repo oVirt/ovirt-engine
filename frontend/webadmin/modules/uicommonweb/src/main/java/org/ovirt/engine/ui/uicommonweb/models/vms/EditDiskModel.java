@@ -155,9 +155,9 @@ public class EditDiskModel extends AbstractDiskModel {
             sizeValidation.setMaximum(maxBlockDiskSize - getSize().getEntity());
         }
         getSizeExtend().validateEntity(new IValidation[] {
-                new NotEmptyValidation(),
-                new NonNegativeLongNumberValidation(),
-                sizeValidation
+            new NotEmptyValidation(),
+            new NonNegativeLongNumberValidation(),
+            sizeValidation
         });
         return super.validate() && getSizeExtend().getIsValid();
     }

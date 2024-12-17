@@ -693,17 +693,17 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
     @Override
     public AuditLogType getAuditLogTypeValue() {
         switch (getActionState()) {
-        case EXECUTE:
-            if (isDiskStorageTypeRequiresExecuteState()) {
-                return getExecuteAuditLogTypeValue(getSucceeded());
-            } else {
+            case EXECUTE:
+                if (isDiskStorageTypeRequiresExecuteState()) {
+                    return getExecuteAuditLogTypeValue(getSucceeded());
+                } else {
+                    return getEndSuccessAuditLogTypeValue(getSucceeded());
+                }
+            case END_SUCCESS:
                 return getEndSuccessAuditLogTypeValue(getSucceeded());
-            }
-        case END_SUCCESS:
-            return getEndSuccessAuditLogTypeValue(getSucceeded());
 
-        default:
-            return AuditLogType.USER_ADD_DISK_FINISHED_FAILURE;
+            default:
+                return AuditLogType.USER_ADD_DISK_FINISHED_FAILURE;
         }
     }
 
@@ -755,15 +755,15 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
     @Override
     protected ActionType getChildActionType() {
         switch (getParameters().getDiskInfo().getDiskStorageType()) {
-        case IMAGE:
-        case KUBERNETES:
-            return ActionType.AddImageFromScratch;
-        case CINDER:
-            return ActionType.AddCinderDisk;
-        case MANAGED_BLOCK_STORAGE:
-            return ActionType.AddManagedBlockStorageDisk;
-        default:
-            return ActionType.Unknown;
+            case IMAGE:
+            case KUBERNETES:
+                return ActionType.AddImageFromScratch;
+            case CINDER:
+                return ActionType.AddCinderDisk;
+            case MANAGED_BLOCK_STORAGE:
+                return ActionType.AddManagedBlockStorageDisk;
+            default:
+                return ActionType.Unknown;
         }
     }
 

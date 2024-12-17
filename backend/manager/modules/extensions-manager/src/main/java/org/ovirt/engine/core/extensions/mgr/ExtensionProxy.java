@@ -74,28 +74,28 @@ public class ExtensionProxy implements Extension {
 
         String message = output.get(Base.InvokeKeys.MESSAGE);
         switch (output.<Integer>get(Base.InvokeKeys.RESULT, Base.InvokeResult.FAILED)) {
-        case Base.InvokeResult.SUCCESS:
-            break;
-        case Base.InvokeResult.UNSUPPORTED:
-            if (!allowUnsupported) {
-                throw new ExtensionInvokeCommandUnsupportedException(
-                    message == null ? "Unsupported command" : message,
-                    input,
-                    output
-                );
-            }
-            break;
-        case Base.InvokeResult.FAILED:
-        default:
-            if (!allowFail) {
-                throw new ExtensionInvokeCommandFailedException(
-                    message == null ? "Invoke failed" : message,
-                    input,
-                    output,
-                    output.get(ExtensionsManager.CAUSE_OUTPUT_KEY)
-                );
-            }
-            break;
+            case Base.InvokeResult.SUCCESS:
+                break;
+            case Base.InvokeResult.UNSUPPORTED:
+                if (!allowUnsupported) {
+                    throw new ExtensionInvokeCommandUnsupportedException(
+                        message == null ? "Unsupported command" : message,
+                        input,
+                        output
+                    );
+                }
+                break;
+            case Base.InvokeResult.FAILED:
+            default:
+                if (!allowFail) {
+                    throw new ExtensionInvokeCommandFailedException(
+                        message == null ? "Invoke failed" : message,
+                        input,
+                        output,
+                        output.get(ExtensionsManager.CAUSE_OUTPUT_KEY)
+                    );
+                }
+                break;
         }
 
         return output;

@@ -463,41 +463,41 @@ public class VolumeBrickModel extends Model {
 
         switch (selectedVolumeType) {
 
-        case REPLICATE:
-            if (brickCount != replicaCount) {
-                valid = false;
-            }
-            break;
+            case REPLICATE:
+                if (brickCount != replicaCount) {
+                    valid = false;
+                }
+                break;
 
-        case STRIPE:
-            if (brickCount != stripeCount) {
-                valid = false;
-            }
-            break;
+            case STRIPE:
+                if (brickCount != stripeCount) {
+                    valid = false;
+                }
+                break;
 
-        case DISTRIBUTED_REPLICATE:
-            if ((brickCount % replicaCount) != 0) {
-                valid = false;
-            }
-            break;
+            case DISTRIBUTED_REPLICATE:
+                if ((brickCount % replicaCount) != 0) {
+                    valid = false;
+                }
+                break;
 
-        case DISTRIBUTED_STRIPE:
-            if ((brickCount % stripeCount) != 0) {
-                valid = false;
-            }
-            break;
+            case DISTRIBUTED_STRIPE:
+                if ((brickCount % stripeCount) != 0) {
+                    valid = false;
+                }
+                break;
 
-        case STRIPED_REPLICATE:
-            if (brickCount != stripeCount * replicaCount) {
-                valid = false;
-            }
-            break;
+            case STRIPED_REPLICATE:
+                if (brickCount != stripeCount * replicaCount) {
+                    valid = false;
+                }
+                break;
 
-        case DISTRIBUTED_STRIPED_REPLICATE:
-            if (brickCount <= stripeCount * replicaCount || (brickCount % (stripeCount * replicaCount)) != 0) {
-                valid = false;
-            }
-            break;
+            case DISTRIBUTED_STRIPED_REPLICATE:
+                if (brickCount <= stripeCount * replicaCount || (brickCount % (stripeCount * replicaCount)) != 0) {
+                    valid = false;
+                }
+                break;
         }
 
         return valid;
@@ -515,33 +515,33 @@ public class VolumeBrickModel extends Model {
         }
 
         switch (selectedVolumeType) {
-        case DISTRIBUTE:
-            validationMsg = ConstantsManager.getInstance().getConstants().distriputedVolumeAddBricksMsg();
-            break;
+            case DISTRIBUTE:
+                validationMsg = ConstantsManager.getInstance().getConstants().distriputedVolumeAddBricksMsg();
+                break;
 
-        case REPLICATE:
-            validationMsg = ConstantsManager.getInstance().getConstants().replicateVolumeAddBricksMsg();
-            break;
+            case REPLICATE:
+                validationMsg = ConstantsManager.getInstance().getConstants().replicateVolumeAddBricksMsg();
+                break;
 
-        case DISTRIBUTED_REPLICATE:
-            validationMsg = ConstantsManager.getInstance().getConstants().distriputedReplicateVolumeAddBricksMsg();
-            break;
+            case DISTRIBUTED_REPLICATE:
+                validationMsg = ConstantsManager.getInstance().getConstants().distriputedReplicateVolumeAddBricksMsg();
+                break;
 
-        case STRIPE:
-            validationMsg = ConstantsManager.getInstance().getConstants().stripeVolumeAddBricksMsg();
-            break;
+            case STRIPE:
+                validationMsg = ConstantsManager.getInstance().getConstants().stripeVolumeAddBricksMsg();
+                break;
 
-        case DISTRIBUTED_STRIPE:
-            validationMsg = ConstantsManager.getInstance().getConstants().distriputedStripeVolumeAddBricksMsg();
-            break;
+            case DISTRIBUTED_STRIPE:
+                validationMsg = ConstantsManager.getInstance().getConstants().distriputedStripeVolumeAddBricksMsg();
+                break;
 
-        case STRIPED_REPLICATE:
-            validationMsg = ConstantsManager.getInstance().getConstants().stripedReplicateVolumeAddBricksMsg();
-            break;
+            case STRIPED_REPLICATE:
+                validationMsg = ConstantsManager.getInstance().getConstants().stripedReplicateVolumeAddBricksMsg();
+                break;
 
-        case DISTRIBUTED_STRIPED_REPLICATE:
-            validationMsg = ConstantsManager.getInstance().getConstants().distriputedStripedReplicateVolumeAddBricksMsg();
-            break;
+            case DISTRIBUTED_STRIPED_REPLICATE:
+                validationMsg = ConstantsManager.getInstance().getConstants().distriputedStripedReplicateVolumeAddBricksMsg();
+                break;
 
         }
 

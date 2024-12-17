@@ -39,57 +39,57 @@ public class WatchdogMapper {
 
     public static VmWatchdogAction map(WatchdogAction action) {
         switch (action) {
-        case DUMP:
-            return VmWatchdogAction.DUMP;
-        case NONE:
-            return VmWatchdogAction.NONE;
-        case PAUSE:
-            return VmWatchdogAction.PAUSE;
-        case POWEROFF:
-            return VmWatchdogAction.POWEROFF;
-        case RESET:
-            return VmWatchdogAction.RESET;
-        default:
-            return null;
+            case DUMP:
+                return VmWatchdogAction.DUMP;
+            case NONE:
+                return VmWatchdogAction.NONE;
+            case PAUSE:
+                return VmWatchdogAction.PAUSE;
+            case POWEROFF:
+                return VmWatchdogAction.POWEROFF;
+            case RESET:
+                return VmWatchdogAction.RESET;
+            default:
+                return null;
         }
     }
 
     public static WatchdogAction map(VmWatchdogAction action) {
         switch (action) {
-        case DUMP:
-            return WatchdogAction.DUMP;
-        case NONE:
-            return WatchdogAction.NONE;
-        case PAUSE:
-            return WatchdogAction.PAUSE;
-        case POWEROFF:
-            return WatchdogAction.POWEROFF;
-        case RESET:
-            return WatchdogAction.RESET;
-        default:
-            return null;
+            case DUMP:
+                return WatchdogAction.DUMP;
+            case NONE:
+                return WatchdogAction.NONE;
+            case PAUSE:
+                return WatchdogAction.PAUSE;
+            case POWEROFF:
+                return WatchdogAction.POWEROFF;
+            case RESET:
+                return WatchdogAction.RESET;
+            default:
+                return null;
         }
     }
 
     public static VmWatchdogType map(WatchdogModel model) {
         switch (model) {
-        case I6300ESB:
-            return VmWatchdogType.i6300esb;
-        case DIAG288:
-            return VmWatchdogType.diag288;
-        default:
-            return null;
+            case I6300ESB:
+                return VmWatchdogType.i6300esb;
+            case DIAG288:
+                return VmWatchdogType.diag288;
+            default:
+                return null;
         }
     }
 
     public static WatchdogModel map(VmWatchdogType model) {
         switch (model) {
-        case i6300esb:
-            return WatchdogModel.I6300ESB;
-        case diag288:
-            return WatchdogModel.DIAG288;
-        default:
-            return null;
+            case i6300esb:
+                return WatchdogModel.I6300ESB;
+            case diag288:
+                return WatchdogModel.DIAG288;
+            default:
+                return null;
         }
     }
 

@@ -43,7 +43,7 @@ public class UsageFinderTest {
         UriInfo uriInfo = mockUri("vms", "00000001-0001-0001-0001-000000000011", "freezefilesystems");
         Request request = mockRequest("POST");
         Fault fault = usageFinder.getUsageMessage(uriInfo, request);
-        assertEquals( "For correct usage, see: http://localhost:8080/ovirt-engine/apidoc#services/vm/methods/freeze_filesystems", fault.getDetail());
+        assertEquals("For correct usage, see: http://localhost:8080/ovirt-engine/apidoc#services/vm/methods/freeze_filesystems", fault.getDetail());
     }
 
     @Test

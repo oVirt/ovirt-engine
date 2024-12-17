@@ -220,7 +220,7 @@ public abstract class AbstractGwtDynamicHostPageServletTest<T extends GwtDynamic
     @Test
     public void testGetUserInfoObjectWithoutWebAdminSettings() {
         ObjectNode result = testServlet.getUserInfoObject(mockUser, "mockSsoToken", null); //$NON-NLS-1$
-        assertNull( result.get("userOptions")); //$NON-NLS-1$
+        assertNull(result.get("userOptions")); //$NON-NLS-1$
         assertNull(result.get("userOptionsId")); //$NON-NLS-1$
     }
 

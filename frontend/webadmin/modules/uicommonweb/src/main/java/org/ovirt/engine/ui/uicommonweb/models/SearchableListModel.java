@@ -535,8 +535,8 @@ public abstract class SearchableListModel<E, T> extends SortedListModel<T> imple
     }
 
     private void setSearchStringPage(int newSearchPageNumber) {
-       this.pagingSearchString = " page " + newSearchPageNumber; //$NON-NLS-1$
-       this.currentPageNumber = newSearchPageNumber;
+        this.pagingSearchString = " page " + newSearchPageNumber; //$NON-NLS-1$
+        this.currentPageNumber = newSearchPageNumber;
     }
 
     protected void searchFirstPage() {

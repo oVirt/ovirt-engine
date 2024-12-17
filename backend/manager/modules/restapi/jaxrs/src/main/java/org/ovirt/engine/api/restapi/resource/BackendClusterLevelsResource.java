@@ -70,9 +70,9 @@ public class BackendClusterLevelsResource extends BackendResource implements Clu
 
     private List<ServerCpu> getServerCpuList(String version) {
         return getEntity(
-           List.class, QueryType.GetAllServerCpuList,
-           new GetAllServerCpuListParameters(new Version(version)),
-           version
+            List.class, QueryType.GetAllServerCpuList,
+            new GetAllServerCpuListParameters(new Version(version)),
+            version
         );
     }
 

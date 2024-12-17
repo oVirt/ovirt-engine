@@ -769,10 +769,10 @@ public abstract class RunOnceModel extends Model {
 
 
         EntityModel<DisplayType> vncProtocol = new EntityModel<>(DisplayType.vga)
-           .setTitle(ConstantsManager.getInstance().getConstants().vncTitle());
+            .setTitle(ConstantsManager.getInstance().getConstants().vncTitle());
 
         EntityModel<DisplayType> qxlProtocol = new EntityModel<>(DisplayType.qxl)
-           .setTitle(ConstantsManager.getInstance().getConstants().spiceTitle());
+            .setTitle(ConstantsManager.getInstance().getConstants().spiceTitle());
 
         boolean hasSpiceSupport =
                 AsyncDataProvider.getInstance().hasSpiceSupport(vm.getOs(), vm.getCompatibilityVersion());
@@ -876,7 +876,7 @@ public abstract class RunOnceModel extends Model {
 
         String selectedDomain = getSysPrepSelectedDomainName().getEntity();
         if (!StringHelper.isNullOrEmpty(selectedDomain)) {
-             params.setSysPrepDomainName(selectedDomain);
+            params.setSysPrepDomainName(selectedDomain);
         }
 
         String selectedEmulatedMachine = getEmulatedMachine().getSelectedItem();
@@ -1258,9 +1258,9 @@ public abstract class RunOnceModel extends Model {
 
         if (getIsWindowsOS() && getIsSysprepEnabled().getEntity()) {
             getSysPrepPassword().validateEntity(new IValidation[] {
-                    new NotEmptyValidation(),
-                    new MatchFieldsValidator(getSysPrepPassword().getEntity(),
-                                             getSysPrepPasswordVerification().getEntity())
+                new NotEmptyValidation(),
+                new MatchFieldsValidator(getSysPrepPassword().getEntity(),
+                getSysPrepPasswordVerification().getEntity())
             });
         }
 

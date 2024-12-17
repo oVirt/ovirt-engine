@@ -58,8 +58,8 @@ public class UpdateHostNetworkQosCommand extends UpdateQosCommandBase<HostNetwor
      */
     private boolean networkUpdateRequired(HostNetworkQos oldQos, HostNetworkQos newQos) {
         boolean noChange = Objects.equals(newQos.getOutAverageLinkshare(), oldQos.getOutAverageLinkshare())
-        && Objects.equals(newQos.getOutAverageRealtime(), oldQos.getOutAverageRealtime())
-        && Objects.equals(newQos.getOutAverageUpperlimit(), oldQos.getOutAverageUpperlimit());
+            && Objects.equals(newQos.getOutAverageRealtime(), oldQos.getOutAverageRealtime())
+            && Objects.equals(newQos.getOutAverageUpperlimit(), oldQos.getOutAverageUpperlimit());
 
         return !noChange;
     }

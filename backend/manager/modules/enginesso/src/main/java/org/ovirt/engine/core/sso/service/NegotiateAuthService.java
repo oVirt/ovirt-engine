@@ -106,71 +106,71 @@ public class NegotiateAuthService {
                 retVal.setStatus(output.<Integer> get(Authn.InvokeKeys.RESULT));
 
                 switch (output.<Integer> get(Authn.InvokeKeys.RESULT)) {
-                case Authn.AuthResult.SUCCESS:
-                    try {
-                        ExtMap authRecord = output.get(Authn.InvokeKeys.AUTH_RECORD);
-                        if (profile.getMapper() != null) {
-                            authRecord = profile.getMapper()
-                                    .invoke(
-                                            new ExtMap().mput(
-                                                    Base.InvokeKeys.COMMAND,
-                                                    Mapping.InvokeCommands.MAP_AUTH_RECORD)
-                                                    .mput(
-                                                            Authn.InvokeKeys.AUTH_RECORD,
-                                                            authRecord),
-                                            true)
-                                    .get(
+                    case Authn.AuthResult.SUCCESS:
+                        try {
+                            ExtMap authRecord = output.get(Authn.InvokeKeys.AUTH_RECORD);
+                            if (profile.getMapper() != null) {
+                                authRecord = profile.getMapper()
+                                        .invoke(
+                                                new ExtMap().mput(
+                                                        Base.InvokeKeys.COMMAND,
+                                                        Mapping.InvokeCommands.MAP_AUTH_RECORD)
+                                                        .mput(
+                                                                Authn.InvokeKeys.AUTH_RECORD,
+                                                                authRecord),
+                                                true)
+                                        .get(
+                                                Authn.InvokeKeys.AUTH_RECORD,
+                                                authRecord);
+                            }
+                            ExtMap input = new ExtMap().mput(
+                                    Base.InvokeKeys.COMMAND,
+                                    Authz.InvokeCommands.FETCH_PRINCIPAL_RECORD)
+                                    .mput(
                                             Authn.InvokeKeys.AUTH_RECORD,
-                                            authRecord);
+                                            authRecord)
+                                    .mput(
+                                            Authz.InvokeKeys.QUERY_FLAGS,
+                                            Authz.QueryFlags.RESOLVE_GROUPS | Authz.QueryFlags.RESOLVE_GROUPS_RECURSIVE);
+                            if (SsoService.getSsoContext(req)
+                                    .getSsoLocalConfig()
+                                    .getBoolean("ENGINE_SSO_ENABLE_EXTERNAL_SSO")) {
+                                input.put(Authz.InvokeKeys.HTTP_SERVLET_REQUEST, req);
+                            }
+                            ExtMap outputMap = profile.getAuthz().invoke(input);
+                            token = SsoService.getTokenFromHeader(req);
+                            SsoSession ssoSession = SsoService.persistAuthInfoInContextWithToken(req,
+                                    token,
+                                    null,
+                                    profile.getName(),
+                                    authRecord,
+                                    outputMap.get(Authz.InvokeKeys.PRINCIPAL_RECORD));
+                            log.info("User {}@{} with profile [{}] successfully logged in with scopes : {} ",
+                                    SsoService.getUserId(outputMap.get(Authz.InvokeKeys.PRINCIPAL_RECORD)),
+                                    profile.getAuthzName(),
+                                    profile.getName(),
+                                    ssoSession.getScope());
+                            token = (String) req.getAttribute(SsoConstants.HTTP_REQ_ATTR_ACCESS_TOKEN);
+                            stack.clear();
+                        } catch (Exception e) {
+                            log.debug("Cannot fetch principal, trying other authn extension.");
+                            stack.pop();
                         }
-                        ExtMap input = new ExtMap().mput(
-                                Base.InvokeKeys.COMMAND,
-                                Authz.InvokeCommands.FETCH_PRINCIPAL_RECORD)
-                                .mput(
-                                        Authn.InvokeKeys.AUTH_RECORD,
-                                        authRecord)
-                                .mput(
-                                        Authz.InvokeKeys.QUERY_FLAGS,
-                                        Authz.QueryFlags.RESOLVE_GROUPS | Authz.QueryFlags.RESOLVE_GROUPS_RECURSIVE);
-                        if (SsoService.getSsoContext(req)
-                                .getSsoLocalConfig()
-                                .getBoolean("ENGINE_SSO_ENABLE_EXTERNAL_SSO")) {
-                            input.put(Authz.InvokeKeys.HTTP_SERVLET_REQUEST, req);
-                        }
-                        ExtMap outputMap = profile.getAuthz().invoke(input);
-                        token = SsoService.getTokenFromHeader(req);
-                        SsoSession ssoSession = SsoService.persistAuthInfoInContextWithToken(req,
-                                token,
-                                null,
-                                profile.getName(),
-                                authRecord,
-                                outputMap.get(Authz.InvokeKeys.PRINCIPAL_RECORD));
-                        log.info("User {}@{} with profile [{}] successfully logged in with scopes : {} ",
-                                SsoService.getUserId(outputMap.get(Authz.InvokeKeys.PRINCIPAL_RECORD)),
-                                profile.getAuthzName(),
-                                profile.getName(),
-                                ssoSession.getScope());
-                        token = (String) req.getAttribute(SsoConstants.HTTP_REQ_ATTR_ACCESS_TOKEN);
-                        stack.clear();
-                    } catch (Exception e) {
-                        log.debug("Cannot fetch principal, trying other authn extension.");
+                        break;
+
+                    case Authn.AuthResult.NEGOTIATION_UNAUTHORIZED:
                         stack.pop();
-                    }
-                    break;
+                        break;
 
-                case Authn.AuthResult.NEGOTIATION_UNAUTHORIZED:
-                    stack.pop();
-                    break;
+                    case Authn.AuthResult.NEGOTIATION_INCOMPLETE:
+                        stop = true;
+                        break;
 
-                case Authn.AuthResult.NEGOTIATION_INCOMPLETE:
-                    stop = true;
-                    break;
-
-                default:
-                    log.error("Unexpected authentication result. AuthResult code: {}",
-                            output.<Integer> get(Authn.InvokeKeys.RESULT));
-                    stack.pop();
-                    break;
+                    default:
+                        log.error("Unexpected authentication result. AuthResult code: {}",
+                                output.<Integer> get(Authn.InvokeKeys.RESULT));
+                        stack.pop();
+                        break;
                 }
             }
             if (!stack.isEmpty()) {

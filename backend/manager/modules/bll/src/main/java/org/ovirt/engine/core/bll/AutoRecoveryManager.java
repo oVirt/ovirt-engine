@@ -161,7 +161,7 @@ public class AutoRecoveryManager implements BackendService {
                         filtered.add(vds);
                     }
                     return filtered;
-        }, "hosts");
+            }, "hosts");
         check(storageDomainDao,
                 ActionType.ConnectDomainToStorage,
                 arg -> {

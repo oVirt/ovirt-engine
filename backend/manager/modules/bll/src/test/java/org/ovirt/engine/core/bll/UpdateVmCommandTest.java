@@ -367,8 +367,7 @@ public class UpdateVmCommandTest extends BaseCommandTest {
         vmStatic.setOrigin(OriginType.MANAGED_HOSTED_ENGINE);
         command.getParameters().getVm().setAutoStartup(true);
 
-        ValidateTestUtils.runAndAssertValidateFailure
-                (command, ACTION_TYPE_FAILED_VM_CANNOT_BE_HIGHLY_AVAILABLE_AND_HOSTED_ENGINE);
+        ValidateTestUtils.runAndAssertValidateFailure(command, ACTION_TYPE_FAILED_VM_CANNOT_BE_HIGHLY_AVAILABLE_AND_HOSTED_ENGINE);
     }
 
     @Test

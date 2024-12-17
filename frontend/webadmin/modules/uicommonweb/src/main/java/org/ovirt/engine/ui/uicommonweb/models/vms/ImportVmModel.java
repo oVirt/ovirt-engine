@@ -63,20 +63,20 @@ public abstract class ImportVmModel extends ListWithDetailsModel {
                 Frontend.getInstance().runQuery(QueryType.GetAllRelevantQuotasForCluster,
                     new IdQueryParameters(getCluster().getSelectedItem().getId()),
                     new AsyncQuery<QueryReturnValue>(returnValue -> {
-                                ArrayList<Quota> quotaList = returnValue.getReturnValue();
-                                getClusterQuota().setItems(quotaList);
-                                if (quotaList.isEmpty()
-                                        && QuotaEnforcementTypeEnum.HARD_ENFORCEMENT.equals(storagePool.getQuotaEnforcementType())) {
-                                    setMessage(ConstantsManager.getInstance()
-                                            .getConstants()
-                                            .missingQuotaClusterEnforceMode());
-                                } else if (getMessage() != null
-                                        && getMessage().equals(ConstantsManager.getInstance()
-                                                .getConstants()
-                                                .missingQuotaClusterEnforceMode())) {
-                                    setMessage("");
-                                }
-                            }));
+                        ArrayList<Quota> quotaList = returnValue.getReturnValue();
+                        getClusterQuota().setItems(quotaList);
+                        if (quotaList.isEmpty()
+                            && QuotaEnforcementTypeEnum.HARD_ENFORCEMENT.equals(storagePool.getQuotaEnforcementType())) {
+                            setMessage(ConstantsManager.getInstance()
+                                .getConstants()
+                                .missingQuotaClusterEnforceMode());
+                        } else if (getMessage() != null
+                            && getMessage().equals(ConstantsManager.getInstance()
+                            .getConstants()
+                            .missingQuotaClusterEnforceMode())) {
+                            setMessage("");
+                        }
+                    }));
             }
             fetchCpuProfiles(getCluster().getSelectedItem().getId());
         }
@@ -205,10 +205,10 @@ public abstract class ImportVmModel extends ListWithDetailsModel {
         EntityModel<String> vmName = new EntityModel<>(data.getVm().getName());
         vmName.validateEntity(
                 new IValidation[] {
-                        new NotEmptyValidation(),
-                        new LengthValidation(maxNameLength),
-                        new I18NNameValidation(),
-                        uniqueNameValidation(data, vmName)
+                    new NotEmptyValidation(),
+                    new LengthValidation(maxNameLength),
+                    new I18NNameValidation(),
+                    uniqueNameValidation(data, vmName)
                 });
 
         data.setError(vmName.getIsValid() ? null : ConstantsManager.getInstance().getConstants().invalidName());

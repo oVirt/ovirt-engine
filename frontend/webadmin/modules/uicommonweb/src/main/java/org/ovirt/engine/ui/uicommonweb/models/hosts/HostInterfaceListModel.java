@@ -172,12 +172,12 @@ public class HostInterfaceListModel extends SearchableListModel<VDS, HostInterfa
     }
 
     private void queryIsHostLockedOnNetworkOperation(IdQueryParameters idQueryParameters) {
-            Frontend.getInstance()
-                .runQuery(QueryType.IsHostLockedOnNetworkOperation,
-                        idQueryParameters,
-                        new AsyncQuery<QueryReturnValue>(returnValue ->
-                            isNetworkOperationInProgress = returnValue.getReturnValue())
-                        );
+        Frontend.getInstance()
+            .runQuery(QueryType.IsHostLockedOnNetworkOperation,
+                idQueryParameters,
+                new AsyncQuery<QueryReturnValue>(returnValue ->
+                isNetworkOperationInProgress = returnValue.getReturnValue())
+            );
     }
 
     private void queryVirtualFunctionMap(IdQueryParameters idQueryParameters) {

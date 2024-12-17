@@ -30,47 +30,44 @@ public class LoggerServiceImpl implements ModuleService {
     }
 
     private enum Action {
-        LOG_RECORD(
-            module -> {
-                ExtensionProxy proxy = module.getExtensionsManager().getExtensionByName((String) module.argMap.get("extension-name"));
+        LOG_RECORD(module -> {
+            ExtensionProxy proxy = module.getExtensionsManager().getExtensionByName((String) module.argMap.get("extension-name"));
 
-                LogRecord logRecord = new LogRecord(
-                    (Level) module.argMap.get("level"),
-                    (String) module.argMap.get("message")
-                );
-                logRecord.setLoggerName((String) module.argMap.get("logger-name"));
+            LogRecord logRecord = new LogRecord(
+                (Level) module.argMap.get("level"),
+                (String) module.argMap.get("message")
+            );
+            logRecord.setLoggerName((String) module.argMap.get("logger-name"));
 
-                log.info("API: -->Logger.InvokeCommands.PUBLISH level={}, name={}", logRecord.getLevel(), logRecord.getLoggerName());
-                proxy.invoke(
-                    new ExtMap().mput(
-                        Base.InvokeKeys.COMMAND,
-                        Logger.InvokeCommands.PUBLISH
-                    ).mput(
-                        Logger.InvokeKeys.LOG_RECORD,
-                        logRecord
-                    )
-                );
-                log.info("API: <--Logger.InvokeCommands.PUBLISH");
+            log.info("API: -->Logger.InvokeCommands.PUBLISH level={}, name={}", logRecord.getLevel(), logRecord.getLoggerName());
+            proxy.invoke(
+                new ExtMap().mput(
+                    Base.InvokeKeys.COMMAND,
+                    Logger.InvokeCommands.PUBLISH
+                ).mput(
+                    Logger.InvokeKeys.LOG_RECORD,
+                    logRecord
+                )
+            );
+            log.info("API: <--Logger.InvokeCommands.PUBLISH");
 
-                log.info("API: -->Logger.InvokeCommands.FLUSH");
-                proxy.invoke(
-                    new ExtMap().mput(
-                        Base.InvokeKeys.COMMAND,
-                        Logger.InvokeCommands.FLUSH
-                    )
-                );
-                log.info("API: <--Logger.InvokeCommands.FLUSH");
+            log.info("API: -->Logger.InvokeCommands.FLUSH");
+            proxy.invoke(
+                new ExtMap().mput(
+                    Base.InvokeKeys.COMMAND,
+                    Logger.InvokeCommands.FLUSH
+                )
+            );
+            log.info("API: <--Logger.InvokeCommands.FLUSH");
 
-                log.info("API: -->Logger.InvokeCommands.CLOSE");
-                proxy.invoke(
-                    new ExtMap().mput(
-                        Base.InvokeKeys.COMMAND,
-                        Logger.InvokeCommands.CLOSE
-                    )
-                );
-                log.info("API: <--Logger.InvokeCommands.CLOSE");
-            }
-        );
+            log.info("API: -->Logger.InvokeCommands.CLOSE");
+            proxy.invoke(
+                new ExtMap().mput(
+                Base.InvokeKeys.COMMAND,
+                Logger.InvokeCommands.CLOSE
+            ));
+            log.info("API: <--Logger.InvokeCommands.CLOSE");
+        });
 
         private Logic logic;
 

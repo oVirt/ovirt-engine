@@ -52,22 +52,22 @@ public class SubTabNetworkExternalSubnetView extends AbstractSubTabTableView<Net
         getTable().addColumn(nameColumn, constants.nameExternalSubnet(), "200px"); //$NON-NLS-1$
 
         AbstractTextColumn<ExternalSubnet> cidrColumn =
-                new AbstractTextColumn<ExternalSubnet>() {
-            @Override
-            public String getValue(ExternalSubnet object) {
-                return object.getCidr();
-            }
-        };
+            new AbstractTextColumn<ExternalSubnet>() {
+                @Override
+                public String getValue(ExternalSubnet object) {
+                    return object.getCidr();
+                }
+            };
         cidrColumn.makeSortable();
         getTable().addColumn(cidrColumn, constants.cidrExternalSubnet(), "100px"); //$NON-NLS-1$
 
         AbstractTextColumn<ExternalSubnet> ipVersionColumn =
-                new AbstractEnumColumn<ExternalSubnet, IpVersion>() {
-            @Override
-            protected IpVersion getRawValue(ExternalSubnet object) {
-                return object.getIpVersion();
-            }
-        };
+            new AbstractEnumColumn<ExternalSubnet, IpVersion>() {
+                @Override
+                protected IpVersion getRawValue(ExternalSubnet object) {
+                    return object.getIpVersion();
+                }
+            };
         ipVersionColumn.makeSortable();
         getTable().addColumn(ipVersionColumn, constants.ipVersionExternalSubnet(), "80px"); //$NON-NLS-1$
 
@@ -96,12 +96,12 @@ public class SubTabNetworkExternalSubnetView extends AbstractSubTabTableView<Net
         getTable().addColumn(dnsServersColumn, constants.dnsServersExternalSubnet(), "200px"); //$NON-NLS-1$
 
         AbstractTextColumn<ExternalSubnet> externalIdColumn =
-                new AbstractTextColumn<ExternalSubnet>() {
-            @Override
-            public String getValue(ExternalSubnet object) {
-                return object.getId();
-            }
-        };
+            new AbstractTextColumn<ExternalSubnet>() {
+                @Override
+                public String getValue(ExternalSubnet object) {
+                    return object.getId();
+                }
+            };
         externalIdColumn.makeSortable();
         getTable().addColumn(externalIdColumn, constants.externalIdExternalSubnet(), "300px"); //$NON-NLS-1$
     }

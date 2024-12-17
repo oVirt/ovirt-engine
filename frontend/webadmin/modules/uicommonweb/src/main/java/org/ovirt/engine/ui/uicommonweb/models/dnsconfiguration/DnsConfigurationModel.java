@@ -140,7 +140,7 @@ public class DnsConfigurationModel extends EntityModel<DnsResolverConfiguration>
         boolean isValid = true;
         for (NameServerModel nameServerModel : items) {
             if (!nameServerModel.validate()) {
-                 isValid = false;
+                isValid = false;
             }
         }
         return isValid;

@@ -200,9 +200,9 @@ public class CreateGlusterVolumeCommand extends GlusterCommandBase<CreateGluster
      * Sets every third brick as arbiter brick if GlusterVolume is an arbiter volume
      */
     private void setArbiterFlag(GlusterVolumeEntity volume) {
-       for (int i = 2; i < volume.getBricks().size(); i += 3) {
-           volume.getBricks().get(i).setIsArbiter(volume.getIsArbiter());
-       }
+        for (int i = 2; i < volume.getBricks().size(); i += 3) {
+            volume.getBricks().get(i).setIsArbiter(volume.getIsArbiter());
+        }
     }
 
     private void setVolumeType(GlusterVolumeEntity createdVolume) {
@@ -302,44 +302,44 @@ public class CreateGlusterVolumeCommand extends GlusterCommandBase<CreateGluster
         }
 
         switch (volume.getVolumeType()) {
-        case REPLICATE:
-            if (brickCount != replicaCount) {
-                addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_INVALID_BRICK_COUNT_FOR_REPLICATE);
-                return false;
-            }
-            break;
-        case DISTRIBUTED_REPLICATE:
-            if (brickCount < replicaCount || Math.IEEEremainder(brickCount, replicaCount) != 0) {
-                addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_INVALID_BRICK_COUNT_FOR_DISTRIBUTED_REPLICATE);
-                return false;
-            }
-            break;
-        case STRIPE:
-            if (brickCount != stripeCount) {
-                addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_INVALID_BRICK_COUNT_FOR_STRIPE);
-                return false;
-            }
-            break;
-        case DISTRIBUTED_STRIPE:
-            if (brickCount <= stripeCount || Math.IEEEremainder(brickCount, stripeCount) != 0) {
-                addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_INVALID_BRICK_COUNT_FOR_DISTRIBUTED_STRIPE);
-                return false;
-            }
-            break;
-        case STRIPED_REPLICATE:
-            if ( Math.IEEEremainder(brickCount, stripeCount * replicaCount) != 0) {
-                addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_INVALID_BRICK_COUNT_FOR_STRIPED_REPLICATE);
-                return false;
-            }
-            break;
-        case DISTRIBUTED_STRIPED_REPLICATE:
-            if ( brickCount <= stripeCount * replicaCount || Math.IEEEremainder(brickCount, stripeCount * replicaCount) != 0) {
-                addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_INVALID_BRICK_COUNT_FOR_DISTRIBUTED_STRIPED_REPLICATE);
-                return false;
-            }
-            break;
-        default:
-            break;
+            case REPLICATE:
+                if (brickCount != replicaCount) {
+                    addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_INVALID_BRICK_COUNT_FOR_REPLICATE);
+                    return false;
+                }
+                break;
+            case DISTRIBUTED_REPLICATE:
+                if (brickCount < replicaCount || Math.IEEEremainder(brickCount, replicaCount) != 0) {
+                    addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_INVALID_BRICK_COUNT_FOR_DISTRIBUTED_REPLICATE);
+                    return false;
+                }
+                break;
+            case STRIPE:
+                if (brickCount != stripeCount) {
+                    addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_INVALID_BRICK_COUNT_FOR_STRIPE);
+                    return false;
+                }
+                break;
+            case DISTRIBUTED_STRIPE:
+                if (brickCount <= stripeCount || Math.IEEEremainder(brickCount, stripeCount) != 0) {
+                    addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_INVALID_BRICK_COUNT_FOR_DISTRIBUTED_STRIPE);
+                    return false;
+                }
+                break;
+            case STRIPED_REPLICATE:
+                if (Math.IEEEremainder(brickCount, stripeCount * replicaCount) != 0) {
+                    addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_INVALID_BRICK_COUNT_FOR_STRIPED_REPLICATE);
+                    return false;
+                }
+                break;
+            case DISTRIBUTED_STRIPED_REPLICATE:
+                if (brickCount <= stripeCount * replicaCount || Math.IEEEremainder(brickCount, stripeCount * replicaCount) != 0) {
+                    addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_INVALID_BRICK_COUNT_FOR_DISTRIBUTED_STRIPED_REPLICATE);
+                    return false;
+                }
+                break;
+            default:
+                break;
         }
 
         boolean ret = updateBrickServerAndInterfaceNames(bricks, true) && validateDuplicateBricks(bricks);

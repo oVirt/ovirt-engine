@@ -86,7 +86,7 @@ public class RestApiSessionMgmtFilter implements Filter {
                         FiltersHelper.getBackend(ctx).runAction(
                                 ActionType.LogoutSession,
                                 new ActionParametersBase(engineSessionId)
-                                );
+                        );
                         HttpSession session = req.getSession(false);
                         if (session != null) {
                             try {

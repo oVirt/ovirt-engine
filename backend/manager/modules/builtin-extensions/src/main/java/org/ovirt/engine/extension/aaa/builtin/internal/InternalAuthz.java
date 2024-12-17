@@ -51,7 +51,7 @@ public class InternalAuthz implements Extension {
                 output.put(
                         Base.InvokeKeys.RESULT,
                         Base.InvokeResult.UNSUPPORTED
-                        );
+                );
             }
             output.putIfAbsent(Authz.InvokeKeys.STATUS, Authz.Status.SUCCESS);
             output.putIfAbsent(Base.InvokeKeys.RESULT, Base.InvokeResult.SUCCESS);
@@ -62,7 +62,7 @@ public class InternalAuthz implements Extension {
                     ).mput(
                             Base.InvokeKeys.MESSAGE,
                             ex.getMessage()
-                    );
+            );
         }
     }
 
@@ -139,7 +139,7 @@ public class InternalAuthz implements Extension {
                 ).mput(
                         Authz.ContextKeys.AVAILABLE_NAMESPACES,
                         Collections.singletonList(NAMESPACE)
-                        );
+        );
         adminUser = new ExtMap().mput(
                 Authz.PrincipalRecord.NAMESPACE,
                 NAMESPACE

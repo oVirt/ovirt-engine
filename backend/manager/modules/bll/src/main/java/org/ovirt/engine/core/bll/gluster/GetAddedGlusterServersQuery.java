@@ -41,7 +41,7 @@ public class GetAddedGlusterServersQuery<P extends AddedGlusterServersParameters
         Map<String, String> glusterServers = new HashMap<>();
         VDS upServer = glusterUtil.getUpServer(getParameters().getClusterId());
 
-        if (upServer != null ) {
+        if (upServer != null) {
             VDSReturnValue returnValue = runVdsCommand(VDSCommandType.GlusterServersList,
                     new VdsIdVDSCommandParametersBase(upServer.getId()));
             glusterServers = getAddedGlusterServers((List<GlusterServerInfo>) returnValue.getReturnValue());

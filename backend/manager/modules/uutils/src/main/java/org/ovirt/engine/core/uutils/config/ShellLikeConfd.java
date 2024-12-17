@@ -188,7 +188,7 @@ public class ShellLikeConfd {
                 switch (c) {
                     case '\\':
                         escape = true;
-                    break;
+                        break;
                     case '$':
                         if (value.charAt(index++) != '{') {
                             throw new RuntimeException("Malformed variable assignement");
@@ -208,10 +208,10 @@ public class ShellLikeConfd {
                                 ret.append(v);
                             }
                         }
-                    break;
+                        break;
                     case '"':
                         inQuotes = !inQuotes;
-                    break;
+                        break;
                     case ' ':
                     case '#':
                         if (inQuotes) {
@@ -219,10 +219,10 @@ public class ShellLikeConfd {
                         } else {
                             index = value.length();
                         }
-                    break;
+                        break;
                     default:
                         ret.append(c);
-                    break;
+                        break;
                 }
             }
         }

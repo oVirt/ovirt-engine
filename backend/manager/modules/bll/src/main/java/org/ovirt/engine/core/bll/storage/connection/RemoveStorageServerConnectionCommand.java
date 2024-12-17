@@ -46,8 +46,8 @@ public class RemoveStorageServerConnectionCommand<T extends StorageServerConnect
     protected boolean validate() {
         String connectionId = getConnection().getId();
         List<StorageDomain> domains = null;
-        if (StringUtils.isEmpty(connectionId) ) {
-           return failValidation(EngineMessage.ACTION_TYPE_FAILED_STORAGE_CONNECTION_ID_EMPTY);
+        if (StringUtils.isEmpty(connectionId)) {
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_STORAGE_CONNECTION_ID_EMPTY);
         }
         StorageServerConnections connection = storageServerConnectionDao.get(connectionId);
         if (connection == null) {
@@ -59,17 +59,17 @@ public class RemoveStorageServerConnectionCommand<T extends StorageServerConnect
         StorageType storageType = connection.getStorageType();
         if (storageType.isFileDomain()) {
             // go to storage domain static, get all storage domains where storage field  = storage connection id
-           domains = getStorageDomainsByConnId(connectionId);
-           if (domains.size() > 0) {
-               String domainNames = createDomainNamesListFromStorageDomains(domains);
-               return prepareFailureMessageForDomains(domainNames);
-           }
+            domains = getStorageDomainsByConnId(connectionId);
+            if (domains.size() > 0) {
+                String domainNames = createDomainNamesListFromStorageDomains(domains);
+                return prepareFailureMessageForDomains(domainNames);
+            }
         } else if (storageType.equals(StorageType.ISCSI)) {
-           List<String> domainNames = new ArrayList<>();
-           List<String> diskNames = new ArrayList<>();
-           // go to luns to storage connections map table, get it from there
-           List<LUNs> luns = lunDao.getAllForStorageServerConnection(connectionId);
-           if (!luns.isEmpty()) {
+            List<String> domainNames = new ArrayList<>();
+            List<String> diskNames = new ArrayList<>();
+            // go to luns to storage connections map table, get it from there
+            List<LUNs> luns = lunDao.getAllForStorageServerConnection(connectionId);
+            if (!luns.isEmpty()) {
                 String volumeGroupId = null;
                 for (LUNs lun : luns) {
                     volumeGroupId = lun.getVolumeGroupId();
@@ -84,7 +84,7 @@ public class RemoveStorageServerConnectionCommand<T extends StorageServerConnect
                     }
                 }
                 String domainNamesForMessage = null;
-                if (!domainNames.isEmpty() ) {
+                if (!domainNames.isEmpty()) {
                     // Build domain names list to display in the error
                     domainNamesForMessage = prepareEntityNamesForMessage(domainNames);
                     if (diskNames.isEmpty()) {
@@ -98,11 +98,10 @@ public class RemoveStorageServerConnectionCommand<T extends StorageServerConnect
                     return prepareFailureMessageForDisks(diskNamesForMessage);
                 }
 
-              }
-           }
-
-           return true;
+            }
         }
+        return true;
+    }
 
     private String prepareEntityNamesForMessage(List<String> entityNames) {
         return StringUtils.join(entityNames, ",");

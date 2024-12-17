@@ -80,7 +80,7 @@ import org.ovirt.engine.core.dao.VmDao;
 @DisableInPrepareMode
 @NonTransactiveCommandAttribute(forceCompensation = true, compensationPhase = CommandCompensationPhase.END_COMMAND)
 public class ImportVmFromExternalProviderCommand<T extends ImportVmFromExternalProviderParameters> extends ImportVmCommandBase<T>
-implements SerialChildExecutingCommand, QuotaStorageDependent {
+    implements SerialChildExecutingCommand, QuotaStorageDependent {
 
     private static final Pattern VMWARE_DISK_NAME_PATTERN = Pattern.compile("\\[.*?\\] .*/(.*).vmdk");
     private static final Pattern DISK_NAME_PATTERN = Pattern.compile(".*/([^.]+).*");
@@ -523,25 +523,21 @@ implements SerialChildExecutingCommand, QuotaStorageDependent {
     @Override
     public boolean performNextOperation(int completedChildCount) {
         switch (getParameters().getImportPhase()) {
-        case CREATE_DISKS:
-            getParameters().setImportPhase(Phase.CONVERT);
-            if (getParameters().getProxyHostId() == null) {
-                getParameters().setProxyHostId(selectProxyHost());
-            }
-            break;
-
-        case CONVERT:
-            if (getVm().getOrigin() == OriginType.OVIRT) {
+            case CREATE_DISKS:
+                getParameters().setImportPhase(Phase.CONVERT);
+                if (getParameters().getProxyHostId() == null) {
+                    getParameters().setProxyHostId(selectProxyHost());
+                }
+                break;
+            case CONVERT:
+                if (getVm().getOrigin() == OriginType.OVIRT) {
+                    return false;
+                }
+                getParameters().setImportPhase(Phase.POST_CONVERT);
+                break;
+            case POST_CONVERT:
                 return false;
-            }
-
-            getParameters().setImportPhase(Phase.POST_CONVERT);
-            break;
-
-        case POST_CONVERT:
-            return false;
-
-        default:
+            default:
         }
 
         persistCommandIfNeeded();

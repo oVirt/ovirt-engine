@@ -87,8 +87,8 @@ public abstract class ImportVmFromExternalProviderModel extends ImportVmModel {
         boolean isWindows = AsyncDataProvider.getInstance().isWindowsOsType(selectedOS);
 
         if (isWindows && sourceIsNotKvm && (!attachDrivers || !someDriverSelected)) {
-                setWinWithoutVirtioMessage(ConstantsManager.getInstance()
-                    .getConstants().missingVirtioDriversForWindows());
+            setWinWithoutVirtioMessage(ConstantsManager.getInstance()
+                .getConstants().missingVirtioDriversForWindows());
         }
     }
 
@@ -109,9 +109,9 @@ public abstract class ImportVmFromExternalProviderModel extends ImportVmModel {
     @Override
     public void init(final List<VM> externalVms, final Guid dataCenterId) {
         setCloseCommand(new UICommand(null, this)
-        .setTitle(ConstantsManager.getInstance().getConstants().close())
-        .setIsDefault(true)
-        .setIsCancel(true));
+            .setTitle(ConstantsManager.getInstance().getConstants().close())
+            .setIsDefault(true)
+            .setIsCancel(true));
 
         initIsoAndAttachDriversFields(externalVms);
         setTargetArchitecture(externalVms);
@@ -165,7 +165,7 @@ public abstract class ImportVmFromExternalProviderModel extends ImportVmModel {
             initNetworksList();
             initClusterAndStorage(dataCenter);
         }), dataCenter.getId());
-     }
+    }
 
     private void initClusterAndStorage(StoragePool dataCenter) {
         AsyncDataProvider.getInstance().getClusterByServiceList(new AsyncQuery<>(clusters -> {
@@ -194,9 +194,9 @@ public abstract class ImportVmFromExternalProviderModel extends ImportVmModel {
                                     initDisksStorageDomainsList();
                                 }
                             }),
-            getStoragePool().getId());
+                getStoragePool().getId());
         }),
-        dataCenter.getId(), true, false);
+            dataCenter.getId(), true, false);
     }
 
     protected void addDiskImportData(String alias,

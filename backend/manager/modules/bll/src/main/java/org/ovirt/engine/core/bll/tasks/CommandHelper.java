@@ -22,11 +22,11 @@ public class CommandHelper {
             ActionParametersBase parameters,
             CommandContext commandContext,
             boolean runAsInternal) {
-         CommandBase<?> command = CommandsFactory.createCommand(actionType, parameters, commandContext);
-         if (runAsInternal) {
-             command.setInternalExecution(true);
-         }
-         return command.validateOnly();
+        CommandBase<?> command = CommandsFactory.createCommand(actionType, parameters, commandContext);
+        if (runAsInternal) {
+            command.setInternalExecution(true);
+        }
+        return command.validateOnly();
     }
 
     public static CommandBase<?> buildCommand(ActionType actionType,

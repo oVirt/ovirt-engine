@@ -46,7 +46,7 @@ public class VdsStatic implements BusinessEntity<Guid>, Commented {
 
     @EditableVdsField(
             onStatuses = { VDSStatus.NonResponsive, VDSStatus.Maintenance, VDSStatus.Down,
-                    VDSStatus.Unassigned, VDSStatus.InstallFailed, VDSStatus.PendingApproval, VDSStatus.InstallingOS })
+                VDSStatus.Unassigned, VDSStatus.InstallFailed, VDSStatus.PendingApproval, VDSStatus.InstallingOS })
     @HostnameOrIp(message = "VALIDATION_VDS_HOSTNAME_HOSTNAME_OR_IP",
             groups = { CreateEntity.class, UpdateEntity.class })
     @NotNull(groups = { CreateEntity.class, UpdateEntity.class })
@@ -61,7 +61,7 @@ public class VdsStatic implements BusinessEntity<Guid>, Commented {
 
     @EditableVdsField(
             onStatuses = { VDSStatus.NonResponsive, VDSStatus.Maintenance, VDSStatus.Down,
-                    VDSStatus.Unassigned, VDSStatus.InstallFailed, VDSStatus.PendingApproval, VDSStatus.InstallingOS })
+                VDSStatus.Unassigned, VDSStatus.InstallFailed, VDSStatus.PendingApproval, VDSStatus.InstallingOS })
     @Range(min = BusinessEntitiesDefinitions.NETWORK_MIN_LEGAL_PORT,
             max = BusinessEntitiesDefinitions.NETWORK_MAX_LEGAL_PORT,
             message = "VALIDATION.VDS.SSH_PORT.RANGE")
@@ -70,7 +70,7 @@ public class VdsStatic implements BusinessEntity<Guid>, Commented {
     @EditableVdsField
     @Size(min = 1, max = BusinessEntitiesDefinitions.HOST_NAME_SIZE)
     @ValidNameWithDot(message = "VALIDATION_VDS_SSH_USERNAME_INVALID", groups = { CreateEntity.class,
-            UpdateEntity.class })
+        UpdateEntity.class })
     private String sshUsername;
 
     @EditableVdsField(onStatuses = { VDSStatus.Maintenance, VDSStatus.PendingApproval })

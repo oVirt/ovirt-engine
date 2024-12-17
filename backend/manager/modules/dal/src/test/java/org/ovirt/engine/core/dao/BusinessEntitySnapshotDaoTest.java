@@ -48,7 +48,7 @@ public class BusinessEntitySnapshotDaoTest extends BaseDaoTestCase<BusinessEntit
     public void testDeleteByCommandId() {
         int numberOfResultsBeforeDeletion = 2;
         Guid commandId = commandWithTwoSnapshotsId;
-            testDeleteByCommandId(numberOfResultsBeforeDeletion, commandId);
+        testDeleteByCommandId(numberOfResultsBeforeDeletion, commandId);
         numberOfResultsBeforeDeletion = 1;
         commandId = commandWithOneSnapshotId;
         testDeleteByCommandId(numberOfResultsBeforeDeletion, commandId);

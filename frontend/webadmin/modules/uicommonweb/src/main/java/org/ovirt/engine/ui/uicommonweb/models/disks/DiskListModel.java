@@ -133,7 +133,7 @@ public class DiskListModel extends ListWithSimpleDetailsModel<Void, Disk> {
         privateCopyCommand = value;
     }
 
-        private UICommand privateUploadCommand;
+    private UICommand privateUploadCommand;
 
     public UICommand getUploadCommand() {
         return privateUploadCommand;

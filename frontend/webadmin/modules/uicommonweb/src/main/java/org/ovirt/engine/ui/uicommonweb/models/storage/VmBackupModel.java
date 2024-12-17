@@ -150,9 +150,9 @@ public class VmBackupModel extends ManageBackupModel<VM> {
 
         // Add 'Close' command
         model.setCloseCommand(new UICommand(CANCEL_COMMAND, this) //$NON-NLS-1$
-        .setTitle(ConstantsManager.getInstance().getConstants().close())
-        .setIsDefault(true)
-        .setIsCancel(true)
+            .setTitle(ConstantsManager.getInstance().getConstants().close())
+            .setIsDefault(true)
+            .setIsCancel(true)
         );
     }
 
@@ -215,9 +215,9 @@ public class VmBackupModel extends ManageBackupModel<VM> {
                                     .getMessages()
                                     .importProcessHasBegunForVms(StringHelper.trimEnd(importedVms.toString().trim(), ',')));
                             confirmModel.getCommands().add(new UICommand(CANCEL_CONFIRMATION_COMMAND, VmBackupModel.this)
-                            .setTitle(ConstantsManager.getInstance().getConstants().close())
-                            .setIsDefault(true)
-                            .setIsCancel(true)
+                                .setTitle(ConstantsManager.getInstance().getConstants().close())
+                                .setIsDefault(true)
+                                .setIsCancel(true)
                             );
                         }
                     }

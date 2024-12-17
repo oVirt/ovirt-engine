@@ -533,7 +533,7 @@ public class DisksViewColumns {
     }
 
     public static <C extends AbstractTextColumn<T>, T> C makeSortable(C column, String sortBy) {
-        if (sortBy == null ) {
+        if (sortBy == null) {
             // Client sorting
             column.makeSortable();
         } else if (!sortBy.equals(constants.empty())) {

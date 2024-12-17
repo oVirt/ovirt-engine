@@ -42,10 +42,10 @@ public class RemoveQuotaCommand extends QuotaCRUDCommand {
             return false;
         }
 
-       if (quota.isDefault()) {
-           addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_QUOTA_DEFAULT_CANNOT_BE_CHANGED);
-           return false;
-       }
+        if (quota.isDefault()) {
+            addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_QUOTA_DEFAULT_CANNOT_BE_CHANGED);
+            return false;
+        }
 
         // If the quota is in use by ether VM or image - return false
         if (!QuotaEnforcementTypeEnum.DISABLED.equals(quota.getQuotaEnforcementType()) && quotaDao.isQuotaInUse(quota)) {

@@ -44,18 +44,18 @@ public class BackendExternalTemplateImportsResourceTest extends AbstractBackendB
         setUpActionExpectations(ActionType.ImportVmTemplateFromExternalUrl,
                 ImportVmTemplateFromExternalUrlParameters.class,
                 new String[] {
-                        "StorageDomainId",
-                        "ClusterId",
-                        "Url",
-                        "ProxyHostId",
-                        "NewTemplateName"
+                    "StorageDomainId",
+                    "ClusterId",
+                    "Url",
+                    "ProxyHostId",
+                    "NewTemplateName"
                 },
                 new Object[] {
-                        STORAGE_DOMAIN_ID,
-                        CLUSTER_ID,
-                        OVA_URL,
-                        HOST_ID,
-                        CREATED_TEMPLATE_NAME
+                    STORAGE_DOMAIN_ID,
+                    CLUSTER_ID,
+                    OVA_URL,
+                    HOST_ID,
+                    CREATED_TEMPLATE_NAME
                 },
                 true,
                 true,

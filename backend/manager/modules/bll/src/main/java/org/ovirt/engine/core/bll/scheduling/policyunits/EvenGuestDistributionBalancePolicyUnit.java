@@ -23,9 +23,9 @@ import org.slf4j.LoggerFactory;
         name = "OptimalForEvenGuestDistribution",
         type = PolicyUnitType.LOAD_BALANCING,
         parameters = {
-                PolicyUnitParameter.SPM_VM_GRACE,
-                PolicyUnitParameter.HIGH_VM_COUNT,
-                PolicyUnitParameter.MIGRATION_THRESHOLD
+            PolicyUnitParameter.SPM_VM_GRACE,
+            PolicyUnitParameter.HIGH_VM_COUNT,
+            PolicyUnitParameter.MIGRATION_THRESHOLD
         }
 )
 public class EvenGuestDistributionBalancePolicyUnit extends EvenDistributionBalancePolicyUnit {

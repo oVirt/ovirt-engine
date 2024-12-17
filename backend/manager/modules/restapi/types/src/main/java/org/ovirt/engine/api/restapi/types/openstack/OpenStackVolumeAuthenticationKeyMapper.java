@@ -67,10 +67,10 @@ public class OpenStackVolumeAuthenticationKeyMapper {
     public static OpenstackVolumeAuthenticationKeyUsageType map(org.ovirt.engine.core.common.businessentities.storage.LibvirtSecretUsageType usageType,
             OpenstackVolumeAuthenticationKeyUsageType template) {
         switch (usageType) {
-        case CEPH:
-            return OpenstackVolumeAuthenticationKeyUsageType.CEPH;
-        default:
-            return null;
+            case CEPH:
+                return OpenstackVolumeAuthenticationKeyUsageType.CEPH;
+            default:
+                return null;
         }
     }
 
@@ -80,10 +80,10 @@ public class OpenStackVolumeAuthenticationKeyMapper {
             OpenstackVolumeAuthenticationKeyUsageType usageType,
             org.ovirt.engine.core.common.businessentities.storage.LibvirtSecretUsageType outgoing) {
         switch (usageType) {
-        case CEPH:
-            return org.ovirt.engine.core.common.businessentities.storage.LibvirtSecretUsageType.CEPH;
-        default:
-            return null;
+            case CEPH:
+                return org.ovirt.engine.core.common.businessentities.storage.LibvirtSecretUsageType.CEPH;
+            default:
+                return null;
         }
     }
 }

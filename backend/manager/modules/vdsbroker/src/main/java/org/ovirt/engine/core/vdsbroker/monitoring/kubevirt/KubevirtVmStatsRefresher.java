@@ -143,20 +143,20 @@ public class KubevirtVmStatsRefresher extends PollVmStatsRefresher {
             return null;
         }
         switch (phase) {
-        case "Running":
-            vmDynamic.setStatus(VMStatus.Up);
-            break;
-        case "Scheduling":
-        case "Scheduled":
-            vmDynamic.setStatus(VMStatus.WaitForLaunch);
-            break;
-        case "Failed":
-        case "Succeeded":
-            vmDynamic.setStatus(VMStatus.PoweringDown);
-            break;
-        default:
-            log.error("got invalid status: {}", phase);
-            return null;
+            case "Running":
+                vmDynamic.setStatus(VMStatus.Up);
+                break;
+            case "Scheduling":
+            case "Scheduled":
+                vmDynamic.setStatus(VMStatus.WaitForLaunch);
+                break;
+            case "Failed":
+            case "Succeeded":
+                vmDynamic.setStatus(VMStatus.PoweringDown);
+                break;
+            default:
+                log.error("got invalid status: {}", phase);
+                return null;
         }
 
         updateGuestOsInfo(vmDynamic, vmi);

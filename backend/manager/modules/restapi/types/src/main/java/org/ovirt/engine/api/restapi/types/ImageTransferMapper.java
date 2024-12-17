@@ -127,12 +127,12 @@ public class ImageTransferMapper {
 
     private static ImageTransferDirection mapDirection(TransferType type) {
         switch (type) {
-        case Download:
-            return ImageTransferDirection.DOWNLOAD;
-        case Upload:
-            return ImageTransferDirection.UPLOAD;
-        default:
-            return null;
+            case Download:
+                return ImageTransferDirection.DOWNLOAD;
+            case Upload:
+                return ImageTransferDirection.UPLOAD;
+            default:
+                return null;
         }
     }
 

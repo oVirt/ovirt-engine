@@ -142,7 +142,7 @@ public class HeaderPresenterWidget extends PresenterWidget<HeaderPresenterWidget
                     model.setSelectedItem(log);
                     model.executeCommand(command);
                 }
-        });
+            });
         getView().getAlertActionWidget().addClearAllAction(constants.clearAllDismissedAlerts(),
                 this.alertModelProvider.getModel().getClearAllCommand(), (command, log) ->
                     alertModelProvider.getModel().executeCommand(command)
@@ -159,7 +159,7 @@ public class HeaderPresenterWidget extends PresenterWidget<HeaderPresenterWidget
                     model.setSelectedItem(log);
                     model.executeCommand(command);
                 }
-        });
+            });
         getView().getEventActionWidget().addClearAllAction(constants.clearAllDismissedEvents(),
                 this.eventModelProvider.getModel().getClearAllCommand(), (command, log) ->
                     eventModelProvider.getModel().executeCommand(command)

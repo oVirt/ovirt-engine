@@ -201,7 +201,7 @@ public class AddVmFromTemplateCommand<T extends AddVmParameters> extends AddVmCo
     }
 
     private static Map<Guid, Set<Guid>> findDomainsInApplicableStatusForDisks
-            (List<DiskImage> diskImages, Map<Guid, StorageDomain> storageDomains) {
+    (List<DiskImage> diskImages, Map<Guid, StorageDomain> storageDomains) {
         return diskImages
                 .stream()
                 .collect(Collectors.toMap(
@@ -254,15 +254,15 @@ public class AddVmFromTemplateCommand<T extends AddVmParameters> extends AddVmCo
     @Override
     public AuditLogType getAuditLogTypeValue() {
         switch (getActionState()) {
-        case EXECUTE:
-            return AuditLogType.USER_ADD_VM_STARTED;
+            case EXECUTE:
+                return AuditLogType.USER_ADD_VM_STARTED;
 
-        case END_SUCCESS:
-            return getSucceeded() ? AuditLogType.USER_ADD_VM_FINISHED_SUCCESS
-                    : AuditLogType.USER_ADD_VM_FINISHED_FAILURE;
+            case END_SUCCESS:
+                return getSucceeded() ? AuditLogType.USER_ADD_VM_FINISHED_SUCCESS
+                        : AuditLogType.USER_ADD_VM_FINISHED_FAILURE;
 
-        default:
-            return AuditLogType.USER_ADD_VM_FINISHED_FAILURE;
+            default:
+                return AuditLogType.USER_ADD_VM_FINISHED_FAILURE;
         }
     }
 }

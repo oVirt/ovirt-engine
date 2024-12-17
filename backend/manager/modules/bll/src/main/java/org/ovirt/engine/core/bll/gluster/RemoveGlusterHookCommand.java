@@ -67,8 +67,8 @@ public class RemoveGlusterHookCommand extends GlusterHookCommandBase<GlusterHook
             return false;
         }
 
-       for (VDS vds: getServersInCluster()) {
-           if (vds.getStatus() != VDSStatus.Up) {
+        for (VDS vds: getServersInCluster()) {
+            if (vds.getStatus() != VDSStatus.Up) {
                 setVdsName(vds.getName());
                 addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_SERVER_STATUS_NOT_UP);
                 addValidationMessage(String.format("$%1$s %2$s", "VdsName", vds.getName()));
@@ -89,16 +89,15 @@ public class RemoveGlusterHookCommand extends GlusterHookCommandBase<GlusterHook
         for (final VDS server : getServersInCluster()) {
             taskList.add(() -> {
                 VDSReturnValue returnValue;
-                    returnValue =
-                           runVdsCommand(
-                                   VDSCommandType.RemoveGlusterHook,
-                                   new GlusterHookVDSParameters(server.getId(),
-                                           entity.getGlusterCommand(),
-                                           entity.getStage(),
-                                           entity.getName()
-                                           ));
-                 return new Pair<>(server, returnValue);
-
+                returnValue =
+                        runVdsCommand(
+                                VDSCommandType.RemoveGlusterHook,
+                                new GlusterHookVDSParameters(server.getId(),
+                                       entity.getGlusterCommand(),
+                                       entity.getStage(),
+                                       entity.getName()
+                       ));
+                return new Pair<>(server, returnValue);
             });
         }
 
@@ -107,7 +106,7 @@ public class RemoveGlusterHookCommand extends GlusterHookCommandBase<GlusterHook
             for (Pair<VDS, VDSReturnValue> pairResult : pairResults) {
 
                 VDSReturnValue retValue = pairResult.getSecond();
-                if (!retValue.getSucceeded() ) {
+                if (!retValue.getSucceeded()) {
                     errors.add(retValue.getVdsError().getMessage());
                 }
             }
@@ -135,7 +134,7 @@ public class RemoveGlusterHookCommand extends GlusterHookCommandBase<GlusterHook
         if (jobProperties == null) {
             jobProperties = super.getJobMessageProperties();
             if (getGlusterHook() != null) {
-                 jobProperties.put(GlusterConstants.HOOK_NAME, getGlusterHook().getName());
+                jobProperties.put(GlusterConstants.HOOK_NAME, getGlusterHook().getName());
             }
         }
 

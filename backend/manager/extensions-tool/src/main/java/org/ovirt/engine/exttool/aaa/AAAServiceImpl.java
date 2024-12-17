@@ -43,345 +43,325 @@ public class AAAServiceImpl implements ModuleService {
     }
 
     private enum Action {
-        AUTHZ_FETCH_PRINCIPAL_RECORD(
-                module -> {
-                    ExtensionProxy authzExtension = module.getExtensionsManager().getExtensionByName((String) module.argMap.get("extension-name"));
+        AUTHZ_FETCH_PRINCIPAL_RECORD(module -> {
+            ExtensionProxy authzExtension = module.getExtensionsManager().getExtensionByName((String) module.argMap.get("extension-name"));
 
-                    log.info("API: -->Authz.InvokeCommands.FETCH_PRINCIPAL_RECORD principal='{}'", module.argMap.get("principal-name"));
-                    ExtMap outMap = authzExtension.invoke(
-                        new ExtMap().mput(
-                            Authz.InvokeKeys.PRINCIPAL,
-                            module.argMap.get("principal-name")
-                        ).mput(
-                            Base.InvokeKeys.COMMAND,
-                            Authz.InvokeCommands.FETCH_PRINCIPAL_RECORD
-                        ).mput(
-                            Authz.InvokeKeys.QUERY_FLAGS,
-                            getAuthzFlags((List<String>) module.argMap.get("authz-flag"))
-                        )
-                    );
-                    log.info(
-                        "API: <--Authz.InvokeCommands.FETCH_PRINCIPAL_RECORD status={}",
-                        getFieldNameByValue(Authz.Status.class, outMap.<Integer> get(Authz.InvokeKeys.STATUS))
-                    );
+            log.info("API: -->Authz.InvokeCommands.FETCH_PRINCIPAL_RECORD principal='{}'", module.argMap.get("principal-name"));
+            ExtMap outMap = authzExtension.invoke(
+                new ExtMap().mput(
+                    Authz.InvokeKeys.PRINCIPAL,
+                    module.argMap.get("principal-name")
+                ).mput(
+                    Base.InvokeKeys.COMMAND,
+                    Authz.InvokeCommands.FETCH_PRINCIPAL_RECORD
+                ).mput(
+                    Authz.InvokeKeys.QUERY_FLAGS,
+                    getAuthzFlags((List<String>) module.argMap.get("authz-flag"))
+                )
+            );
+            log.info(
+                "API: <--Authz.InvokeCommands.FETCH_PRINCIPAL_RECORD status={}",
+                getFieldNameByValue(Authz.Status.class, outMap.<Integer> get(Authz.InvokeKeys.STATUS))
+            );
 
-                    if (outMap.<Integer> get(Authz.InvokeKeys.STATUS) != Authz.Status.SUCCESS) {
-                        throw new RuntimeException(
-                            String.format(
-                                "Authz.Status code is: %1$s",
-                                getFieldNameByValue(Authz.Status.class, outMap.<Integer> get(Authz.InvokeKeys.STATUS))
-                            )
-                        );
-                    }
+            if (outMap.<Integer> get(Authz.InvokeKeys.STATUS) != Authz.Status.SUCCESS) {
+                throw new RuntimeException(String.format(
+                    "Authz.Status code is: %1$s",
+                    getFieldNameByValue(Authz.Status.class, outMap.<Integer> get(Authz.InvokeKeys.STATUS))
+                ));
+            }
 
-                    Dump.PRINCIPAL_RECORD.dump(module, outMap.get(Authz.InvokeKeys.PRINCIPAL_RECORD));
-                }
-        ),
-        AUTHN_AUTHENTICATE_CREDENTIALS(
-                module -> {
-                    ExtensionProxy authnExtension = module.getExtensionsManager().getExtensionByName((String) module.argMap.get("extension-name"));
+            Dump.PRINCIPAL_RECORD.dump(module, outMap.get(Authz.InvokeKeys.PRINCIPAL_RECORD));
+        }),
+        AUTHN_AUTHENTICATE_CREDENTIALS(module -> {
+            ExtensionProxy authnExtension = module.getExtensionsManager().getExtensionByName((String) module.argMap.get("extension-name"));
 
-                    log.info("API: -->Authn.InvokeCommands.AUTHENTICATE_CREDENTIALS user='{}'", module.argMap.get("user-name"));
-                    ExtMap outMap = authnExtension.invoke(
-                        new ExtMap().mput(
-                            Base.InvokeKeys.COMMAND,
-                            Authn.InvokeCommands.AUTHENTICATE_CREDENTIALS
-                        ).mput(
-                            Authn.InvokeKeys.USER,
-                            module.argMap.get("user-name")
-                        ).mput(
-                            Authn.InvokeKeys.CREDENTIALS,
-                            getPassword((String) module.argMap.get("password"))
-                        )
-                    );
-                    log.info(
-                        "API: <--Authn.InvokeCommands.AUTHENTICATE_CREDENTIALS result={}",
+            log.info("API: -->Authn.InvokeCommands.AUTHENTICATE_CREDENTIALS user='{}'", module.argMap.get("user-name"));
+            ExtMap outMap = authnExtension.invoke(
+                new ExtMap().mput(
+                    Base.InvokeKeys.COMMAND,
+                    Authn.InvokeCommands.AUTHENTICATE_CREDENTIALS
+                ).mput(
+                    Authn.InvokeKeys.USER,
+                    module.argMap.get("user-name")
+                ).mput(
+                    Authn.InvokeKeys.CREDENTIALS,
+                    getPassword((String) module.argMap.get("password"))
+                )
+            );
+            log.info(
+                "API: <--Authn.InvokeCommands.AUTHENTICATE_CREDENTIALS result={}",
+                getFieldNameByValue(Authn.AuthResult.class, outMap.<Integer> get(Authn.InvokeKeys.RESULT))
+            );
+
+            Dump.AUTH_RECORD.dump(module, outMap.get(Authn.InvokeKeys.AUTH_RECORD));
+
+            if (outMap.<Integer> get(Authn.InvokeKeys.RESULT) != Authn.AuthResult.SUCCESS) {
+                throw new RuntimeException(
+                    String.format("Authn.Result code is: %1$s",
                         getFieldNameByValue(Authn.AuthResult.class, outMap.<Integer> get(Authn.InvokeKeys.RESULT))
-                    );
+                    ));
+            }
+        }),
+        CHANGE_CREDENTIALS(module -> {
+            AAAProfile aaaprofile = module.new AAAProfile((String) module.argMap.get("profile"));
+            if ((aaaprofile.getAuthnExtension().getContext().<Long>get(Authn.ContextKeys.CAPABILITIES, 0L) & Authn.Capabilities.CREDENTIALS_CHANGE) == 0 &&
+                !(Boolean) module.argMap.get("ignore-capabilities")) {
+                throw new IllegalArgumentException("Unsupported operation: CREDENTIALS_CHANGE");
+            }
 
-                    Dump.AUTH_RECORD.dump(module, outMap.get(Authn.InvokeKeys.AUTH_RECORD));
+            String user = aaaprofile.mapUser((String) module.argMap.get("user-name"));
+            log.info("API: -->Authn.InvokeCommands.CREDENTIALS_CHANGES profile='{}' user='{}'", aaaprofile.getProfile(), user);
+            ExtMap outMap = aaaprofile.getAuthnExtension().invoke(
+                new ExtMap().mput(
+                    Base.InvokeKeys.COMMAND,
+                    Authn.InvokeCommands.CREDENTIALS_CHANGE
+                ).mput(
+                    Authn.InvokeKeys.USER,
+                    user
+                ).mput(
+                    Authn.InvokeKeys.CREDENTIALS,
+                    getPassword((String) module.argMap.get("password"))
+                ).mput(
+                    Authn.InvokeKeys.CREDENTIALS_NEW,
+                    getPassword((String) module.argMap.get("password-new"), "New password: ")
+                ));
+            log.info(
+                "API: <--Authn.InvokeCommands.CREDENTIALS_CHANGES profile='{}' result={}",
+                aaaprofile.getProfile(),
+                getFieldNameByValue(Authn.AuthResult.class, outMap.<Integer> get(Authn.InvokeKeys.RESULT))
+            );
 
-                    if (outMap.<Integer> get(Authn.InvokeKeys.RESULT) != Authn.AuthResult.SUCCESS) {
-                        throw new RuntimeException(
-                            String.format(
-                                "Authn.Result code is: %1$s",
-                                getFieldNameByValue(Authn.AuthResult.class, outMap.<Integer> get(Authn.InvokeKeys.RESULT))
-                            )
-                        );
-                    }
-                }
-        ),
-        CHANGE_CREDENTIALS(
-                module -> {
-                    AAAProfile aaaprofile = module.new AAAProfile((String) module.argMap.get("profile"));
-                    if ((aaaprofile.getAuthnExtension().getContext().<Long>get(Authn.ContextKeys.CAPABILITIES, 0L) & Authn.Capabilities.CREDENTIALS_CHANGE) == 0 &&
-                            !(Boolean) module.argMap.get("ignore-capabilities")) {
-                        throw new IllegalArgumentException("Unsupported operation: CREDENTIALS_CHANGE");
-                    }
+            if (outMap.<Integer>get(Base.InvokeKeys.RESULT) != Base.InvokeResult.SUCCESS ||
+                outMap.<Integer>get(Authn.InvokeKeys.RESULT) != Authn.AuthResult.SUCCESS) {
+                throw new RuntimeException("Password change failed");
+            }
+            log.info("Password successfully changed");
+        }),
+        LOGIN_USER(module -> {
+            AAAProfile aaaprofile = module.new AAAProfile((String) module.argMap.get("profile"));
+            String user = aaaprofile.mapUser((String) module.argMap.get("user-name"));
+            log.info("API: -->Authn.InvokeCommands.AUTHENTICATE_CREDENTIALS profile='{}' user='{}'", aaaprofile.getProfile(), user);
+            ExtMap outMap = aaaprofile.getAuthnExtension().invoke(
+                new ExtMap().mput(
+                    Base.InvokeKeys.COMMAND,
+                    Authn.InvokeCommands.AUTHENTICATE_CREDENTIALS
+                ).mput(
+                    Authn.InvokeKeys.USER,
+                    user
+                ).mput(
+                    Authn.InvokeKeys.CREDENTIALS,
+                    getPassword((String) module.argMap.get("password"))
+            ));
+            log.info(
+                "API: <--Authn.InvokeCommands.AUTHENTICATE_CREDENTIALS profile='{}' result={}",
+                aaaprofile.getProfile(),
+                getFieldNameByValue(Authn.AuthResult.class, outMap.<Integer> get(Authn.InvokeKeys.RESULT))
+            );
 
-                    String user = aaaprofile.mapUser((String) module.argMap.get("user-name"));
-                    log.info("API: -->Authn.InvokeCommands.CREDENTIALS_CHANGES profile='{}' user='{}'", aaaprofile.getProfile(), user);
-                    ExtMap outMap = aaaprofile.getAuthnExtension().invoke(
-                            new ExtMap().mput(
-                                    Base.InvokeKeys.COMMAND,
-                                    Authn.InvokeCommands.CREDENTIALS_CHANGE
-                            ).mput(
-                                    Authn.InvokeKeys.USER,
-                                    user
-                            ).mput(
-                                    Authn.InvokeKeys.CREDENTIALS,
-                                    getPassword((String) module.argMap.get("password"))
-                            ).mput(
-                                    Authn.InvokeKeys.CREDENTIALS_NEW,
-                                    getPassword((String) module.argMap.get("password-new"), "New password: ")
-                            )
-                    );
-                    log.info(
-                           "API: <--Authn.InvokeCommands.CREDENTIALS_CHANGES profile='{}' result={}",
-                            aaaprofile.getProfile(),
-                            getFieldNameByValue(Authn.AuthResult.class, outMap.<Integer> get(Authn.InvokeKeys.RESULT))
-                    );
+            ExtMap authRecord = outMap.get(Authn.InvokeKeys.AUTH_RECORD);
+            Dump.AUTH_RECORD.dump(module, authRecord);
 
-                    if (outMap.<Integer>get(Base.InvokeKeys.RESULT) != Base.InvokeResult.SUCCESS ||
-                            outMap.<Integer>get(Authn.InvokeKeys.RESULT) != Authn.AuthResult.SUCCESS) {
-                        throw new RuntimeException("Password change failed");
-                    }
-                    log.info("Password successfully changed");
-                }
-        ),
-        LOGIN_USER(
-                module -> {
-                    AAAProfile aaaprofile = module.new AAAProfile((String) module.argMap.get("profile"));
-                    String user = aaaprofile.mapUser((String) module.argMap.get("user-name"));
-                    log.info("API: -->Authn.InvokeCommands.AUTHENTICATE_CREDENTIALS profile='{}' user='{}'", aaaprofile.getProfile(), user);
-                    ExtMap outMap = aaaprofile.getAuthnExtension().invoke(
-                        new ExtMap().mput(
-                            Base.InvokeKeys.COMMAND,
-                            Authn.InvokeCommands.AUTHENTICATE_CREDENTIALS
-                        ).mput(
-                            Authn.InvokeKeys.USER,
-                            user
-                        ).mput(
-                            Authn.InvokeKeys.CREDENTIALS,
-                            getPassword((String) module.argMap.get("password"))
-                        )
-                    );
-                    log.info(
-                        "API: <--Authn.InvokeCommands.AUTHENTICATE_CREDENTIALS profile='{}' result={}",
-                        aaaprofile.getProfile(),
+            if (outMap.<Integer> get(Authn.InvokeKeys.RESULT) != Authn.AuthResult.SUCCESS) {
+                module.acctReport(
+                    Acct.ReportReason.PRINCIPAL_LOGIN_FAILED,
+                    aaaprofile.getAuthzName(),
+                    authRecord,
+                    null,
+                    user,
+                    "User '%1$s' could not login"
+                );
+                throw new RuntimeException(
+                    String.format(
+                        "Authn.Result code is: %1$s",
                         getFieldNameByValue(Authn.AuthResult.class, outMap.<Integer> get(Authn.InvokeKeys.RESULT))
-                    );
+                    )
+                );
+            }
 
-                    ExtMap authRecord = outMap.get(Authn.InvokeKeys.AUTH_RECORD);
-                    Dump.AUTH_RECORD.dump(module, authRecord);
+            if (aaaprofile.getMappingExtension() != null) {
+                log.info("API: -->Mapping.InvokeCommands.MAP_AUTH_RECORD");
+                Dump.AUTH_RECORD.dump(module, authRecord);
+                authRecord = aaaprofile.getMappingExtension().invoke(
+                    new ExtMap().mput(
+                        Base.InvokeKeys.COMMAND,
+                        Mapping.InvokeCommands.MAP_AUTH_RECORD
+                    ).mput(
+                        Authn.InvokeKeys.AUTH_RECORD,
+                        authRecord
+                    ),
+                        true
+                    ).get(
+                        Authn.InvokeKeys.AUTH_RECORD,
+                        authRecord
+                );
+                log.info("API: <--Mapping.InvokeCommands.MAP_AUTH_RECORD");
+                Dump.AUTH_RECORD.dump(module, authRecord);
+            }
 
-                    if (outMap.<Integer> get(Authn.InvokeKeys.RESULT) != Authn.AuthResult.SUCCESS) {
-                        module.acctReport(
-                            Acct.ReportReason.PRINCIPAL_LOGIN_FAILED,
-                            aaaprofile.getAuthzName(),
-                            authRecord,
-                            null,
-                            user,
-                            "User '%1$s' could not login"
-                        );
-                        throw new RuntimeException(
-                            String.format(
-                                "Authn.Result code is: %1$s",
-                                getFieldNameByValue(Authn.AuthResult.class, outMap.<Integer> get(Authn.InvokeKeys.RESULT))
-                            )
-                        );
-                    }
+            log.info(
+                "API: -->Authz.InvokeCommands.FETCH_PRINCIPAL_RECORD principal='{}'",
+                (Object) authRecord.get(Authn.AuthRecord.PRINCIPAL)
+            );
+            outMap = module.getExtensionsManager().getExtensionByName(aaaprofile.getAuthzName()).invoke(
+                new ExtMap().
+                    mput(
+                        Base.InvokeKeys.COMMAND,
+                        Authz.InvokeCommands.FETCH_PRINCIPAL_RECORD
+                    ).mput(
+                        Authn.InvokeKeys.AUTH_RECORD,
+                        authRecord
+                    ).mput(
+                        Authz.InvokeKeys.QUERY_FLAGS,
+                        Authz.QueryFlags.RESOLVE_GROUPS | Authz.QueryFlags.RESOLVE_GROUPS_RECURSIVE
+                    )
+            );
+            log.info(
+                "API: <--Authz.InvokeCommands.FETCH_PRINCIPAL_RECORD status={}",
+                getFieldNameByValue(Authz.Status.class, outMap.<Integer> get(Authz.InvokeKeys.STATUS))
+            );
 
-                    if (aaaprofile.getMappingExtension() != null) {
-                        log.info("API: -->Mapping.InvokeCommands.MAP_AUTH_RECORD");
-                        Dump.AUTH_RECORD.dump(module, authRecord);
-                        authRecord = aaaprofile.getMappingExtension().invoke(
-                            new ExtMap().mput(
-                                Base.InvokeKeys.COMMAND,
-                                Mapping.InvokeCommands.MAP_AUTH_RECORD
-                            ).mput(
-                                Authn.InvokeKeys.AUTH_RECORD,
-                                authRecord
-                            ),
-                            true
-                        ).get(
-                            Authn.InvokeKeys.AUTH_RECORD,
-                            authRecord
-                        );
-                        log.info("API: <--Mapping.InvokeCommands.MAP_AUTH_RECORD");
-                        Dump.AUTH_RECORD.dump(module, authRecord);
-                    }
+            ExtMap principalRecord = outMap.get(Authz.InvokeKeys.PRINCIPAL_RECORD);
+            Dump.PRINCIPAL_RECORD.dump(module, principalRecord);
 
-                    log.info(
-                        "API: -->Authz.InvokeCommands.FETCH_PRINCIPAL_RECORD principal='{}'",
-                        (Object) authRecord.get(Authn.AuthRecord.PRINCIPAL)
-                    );
-                    outMap = module.getExtensionsManager().getExtensionByName(aaaprofile.getAuthzName()).invoke(
-                        new ExtMap().
-                            mput(
-                                Base.InvokeKeys.COMMAND,
-                                Authz.InvokeCommands.FETCH_PRINCIPAL_RECORD
-                            ).mput(
-                                Authn.InvokeKeys.AUTH_RECORD,
-                                authRecord
-                            ).mput(
-                                Authz.InvokeKeys.QUERY_FLAGS,
-                                Authz.QueryFlags.RESOLVE_GROUPS | Authz.QueryFlags.RESOLVE_GROUPS_RECURSIVE
-                            )
-                    );
-                    log.info(
-                        "API: <--Authz.InvokeCommands.FETCH_PRINCIPAL_RECORD status={}",
-                        getFieldNameByValue(Authz.Status.class, outMap.<Integer> get(Authz.InvokeKeys.STATUS))
-                    );
-
-                    ExtMap principalRecord = outMap.get(Authz.InvokeKeys.PRINCIPAL_RECORD);
-                    Dump.PRINCIPAL_RECORD.dump(module, principalRecord);
-
-                    if (outMap.<Integer> get(Authz.InvokeKeys.STATUS) != Authz.Status.SUCCESS) {
-                        if (principalRecord == null) {
-                            module.acctReport(
-                                Acct.ReportReason.PRINCIPAL_NOT_FOUND,
-                                aaaprofile.getAuthzName(),
-                                authRecord,
-                                null,
-                                user,
-                                "User '%1$s' could not be found"
-                            );
-                        } else {
-                            module.acctReport(
-                                Acct.ReportReason.PRINCIPAL_LOGIN_FAILED,
-                                aaaprofile.getAuthzName(),
-                                authRecord,
-                                principalRecord,
-                                user,
-                                "User '%1$s' could not be found"
-                            );
-                        }
-
-                        throw new RuntimeException(
-                            String.format(
-                                "Authz.Status code is: %1$s",
-                                getFieldNameByValue(Authz.Status.class, outMap.<Integer> get(Authz.InvokeKeys.STATUS))
-                            )
-                        );
-                    }
-
+            if (outMap.<Integer> get(Authz.InvokeKeys.STATUS) != Authz.Status.SUCCESS) {
+                if (principalRecord == null) {
                     module.acctReport(
-                        Acct.ReportReason.PRINCIPAL_LOGIN_CREDENTIALS,
+                        Acct.ReportReason.PRINCIPAL_NOT_FOUND,
+                        aaaprofile.getAuthzName(),
+                        authRecord,
+                        null,
+                        user,
+                        "User '%1$s' could not be found"
+                    );
+                } else {
+                    module.acctReport(
+                        Acct.ReportReason.PRINCIPAL_LOGIN_FAILED,
                         aaaprofile.getAuthzName(),
                         authRecord,
                         principalRecord,
                         user,
-                        "Principal '%1$s' logged in"
-                    );
-
-                    if ((aaaprofile.getAuthnExtension().getContext().<Long> get(Authn.ContextKeys.CAPABILITIES) & Authn.Capabilities.LOGOUT) != 0) {
-                        log.info("API: -->Authn.InvokeCommands.LOGOUT principal='{}'", authRecord.<String> get(Authn.AuthRecord.PRINCIPAL));
-                        aaaprofile.getAuthnExtension().invoke(
-                            new ExtMap().mput(
-                                Base.InvokeKeys.COMMAND,
-                                Authn.InvokeCommands.LOGOUT
-                            ).mput(
-                                Authn.InvokeKeys.AUTH_RECORD,
-                                authRecord
-                            )
-                        );
-                        log.info("API: <--Authn.InvokeCommands.LOGOUT");
-                    }
-
-                    module.acctReport(
-                        Acct.ReportReason.PRINCIPAL_LOGOUT,
-                        aaaprofile.getAuthzName(),
-                        authRecord,
-                        principalRecord,
-                        user,
-                        "Principal '%1$s' logged out"
+                        "User '%1$s' could not be found"
                     );
                 }
-        ),
-        SEARCH(
-                module -> {
-                    ExtensionProxy authzExtension = module.getExtensionsManager().getExtensionByName((String) module.argMap.get("extension-name"));
-                    ExtUUID entity = getQueryEntity((String) module.argMap.get("entity"));
-                    ExtMap filter = createQueryFilter(entity, module.argMap);
-                    Dump.QUERY_FILTER_RECORD.dump(module, filter, "");
 
-                    Collection<String> namespaces = authzExtension.getContext().get(
-                        Authz.ContextKeys.AVAILABLE_NAMESPACES,
-                        Collections.<String>emptyList()
-                    );
-                    if (module.argMap.get("namespace") != null) {
-                        namespaces = (Collection<String>) module.argMap.get("namespace");
-                    }
+                throw new RuntimeException(
+                    String.format(
+                        "Authz.Status code is: %1$s",
+                        getFieldNameByValue(Authz.Status.class, outMap.<Integer> get(Authz.InvokeKeys.STATUS))
+                ));
+            }
 
-                    for (String namespace : namespaces) {
-                        log.info("API: -->Authz.InvokeCommands.QUERY_OPEN namespace='{}'", namespace);
-                        ExtMap outMap = authzExtension.invoke(
-                            new ExtMap().mput(
-                                Base.InvokeKeys.COMMAND,
-                                Authz.InvokeCommands.QUERY_OPEN
-                            ).mput(
-                                Authz.InvokeKeys.QUERY_ENTITY,
-                                entity
-                            ).mput(
-                                Authz.InvokeKeys.QUERY_FLAGS,
-                                getAuthzFlags((List<String>) module.argMap.get("authz-flag"))
-                            ).mput(
-                                Authz.InvokeKeys.QUERY_FILTER,
-                                filter
-                            ).mput(
-                                Authz.InvokeKeys.NAMESPACE,
-                                namespace
-                            )
-                        );
-                        log.info("API: <--Authz.InvokeCommands.QUERY_OPEN");
+            module.acctReport(
+                Acct.ReportReason.PRINCIPAL_LOGIN_CREDENTIALS,
+                aaaprofile.getAuthzName(),
+                authRecord,
+                principalRecord,
+                user,
+                "Principal '%1$s' logged in"
+            );
 
-                        Object opaque = outMap.get(Authz.InvokeKeys.QUERY_OPAQUE);
-                        boolean done = false;
-                        while (!done) {
-                            log.info("API: -->Authz.InvokeCommands.QUERY_EXECUTE");
-                            outMap = authzExtension.invoke(
-                                new ExtMap().mput(
-                                    Base.InvokeKeys.COMMAND,
-                                    Authz.InvokeCommands.QUERY_EXECUTE
-                                ).mput(
-                                    Authz.InvokeKeys.QUERY_OPAQUE,
-                                    opaque
-                                ).mput(
-                                    Authz.InvokeKeys.PAGE_SIZE,
-                                    module.argMap.get("page-size")
-                                )
-                            );
-                            Collection<ExtMap> results = outMap.get(Authz.InvokeKeys.QUERY_RESULT);
-                            log.info("API: <--Authz.InvokeCommands.QUERY_EXECUTE count={}", results == null ? "END" : results.size());
+            if ((aaaprofile.getAuthnExtension().getContext().<Long> get(Authn.ContextKeys.CAPABILITIES) & Authn.Capabilities.LOGOUT) != 0) {
+                log.info("API: -->Authn.InvokeCommands.LOGOUT principal='{}'", authRecord.<String> get(Authn.AuthRecord.PRINCIPAL));
+                aaaprofile.getAuthnExtension().invoke(
+                    new ExtMap().mput(
+                        Base.InvokeKeys.COMMAND,
+                        Authn.InvokeCommands.LOGOUT
+                    ).mput(
+                        Authn.InvokeKeys.AUTH_RECORD,
+                        authRecord
+                ));
+                log.info("API: <--Authn.InvokeCommands.LOGOUT");
+            }
 
-                            if (results == null) {
-                                done = true;
-                            } else {
-                                for (ExtMap result : results) {
-                                    if (Authz.QueryEntity.PRINCIPAL.equals(entity)) {
-                                        Dump.PRINCIPAL_RECORD.dump(module, result);
-                                    } else if (Authz.QueryEntity.GROUP.equals(entity)) {
-                                        Dump.GROUP_RECORD.dump(module, result);
-                                    }
-                                }
+            module.acctReport(
+                Acct.ReportReason.PRINCIPAL_LOGOUT,
+                aaaprofile.getAuthzName(),
+                authRecord,
+                principalRecord,
+                user,
+                "Principal '%1$s' logged out"
+            );
+        }),
+        SEARCH(module -> {
+            ExtensionProxy authzExtension = module.getExtensionsManager().getExtensionByName((String) module.argMap.get("extension-name"));
+            ExtUUID entity = getQueryEntity((String) module.argMap.get("entity"));
+            ExtMap filter = createQueryFilter(entity, module.argMap);
+            Dump.QUERY_FILTER_RECORD.dump(module, filter, "");
+
+            Collection<String> namespaces = authzExtension.getContext().get(
+                Authz.ContextKeys.AVAILABLE_NAMESPACES,
+                Collections.<String>emptyList()
+            );
+            if (module.argMap.get("namespace") != null) {
+                namespaces = (Collection<String>) module.argMap.get("namespace");
+            }
+
+            for (String namespace : namespaces) {
+                log.info("API: -->Authz.InvokeCommands.QUERY_OPEN namespace='{}'", namespace);
+                ExtMap outMap = authzExtension.invoke(
+                    new ExtMap().mput(
+                        Base.InvokeKeys.COMMAND,
+                        Authz.InvokeCommands.QUERY_OPEN
+                    ).mput(
+                        Authz.InvokeKeys.QUERY_ENTITY,
+                        entity
+                    ).mput(
+                        Authz.InvokeKeys.QUERY_FLAGS,
+                        getAuthzFlags((List<String>) module.argMap.get("authz-flag"))
+                    ).mput(
+                        Authz.InvokeKeys.QUERY_FILTER,
+                        filter
+                    ).mput(
+                        Authz.InvokeKeys.NAMESPACE,
+                        namespace
+                    )
+                );
+                log.info("API: <--Authz.InvokeCommands.QUERY_OPEN");
+
+                Object opaque = outMap.get(Authz.InvokeKeys.QUERY_OPAQUE);
+                boolean done = false;
+                while (!done) {
+                    log.info("API: -->Authz.InvokeCommands.QUERY_EXECUTE");
+                    outMap = authzExtension.invoke(
+                        new ExtMap().mput(
+                            Base.InvokeKeys.COMMAND,
+                            Authz.InvokeCommands.QUERY_EXECUTE
+                        ).mput(
+                            Authz.InvokeKeys.QUERY_OPAQUE,
+                            opaque
+                        ).mput(
+                            Authz.InvokeKeys.PAGE_SIZE,
+                            module.argMap.get("page-size")
+                        ));
+                    Collection<ExtMap> results = outMap.get(Authz.InvokeKeys.QUERY_RESULT);
+                    log.info("API: <--Authz.InvokeCommands.QUERY_EXECUTE count={}", results == null ? "END" : results.size());
+
+                    if (results == null) {
+                        done = true;
+                    } else {
+                        for (ExtMap result : results) {
+                            if (Authz.QueryEntity.PRINCIPAL.equals(entity)) {
+                                Dump.PRINCIPAL_RECORD.dump(module, result);
+                            } else if (Authz.QueryEntity.GROUP.equals(entity)) {
+                                Dump.GROUP_RECORD.dump(module, result);
                             }
                         }
-
-                        log.info("API: -->Authz.InvokeCommands.QUERY_CLOSE");
-                        authzExtension.invoke(
-                            new ExtMap().mput(
-                                Base.InvokeKeys.COMMAND,
-                                Authz.InvokeCommands.QUERY_CLOSE
-                            ).mput(
-                                Authz.InvokeKeys.QUERY_OPAQUE,
-                                opaque
-                            )
-                        );
-                        log.info("API: <--Authz.InvokeCommands.QUERY_CLOSE");
                     }
                 }
-        );
+
+                log.info("API: -->Authz.InvokeCommands.QUERY_CLOSE");
+                authzExtension.invoke(
+                    new ExtMap().mput(
+                        Base.InvokeKeys.COMMAND,
+                        Authz.InvokeCommands.QUERY_CLOSE
+                    ).mput(
+                        Authz.InvokeKeys.QUERY_OPAQUE,
+                        opaque
+                    ));
+                log.info("API: <--Authz.InvokeCommands.QUERY_CLOSE");
+            }
+        });
 
         private Logic logic;
 
@@ -424,15 +404,13 @@ public class AAAServiceImpl implements ModuleService {
     }
 
     private enum Dump {
-        AUTH_RECORD(
-                (module, map, indent) -> {
-                    if (map != null) {
-                        log.info("--- Begin AuthRecord ---");
-                        dumpRecord(module, map, Collections.emptySet(), "AuthRecord", "");
-                        log.info("--- End   AuthRecord ---");
-                    }
-                }
-        ),
+        AUTH_RECORD((module, map, indent) -> {
+            if (map != null) {
+                log.info("--- Begin AuthRecord ---");
+                dumpRecord(module, map, Collections.emptySet(), "AuthRecord", "");
+                log.info("--- End   AuthRecord ---");
+            }
+        }),
         PRINCIPAL_RECORD(
             new DumpFormat() {
                 @Override
@@ -448,8 +426,7 @@ public class AAAServiceImpl implements ModuleService {
                 }
             }
         ),
-        GROUP_RECORD(
-                (module, map, indent) -> dumpGroups(module, map, indent, new HashSet<>())
+        GROUP_RECORD((module, map, indent) -> dumpGroups(module, map, indent, new HashSet<>())
         ),
         QUERY_FILTER_RECORD(
             new DumpFormat() {
@@ -474,7 +451,7 @@ public class AAAServiceImpl implements ModuleService {
         }
 
         private static void dumpGroups(AAAServiceImpl module, ExtMap map, String indent, Set<String> loopPrevention) {
-            if (map != null ) {
+            if (map != null) {
                 loopPrevention.add(map.get(Authz.GroupRecord.ID));
                 log.info("{}--- Begin GroupRecord ---", indent);
                 dumpRecord(module, map, Collections.singleton(Authz.GroupRecord.GROUPS), "GroupRecord", indent);

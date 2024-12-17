@@ -16,7 +16,7 @@ public class NetworkClusterStatusColumn extends AbstractImageResourceColumn<Pair
         if (object.getSecond() != null) {
             return networkStatusColumn.getValue(object.getSecond());
         }
-     return null;
+        return null;
     }
 
 }

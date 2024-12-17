@@ -37,10 +37,10 @@ public class BackendStorageServerConnectionsResourceTest extends AbstractBackend
         org.ovirt.engine.api.model.StorageType.ISCSI };
 
     protected static final StorageType[] STORAGE_TYPES_MAPPED = {
-            StorageType.NFS,
-            StorageType.LOCALFS,
-            StorageType.POSIXFS,
-            StorageType.ISCSI };
+        StorageType.NFS,
+        StorageType.LOCALFS,
+        StorageType.POSIXFS,
+        StorageType.ISCSI };
 
     public BackendStorageServerConnectionsResourceTest() {
         super(new BackendStorageServerConnectionsResource(), null, "");
@@ -65,7 +65,7 @@ public class BackendStorageServerConnectionsResourceTest extends AbstractBackend
     StorageConnection getModel(int index) {
         StorageConnection model = new StorageConnection();
         model.setType(STORAGE_TYPES[index]);
-        if ( index == 0 || index == 3 ) {
+        if (index == 0 || index == 3) {
             model.setAddress("1.1.1.1");
         }
         Host host = new Host();

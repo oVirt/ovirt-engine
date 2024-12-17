@@ -113,7 +113,7 @@ public class VmDeviceDaoImpl extends
 
     @Override
     public List<VmDevice> getVmDeviceByVmIdTypeAndDevice
-            (Guid vmId, VmDeviceGeneralType type, String device, Guid userID, boolean isFiltered) {
+    (Guid vmId, VmDeviceGeneralType type, String device, Guid userID, boolean isFiltered) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("vm_id", vmId)
                 .addValue("type", type.getValue())
@@ -127,7 +127,7 @@ public class VmDeviceDaoImpl extends
 
     @Override
     public List<VmDevice> getVmDeviceByTypeAndDevice
-            (List<Guid> vmsIds, VmDeviceGeneralType type, String device, Guid userID, boolean isFiltered) {
+    (List<Guid> vmsIds, VmDeviceGeneralType type, String device, Guid userID, boolean isFiltered) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("vm_ids", createArrayOfUUIDs(vmsIds))
                 .addValue("type", type.getValue())

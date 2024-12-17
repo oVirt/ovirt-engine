@@ -30,14 +30,14 @@ public class MigrationsModelToEntityBuilder<S extends ModelWithMigrationsOptions
             return null;
         }
         switch (parallelMigrationsType) {
-        case AUTO:
-            return ParallelMigrationsType.AUTO.getValue();
-        case AUTO_PARALLEL:
-            return ParallelMigrationsType.AUTO_PARALLEL.getValue();
-        case DISABLED:
-            return ParallelMigrationsType.DISABLED.getValue();
-        default:
-            return source.getCustomParallelMigrations().getEntity();
+            case AUTO:
+                return ParallelMigrationsType.AUTO.getValue();
+            case AUTO_PARALLEL:
+                return ParallelMigrationsType.AUTO_PARALLEL.getValue();
+            case DISABLED:
+                return ParallelMigrationsType.DISABLED.getValue();
+            default:
+                return source.getCustomParallelMigrations().getEntity();
         }
     }
 

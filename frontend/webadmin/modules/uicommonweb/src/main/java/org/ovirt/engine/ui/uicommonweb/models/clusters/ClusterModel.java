@@ -690,23 +690,23 @@ public class ClusterModel extends EntityModel<Cluster> implements HasValidatedTa
 
             // webadmin use.
             switch (migrateOnErrorOption) {
-            case NO:
-                getMigrateOnErrorOption_NO().setEntity(true);
-                getMigrateOnErrorOption_YES().setEntity(false);
-                getMigrateOnErrorOption_HA_ONLY().setEntity(false);
-                break;
-            case YES:
-                getMigrateOnErrorOption_NO().setEntity(false);
-                getMigrateOnErrorOption_YES().setEntity(true);
-                getMigrateOnErrorOption_HA_ONLY().setEntity(false);
-                break;
-            case HA_ONLY:
-                getMigrateOnErrorOption_NO().setEntity(false);
-                getMigrateOnErrorOption_YES().setEntity(false);
-                getMigrateOnErrorOption_HA_ONLY().setEntity(true);
-                break;
-            default:
-                break;
+                case NO:
+                    getMigrateOnErrorOption_NO().setEntity(true);
+                    getMigrateOnErrorOption_YES().setEntity(false);
+                    getMigrateOnErrorOption_HA_ONLY().setEntity(false);
+                    break;
+                case YES:
+                    getMigrateOnErrorOption_NO().setEntity(false);
+                    getMigrateOnErrorOption_YES().setEntity(true);
+                    getMigrateOnErrorOption_HA_ONLY().setEntity(false);
+                    break;
+                case HA_ONLY:
+                    getMigrateOnErrorOption_NO().setEntity(false);
+                    getMigrateOnErrorOption_YES().setEntity(false);
+                    getMigrateOnErrorOption_HA_ONLY().setEntity(true);
+                    break;
+                default:
+                    break;
             }
             onPropertyChanged(new PropertyChangedEventArgs("MigrateOnErrorOption")); //$NON-NLS-1$
         }
@@ -1410,27 +1410,27 @@ public class ClusterModel extends EntityModel<Cluster> implements HasValidatedTa
                     Frontend.getInstance().runQuery(QueryType.GetClusterPolicies,
                             new QueryParametersBase(),
                             new AsyncQuery<QueryReturnValue>(retVal -> {
-                                        ArrayList<ClusterPolicy> list = retVal.getReturnValue();
-                                        getClusterPolicy().setItems(list);
-                                        ClusterPolicy defaultClusterPolicy = null;
-                                        ClusterPolicy selectedClusterPolicy = null;
-                                        for (ClusterPolicy clusterPolicy : list) {
-                                            if (getIsEdit() && getEntity() != null
-                                                    && clusterPolicy.getId()
-                                                    .equals(getEntity().getClusterPolicyId())) {
-                                                selectedClusterPolicy = clusterPolicy;
-                                            }
-                                            if (clusterPolicy.isDefaultPolicy()) {
-                                                defaultClusterPolicy = clusterPolicy;
-                                            }
-                                        }
-                                        if (selectedClusterPolicy != null) {
-                                            getClusterPolicy().setSelectedItem(selectedClusterPolicy);
-                                        } else {
-                                            getClusterPolicy().setSelectedItem(defaultClusterPolicy);
-                                        }
-                                        clusterPolicyChanged();
-                                    }));
+                                ArrayList<ClusterPolicy> list = retVal.getReturnValue();
+                                getClusterPolicy().setItems(list);
+                                ClusterPolicy defaultClusterPolicy = null;
+                                ClusterPolicy selectedClusterPolicy = null;
+                                for (ClusterPolicy clusterPolicy : list) {
+                                    if (getIsEdit() && getEntity() != null
+                                        && clusterPolicy.getId()
+                                        .equals(getEntity().getClusterPolicyId())) {
+                                        selectedClusterPolicy = clusterPolicy;
+                                    }
+                                    if (clusterPolicy.isDefaultPolicy()) {
+                                        defaultClusterPolicy = clusterPolicy;
+                                    }
+                                }
+                                if (selectedClusterPolicy != null) {
+                                    getClusterPolicy().setSelectedItem(selectedClusterPolicy);
+                                } else {
+                                    getClusterPolicy().setSelectedItem(defaultClusterPolicy);
+                                }
+                                clusterPolicyChanged();
+                            }));
                 }));
         setCustomMigrationNetworkBandwidth(new EntityModel<>());
         setMigrationBandwidthLimitType(new ListModel<>());
@@ -2450,9 +2450,9 @@ public class ClusterModel extends EntityModel<Cluster> implements HasValidatedTa
 
     public void validateName() {
         getName().validateEntity(new IValidation[] {
-                new NotEmptyValidation(),
-                new LengthValidation(40),
-                new I18NNameValidation() });
+            new NotEmptyValidation(),
+            new LengthValidation(40),
+            new I18NNameValidation() });
     }
 
     private String defaultClusterRngSourcesCsv(Version ver) {
@@ -2464,10 +2464,10 @@ public class ClusterModel extends EntityModel<Cluster> implements HasValidatedTa
 
     public boolean getKsmPolicyForNuma() {
         switch (getKsmPolicyForNumaSelection().getSelectedItem()) {
-        case shareAcrossNumaNodes:
-            return true;
-        case shareInsideEachNumaNode:
-            return false;
+            case shareAcrossNumaNodes:
+                return true;
+            case shareInsideEachNumaNode:
+                return false;
         }
         return true;
     }

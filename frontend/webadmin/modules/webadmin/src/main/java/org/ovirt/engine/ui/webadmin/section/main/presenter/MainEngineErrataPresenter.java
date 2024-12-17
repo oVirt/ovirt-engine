@@ -59,7 +59,7 @@ public class MainEngineErrataPresenter extends AbstractMainWithDetailsPresenter<
 
     @Override
     protected PlaceRequest getSubTabRequest() {
-        return PlaceRequestFactory.get( WebAdminApplicationPlaces.errataDetailsSubTabPlace);
+        return PlaceRequestFactory.get(WebAdminApplicationPlaces.errataDetailsSubTabPlace);
     }
 
     @Override

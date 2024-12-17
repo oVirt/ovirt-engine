@@ -71,10 +71,10 @@ public class Dashboard {
     }
 
     public String getEngineGrafanaBaseUrl() {
-      return engineGrafanaBaseUrl;
+        return engineGrafanaBaseUrl;
     }
 
     public void setEngineGrafanaBaseUrl(String engineGrafanaBaseUrl) {
-      this.engineGrafanaBaseUrl = engineGrafanaBaseUrl;
+        this.engineGrafanaBaseUrl = engineGrafanaBaseUrl;
     }
 }

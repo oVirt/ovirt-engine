@@ -45,55 +45,55 @@ public class SubTabHostGlusterStorageDevicesView extends AbstractSubTabTableView
         getTable().addColumn(storageDeviceStatusColumn, constants.empty(), "30px"); //$NON-NLS-1$
 
         AbstractTextColumn<StorageDevice> deviceNameColumn =
-                new AbstractTextColumn<StorageDevice>() {
-            @Override
-            public String getValue(StorageDevice object) {
-                return object.getName();
-            }
-        };
+            new AbstractTextColumn<StorageDevice>() {
+                @Override
+                public String getValue(StorageDevice object) {
+                    return object.getName();
+                }
+            };
         deviceNameColumn.makeSortable();
         getTable().addColumn(deviceNameColumn, constants.deviceName(), "250px"); //$NON-NLS-1$
 
         AbstractTextColumn<StorageDevice> descriptionColumn =
-                new AbstractTextColumn<StorageDevice>() {
-            @Override
-            public String getValue(StorageDevice object) {
-                return object.getDescription();
-            }
-        };
+            new AbstractTextColumn<StorageDevice>() {
+                @Override
+                public String getValue(StorageDevice object) {
+                    return object.getDescription();
+                }
+            };
 
         descriptionColumn.makeSortable();
         getTable().addColumn(descriptionColumn, constants.description(), "300px"); //$NON-NLS-1$
 
         AbstractTextColumn<StorageDevice> sizeColumn =
-                new AbstractTextColumn<StorageDevice>() {
-            @Override
-            public String getValue(StorageDevice object) {
-                    Pair<SizeUnit, Double> convertedSize = SizeConverter.autoConvert(object.getSize(), SizeUnit.MiB);
-                    return formatSize(convertedSize.getSecond()) + " " + convertedSize.getFirst().toString(); //$NON-NLS-1$
+            new AbstractTextColumn<StorageDevice>() {
+                @Override
+                public String getValue(StorageDevice object) {
+                        Pair<SizeUnit, Double> convertedSize = SizeConverter.autoConvert(object.getSize(), SizeUnit.MiB);
+                        return formatSize(convertedSize.getSecond()) + " " + convertedSize.getFirst().toString(); //$NON-NLS-1$
 
-            }
-        };
+                }
+            };
         sizeColumn.makeSortable();
         getTable().addColumn(sizeColumn, constants.size(), "100px"); //$NON-NLS-1$
 
         AbstractTextColumn<StorageDevice> mountPointColumn =
-                new AbstractTextColumn<StorageDevice>() {
-            @Override
-            public String getValue(StorageDevice object) {
-                return object.getMountPoint();
-            }
-        };
+            new AbstractTextColumn<StorageDevice>() {
+                @Override
+                public String getValue(StorageDevice object) {
+                    return object.getMountPoint();
+                }
+            };
         mountPointColumn.makeSortable();
         getTable().addColumn(mountPointColumn, constants.mountPoint(), "170px"); //$NON-NLS-1$
 
         AbstractTextColumn<StorageDevice> fsTypeColumn =
-                new AbstractTextColumn<StorageDevice>() {
-            @Override
-            public String getValue(StorageDevice object) {
-                return object.getFsType();
-            }
-        };
+            new AbstractTextColumn<StorageDevice>() {
+                @Override
+                public String getValue(StorageDevice object) {
+                    return object.getFsType();
+                }
+            };
         fsTypeColumn.makeSortable();
         getTable().addColumn(fsTypeColumn, constants.fileSystemType(), "170px"); //$NON-NLS-1$
     }

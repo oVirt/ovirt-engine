@@ -103,7 +103,7 @@ public class NotificationListWidget extends Composite implements ActionWidget {
     public void setHeaderTitle(String title) {
         this.title = title;
         this.thisWidgetId = title.replace(" ", "_").toLowerCase(); // $NON-NLS-1$ $NON-NLS-2$
-     }
+    }
 
     @Override
     public void addAction(String buttonLabel, UICommand command, AuditLogActionCallback callback) {

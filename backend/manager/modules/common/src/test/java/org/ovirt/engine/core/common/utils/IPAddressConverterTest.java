@@ -27,24 +27,24 @@ public class IPAddressConverterTest {
         runIpAddressConversionToBigInt("0.0.0.1", BigInteger.valueOf(0x00000001));
         runIpAddressConversionToBigInt("1.1.1.1", BigInteger.valueOf(0x01010101));
         runIpAddressConversionToBigInt("1234:5678:9abc::", new BigInteger(new byte[] {
-                (byte) 0x12, (byte) 0x34,
-                (byte) 0x56, (byte) 0x78,
-                (byte) 0x9a, (byte) 0xbc,
-                0, 0,
-                0, 0,
-                0, 0,
-                0, 0,
-                0, 0
+            (byte) 0x12, (byte) 0x34,
+            (byte) 0x56, (byte) 0x78,
+            (byte) 0x9a, (byte) 0xbc,
+            0, 0,
+            0, 0,
+            0, 0,
+            0, 0,
+            0, 0
         }));
         runIpAddressConversionToBigInt("1234:5678:9abc::4321", new BigInteger(new byte[] {
-                (byte) 0x12, (byte) 0x34,
-                (byte) 0x56, (byte) 0x78,
-                (byte) 0x9a, (byte) 0xbc,
-                0, 0,
-                0, 0,
-                0, 0,
-                0, 0,
-                (byte) 0x43, (byte) 0x21
+            (byte) 0x12, (byte) 0x34,
+            (byte) 0x56, (byte) 0x78,
+            (byte) 0x9a, (byte) 0xbc,
+            0, 0,
+            0, 0,
+            0, 0,
+            0, 0,
+            (byte) 0x43, (byte) 0x21
         }));
     }
 

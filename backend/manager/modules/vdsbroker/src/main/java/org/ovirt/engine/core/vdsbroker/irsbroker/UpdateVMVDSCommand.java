@@ -54,13 +54,13 @@ public class UpdateVMVDSCommand<P extends UpdateVMVDSCommandParameters> extends 
     protected void proceedProxyReturnValue() {
         EngineError returnStatus = getReturnValueFromStatus(getReturnStatus());
         switch (returnStatus) {
-        case Done:
-            return;
-        default:
-            VDSExceptionBase outEx = createDefaultConcreteException(getReturnStatus().message);
-            initializeVdsError(returnStatus);
-            outEx.setVdsError(getVDSReturnValue().getVdsError());
-            throw outEx;
+            case Done:
+                return;
+            default:
+                VDSExceptionBase outEx = createDefaultConcreteException(getReturnStatus().message);
+                initializeVdsError(returnStatus);
+                outEx.setVdsError(getVDSReturnValue().getVdsError());
+                throw outEx;
         }
     }
 

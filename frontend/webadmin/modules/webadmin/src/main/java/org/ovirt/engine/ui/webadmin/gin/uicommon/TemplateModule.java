@@ -280,11 +280,11 @@ public class TemplateModule extends AbstractGinModule {
         .to(new TypeLiteral<DetailTabModelProvider<ImportTemplatesModel, TemplateImportGeneralModel>>() { }).in(Singleton.class);
         // Search-able Detail Models
         bind(new TypeLiteral<SearchableDetailModelProvider<VM, TemplateListModel, TemplateVmListModel>>() { })
-           .to(new TypeLiteral<SearchableDetailTabModelProvider<VM, TemplateListModel, TemplateVmListModel>>() { })
-           .in(Singleton.class);
+            .to(new TypeLiteral<SearchableDetailTabModelProvider<VM, TemplateListModel, TemplateVmListModel>>() { })
+            .in(Singleton.class);
         // Permission Detail Model
         bind(new TypeLiteral<SearchableDetailModelProvider<Permission, TemplateListModel, PermissionListModel<VmTemplate>>>() { })
-           .to(new TypeLiteral<PermissionModelProvider<VmTemplate, TemplateListModel>>() { }).in(Singleton.class);
+            .to(new TypeLiteral<PermissionModelProvider<VmTemplate, TemplateListModel>>() { }).in(Singleton.class);
     }
 
 }

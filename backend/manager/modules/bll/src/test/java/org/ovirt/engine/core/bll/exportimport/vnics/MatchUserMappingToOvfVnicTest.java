@@ -30,7 +30,7 @@ public class MatchUserMappingToOvfVnicTest {
     @Test
     public void test() {
         AtomicInteger count = new AtomicInteger(0);
-        dataPoints.matchUserMappingToOvfVnicDataPoints.forEach( dataPoint -> {
+        dataPoints.matchUserMappingToOvfVnicDataPoints.forEach(dataPoint -> {
             test(dataPoint, count.get());
             count.getAndIncrement();
         });

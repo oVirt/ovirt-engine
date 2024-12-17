@@ -142,7 +142,7 @@ public class RemoveStorageDomainCommandTest extends BaseCommandTest {
     public void testRemove() {
         for (boolean shouldFormat : new boolean[] { true, false }) {
             for (StorageDomainType sdType : new StorageDomainType[] { StorageDomainType.Data, StorageDomainType.ISO,
-                    StorageDomainType.ImportExport }) {
+                StorageDomainType.ImportExport }) {
                 for (StorageType sType : StorageType.values()) {
                     if (sType.isConcreteStorageType()) {
                         doTestRemove(sdType, sType, shouldFormat, false);
@@ -154,7 +154,7 @@ public class RemoveStorageDomainCommandTest extends BaseCommandTest {
     }
 
     public void doTestRemove
-            (StorageDomainType type, StorageType storageType, boolean shouldFormat, boolean shouldFormatFail) {
+    (StorageDomainType type, StorageType storageType, boolean shouldFormat, boolean shouldFormatFail) {
         command.getParameters().setDoFormat(shouldFormat);
         storageDomain.setStorageDomainType(type);
         storageDomain.setStorageType(storageType);

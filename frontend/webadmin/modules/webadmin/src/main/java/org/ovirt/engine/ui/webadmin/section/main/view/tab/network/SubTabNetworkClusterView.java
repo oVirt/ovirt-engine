@@ -82,21 +82,21 @@ public class SubTabNetworkClusterView extends AbstractSubTabTableView<NetworkVie
         getTable().enableColumnResizing();
 
         AbstractTextColumn<PairQueryable<Cluster, NetworkCluster>> nameColumn =
-                new AbstractLinkColumn<PairQueryable<Cluster, NetworkCluster>>(
-                        new FieldUpdater<PairQueryable<Cluster, NetworkCluster>, String>() {
-            @Override
-            public void update(int index, PairQueryable<Cluster, NetworkCluster> cluster, String value) {
-                Map<String, String> parameters = new HashMap<>();
-                parameters.put(FragmentParams.NAME.getName(), cluster.getFirst().getName());
-                getPlaceTransitionHandler().handlePlaceTransition(
-                        WebAdminApplicationPlaces.clusterGeneralSubTabPlace, parameters);
-            }
-        }) {
-            @Override
-            public String getValue(PairQueryable<Cluster, NetworkCluster> object) {
-                return object.getFirst().getName();
-            }
-        };
+            new AbstractLinkColumn<PairQueryable<Cluster, NetworkCluster>>(
+                new FieldUpdater<PairQueryable<Cluster, NetworkCluster>, String>() {
+                    @Override
+                    public void update(int index, PairQueryable<Cluster, NetworkCluster> cluster, String value) {
+                        Map<String, String> parameters = new HashMap<>();
+                        parameters.put(FragmentParams.NAME.getName(), cluster.getFirst().getName());
+                        getPlaceTransitionHandler().handlePlaceTransition(
+                                WebAdminApplicationPlaces.clusterGeneralSubTabPlace, parameters);
+                    }
+                }) {
+                    @Override
+                    public String getValue(PairQueryable<Cluster, NetworkCluster> object) {
+                        return object.getFirst().getName();
+                    }
+                };
         nameColumn.makeSortable();
         getTable().addColumn(nameColumn, constants.nameCluster(), "400px"); //$NON-NLS-1$
 
@@ -110,17 +110,17 @@ public class SubTabNetworkClusterView extends AbstractSubTabTableView<NetworkVie
         getTable().addColumn(versionColumn, constants.comptVersCluster(), "130px"); //$NON-NLS-1$
 
         AbstractCheckboxColumn<PairQueryable<Cluster, NetworkCluster>> attachedColumn =
-                new AbstractCheckboxColumn<PairQueryable<Cluster, NetworkCluster>>(true) {
-            @Override
-            public Boolean getValue(PairQueryable<Cluster, NetworkCluster> object) {
-                return object.getSecond() != null;
-            }
+            new AbstractCheckboxColumn<PairQueryable<Cluster, NetworkCluster>>(true) {
+                @Override
+                public Boolean getValue(PairQueryable<Cluster, NetworkCluster> object) {
+                    return object.getSecond() != null;
+                }
 
-            @Override
-            protected boolean canEdit(PairQueryable<Cluster, NetworkCluster> object) {
-                return false;
-            }
-        };
+                @Override
+                protected boolean canEdit(PairQueryable<Cluster, NetworkCluster> object) {
+                    return false;
+                }
+            };
         attachedColumn.makeSortable();
         getTable().addColumn(attachedColumn, constants.attachedNetworkCluster(), "120px"); //$NON-NLS-1$
 
@@ -129,20 +129,20 @@ public class SubTabNetworkClusterView extends AbstractSubTabTableView<NetworkVie
         getTable().addColumn(statusColumn, constants.networkStatus(), "120px"); //$NON-NLS-1$
 
         AbstractCheckboxColumn<PairQueryable<Cluster, NetworkCluster>> netRequiredColumn =
-                new AbstractCheckboxColumn<PairQueryable<Cluster, NetworkCluster>>(true) {
-            @Override
-            public Boolean getValue(PairQueryable<Cluster, NetworkCluster> object) {
-                if (object.getSecond() != null) {
-                    return object.getSecond().isRequired();
+            new AbstractCheckboxColumn<PairQueryable<Cluster, NetworkCluster>>(true) {
+                @Override
+                public Boolean getValue(PairQueryable<Cluster, NetworkCluster> object) {
+                    if (object.getSecond() != null) {
+                        return object.getSecond().isRequired();
+                    }
+                    return false;
                 }
-                return false;
-            }
 
-            @Override
-            protected boolean canEdit(PairQueryable<Cluster, NetworkCluster> object) {
-                return false;
-            }
-        };
+                @Override
+                protected boolean canEdit(PairQueryable<Cluster, NetworkCluster> object) {
+                    return false;
+                }
+            };
         netRequiredColumn.makeSortable();
         getTable().addColumn(netRequiredColumn, constants.requiredNetCluster(), "120px"); //$NON-NLS-1$
 

@@ -20,9 +20,9 @@ import org.ovirt.engine.core.compat.Guid;
  */
 public class MultiThreadedDaoTest extends BaseDaoTestCase<TagDao> {
     private static final Guid[] EXISTING_TAGS_IDS = {
-            new Guid("d3ec3e01-ca89-48e1-8b43-a9b38f873b0c"),
-            new Guid("d3ec3e01-ca89-48e1-8b43-a9b38f873b0d"),
-            new Guid("d3ec3e01-ca89-48e1-8b43-a9b38f873b0e") };
+        new Guid("d3ec3e01-ca89-48e1-8b43-a9b38f873b0c"),
+        new Guid("d3ec3e01-ca89-48e1-8b43-a9b38f873b0d"),
+        new Guid("d3ec3e01-ca89-48e1-8b43-a9b38f873b0e") };
 
     private CountDownLatch latch = null;
 

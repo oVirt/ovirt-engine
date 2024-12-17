@@ -24,16 +24,16 @@ public class CPUMapper {
             ArchitectureType template) {
         if (model != null) {
             switch (model) {
-            case UNDEFINED:
-                return ArchitectureType.undefined;
-            case X86_64:
-                return ArchitectureType.x86_64;
-            case PPC64:
-                return ArchitectureType.ppc64;
-            case S390X:
-                return ArchitectureType.s390x;
-            default:
-                return null;
+                case UNDEFINED:
+                    return ArchitectureType.undefined;
+                case X86_64:
+                    return ArchitectureType.x86_64;
+                case PPC64:
+                    return ArchitectureType.ppc64;
+                case S390X:
+                    return ArchitectureType.s390x;
+                default:
+                    return null;
             }
         }
         return null;
@@ -44,16 +44,16 @@ public class CPUMapper {
             String template) {
         if (model != null) {
             switch (model) {
-            case undefined:
-                return Architecture.UNDEFINED;
-            case x86_64:
-                return Architecture.X86_64;
-            case ppc64:
-                return Architecture.PPC64;
-            case s390x:
-                return Architecture.S390X;
-            default:
-                return null;
+                case undefined:
+                    return Architecture.UNDEFINED;
+                case x86_64:
+                    return Architecture.X86_64;
+                case ppc64:
+                    return Architecture.PPC64;
+                case s390x:
+                    return Architecture.S390X;
+                default:
+                    return null;
             }
         }
         return null;

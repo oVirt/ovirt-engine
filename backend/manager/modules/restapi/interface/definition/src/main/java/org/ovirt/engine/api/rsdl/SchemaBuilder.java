@@ -16,7 +16,7 @@ public class SchemaBuilder {
     }
 
     public Schema build() {
-       return this.schema;
+        return this.schema;
     }
 
     public SchemaBuilder description(String description) {

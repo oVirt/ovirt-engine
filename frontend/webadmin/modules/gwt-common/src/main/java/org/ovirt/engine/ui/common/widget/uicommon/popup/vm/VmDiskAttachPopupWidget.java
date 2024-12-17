@@ -523,12 +523,12 @@ public class VmDiskAttachPopupWidget extends AbstractModelBoundPopupWidget<Attac
 
     private Column getDiskInterfaceSelectionColumn() {
         AbstractListModelListBoxColumn diskInterfaceStringColumn =
-                new AbstractListModelListBoxColumn<EntityModel, DiskInterface>(new EnumRenderer<DiskInterface>()) {
-            @Override
-            public ListModel getValue(EntityModel object) {
-                return ((DiskModel) object.getEntity()).getDiskInterface();
-            }
-        };
+            new AbstractListModelListBoxColumn<EntityModel, DiskInterface>(new EnumRenderer<DiskInterface>()) {
+                @Override
+                public ListModel getValue(EntityModel object) {
+                    return ((DiskModel) object.getEntity()).getDiskInterface();
+                }
+            };
         return diskInterfaceStringColumn;
     }
 }

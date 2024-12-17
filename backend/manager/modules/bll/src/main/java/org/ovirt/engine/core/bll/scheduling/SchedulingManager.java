@@ -787,28 +787,28 @@ public class SchedulingManager implements BackendService {
         }
 
         switch (runnableHosts.size()) {
-        case 0:
-            // no runnable hosts found, nothing found
-            return Optional.empty();
-        case 1:
-            // found single available host, in available list return it
-            return Optional.of(runnableHosts.get(0).getId());
-        default:
-            // select best runnable host with scoring functions (from policy)
-            List<Pair<Guid, Integer>> functions = policy.getFunctions();
-            Guid selector = Optional.of(policy).map(ClusterPolicy::getSelector).orElse(defaultSelectorGuid);
-            PolicyUnitImpl selectorUnit = policyUnits.get(selector);
-            SelectorInstance selectorInstance = selectorUnit.selector(context.getPolicyParameters());
+            case 0:
+                // no runnable hosts found, nothing found
+                return Optional.empty();
+            case 1:
+                // found single available host, in available list return it
+                return Optional.of(runnableHosts.get(0).getId());
+            default:
+                // select best runnable host with scoring functions (from policy)
+                List<Pair<Guid, Integer>> functions = policy.getFunctions();
+                Guid selector = Optional.of(policy).map(ClusterPolicy::getSelector).orElse(defaultSelectorGuid);
+                PolicyUnitImpl selectorUnit = policyUnits.get(selector);
+                SelectorInstance selectorInstance = selectorUnit.selector(context.getPolicyParameters());
 
-            List<Guid> runnableGuids = runnableHosts.stream().map(VDS::getId).collect(Collectors.toList());
-            selectorInstance.init(functions, runnableGuids);
+                List<Guid> runnableGuids = runnableHosts.stream().map(VDS::getId).collect(Collectors.toList());
+                selectorInstance.init(functions, runnableGuids);
 
-            if (!functions.isEmpty() && context.isShouldWeighClusterHosts()) {
-                Optional<Guid> bestHostByFunctions = runFunctions(selectorInstance, runnableHosts, vmGroup, context);
-                if (bestHostByFunctions.isPresent()) {
-                    return bestHostByFunctions;
+                if (!functions.isEmpty() && context.isShouldWeighClusterHosts()) {
+                    Optional<Guid> bestHostByFunctions = runFunctions(selectorInstance, runnableHosts, vmGroup, context);
+                    if (bestHostByFunctions.isPresent()) {
+                        return bestHostByFunctions;
+                    }
                 }
-            }
         }
         // failed select best runnable host using scoring functions, return the first
         return Optional.of(runnableHosts.get(0).getId());
@@ -1407,31 +1407,31 @@ public class SchedulingManager implements BackendService {
         if (policyUnit != null) {
             for (ClusterPolicy clusterPolicy : policyMap.values()) {
                 switch (policyUnit.getPolicyUnitType()) {
-                case FILTER:
-                    Collection<Guid> filters = clusterPolicy.getFilters();
-                    if (filters != null && filters.contains(policyUnitId)) {
-                        list.add(clusterPolicy.getName());
-                    }
-                    break;
-                case WEIGHT:
-                    Collection<Pair<Guid, Integer>> functions = clusterPolicy.getFunctions();
-                    if (functions == null) {
-                        break;
-                    }
-                    for (Pair<Guid, Integer> pair : functions) {
-                        if (pair.getFirst().equals(policyUnitId)) {
+                    case FILTER:
+                        Collection<Guid> filters = clusterPolicy.getFilters();
+                        if (filters != null && filters.contains(policyUnitId)) {
                             list.add(clusterPolicy.getName());
+                        }
+                        break;
+                    case WEIGHT:
+                        Collection<Pair<Guid, Integer>> functions = clusterPolicy.getFunctions();
+                        if (functions == null) {
                             break;
                         }
-                    }
-                    break;
-                case LOAD_BALANCING:
-                    if (policyUnitId.equals(clusterPolicy.getBalance())) {
-                        list.add(clusterPolicy.getName());
-                    }
-                    break;
-                default:
-                    break;
+                        for (Pair<Guid, Integer> pair : functions) {
+                            if (pair.getFirst().equals(policyUnitId)) {
+                                list.add(clusterPolicy.getName());
+                                break;
+                            }
+                        }
+                        break;
+                    case LOAD_BALANCING:
+                        if (policyUnitId.equals(clusterPolicy.getBalance())) {
+                            list.add(clusterPolicy.getName());
+                        }
+                        break;
+                    default:
+                        break;
                 }
             }
         }

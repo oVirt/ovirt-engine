@@ -89,9 +89,9 @@ public class CloneVmModel extends Model {
     public boolean validate() {
         getCloneName().validateEntity(
                 new IValidation[]{
-                        new NotEmptyValidation(),
-                        new LengthValidation(AsyncDataProvider.getInstance().getMaxVmNameLength()),
-                        new I18NNameValidation()
+                    new NotEmptyValidation(),
+                    new LengthValidation(AsyncDataProvider.getInstance().getMaxVmNameLength()),
+                    new I18NNameValidation()
                 });
 
         return getCloneName().getIsValid();

@@ -138,9 +138,9 @@ public class BackendVmSessionsResource extends AbstractBackendCollectionResource
     }
 
     private void addLinkToUser(Session session) {
-         ServiceTreeNode node = ServiceTree.getNode(UsersResource.class);
-         String href = CurrentManager.get().getAbsolutePath(node.getPath(), session.getUser().getId());
-         session.getUser().setHref(href);
+        ServiceTreeNode node = ServiceTree.getNode(UsersResource.class);
+        String href = CurrentManager.get().getAbsolutePath(node.getPath(), session.getUser().getId());
+        session.getUser().setHref(href);
     }
 
     private BackendUserResource getUserResource() {

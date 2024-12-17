@@ -202,11 +202,11 @@ public class NetworkHelper {
 
     public List<NetworkCluster> createNetworkClusters(Collection<Guid> clusterIds) {
         return clusterIds.stream().map(clusterId -> {
-                    final NetworkCluster networkCluster = new NetworkCluster();
-                    networkCluster.setClusterId(clusterId);
-                    networkCluster.setRequired(false);
-                    return networkCluster;
-                }).collect(Collectors.toList());
+            final NetworkCluster networkCluster = new NetworkCluster();
+            networkCluster.setClusterId(clusterId);
+            networkCluster.setRequired(false);
+            return networkCluster;
+        }).collect(Collectors.toList());
     }
 
     public void mapPhysicalNetworkIdIfApplicable(ProviderNetwork providerNetwork, Guid dataCenterId) {

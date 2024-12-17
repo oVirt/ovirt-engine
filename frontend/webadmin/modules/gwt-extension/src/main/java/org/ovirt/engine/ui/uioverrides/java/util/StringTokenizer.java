@@ -97,8 +97,7 @@ package java.util;
  * @see     java.io.StreamTokenizer
  * @since   JDK1.0
  */
-public
-class StringTokenizer implements Enumeration<Object> {
+public class StringTokenizer implements Enumeration<Object> {
     private int currentPosition;
     private int newPosition;
     private int maxPosition;

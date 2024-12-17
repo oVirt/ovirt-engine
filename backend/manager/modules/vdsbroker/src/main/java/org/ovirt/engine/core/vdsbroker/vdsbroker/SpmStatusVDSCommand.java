@@ -33,14 +33,14 @@ public class SpmStatusVDSCommand<P extends SpmStatusVDSCommandParameters> extend
     protected void proceedProxyReturnValue() {
         EngineError returnStatus = getReturnValueFromStatus(getReturnStatus());
         switch (returnStatus) {
-        case StoragePoolUnknown:
-            // ignore this, the parser can handle the empty result.
-            break;
+            case StoragePoolUnknown:
+                // ignore this, the parser can handle the empty result.
+                break;
 
-        default:
-            super.proceedProxyReturnValue();
-            initializeVdsError(returnStatus);
-            break;
+            default:
+                super.proceedProxyReturnValue();
+                initializeVdsError(returnStatus);
+                break;
         }
     }
 

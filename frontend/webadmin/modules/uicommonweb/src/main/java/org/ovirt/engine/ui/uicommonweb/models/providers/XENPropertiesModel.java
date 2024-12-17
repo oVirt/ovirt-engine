@@ -33,8 +33,8 @@ public class XENPropertiesModel extends ProxyHostPropertiesModel {
             setIsValid(true);
         } else {
             getUrl().validateEntity(new IValidation[] {
-                    new NotEmptyValidation(),
-                    new LengthValidation(255) });
+                new NotEmptyValidation(),
+                new LengthValidation(255) });
             setIsValid(getUrl().getIsValid());
         }
 

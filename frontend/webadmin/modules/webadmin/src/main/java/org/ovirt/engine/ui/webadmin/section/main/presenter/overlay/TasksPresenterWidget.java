@@ -147,18 +147,18 @@ public class TasksPresenterWidget extends AbstractOverlayPresenterWidget<TasksPr
 
     protected NotificationStatus getNotificationStatus(JobExecutionStatus status) {
         switch (status) {
-        case ABORTED:
-            return NotificationStatus.WARNING;
-        case FAILED:
-            return NotificationStatus.DANGER;
-        case FINISHED:
-            return NotificationStatus.SUCCESS;
-        case STARTED:
-            return NotificationStatus.INFO;
-        case UNKNOWN:
-            return NotificationStatus.WARNING;
-        default:
-            return NotificationStatus.INFO;
+            case ABORTED:
+                return NotificationStatus.WARNING;
+            case FAILED:
+                return NotificationStatus.DANGER;
+            case FINISHED:
+                return NotificationStatus.SUCCESS;
+            case STARTED:
+                return NotificationStatus.INFO;
+            case UNKNOWN:
+                return NotificationStatus.WARNING;
+            default:
+                return NotificationStatus.INFO;
         }
     }
 

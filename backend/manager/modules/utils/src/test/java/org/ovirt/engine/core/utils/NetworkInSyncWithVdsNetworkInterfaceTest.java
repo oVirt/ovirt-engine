@@ -769,7 +769,7 @@ public class NetworkInSyncWithVdsNetworkInterfaceTest {
     public void testReportConfigurationsOnHostWhenIpv6BootProtocolStatic() {
         for (int i = 0; i < 8; i++) {
             boolean syncIpv6Address = i % 2 == 0;
-            boolean syncIpv6Prefix = (i / 2 ) % 2 == 0;
+            boolean syncIpv6Prefix = (i / 2) % 2 == 0;
             boolean syncIpv6Gateway = (i / 4) % 2 == 0;
 
             initIpv6ConfigurationBootProtocolAddress(Ipv6BootProtocol.STATIC_IP, syncIpv6Address);

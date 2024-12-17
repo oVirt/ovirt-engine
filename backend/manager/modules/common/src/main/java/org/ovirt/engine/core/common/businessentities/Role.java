@@ -21,7 +21,7 @@ public class Role implements Queryable, BusinessEntity<Guid>, Nameable {
 
     @NotNull(message = "VALIDATION_ROLES_NAME_NOT_NULL", groups = { CreateEntity.class, UpdateEntity.class })
     @Size(min = 1, max = BusinessEntitiesDefinitions.ROLE_NAME_SIZE, message = "VALIDATION_ROLES_NAME_MAX", groups = {
-            CreateEntity.class, UpdateEntity.class })
+        CreateEntity.class, UpdateEntity.class })
     @ValidName(message = "VALIDATION_ROLES_NAME_INVALID", groups = { CreateEntity.class, UpdateEntity.class })
     private String name;
 

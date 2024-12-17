@@ -66,5 +66,5 @@ public interface StepDao extends GenericDao<Step, Guid> {
      * Retrieves all {@link Step} in status {@code JobExecutionStatus.STARTED} for the given {@link SubjectEntity}
      */
     List<Step> getStartedStepsByStepSubjectEntity(SubjectEntity subjectEntity);
- }
+}
 

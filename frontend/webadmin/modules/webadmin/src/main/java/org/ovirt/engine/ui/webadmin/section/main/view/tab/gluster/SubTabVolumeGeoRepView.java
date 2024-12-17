@@ -16,9 +16,8 @@ import com.google.gwt.core.client.GWT;
 import com.google.inject.Inject;
 
 public class SubTabVolumeGeoRepView
-extends
-AbstractSubTabTableView<GlusterVolumeEntity, GlusterGeoRepSession, VolumeListModel, VolumeGeoRepListModel>
-implements SubTabVolumeGeoRepPresenter.ViewDef {
+    extends AbstractSubTabTableView<GlusterVolumeEntity, GlusterGeoRepSession, VolumeListModel, VolumeGeoRepListModel>
+    implements SubTabVolumeGeoRepPresenter.ViewDef {
 
     interface ViewIdHandler extends ElementIdHandler<SubTabVolumeGeoRepView> {
         ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);

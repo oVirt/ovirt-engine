@@ -322,9 +322,9 @@ public abstract class AffinityGroupModel extends Model {
 
     protected boolean validate() {
         getName().validateEntity(new IValidation[] {
-                new NotEmptyValidation(),
-                new LengthValidation(255),
-                new I18NNameValidation() });
+            new NotEmptyValidation(),
+            new LengthValidation(255),
+            new I18NNameValidation() });
         getDescription().validateEntity(new IValidation[] { new AsciiOrNoneValidation() });
         getPriority().validateEntity(new IValidation[] { new DoubleValidation() });
 

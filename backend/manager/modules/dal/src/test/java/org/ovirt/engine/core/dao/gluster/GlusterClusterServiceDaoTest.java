@@ -24,14 +24,14 @@ public class GlusterClusterServiceDaoTest extends BaseDaoTestCase<GlusterCluster
         assertEquals(2, services.size());
         for (GlusterClusterService service : services) {
             switch (service.getServiceType()) {
-            case GLUSTER:
-                assertEquals(GlusterServiceStatus.RUNNING, service.getStatus());
-                break;
-            case GLUSTER_SWIFT:
-                assertEquals(GlusterServiceStatus.STOPPED, service.getStatus());
-                break;
-            default:
-                fail("Unexpected service type: " + service.getServiceType());
+                case GLUSTER:
+                    assertEquals(GlusterServiceStatus.RUNNING, service.getStatus());
+                    break;
+                case GLUSTER_SWIFT:
+                    assertEquals(GlusterServiceStatus.STOPPED, service.getStatus());
+                    break;
+                default:
+                    fail("Unexpected service type: " + service.getServiceType());
             }
         }
     }

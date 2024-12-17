@@ -10,7 +10,7 @@ public class RemoveGlusterHookVDSCommand<P extends GlusterHookVDSParameters> ext
 
     @Override
     protected void executeVdsBrokerCommand() {
-         status =
+        status =
                 getBroker().glusterHookRemove(getParameters().getGlusterCommand(),
                         getParameters().getHookStage().toString(),
                         getParameters().getHookName());

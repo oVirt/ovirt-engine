@@ -249,10 +249,10 @@ public class ArgumentsParser {
             } else {
                 if (
                     value == null &&
-                    (
+                        (
                         argument.getType() == Argument.Type.OPTIONAL_ARGUMENT ||
                         argument.getType() == Argument.Type.REQUIRED_ARGUMENT
-                    )
+                        )
                 ) {
                     if (args.size() > 0) {
                         value = args.get(0);

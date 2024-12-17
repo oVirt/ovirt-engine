@@ -58,16 +58,16 @@ public class GlusterVolumeConditionFieldAutoCompleter extends BaseConditionField
     public IAutoCompleter getFieldRelationshipAutoCompleter(String fieldName) {
         try {
             switch (FIELDS.valueOf(fieldName.toUpperCase())) {
-            case NAME:
-            case TYPE:
-            case TRANSPORT_TYPE:
-            case STATUS:
-                return StringConditionRelationAutoCompleter.INSTANCE;
-            case REPLICA_COUNT:
-            case STRIPE_COUNT:
-                return NumericConditionRelationAutoCompleter.INSTANCE;
-            default:
-                return null;
+                case NAME:
+                case TYPE:
+                case TRANSPORT_TYPE:
+                case STATUS:
+                    return StringConditionRelationAutoCompleter.INSTANCE;
+                case REPLICA_COUNT:
+                case STRIPE_COUNT:
+                    return NumericConditionRelationAutoCompleter.INSTANCE;
+                default:
+                    return null;
             }
         } catch (Exception e) {
             return null;
@@ -78,14 +78,14 @@ public class GlusterVolumeConditionFieldAutoCompleter extends BaseConditionField
     public IConditionValueAutoCompleter getFieldValueAutoCompleter(String fieldName) {
         try {
             switch (FIELDS.valueOf(fieldName.toUpperCase())) {
-            case TYPE:
-                return new EnumNameAutoCompleter(GlusterVolumeType.class);
-            case TRANSPORT_TYPE:
-                return new EnumNameAutoCompleter(TransportType.class);
-            case STATUS:
-                return new EnumNameAutoCompleter(GlusterStatus.class);
-            default:
-                return null;
+                case TYPE:
+                    return new EnumNameAutoCompleter(GlusterVolumeType.class);
+                case TRANSPORT_TYPE:
+                    return new EnumNameAutoCompleter(TransportType.class);
+                case STATUS:
+                    return new EnumNameAutoCompleter(GlusterStatus.class);
+                default:
+                    return null;
             }
         } catch (Exception e) {
             return null;

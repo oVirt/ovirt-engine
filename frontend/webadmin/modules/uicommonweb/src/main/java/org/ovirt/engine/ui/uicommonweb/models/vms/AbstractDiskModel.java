@@ -550,13 +550,13 @@ public abstract class AbstractDiskModel extends DiskModel {
     public void updateInterfaceList(final Version clusterVersion) {
         AsyncDataProvider.getInstance().getDiskInterfaceList(getVm().getOs(), clusterVersion,
                     getVm().getBiosType().getChipsetType(), new AsyncQuery<>(
-                diskInterfaces -> {
-                    if (Boolean.FALSE.equals(getIsVirtioScsiEnabled().getEntity())) {
-                        diskInterfaces.remove(DiskInterface.VirtIO_SCSI);
-                    }
+                        diskInterfaces -> {
+                            if (Boolean.FALSE.equals(getIsVirtioScsiEnabled().getEntity())) {
+                                diskInterfaces.remove(DiskInterface.VirtIO_SCSI);
+                            }
 
-                    setInterfaces(diskInterfaces);
-                }));
+                            setInterfaces(diskInterfaces);
+                        }));
     }
 
     private void setInterfaces(List<DiskInterface> diskInterfaces) {
@@ -952,8 +952,8 @@ public abstract class AbstractDiskModel extends DiskModel {
 
     public boolean validate() {
         getDescription().validateEntity(new IValidation[] {
-                new SpecialAsciiI18NOrNoneValidation(),
-                new LengthValidation(BusinessEntitiesDefinitions.DISK_DESCRIPTION_MAX_SIZE)});
+            new SpecialAsciiI18NOrNoneValidation(),
+            new LengthValidation(BusinessEntitiesDefinitions.DISK_DESCRIPTION_MAX_SIZE)});
 
         getAlias().validateEntity(getDiskAliasValidations());
 

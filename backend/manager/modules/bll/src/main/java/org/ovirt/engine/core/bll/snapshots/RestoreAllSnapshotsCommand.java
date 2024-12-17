@@ -266,14 +266,14 @@ public class RestoreAllSnapshotsCommand<T extends RestoreAllSnapshotsParameters>
 
     private boolean isRemoveLeaseNeeded(Guid srcLeaseDomainId, Guid dstLeaseDomainId) {
         switch (getParameters().getSnapshotAction()) {
-        case UNDO:
-            return !Objects.equals(srcLeaseDomainId, dstLeaseDomainId) ||
-                    srcLeaseDomainId == null && dstLeaseDomainId != null;
-        case COMMIT:
-            return !Objects.equals(srcLeaseDomainId, dstLeaseDomainId) ||
-                    srcLeaseDomainId != null && dstLeaseDomainId == null;
-        default:
-            return false;
+            case UNDO:
+                return !Objects.equals(srcLeaseDomainId, dstLeaseDomainId) ||
+                        srcLeaseDomainId == null && dstLeaseDomainId != null;
+            case COMMIT:
+                return !Objects.equals(srcLeaseDomainId, dstLeaseDomainId) ||
+                        srcLeaseDomainId != null && dstLeaseDomainId == null;
+            default:
+                return false;
         }
     }
 
@@ -420,17 +420,17 @@ public class RestoreAllSnapshotsCommand<T extends RestoreAllSnapshotsParameters>
     private Snapshot getSnapshot() {
         if (snapshot == null) {
             switch (getParameters().getSnapshotAction()) {
-            case UNDO:
-                snapshot = snapshotDao.get(getVmId(), SnapshotType.PREVIEW);
-                break;
-            case COMMIT:
-                snapshot = snapshotDao.get(getVmId(), SnapshotStatus.IN_PREVIEW);
-                break;
-            case RESTORE_STATELESS:
-                snapshot = snapshotDao.get(getVmId(), SnapshotType.STATELESS);
-                break;
-            default:
-                log.error("The Snapshot Action '{}' is not valid", getParameters().getSnapshotAction());
+                case UNDO:
+                    snapshot = snapshotDao.get(getVmId(), SnapshotType.PREVIEW);
+                    break;
+                case COMMIT:
+                    snapshot = snapshotDao.get(getVmId(), SnapshotStatus.IN_PREVIEW);
+                    break;
+                case RESTORE_STATELESS:
+                    snapshot = snapshotDao.get(getVmId(), SnapshotType.STATELESS);
+                    break;
+                default:
+                    log.error("The Snapshot Action '{}' is not valid", getParameters().getSnapshotAction());
             }
 
             // We initialize the snapshotId in the parameters so we can use it in the endVmCommand
@@ -586,60 +586,60 @@ public class RestoreAllSnapshotsCommand<T extends RestoreAllSnapshotsParameters>
         List<DiskImage> intersection = ImagesHandler.imagesIntersection(imagesFromActiveSnapshot, imagesFromPreviewSnapshot);
 
         switch (targetSnapshot.getType()) {
-        case PREVIEW:
-            snapshotDao.updateStatus(
-                    snapshotDao.getId(getVmId(), SnapshotType.REGULAR, SnapshotStatus.IN_PREVIEW),
-                    SnapshotStatus.OK);
+            case PREVIEW:
+                snapshotDao.updateStatus(
+                        snapshotDao.getId(getVmId(), SnapshotType.REGULAR, SnapshotStatus.IN_PREVIEW),
+                        SnapshotStatus.OK);
 
-            getParameters().setImages((List<DiskImage>) CollectionUtils.union(imagesFromPreviewSnapshot, intersection));
-            imagesFromPreviewSnapshot.forEach(image -> {
-                if (image.getDiskStorageType() != DiskStorageType.CINDER
-                        && image.getDiskStorageType() != DiskStorageType.MANAGED_BLOCK_STORAGE) {
-                    imagesToRestore.add(image);
-                } else {
-                   List<DiskImage> cinderDiskFromPreviewSnapshot = intersection.stream().filter(diskImage ->
-                            diskImage.getId().equals(image.getId())).collect(Collectors.toList());
-                    if (!cinderDiskFromPreviewSnapshot.isEmpty()) {
-                        imagesToRestore.add(cinderDiskFromPreviewSnapshot.get(0));
-                    }
-                }
-            });
-            updateSnapshotIdForSkipRestoreImages(
-                    ImagesHandler.imagesSubtract(imagesFromActiveSnapshot, imagesToRestore), targetSnapshot.getId());
-            restoreConfiguration(targetSnapshot);
-            break;
-
-        case STATELESS:
-            imagesToRestore = getParameters().getImages();
-            restoreConfiguration(targetSnapshot);
-            break;
-
-        case REGULAR:
-            prepareToDeletePreviewBranch(imagesFromActiveSnapshot);
-
-            // Set the active snapshot's images as target images for restore, because they are what we keep.
-            getParameters().setImages(imagesFromActiveSnapshot);
-            imagesFromActiveSnapshot.forEach(image -> {
-                List<DiskImage> cinderDiskFromPreviewSnapshot = imagesFromPreviewSnapshot.stream().filter(diskImage ->
-                        diskImage.getId().equals(image.getId())).collect(Collectors.toList());
-                if (!cinderDiskFromPreviewSnapshot.isEmpty()) {
-                    if (image.getDiskStorageType() == DiskStorageType.IMAGE ||
-                            image.getDiskStorageType() == DiskStorageType.MANAGED_BLOCK_STORAGE) {
+                getParameters().setImages((List<DiskImage>) CollectionUtils.union(imagesFromPreviewSnapshot, intersection));
+                imagesFromPreviewSnapshot.forEach(image -> {
+                    if (image.getDiskStorageType() != DiskStorageType.CINDER
+                            && image.getDiskStorageType() != DiskStorageType.MANAGED_BLOCK_STORAGE) {
                         imagesToRestore.add(image);
-                    } else if (image.getDiskStorageType() == DiskStorageType.CINDER) {
-                        CinderDisk cinderVolume = getInitialCinderVolumeToDelete(image);
-                        if (cinderVolume != null) {
-                            imagesToRestore.add(cinderVolume);
+                    } else {
+                        List<DiskImage> cinderDiskFromPreviewSnapshot = intersection.stream().filter(diskImage ->
+                                diskImage.getId().equals(image.getId())).collect(Collectors.toList());
+                        if (!cinderDiskFromPreviewSnapshot.isEmpty()) {
+                            imagesToRestore.add(cinderDiskFromPreviewSnapshot.get(0));
                         }
                     }
-                }
-            });
-            updateSnapshotIdForSkipRestoreImages(
-                    ImagesHandler.imagesSubtract(imagesFromActiveSnapshot, imagesToRestore), activeSnapshotId);
-            break;
-        default:
-            throw new EngineException(EngineError.ENGINE, "No support for restoring to snapshot type: "
-                    + targetSnapshot.getType());
+                });
+                updateSnapshotIdForSkipRestoreImages(
+                        ImagesHandler.imagesSubtract(imagesFromActiveSnapshot, imagesToRestore), targetSnapshot.getId());
+                restoreConfiguration(targetSnapshot);
+                break;
+
+            case STATELESS:
+                imagesToRestore = getParameters().getImages();
+                restoreConfiguration(targetSnapshot);
+                break;
+
+            case REGULAR:
+                prepareToDeletePreviewBranch(imagesFromActiveSnapshot);
+
+                // Set the active snapshot's images as target images for restore, because they are what we keep.
+                getParameters().setImages(imagesFromActiveSnapshot);
+                imagesFromActiveSnapshot.forEach(image -> {
+                    List<DiskImage> cinderDiskFromPreviewSnapshot = imagesFromPreviewSnapshot.stream().filter(diskImage ->
+                            diskImage.getId().equals(image.getId())).collect(Collectors.toList());
+                    if (!cinderDiskFromPreviewSnapshot.isEmpty()) {
+                        if (image.getDiskStorageType() == DiskStorageType.IMAGE ||
+                                image.getDiskStorageType() == DiskStorageType.MANAGED_BLOCK_STORAGE) {
+                            imagesToRestore.add(image);
+                        } else if (image.getDiskStorageType() == DiskStorageType.CINDER) {
+                            CinderDisk cinderVolume = getInitialCinderVolumeToDelete(image);
+                            if (cinderVolume != null) {
+                                imagesToRestore.add(cinderVolume);
+                            }
+                        }
+                    }
+                });
+                updateSnapshotIdForSkipRestoreImages(
+                        ImagesHandler.imagesSubtract(imagesFromActiveSnapshot, imagesToRestore), activeSnapshotId);
+                break;
+            default:
+                throw new EngineException(EngineError.ENGINE, "No support for restoring to snapshot type: "
+                        + targetSnapshot.getType());
         }
     }
 
@@ -733,7 +733,7 @@ public class RestoreAllSnapshotsCommand<T extends RestoreAllSnapshotsParameters>
     private Set<Guid> getCriticalSnapshotsChain(List<DiskImage> imagesFromActiveSnapshot, List<CinderDisk> cinderImagesForPreviewedSnapshot) {
         Set<Guid> criticalSnapshotsChain = new HashSet<>();
         for (DiskImage image : cinderImagesForPreviewedSnapshot) {
-          List<DiskImage> cinderDiskFromSnapshot = imagesFromActiveSnapshot.stream().filter(diskImage ->
+            List<DiskImage> cinderDiskFromSnapshot = imagesFromActiveSnapshot.stream().filter(diskImage ->
                     diskImage.getId().equals(image.getId())).collect(Collectors.toList());
             for (DiskImage diskImage : diskImageDao.getAllSnapshotsForLeaf(cinderDiskFromSnapshot.get(0).getImageId())) {
                 criticalSnapshotsChain.add(diskImage.getVmSnapshotId());
@@ -792,22 +792,22 @@ public class RestoreAllSnapshotsCommand<T extends RestoreAllSnapshotsParameters>
     @Override
     public AuditLogType getAuditLogTypeValue() {
         switch (getActionState()) {
-        case EXECUTE:
-            if (getSucceeded()) {
-                if (getParameters().getSnapshotAction() == SnapshotActionEnum.UNDO) {
-                    return AuditLogType.USER_UNDO_RESTORE_FROM_SNAPSHOT_START;
+            case EXECUTE:
+                if (getSucceeded()) {
+                    if (getParameters().getSnapshotAction() == SnapshotActionEnum.UNDO) {
+                        return AuditLogType.USER_UNDO_RESTORE_FROM_SNAPSHOT_START;
+                    }
+                    return AuditLogType.USER_COMMIT_RESTORE_FROM_SNAPSHOT_START;
                 }
-                return AuditLogType.USER_COMMIT_RESTORE_FROM_SNAPSHOT_START;
-            }
-            if (getParameters().getSnapshotAction() == SnapshotActionEnum.UNDO) {
-                return AuditLogType.USER_UNDO_RESTORE_FROM_SNAPSHOT_FINISH_FAILURE;
-            }
-            return AuditLogType.USER_COMMIT_RESTORE_FROM_SNAPSHOT_FINISH_FAILURE;
-        default:
-            if (getParameters().getSnapshotAction() == SnapshotActionEnum.UNDO) {
-                return AuditLogType.USER_UNDO_RESTORE_FROM_SNAPSHOT_FINISH_SUCCESS;
-            }
-            return AuditLogType.USER_COMMIT_RESTORE_FROM_SNAPSHOT_FINISH_SUCCESS;
+                if (getParameters().getSnapshotAction() == SnapshotActionEnum.UNDO) {
+                    return AuditLogType.USER_UNDO_RESTORE_FROM_SNAPSHOT_FINISH_FAILURE;
+                }
+                return AuditLogType.USER_COMMIT_RESTORE_FROM_SNAPSHOT_FINISH_FAILURE;
+            default:
+                if (getParameters().getSnapshotAction() == SnapshotActionEnum.UNDO) {
+                    return AuditLogType.USER_UNDO_RESTORE_FROM_SNAPSHOT_FINISH_SUCCESS;
+                }
+                return AuditLogType.USER_COMMIT_RESTORE_FROM_SNAPSHOT_FINISH_SUCCESS;
         }
     }
 

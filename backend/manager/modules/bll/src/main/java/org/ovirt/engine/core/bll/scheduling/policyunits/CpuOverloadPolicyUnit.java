@@ -33,8 +33,8 @@ import org.slf4j.LoggerFactory;
         type = PolicyUnitType.FILTER,
         description = "Filters out CPU overloaded hosts.",
         parameters = {
-                PolicyUnitParameter.HIGH_UTILIZATION,
-                PolicyUnitParameter.CPU_OVERCOMMIT_DURATION_MINUTES
+            PolicyUnitParameter.HIGH_UTILIZATION,
+            PolicyUnitParameter.CPU_OVERCOMMIT_DURATION_MINUTES
         }
 )
 public class CpuOverloadPolicyUnit extends PolicyUnitImpl {

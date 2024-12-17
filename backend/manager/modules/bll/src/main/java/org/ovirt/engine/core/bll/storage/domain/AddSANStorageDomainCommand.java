@@ -48,7 +48,7 @@ public class AddSANStorageDomainCommand<T extends AddSANStorageDomainParameters>
         getStorageDomain().setStorage("");
         addStorageDomainInDb();
         if (StringUtils.isEmpty(storage)) {
-              storage = createVG();
+            storage = createVG();
         }
         getStorageDomain().setStorage(storage);
         if (StringUtils.isNotEmpty(getStorageDomain().getStorage()) && addStorageDomainInIrs()) {

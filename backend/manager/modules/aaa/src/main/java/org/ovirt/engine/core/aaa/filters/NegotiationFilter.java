@@ -138,28 +138,28 @@ public class NegotiationFilter implements Filter {
             );
 
             switch (output.<Integer> get(Authn.InvokeKeys.RESULT)) {
-            case Authn.AuthResult.SUCCESS:
-                req.setAttribute(FiltersHelper.Constants.REQUEST_AUTH_RECORD_KEY,
-                    output.<ExtMap> get(Authn.InvokeKeys.AUTH_RECORD));
-                req.setAttribute(FiltersHelper.Constants.REQUEST_AUTH_TYPE_KEY,
-                    AuthType.NEGOTIATION);
-                req.setAttribute(FiltersHelper.Constants.REQUEST_PROFILE_KEY, profile.getName());
-                stack.clear();
-                break;
+                case Authn.AuthResult.SUCCESS:
+                    req.setAttribute(FiltersHelper.Constants.REQUEST_AUTH_RECORD_KEY,
+                        output.<ExtMap> get(Authn.InvokeKeys.AUTH_RECORD));
+                    req.setAttribute(FiltersHelper.Constants.REQUEST_AUTH_TYPE_KEY,
+                        AuthType.NEGOTIATION);
+                    req.setAttribute(FiltersHelper.Constants.REQUEST_PROFILE_KEY, profile.getName());
+                    stack.clear();
+                    break;
 
-            case Authn.AuthResult.NEGOTIATION_UNAUTHORIZED:
-                stack.pop();
-                break;
+                case Authn.AuthResult.NEGOTIATION_UNAUTHORIZED:
+                    stack.pop();
+                    break;
 
-            case Authn.AuthResult.NEGOTIATION_INCOMPLETE:
-                stop = true;
-                break;
+                case Authn.AuthResult.NEGOTIATION_INCOMPLETE:
+                    stop = true;
+                    break;
 
-            default:
-                log.error("Unexpected authentication result. AuthResult code is {}",
-                    output.<Integer> get(Authn.InvokeKeys.RESULT));
-                stack.pop();
-                break;
+                default:
+                    log.error("Unexpected authentication result. AuthResult code is {}",
+                        output.<Integer> get(Authn.InvokeKeys.RESULT));
+                    stack.pop();
+                    break;
             }
         }
     }

@@ -170,18 +170,18 @@ public class SpmStopVDSCommand<P extends SpmStopVDSCommandParameters> extends Vd
     protected void proceedProxyReturnValue() {
         EngineError returnStatus = getReturnValueFromStatus(getReturnStatus());
         switch (returnStatus) {
-        case StoragePoolUnknown:
-        case SpmStatusError:
-            // ignore this, the parser can handle the empty result.
-            break;
-        case TaskInProgress:
-            getVDSReturnValue().setVdsError(new VDSError(returnStatus, getReturnStatus().message));
-            getVDSReturnValue().setSucceeded(false);
-            break;
-        default:
-            super.proceedProxyReturnValue();
-            initializeVdsError(returnStatus);
-            break;
+            case StoragePoolUnknown:
+            case SpmStatusError:
+                // ignore this, the parser can handle the empty result.
+                break;
+            case TaskInProgress:
+                getVDSReturnValue().setVdsError(new VDSError(returnStatus, getReturnStatus().message));
+                getVDSReturnValue().setSucceeded(false);
+                break;
+            default:
+                super.proceedProxyReturnValue();
+                initializeVdsError(returnStatus);
+                break;
         }
     }
 }

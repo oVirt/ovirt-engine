@@ -29,18 +29,18 @@ public class QuotaDependencyTest {
         }
 
         switch (actionType.getQuotaDependency()) {
-        case CLUSTER:
-            assertCommandIsQuotaVdsDependent(commandClass);
-            break;
-        case STORAGE:
-            assertCommandIsQuotaStorageDependent(commandClass);
-            break;
-        case BOTH:
-            assertCommandIsQuotaVdsDependent(commandClass);
-            assertCommandIsQuotaStorageDependent(commandClass);
-            break;
-        default:
-            break;
+            case CLUSTER:
+                assertCommandIsQuotaVdsDependent(commandClass);
+                break;
+            case STORAGE:
+                assertCommandIsQuotaStorageDependent(commandClass);
+                break;
+            case BOTH:
+                assertCommandIsQuotaVdsDependent(commandClass);
+                assertCommandIsQuotaStorageDependent(commandClass);
+                break;
+            default:
+                break;
         }
     }
 

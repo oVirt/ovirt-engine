@@ -62,19 +62,19 @@ public abstract class EventSubscriptionCommandBase<T extends EventSubscriptionPa
         boolean retValue = true;
 
         switch (eventNotificationMethod) {
-        case SMTP:
-            String mailAddress = StringUtils.isEmpty(eventSubscriber.getMethodAddress()) ? user.getEmail()
-                    : eventSubscriber.getMethodAddress();
+            case SMTP:
+                String mailAddress = StringUtils.isEmpty(eventSubscriber.getMethodAddress()) ? user.getEmail()
+                        : eventSubscriber.getMethodAddress();
 
-            if (!isEmailValid(mailAddress)) {
-                addValidationMessage(EngineMessage.USER_DOES_NOT_HAVE_A_VALID_EMAIL);
+                if (!isEmailValid(mailAddress)) {
+                    addValidationMessage(EngineMessage.USER_DOES_NOT_HAVE_A_VALID_EMAIL);
+                    retValue = false;
+                }
+                break;
+            default:
+                addValidationMessage(EngineMessage.EN_UNKNOWN_NOTIFICATION_METHOD);
                 retValue = false;
-            }
-            break;
-        default:
-            addValidationMessage(EngineMessage.EN_UNKNOWN_NOTIFICATION_METHOD);
-            retValue = false;
-            break;
+                break;
         }
         return retValue;
     }

@@ -28,17 +28,17 @@ public class ExternalSchedulerDiscoveryResult {
 
     public boolean populate(Object xmlRpcRawResult) {
         try {
-        if (!(xmlRpcRawResult instanceof HashMap)) {
-            log.error("External scheduler error, malformed discover results");
-            return false;
-        }
-        @SuppressWarnings("unchecked")
-        Map<String, Map<String, Object[]>> castedResult = (Map<String, Map<String, Object[]>>) xmlRpcRawResult;
+            if (!(xmlRpcRawResult instanceof HashMap)) {
+                log.error("External scheduler error, malformed discover results");
+                return false;
+            }
+            @SuppressWarnings("unchecked")
+            Map<String, Map<String, Object[]>> castedResult = (Map<String, Map<String, Object[]>>) xmlRpcRawResult;
 
-        // keys will be filter, score and balance
-        for (Map.Entry<String, Map<String, Object[]>> entry : castedResult.entrySet()) {
-            String type = entry.getKey();
-            Map<String, Object[]> typeMap = entry.getValue();
+            // keys will be filter, score and balance
+            for (Map.Entry<String, Map<String, Object[]>> entry : castedResult.entrySet()) {
+                String type = entry.getKey();
+                Map<String, Object[]> typeMap = entry.getValue();
                 List<ExternalSchedulerDiscoveryUnit> currentList = getRelevantList(type);
                 if (currentList == null) {
                     log.error("External scheduler error, got unknown type");
@@ -51,10 +51,10 @@ public class ExternalSchedulerDiscoveryResult {
                     // check custom properties format.
                     String customPropertiesRegex = singleModule[1].toString();
                     if (!StringUtils.isEmpty(customPropertiesRegex) && SimpleCustomPropertiesUtil.getInstance()
-                            .syntaxErrorInProperties(customPropertiesRegex)) {
+                        .syntaxErrorInProperties(customPropertiesRegex)) {
                         log.error("Module '{}' will not be loaded, wrong custom properties format ({})",
-                                moduleName,
-                                customPropertiesRegex);
+                                    moduleName,
+                                    customPropertiesRegex);
                         continue;
                     }
                     ExternalSchedulerDiscoveryUnit currentUnit = new ExternalSchedulerDiscoveryUnit(moduleName,
@@ -62,8 +62,8 @@ public class ExternalSchedulerDiscoveryResult {
                             customPropertiesRegex);
                     currentList.add(currentUnit);
                 }
-        }
-        return true;
+            }
+            return true;
         } catch (Exception e) {
             log.error("External scheduler error, exception while parsing discovery results: {}", e.getMessage());
             log.debug("Exception", e);
@@ -73,14 +73,14 @@ public class ExternalSchedulerDiscoveryResult {
 
     private List<ExternalSchedulerDiscoveryUnit> getRelevantList(String type) {
         switch (type) {
-        case FILTERS:
-            return filters;
-        case SCORES:
-            return scores;
-        case BALANCE:
-            return balance;
-        default:
-            return null;
+            case FILTERS:
+                return filters;
+            case SCORES:
+                return scores;
+            case BALANCE:
+                return balance;
+            default:
+                return null;
         }
     }
 

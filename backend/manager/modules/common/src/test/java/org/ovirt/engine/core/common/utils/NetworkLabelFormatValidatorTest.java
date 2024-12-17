@@ -30,14 +30,14 @@ public class NetworkLabelFormatValidatorTest {
 
     public static Stream<Arguments> checkNetworkLabelFormat() {
         return Stream.of(
-                Arguments.of(Collections.emptySet(), true ),
-                Arguments.of(null, true ),
-                Arguments.of(Collections.singleton("abc"), true ),
-                Arguments.of(new HashSet<>(Arrays.asList("abc", "xyz")), true ),
-                Arguments.of(Collections.singleton("abc-_sc"), true ),
-                Arguments.of(Collections.singleton(""), false ),
-                Arguments.of(Collections.singleton(" "), false ),
-                Arguments.of(Collections.singleton("abc*"), false ),
+                Arguments.of(Collections.emptySet(), true),
+                Arguments.of(null, true),
+                Arguments.of(Collections.singleton("abc"), true),
+                Arguments.of(new HashSet<>(Arrays.asList("abc", "xyz")), true),
+                Arguments.of(Collections.singleton("abc-_sc"), true),
+                Arguments.of(Collections.singleton(""), false),
+                Arguments.of(Collections.singleton(" "), false),
+                Arguments.of(Collections.singleton("abc*"), false),
                 Arguments.of(new HashSet<>(Arrays.asList("aaa", "abc*")), false)
         );
     }

@@ -562,15 +562,15 @@ public class RemoveSnapshotCommand<T extends RemoveSnapshotParameters> extends V
     @Override
     public AuditLogType getAuditLogTypeValue() {
         switch (getActionState()) {
-        case EXECUTE:
-            return getSucceeded() ? AuditLogType.USER_REMOVE_SNAPSHOT : AuditLogType.USER_FAILED_REMOVE_SNAPSHOT;
+            case EXECUTE:
+                return getSucceeded() ? AuditLogType.USER_REMOVE_SNAPSHOT : AuditLogType.USER_FAILED_REMOVE_SNAPSHOT;
 
-        case END_SUCCESS:
-            return getSucceeded() ? AuditLogType.USER_REMOVE_SNAPSHOT_FINISHED_SUCCESS
-                    : AuditLogType.USER_REMOVE_SNAPSHOT_FINISHED_FAILURE;
+            case END_SUCCESS:
+                return getSucceeded() ? AuditLogType.USER_REMOVE_SNAPSHOT_FINISHED_SUCCESS
+                        : AuditLogType.USER_REMOVE_SNAPSHOT_FINISHED_FAILURE;
 
-        default:
-            return AuditLogType.USER_REMOVE_SNAPSHOT_FINISHED_FAILURE;
+            default:
+                return AuditLogType.USER_REMOVE_SNAPSHOT_FINISHED_FAILURE;
         }
     }
 

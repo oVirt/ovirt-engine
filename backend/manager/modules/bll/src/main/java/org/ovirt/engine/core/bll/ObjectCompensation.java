@@ -16,14 +16,14 @@ public class ObjectCompensation {
 
     public void compensate(String commandType, TransientCompensationBusinessEntity entity) {
         switch (entity.getTransientEntityType()) {
-        case RELEASE_MACS:
-            handleReleaseMacsCompensation((ReleaseMacsTransientCompensation) entity);
-            break;
-        default:
-            throw new IllegalArgumentException(String.format(
-                    "Unable to compensate type %s, please handle this compensation in command %s.",
-                    BusinessEntitySnapshot.SnapshotType.TRANSIENT_ENTITY,
-                    commandType));
+            case RELEASE_MACS:
+                handleReleaseMacsCompensation((ReleaseMacsTransientCompensation) entity);
+                break;
+            default:
+                throw new IllegalArgumentException(String.format(
+                        "Unable to compensate type %s, please handle this compensation in command %s.",
+                        BusinessEntitySnapshot.SnapshotType.TRANSIENT_ENTITY,
+                        commandType));
         }
     }
 

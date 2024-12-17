@@ -113,7 +113,7 @@ public class BackendStorageDomainImagesResourceTest extends AbstractBackendColle
             entities.add(getEntity(i));
         }
 
-        setUpEntityQueryExpectations( QueryType.GetImagesList, GetImagesListParameters.class,
+        setUpEntityQueryExpectations(QueryType.GetImagesList, GetImagesListParameters.class,
                 new String[]{"StorageDomainId", "ImageType"}, new Object[]{GUIDS[3], ImageFileType.All},
                 entities, failure);
     }

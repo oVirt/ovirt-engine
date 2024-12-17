@@ -572,18 +572,18 @@ public class IrsProxyImpl implements IrsProxy {
 
                     for (EngineError alert : alerts) {
                         switch (alert) {
-                        case VG_METADATA_CRITICALLY_FULL:
-                            auditLogDirector.log(logable, AuditLogType.STORAGE_ALERT_VG_METADATA_CRITICALLY_FULL);
-                            break;
-                        case SMALL_VG_METADATA:
-                            auditLogDirector.log(logable, AuditLogType.STORAGE_ALERT_SMALL_VG_METADATA);
-                            break;
-                        default:
-                            log.error("Unrecognized alert for domain {}(id = {}): {}",
-                                    domainFromVdsm.getStorageName(),
-                                    domainFromVdsm.getId(),
-                                    alert);
-                            break;
+                            case VG_METADATA_CRITICALLY_FULL:
+                                auditLogDirector.log(logable, AuditLogType.STORAGE_ALERT_VG_METADATA_CRITICALLY_FULL);
+                                break;
+                            case SMALL_VG_METADATA:
+                                auditLogDirector.log(logable, AuditLogType.STORAGE_ALERT_SMALL_VG_METADATA);
+                                break;
+                            default:
+                                log.error("Unrecognized alert for domain {}(id = {}): {}",
+                                        domainFromVdsm.getStorageName(),
+                                        domainFromVdsm.getId(),
+                                        alert);
+                                break;
                         }
                     }
                 }
@@ -1144,13 +1144,13 @@ public class IrsProxyImpl implements IrsProxy {
                             EngineError.ENGINE,
                             TransactionScopeOption.RequiresNew);
             if (spmStatus != null) {
-                 TransactionSupport.executeInNewTransaction(() -> {
-                     StoragePool pool =
-                             storagePoolDao.get(storagePool.getId());
-                     pool.setSpmVdsId(null);
-                     storagePoolDao.update(pool);
-                     return null;
-                 });
+                TransactionSupport.executeInNewTransaction(() -> {
+                    StoragePool pool =
+                            storagePoolDao.get(storagePool.getId());
+                    pool.setSpmVdsId(null);
+                    storagePoolDao.update(pool);
+                    return null;
+                });
             }
             throw new IrsSpmStartFailedException();
         }
@@ -1900,11 +1900,11 @@ public class IrsProxyImpl implements IrsProxy {
     }
 
     private void cancelJob(ScheduledFuture job) {
-       try {
-           job.cancel(true);
-       } catch (Throwable t) {
-           log.debug("Exception cancelling job: {}" , ExceptionUtils.getRootCauseMessage(t));
-       }
+        try {
+            job.cancel(true);
+        } catch (Throwable t) {
+            log.debug("Exception cancelling job: {}" , ExceptionUtils.getRootCauseMessage(t));
+        }
     }
     private String getDomainIdTuple(Guid domainId) {
         StorageDomainStatic storage_domain = storageDomainStaticDao.get(domainId);

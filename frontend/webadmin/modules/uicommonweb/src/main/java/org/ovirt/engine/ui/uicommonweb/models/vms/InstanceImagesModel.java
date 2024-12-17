@@ -136,7 +136,7 @@ public class InstanceImagesModel extends ListModel<InstanceImageLineModel> {
             return;
         }
 
-        for (RemoveDiskModel removeDisk : removeDiskModels ) {
+        for (RemoveDiskModel removeDisk : removeDiskModels) {
             removeDisk.onRemove(new ICommandTarget() {
                 @Override
                 public void executeCommand(UICommand command) {

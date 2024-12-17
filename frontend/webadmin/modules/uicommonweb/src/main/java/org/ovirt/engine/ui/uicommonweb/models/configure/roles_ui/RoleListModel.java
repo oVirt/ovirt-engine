@@ -170,19 +170,19 @@ public class RoleListModel extends ListWithSimpleDetailsModel<Void, Role> {
         QueryParametersBase tempVar = new QueryParametersBase();
         tempVar.setRefresh(getIsQueryFirstTime());
         Frontend.getInstance().runQuery(QueryType.GetAllRoles, tempVar, new AsyncQuery<QueryReturnValue>(returnValue -> {
-                    ArrayList<Role> filteredList = new ArrayList<>();
-                    for (Role item : (ArrayList<Role>) returnValue.getReturnValue()) {
-                        // ignore CONSUME_QUOTA_ROLE in UI
-                        if (item.getId().equals(ApplicationGuids.quotaConsumer.asGuid())) {
-                            continue;
-                        }
-                        if (getItemsFilter() == null || getItemsFilter() == item.getType()) {
-                            filteredList.add(item);
-                        }
-                    }
-                    Collections.sort(filteredList, new NameableComparator());
-                    setItems(filteredList);
-                }));
+            ArrayList<Role> filteredList = new ArrayList<>();
+            for (Role item : (ArrayList<Role>) returnValue.getReturnValue()) {
+                // ignore CONSUME_QUOTA_ROLE in UI
+                if (item.getId().equals(ApplicationGuids.quotaConsumer.asGuid())) {
+                    continue;
+                }
+                if (getItemsFilter() == null || getItemsFilter() == item.getType()) {
+                    filteredList.add(item);
+                }
+            }
+            Collections.sort(filteredList, new NameableComparator());
+            setItems(filteredList);
+        }));
         setIsQueryFirstTime(false);
     }
 

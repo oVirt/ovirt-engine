@@ -271,19 +271,19 @@ public class HostModule extends AbstractGinModule {
             final Provider<HostListModel<Void>> mainModelProvider,
             final Provider<HostGlusterStorageDevicesListModel> modelProvider) {
         SearchableDetailTabModelProvider<StorageDevice, HostListModel<Void>, HostGlusterStorageDevicesListModel> result =
-                new SearchableDetailTabModelProvider<StorageDevice, HostListModel<Void>, HostGlusterStorageDevicesListModel>(
-                eventBus, defaultConfirmPopupProvider) {
-            @Override
+            new SearchableDetailTabModelProvider<StorageDevice, HostListModel<Void>, HostGlusterStorageDevicesListModel>(
+            eventBus, defaultConfirmPopupProvider) {
+                    @Override
                     public AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(HostGlusterStorageDevicesListModel source,
-                    UICommand lastExecutedCommand,
-                    Model windowModel) {
-                if (lastExecutedCommand == getModel().getCreateBrickCommand()) {
-                    return createBrickPopupProvider.get();
-                } else {
-                    return super.getModelPopup(source, lastExecutedCommand, windowModel);
-                }
-            }
-        };
+                        UICommand lastExecutedCommand,
+                        Model windowModel) {
+                        if (lastExecutedCommand == getModel().getCreateBrickCommand()) {
+                            return createBrickPopupProvider.get();
+                        } else {
+                            return super.getModelPopup(source, lastExecutedCommand, windowModel);
+                        }
+                    }
+            };
         result.setMainModelProvider(mainModelProvider);
         result.setModelProvider(modelProvider);
         return result;

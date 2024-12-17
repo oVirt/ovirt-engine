@@ -271,7 +271,7 @@ public class SnapshotsManager {
             List<DiskImage> disks,
             Map<Guid, VmDevice> vmDevices,
             final CompensationContext compensationContext
-            ) {
+    ) {
         final Snapshot snapshot = new Snapshot(snapshotId,
                 snapshotStatus,
                 vm.getId(),

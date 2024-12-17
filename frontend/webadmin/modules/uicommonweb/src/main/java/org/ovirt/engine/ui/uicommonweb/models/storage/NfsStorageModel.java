@@ -180,13 +180,13 @@ public class NfsStorageModel extends FileStorageModel {
 
         if (getRetransmissions().getIsValid()) {
             getRetransmissions().validateEntity(new IValidation[] {
-                    new IntegerValidation(0, RETRANS_MAX)
+                new IntegerValidation(0, RETRANS_MAX)
             });
         }
 
         if (getTimeout().getIsValid()) {
             getTimeout().validateEntity(new IValidation[] {
-                    new IntegerValidation(1, TIMEOUT_MAX)
+                new IntegerValidation(1, TIMEOUT_MAX)
             });
         }
 

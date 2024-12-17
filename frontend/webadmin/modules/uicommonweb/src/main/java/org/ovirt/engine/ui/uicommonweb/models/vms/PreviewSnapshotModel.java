@@ -182,7 +182,7 @@ public class PreviewSnapshotModel extends Model {
                 null;
     }
 
-     private void updateDiskSnapshotsMap() {
+    private void updateDiskSnapshotsMap() {
         if (snapshots.getItems() == null) {
             return;
         }

@@ -615,7 +615,7 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
             case FINISHED_CLEANUP:
                 handleFinishedCleanup();
                 break;
-            }
+        }
     }
 
     private void handleInitializing(final StateContext context) {
@@ -992,24 +992,24 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
     private void stopTransferIfNecessary(ImageTransfer entity, long ts, Integer idleTimeFromTicket) {
         if (shouldAbortOnClientInactivityTimeout(entity, ts, idleTimeFromTicket)) {
             switch (entity.getTimeoutPolicy()) {
-            case LEGACY:
-                if (getParameters().getTransferType() == TransferType.Download) {
-                    // In download flows, we can cancel the transfer if there was no activity
-                    // for a while, as the download is handled by the client.
-                    auditLog(this, AuditLogType.DOWNLOAD_IMAGE_CANCELED_TIMEOUT);
+                case LEGACY:
+                    if (getParameters().getTransferType() == TransferType.Download) {
+                        // In download flows, we can cancel the transfer if there was no activity
+                        // for a while, as the download is handled by the client.
+                        auditLog(this, AuditLogType.DOWNLOAD_IMAGE_CANCELED_TIMEOUT);
+                        updateEntityPhase(ImageTransferPhase.CANCELLED_SYSTEM);
+                    } else {
+                        updateEntityPhaseToStoppedBySystem(AuditLogType.UPLOAD_IMAGE_PAUSED_BY_SYSTEM_TIMEOUT);
+                    }
+                    break;
+                case PAUSE:
+                    auditLog(this, AuditLogType.TRANSFER_IMAGE_PAUSED_ON_TIMEOUT);
+                    updateEntityPhase(ImageTransferPhase.PAUSED_SYSTEM);
+                    break;
+                case CANCEL:
+                    auditLog(this, AuditLogType.TRANSFER_IMAGE_CANCELED_ON_TIMEOUT);
                     updateEntityPhase(ImageTransferPhase.CANCELLED_SYSTEM);
-                } else {
-                    updateEntityPhaseToStoppedBySystem(AuditLogType.UPLOAD_IMAGE_PAUSED_BY_SYSTEM_TIMEOUT);
-                }
-                break;
-            case PAUSE:
-                auditLog(this, AuditLogType.TRANSFER_IMAGE_PAUSED_ON_TIMEOUT);
-                updateEntityPhase(ImageTransferPhase.PAUSED_SYSTEM);
-                break;
-            case CANCEL:
-                auditLog(this, AuditLogType.TRANSFER_IMAGE_CANCELED_ON_TIMEOUT);
-                updateEntityPhase(ImageTransferPhase.CANCELLED_SYSTEM);
-                break;
+                    break;
             }
         }
     }
@@ -1136,15 +1136,15 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
     @Override
     protected VDS checkForActiveVds() {
         Guid hostForExecution = vdsCommandsHelper.getHostForExecution(getStoragePoolId(), host -> {
-                var domainsData = resourceManager.getVdsManager(host.getId()).getDomains();
-                if (domainsData == null) {
-                    return false;
-                }
-                var domainData = domainsData.stream()
-                        .filter(vdsDomainsData -> vdsDomainsData.getDomainId().equals(getStorageDomainId()))
-                        .findFirst()
-                        .orElse(null);
-                return domainData != null ? domainData.isValid() : false;
+            var domainsData = resourceManager.getVdsManager(host.getId()).getDomains();
+            if (domainsData == null) {
+                return false;
+            }
+            var domainData = domainsData.stream()
+                    .filter(vdsDomainsData -> vdsDomainsData.getDomainId().equals(getStorageDomainId()))
+                    .findFirst()
+                    .orElse(null);
+            return domainData != null ? domainData.isValid() : false;
         });
 
         if (hostForExecution == null) {

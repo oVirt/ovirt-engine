@@ -127,7 +127,7 @@ public class ExternalVnicProfileMapping implements Serializable {
       * in the UI when adding and removing from a set.
      * @return true if the source profile of o is the same as that of this
      */
-   @Override
+    @Override
     public boolean equals(Object o) {
         if (this == o) {
             return true;

@@ -40,45 +40,45 @@ public class VmModelHelper {
         // check if VM provides any disk for the export
         if (vmDisks.size() - (sharedImageDisks.size() + directLunDisks.size() + snapshotDisks.size()) == 0) {
             switch (warningType) {
-            case VM_EXPORT:
-                model.setMessage(messages.noExportableDisksFoundForTheExport());
-                break;
-            case VM_SNAPSHOT:
-                model.setMessage(messages.noExportableDisksFoundForTheSnapshot());
-                break;
-            case VM_TEMPLATE:
-                model.setMessage(messages.noExportableDisksFoundForTheTemplate());
-                break;
+                case VM_EXPORT:
+                    model.setMessage(messages.noExportableDisksFoundForTheExport());
+                    break;
+                case VM_SNAPSHOT:
+                    model.setMessage(messages.noExportableDisksFoundForTheSnapshot());
+                    break;
+                case VM_TEMPLATE:
+                    model.setMessage(messages.noExportableDisksFoundForTheTemplate());
+                    break;
             }
         }
 
         String diskLabels = getDiskLabelList(sharedImageDisks);
         if (diskLabels != null) {
             switch (warningType) {
-            case VM_EXPORT:
-                model.setMessage(messages.sharedDisksWillNotBePartOfTheExport(diskLabels));
-                break;
-            case VM_SNAPSHOT:
-                model.setMessage(messages.sharedDisksWillNotBePartOfTheSnapshot(diskLabels));
-                break;
-            case VM_TEMPLATE:
-                model.setMessage(messages.sharedDisksWillNotBePartOfTheTemplate(diskLabels));
-                break;
+                case VM_EXPORT:
+                    model.setMessage(messages.sharedDisksWillNotBePartOfTheExport(diskLabels));
+                    break;
+                case VM_SNAPSHOT:
+                    model.setMessage(messages.sharedDisksWillNotBePartOfTheSnapshot(diskLabels));
+                    break;
+                case VM_TEMPLATE:
+                    model.setMessage(messages.sharedDisksWillNotBePartOfTheTemplate(diskLabels));
+                    break;
             }
         }
 
         diskLabels = getDiskLabelList(directLunDisks);
         if (diskLabels != null) {
             switch (warningType) {
-            case VM_EXPORT:
-                model.setMessage(messages.directLUNDisksWillNotBePartOfTheExport(diskLabels));
-                break;
-            case VM_SNAPSHOT:
-                model.setMessage(messages.directLUNDisksWillNotBePartOfTheSnapshot(diskLabels));
-                break;
-            case VM_TEMPLATE:
-                model.setMessage(messages.directLUNDisksWillNotBePartOfTheTemplate(diskLabels));
-                break;
+                case VM_EXPORT:
+                    model.setMessage(messages.directLUNDisksWillNotBePartOfTheExport(diskLabels));
+                    break;
+                case VM_SNAPSHOT:
+                    model.setMessage(messages.directLUNDisksWillNotBePartOfTheSnapshot(diskLabels));
+                    break;
+                case VM_TEMPLATE:
+                    model.setMessage(messages.directLUNDisksWillNotBePartOfTheTemplate(diskLabels));
+                    break;
             }
         }
 

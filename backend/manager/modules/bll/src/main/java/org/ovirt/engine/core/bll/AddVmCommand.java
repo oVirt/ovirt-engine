@@ -1502,16 +1502,16 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
     @Override
     public AuditLogType getAuditLogTypeValue() {
         switch (getActionState()) {
-        case EXECUTE:
-            return getSucceeded() ? !getReturnValue().getVdsmTaskIdList().isEmpty() ? AuditLogType.USER_ADD_VM_STARTED
-                    : AuditLogType.USER_ADD_VM : AuditLogType.USER_FAILED_ADD_VM;
+            case EXECUTE:
+                return getSucceeded() ? !getReturnValue().getVdsmTaskIdList().isEmpty() ? AuditLogType.USER_ADD_VM_STARTED
+                        : AuditLogType.USER_ADD_VM : AuditLogType.USER_FAILED_ADD_VM;
 
-        case END_SUCCESS:
-            return getSucceeded() ? AuditLogType.USER_ADD_VM_FINISHED_SUCCESS
-                    : AuditLogType.USER_ADD_VM_FINISHED_FAILURE;
+            case END_SUCCESS:
+                return getSucceeded() ? AuditLogType.USER_ADD_VM_FINISHED_SUCCESS
+                        : AuditLogType.USER_ADD_VM_FINISHED_FAILURE;
 
-        default:
-            return AuditLogType.USER_ADD_VM_FINISHED_FAILURE;
+            default:
+                return AuditLogType.USER_ADD_VM_FINISHED_FAILURE;
         }
     }
 

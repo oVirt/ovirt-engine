@@ -351,36 +351,36 @@ public class RegisterVdsQuery<P extends RegisterVdsParameters> extends QueriesCo
                     VDSType.VDS, null);
         vds.setSshKeyFingerprint(getParameters().getSSHFingerprint());
 
-                log.debug(
-                        "RegisterVdsQuery::register - Will try now to add VDS from scratch; Name: '{}', Hostname: '{}', Unique: '{}', VdsPort: '{}',Subnet mask: '{}', isPending: '{}' with force synchronize",
-                        getParameters().getVdsName(),
-                        getParameters().getVdsHostName(),
-                        getStrippedVdsUniqueId(),
-                        getParameters().getVdsPort(),
-                        pending);
+        log.debug(
+            "RegisterVdsQuery::register - Will try now to add VDS from scratch; Name: '{}', Hostname: '{}', Unique: '{}', VdsPort: '{}',Subnet mask: '{}', isPending: '{}' with force synchronize",
+            getParameters().getVdsName(),
+            getParameters().getVdsHostName(),
+            getStrippedVdsUniqueId(),
+            getParameters().getVdsPort(),
+            pending);
 
-            AddVdsActionParameters p = new AddVdsActionParameters(vds, "");
-            p.setPending(pending);
+        AddVdsActionParameters p = new AddVdsActionParameters(vds, "");
+        p.setPending(pending);
 
-            ActionReturnValue ret = backend.runInternalAction(ActionType.AddVds, p);
+        ActionReturnValue ret = backend.runInternalAction(ActionType.AddVds, p);
 
-            if (!ret.getSucceeded()) {
-                log.error(
-                        "RegisterVdsQuery::register - Registration failed for VDS - Name: '{}', Hostname: '{}', UniqueID: '{}', Subnet mask: '{}'",
-                        getParameters().getVdsName(),
-                        getParameters().getVdsHostName(),
-                        getStrippedVdsUniqueId());
-                captureCommandErrorsToLogger(ret, "RegisterVdsQuery::register");
-                error = AuditLogType.VDS_REGISTER_FAILED;
-                returnValue = false;
-            } else {
-                log.info(
-                        "RegisterVdsQuery::register - Registered a new VDS '{}' - Name: '{}', Hostname: '{}', UniqueID: '{}'",
-                        pending ? "pending approval" : "automatically approved",
-                        getParameters().getVdsName(),
-                        getParameters().getVdsHostName(),
-                        getStrippedVdsUniqueId());
-            }
+        if (!ret.getSucceeded()) {
+            log.error(
+                "RegisterVdsQuery::register - Registration failed for VDS - Name: '{}', Hostname: '{}', UniqueID: '{}', Subnet mask: '{}'",
+                getParameters().getVdsName(),
+                getParameters().getVdsHostName(),
+                getStrippedVdsUniqueId());
+            captureCommandErrorsToLogger(ret, "RegisterVdsQuery::register");
+            error = AuditLogType.VDS_REGISTER_FAILED;
+            returnValue = false;
+        } else {
+            log.info(
+                "RegisterVdsQuery::register - Registered a new VDS '{}' - Name: '{}', Hostname: '{}', UniqueID: '{}'",
+                pending ? "pending approval" : "automatically approved",
+                getParameters().getVdsName(),
+                getParameters().getVdsHostName(),
+                getStrippedVdsUniqueId());
+        }
         return returnValue;
     }
 
@@ -401,7 +401,7 @@ public class RegisterVdsQuery<P extends RegisterVdsParameters> extends QueriesCo
                 // looping foreach VDS found with similar hostnames and change to each one to available hostname
                 if (
                     vdsByUniqueId == null ||
-                    !vdsByHostName.getId().equals(vdsByUniqueId.getId())
+                        !vdsByHostName.getId().equals(vdsByUniqueId.getId())
                 ) {
                     boolean unique = false;
                     String tryHostName = "";

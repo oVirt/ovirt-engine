@@ -65,7 +65,7 @@ public class UiCommonEditorVisitor extends EditorVisitor {
         if (functionalEditor != null) {
             // Pass in the EditorDelegate
             if (editor instanceof HasEditorDelegate) {
-              ((HasEditorDelegate<T>) editor).setDelegate(ctx.getEditorDelegate());
+                ((HasEditorDelegate<T>) editor).setDelegate(ctx.getEditorDelegate());
             }
             // Set tab index, unless it's being set manually (i.e. already been set)
             if (functionalEditor.getTabIndex() <= 0) {

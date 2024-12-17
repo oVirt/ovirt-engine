@@ -153,7 +153,7 @@ public class VmSerialNumberBuilderTest {
     }
 
     private static Stream<MockConfigDescriptor<?>> mockConfigWithSerialNumber
-            (SerialNumberPolicy serialNumberPolicy, String customSerialNumber) {
+    (SerialNumberPolicy serialNumberPolicy, String customSerialNumber) {
         return Stream.of(
                 MockConfigDescriptor.of(ConfigValues.DefaultSerialNumberPolicy, serialNumberPolicy),
                 MockConfigDescriptor.of(ConfigValues.DefaultCustomSerialNumber, customSerialNumber)

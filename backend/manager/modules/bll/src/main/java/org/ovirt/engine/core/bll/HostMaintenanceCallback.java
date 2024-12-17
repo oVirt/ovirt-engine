@@ -94,42 +94,41 @@ public class HostMaintenanceCallback implements CommandCallback {
 
         switch (host.getStatus()) {
 
-        // Wait till moving to maintenance ends
-        case PreparingForMaintenance:
-            break;
+            // Wait till moving to maintenance ends
+            case PreparingForMaintenance:
+                break;
 
-        // Stop Gluster processes
-        case Maintenance:
-            log.info("Host '{}' is on maintenance mode. Stoping all gluster services.",
-                    getHostName(parameters.getVdsId()));
-            stopGlusterServices(parameters.getVdsId());
-            GlusterStatus isRunning = glusterUtil.isVDORunning(parameters.getVdsId());
-            switch (isRunning) {
-            case DOWN:
-                log.info("VDO service is down in host : '{}' , skipping stopping of VDO service",
-                        parameters.getVdsId());
-                break;
-            case UP:
-                log.info("VDO service is up in host : '{}' ,  stopping VDO service", parameters.getVdsId());
-                stopVDOService(parameters.getVdsId());
-                break;
-            case UNKNOWN:
-                log.info("VDO service is not installed host : '{}' , ignoring stop VDO service",
-                        parameters.getVdsId());
-                break;
-            }
-            maintenanceCommand.setCommandStatus(CommandStatus.SUCCEEDED);
-            break;
-
-        // Any other status implies maintenance action failed, and the callback cannot proceed with stopping gluster's services
-        default:
-            if (isMaintenanceCommandExecuted(maintenanceCommand)) {
-                log.info("Host '{}' failed to move to maintenance mode. Could not stop Gluster services.",
+            // Stop Gluster processes
+            case Maintenance:
+                log.info("Host '{}' is on maintenance mode. Stoping all gluster services.",
                         getHostName(parameters.getVdsId()));
-                maintenanceCommand.setCommandStatus(CommandStatus.FAILED);
-            }
+                stopGlusterServices(parameters.getVdsId());
+                GlusterStatus isRunning = glusterUtil.isVDORunning(parameters.getVdsId());
+                switch (isRunning) {
+                    case DOWN:
+                        log.info("VDO service is down in host : '{}' , skipping stopping of VDO service",
+                                parameters.getVdsId());
+                        break;
+                    case UP:
+                        log.info("VDO service is up in host : '{}' ,  stopping VDO service", parameters.getVdsId());
+                        stopVDOService(parameters.getVdsId());
+                        break;
+                    case UNKNOWN:
+                        log.info("VDO service is not installed host : '{}' , ignoring stop VDO service",
+                                parameters.getVdsId());
+                        break;
+                }
+                maintenanceCommand.setCommandStatus(CommandStatus.SUCCEEDED);
+                break;
 
-            break;
+            // Any other status implies maintenance action failed, and the callback cannot proceed with stopping gluster's services
+            default:
+                if (isMaintenanceCommandExecuted(maintenanceCommand)) {
+                    log.info("Host '{}' failed to move to maintenance mode. Could not stop Gluster services.",
+                            getHostName(parameters.getVdsId()));
+                    maintenanceCommand.setCommandStatus(CommandStatus.FAILED);
+                }
+                break;
         }
     }
 

@@ -104,13 +104,13 @@ public class RemoveDeviceFromSANStorageDomainCommand<T extends RemoveDeviceFromS
     public AuditLogType getAuditLogTypeValue() {
         addCustomValue("LunId", getParameters().getDeviceId());
         switch (getActionState()) {
-        case EXECUTE:
-            return AuditLogType.USER_REMOVE_DEVICE_FROM_STORAGE_DOMAIN_STARTED;
-        case END_SUCCESS:
-            return AuditLogType.USER_REMOVE_DEVICE_FROM_STORAGE_DOMAIN;
+            case EXECUTE:
+                return AuditLogType.USER_REMOVE_DEVICE_FROM_STORAGE_DOMAIN_STARTED;
+            case END_SUCCESS:
+                return AuditLogType.USER_REMOVE_DEVICE_FROM_STORAGE_DOMAIN;
 
-        default:
-            return AuditLogType.USER_REMOVE_DEVICE_FROM_STORAGE_DOMAIN_FAILED;
+            default:
+                return AuditLogType.USER_REMOVE_DEVICE_FROM_STORAGE_DOMAIN_FAILED;
         }
     }
 

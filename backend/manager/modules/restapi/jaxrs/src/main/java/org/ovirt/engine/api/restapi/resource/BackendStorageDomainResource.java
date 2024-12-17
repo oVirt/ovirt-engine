@@ -89,12 +89,12 @@ public class BackendStorageDomainResource
         StorageType storageType = entity.getStorageType();
         if (storageType != null) {
             switch (storageType) {
-            case ISCSI:
-            case FCP:
-                extendStorageDomain(incoming, model);
-                break;
-            default:
-                break;
+                case ISCSI:
+                case FCP:
+                    extendStorageDomain(incoming, model);
+                    break;
+                default:
+                    break;
             }
         }
 
@@ -234,7 +234,7 @@ public class BackendStorageDomainResource
         return isIsoDomain(storageDomain) ? new String[] { "templates", "vms", "disks", "images" }
                 : isExportDomain(storageDomain) ? new String[] { "files", "images" }
                         : isImageDomain(storageDomain) ? new String[] { "templates", "vms", "files", "disks",
-                                "storageconnections" }
+                            "storageconnections" }
                                 : new String[] { "files", "images" };
     }
 

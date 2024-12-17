@@ -71,12 +71,12 @@ public class BackendGlusterHookResource
         ResolutionType resolutionType = EnumValidator.validateEnum(ResolutionType.class, action.getResolutionType(), true);
 
         switch (resolutionType) {
-        case ADD:
-            return addToMissingServers(action);
-        case COPY:
-            return copy(action);
-        default:
-            return null;
+            case ADD:
+                return addToMissingServers(action);
+            case COPY:
+                return copy(action);
+            default:
+                return null;
         }
     }
 
@@ -104,7 +104,7 @@ public class BackendGlusterHookResource
     }
 
     public String getId() {
-       return this.id;
+        return this.id;
     }
 
     @Override

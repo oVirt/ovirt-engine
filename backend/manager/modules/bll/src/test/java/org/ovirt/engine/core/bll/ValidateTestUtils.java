@@ -43,7 +43,7 @@ public class ValidateTestUtils {
      * @return The failure messages, so that they can be further examined if needed.
      */
     public static List<String> runAndAssertValidateFailure
-            (String assertionMessage, CommandBase<?> command, EngineMessage message) {
+    (String assertionMessage, CommandBase<?> command, EngineMessage message) {
         assertFalse(command.validate(), "Command's validate expected to fail, but succeeded");
 
         return assertValidationMessages(assertionMessage, command, message);
@@ -78,7 +78,7 @@ public class ValidateTestUtils {
      * @return The action messages, so that they can be further examined if needed.
      */
     public static List<String> runAndAssertSetActionMessageParameters
-            (CommandBase<?> command, EngineMessage... messages) {
+    (CommandBase<?> command, EngineMessage... messages) {
         return runAndAssertSetActionMessageParameters("", command, messages);
     }
 
@@ -96,7 +96,7 @@ public class ValidateTestUtils {
      * @return The action messages, so that they can be further examined if needed.
      */
     public static List<String> runAndAssertSetActionMessageParameters
-            (String assertionMessage, CommandBase<?> command, EngineMessage... messages) {
+    (String assertionMessage, CommandBase<?> command, EngineMessage... messages) {
         command.setActionMessageParameters();
         for (EngineMessage message : messages) {
             assertValidationMessages(assertionMessage, command, message);

@@ -24,54 +24,54 @@ import org.ovirt.engine.core.compat.Guid;
 
 public abstract class AbstractGetDisksAndSnapshotsQueryTest<P extends QueryParametersBase, Q extends QueriesCommandBase<P>>
         extends AbstractUserQueryTest<P, Q> {
-        private static final int NUM_OF_SNAPSHOTS_TO_CREATE = 3;
+    private static final int NUM_OF_SNAPSHOTS_TO_CREATE = 3;
 
-        /**
-         * Active disk with snapshots for the test
-         */
-        protected DiskImage diskWithSnapshots;
+    /**
+    * Active disk with snapshots for the test
+    */
+    protected DiskImage diskWithSnapshots;
 
-        /**
-         * List of all the snapshots for {@link AbstractGetDisksAndSnapshotsQueryTest#diskWithSnapshots}
-         */
-        protected List<DiskImage> snapshotsList;
+    /**
+    * List of all the snapshots for {@link AbstractGetDisksAndSnapshotsQueryTest#diskWithSnapshots}
+    */
+    protected List<DiskImage> snapshotsList;
 
-        /**
-         * Active disk without snapshots for the test
-         */
-        protected DiskImage diskWithoutSnapshots;
+    /**
+    * Active disk without snapshots for the test
+    */
+    protected DiskImage diskWithoutSnapshots;
 
-        /**
-         * OVF image for the test
-         */
-        protected DiskImage ovfImage;
+    /**
+    * OVF image for the test
+    */
+    protected DiskImage ovfImage;
 
-        /**
-         * Cinder disk for the test
-         */
-        protected CinderDisk cinderDisk;
+    /**
+    * Cinder disk for the test
+    */
+    protected CinderDisk cinderDisk;
 
-        /**
-         * LUN disk for the test
-         */
-        protected LunDisk lunDisk;
+    /**
+    * LUN disk for the test
+    */
+    protected LunDisk lunDisk;
 
-        @Mock
-        protected ImagesHandler imagesHandler;
+    @Mock
+    protected ImagesHandler imagesHandler;
 
-        @BeforeEach
-        @Override
-        public void setUp() throws Exception {
-            super.setUp();
-            diskWithSnapshots = createDiskImage(null);
-            snapshotsList = createSnapshotsForDiskImage(diskWithSnapshots.getId());
-            diskWithoutSnapshots = createDiskImage(null);
-            ovfImage = createDiskImage(null);
-            ovfImage.setContentType(DiskContentType.OVF_STORE);
-            cinderDisk = createCinderDisk();
-            lunDisk = createLunDisk();
-            setUpImagesHandlerMocks();
-        }
+    @BeforeEach
+    @Override
+    public void setUp() throws Exception {
+        super.setUp();
+        diskWithSnapshots = createDiskImage(null);
+        snapshotsList = createSnapshotsForDiskImage(diskWithSnapshots.getId());
+        diskWithoutSnapshots = createDiskImage(null);
+        ovfImage = createDiskImage(null);
+        ovfImage.setContentType(DiskContentType.OVF_STORE);
+        cinderDisk = createCinderDisk();
+        lunDisk = createLunDisk();
+        setUpImagesHandlerMocks();
+    }
 
     protected void setUpImagesHandlerMocks() {
         List<DiskImage> diskImagesTestParam = new ArrayList<>(snapshotsList);

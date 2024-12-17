@@ -38,17 +38,17 @@ public abstract class QosQueryBase extends QueriesCommandBase<QosQueryParameterB
             return qosBaseDao;
         }
         switch (qosType) {
-        case STORAGE:
-            return storageQosDao;
-        case CPU:
-            return cpuQosDao;
-        case NETWORK:
-            return networkQoSDao;
-        case HOSTNETWORK:
-            return hostNetworkQosDao;
-        default:
-            log.debug("Not handled QoS type: '{}'", qosType);
-            break;
+            case STORAGE:
+                return storageQosDao;
+            case CPU:
+                return cpuQosDao;
+            case NETWORK:
+                return networkQoSDao;
+            case HOSTNETWORK:
+                return hostNetworkQosDao;
+            default:
+                log.debug("Not handled QoS type: '{}'", qosType);
+                break;
         }
         return null;
     }

@@ -14,7 +14,7 @@ import org.ovirt.engine.core.dao.ModificationDao;
 public final class CompensationUtils {
 
     public static <ID extends Serializable, T extends BusinessEntity<ID>>
-    void saveEntity(T entity, ModificationDao<T, ID> dao, CompensationContext compensationContext) {
+        void saveEntity(T entity, ModificationDao<T, ID> dao, CompensationContext compensationContext) {
         dao.save(entity);
         if (compensationContext != null) {
             compensationContext.snapshotNewEntity(entity);
@@ -22,7 +22,7 @@ public final class CompensationUtils {
     }
 
     public static <ID extends Serializable, T extends BusinessEntity<ID>>
-    void updateEntity(T entity, GenericDao<T, ID> dao, CompensationContext compensationContext) {
+        void updateEntity(T entity, GenericDao<T, ID> dao, CompensationContext compensationContext) {
         if (compensationContext == null) {
             dao.update(entity);
             return;
@@ -32,7 +32,7 @@ public final class CompensationUtils {
     }
 
     public static <ID extends Serializable, T extends BusinessEntity<ID>>
-    void updateEntity(T newEntity, T oldEntity, ModificationDao<T, ID> dao, CompensationContext compensationContext) {
+        void updateEntity(T newEntity, T oldEntity, ModificationDao<T, ID> dao, CompensationContext compensationContext) {
         if (compensationContext != null) {
             compensationContext.snapshotEntityUpdated(oldEntity);
         }
@@ -41,7 +41,7 @@ public final class CompensationUtils {
     }
 
     public static <ID extends Serializable, T extends BusinessEntity<ID>>
-    void updateEntity(T oldEntity, Consumer<T> modificationFunction, ModificationDao<T, ID> dao, CompensationContext compensationContext) {
+        void updateEntity(T oldEntity, Consumer<T> modificationFunction, ModificationDao<T, ID> dao, CompensationContext compensationContext) {
         if (compensationContext != null) {
             compensationContext.snapshotEntityUpdated(oldEntity);
         }
@@ -51,7 +51,7 @@ public final class CompensationUtils {
     }
 
     public static <ID extends Serializable, T extends BusinessEntity<ID>>
-    void removeEntity(ID entityId, GenericDao<T, ID> dao, CompensationContext compensationContext) {
+        void removeEntity(ID entityId, GenericDao<T, ID> dao, CompensationContext compensationContext) {
         if (compensationContext == null) {
             dao.remove(entityId);
             return;
@@ -62,7 +62,7 @@ public final class CompensationUtils {
     }
 
     public static <ID extends Serializable, T extends BusinessEntity<ID>>
-    void removeEntity(T entity, ModificationDao<T, ID> dao, CompensationContext compensationContext) {
+        void removeEntity(T entity, ModificationDao<T, ID> dao, CompensationContext compensationContext) {
         if (entity == null) {
             return;
         }
@@ -75,7 +75,7 @@ public final class CompensationUtils {
     }
 
     public static <ID extends Serializable, T extends BusinessEntity<ID>>
-    void removeEntities(Collection<T> entities, MassOperationsDao<T, ID> dao, CompensationContext compensationContext) {
+        void removeEntities(Collection<T> entities, MassOperationsDao<T, ID> dao, CompensationContext compensationContext) {
         if (compensationContext != null) {
             compensationContext.snapshotEntities(entities);
         }

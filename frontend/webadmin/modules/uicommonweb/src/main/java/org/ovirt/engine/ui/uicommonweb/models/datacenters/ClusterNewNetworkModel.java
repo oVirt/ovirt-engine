@@ -21,9 +21,9 @@ public class ClusterNewNetworkModel extends NewNetworkModel {
             networkClusterModel.setIsChangeable(false);
 
             return networkClusterModel;
-         } else {
-             return super.createNetworkClusterModel(cluster);
-         }
+        } else {
+            return super.createNetworkClusterModel(cluster);
+        }
     }
 
 }

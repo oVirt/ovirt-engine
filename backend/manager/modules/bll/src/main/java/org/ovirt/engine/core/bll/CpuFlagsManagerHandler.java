@@ -38,7 +38,7 @@ public class CpuFlagsManagerHandler implements BackendService {
         for (Version ver : Config.<Set<Version>> getValue(ConfigValues.SupportedClusterLevels)) {
             managersDictionary.put(ver, new CpuFlagsManager(ver));
         }
-       log.info("Finished initializing dictionaries");
+        log.info("Finished initializing dictionaries");
     }
 
     public String getCpuId(String name, Version ver) {
@@ -341,7 +341,7 @@ public class CpuFlagsManagerHandler implements BackendService {
                             : new HashSet<>(parseFlags(serverFlags));
 
             // first find cluster cpu
-            if ( StringUtils.isNotEmpty(clusterCpuName)
+            if (StringUtils.isNotEmpty(clusterCpuName)
                     && ((clusterCpu = intelCpuByNameDictionary.get(clusterCpuName)) != null
                             || (clusterCpu = amdCpuByNameDictionary.get(clusterCpuName)) != null
                             || (clusterCpu = ibmCpuByNameDictionary.get(clusterCpuName)) != null
@@ -461,11 +461,11 @@ public class CpuFlagsManagerHandler implements BackendService {
                     supportedCpus.add(intelCpuList.get(i));
                 }
             } else if (ibmCpuByNameDictionary.containsKey(maxCpuName)) {
-                    ServerCpu selected = ibmCpuByNameDictionary.get(maxCpuName);
-                    int selectedCpuIndex = ibmCpuList.indexOf(selected);
-                    for (int i = 0; i <= selectedCpuIndex; i++) {
-                        supportedCpus.add(ibmCpuList.get(i));
-                    }
+                ServerCpu selected = ibmCpuByNameDictionary.get(maxCpuName);
+                int selectedCpuIndex = ibmCpuList.indexOf(selected);
+                for (int i = 0; i <= selectedCpuIndex; i++) {
+                    supportedCpus.add(ibmCpuList.get(i));
+                }
             } else if (amdCpuByNameDictionary.containsKey(maxCpuName)) {
                 ServerCpu selected = amdCpuByNameDictionary.get(maxCpuName);
                 int selectedCpuIndex = amdCpuList.indexOf(selected);

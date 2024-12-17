@@ -51,21 +51,21 @@ public class BackendUserResource
     private static final String MERGE = "merge";
 
     private static final String[] IMMUTABLE_FIELDS = {
-            "department",
-            "domainEntryId",
-            "email",
-            "lastName",
-            "loggedIn",
-            "namespace",
-            "password",
-            "principal",
-            "userName",
-            "domain",
-            "groups",
-            "permissions",
-            "roles",
-            "sshPublicKeys",
-            "tags" };
+        "department",
+        "domainEntryId",
+        "email",
+        "lastName",
+        "loggedIn",
+        "namespace",
+        "password",
+        "principal",
+        "userName",
+        "domain",
+        "groups",
+        "permissions",
+        "roles",
+        "sshPublicKeys",
+        "tags" };
     private BackendUsersResource parent;
 
     public BackendUserResource(String id, BackendUsersResource parent) {

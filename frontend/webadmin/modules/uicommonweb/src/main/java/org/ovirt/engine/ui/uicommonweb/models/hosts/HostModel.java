@@ -814,9 +814,9 @@ public abstract class HostModel extends Model implements HasValidatedTabs {
         });
 
         getHost().validateEntity(new IValidation[] {
-                new NotEmptyValidation(),
-                new LengthValidation(255),
-                new HostAddressValidation() });
+            new NotEmptyValidation(),
+            new LengthValidation(255),
+            new HostAddressValidation() });
         if (!getHost().getIsValid()) {
             getFetchResult().setEntity(ConstantsManager.getInstance().getConstants().publicKeyAddressError()
                     + getHost().getInvalidityReasons().get(0));
@@ -1033,9 +1033,9 @@ public abstract class HostModel extends Model implements HasValidatedTabs {
         getComment().validateEntity(new IValidation[] { new SpecialAsciiI18NOrNoneValidation() });
 
         getHost().validateEntity(new IValidation[] {
-                new NotEmptyValidation(),
-                new LengthValidation(255),
-                new HostAddressValidation() });
+            new NotEmptyValidation(),
+            new LengthValidation(255),
+            new HostAddressValidation() });
 
         getAuthSshPort().validateEntity(new IValidation[] {new NotEmptyValidation(), new IntegerValidation(1, 65535)});
 

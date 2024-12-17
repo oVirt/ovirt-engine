@@ -133,8 +133,8 @@ public class RemoveStorageDomainCommand<T extends RemoveStorageDomainParameters>
                 return failValidation(EngineMessage.CANNOT_REMOVE_STORAGE_DOMAIN_INVALID_HOST_ID);
             }
         } else if (vds.getStatus() != VDSStatus.Up) {
-                return failValidation(EngineMessage.CANNOT_REMOVE_STORAGE_DOMAIN_HOST_NOT_UP,
-                        String.format("$%1$s %2$s", "hostName", vds.getName()));
+            return failValidation(EngineMessage.CANNOT_REMOVE_STORAGE_DOMAIN_HOST_NOT_UP,
+                String.format("$%1$s %2$s", "hostName", vds.getName()));
         }
 
         StorageDomainToPoolRelationValidator domainPoolValidator = createDomainToPoolValidator(dom);

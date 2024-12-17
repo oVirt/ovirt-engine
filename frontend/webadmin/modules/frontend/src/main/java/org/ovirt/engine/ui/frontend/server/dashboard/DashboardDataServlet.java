@@ -230,15 +230,15 @@ public class DashboardDataServlet extends HttpServlet {
             String[] preferOptions = preferHeader == null ? new String[0] : preferHeader.trim().split("\\s*,\\s*"); //$NON-NLS-1$
             for (String option : preferOptions) {
                 switch (option) {
-                case PREFER_FAKE_DATA:
-                    preferFake = true;
-                    break;
-                case PREFER_ERROR:
-                    preferError = true;
-                    break;
-                case PREFER_NO_CACHE:
-                    preferNoCache = true;
-                    break;
+                    case PREFER_FAKE_DATA:
+                        preferFake = true;
+                        break;
+                    case PREFER_ERROR:
+                        preferError = true;
+                        break;
+                    case PREFER_NO_CACHE:
+                        preferNoCache = true;
+                        break;
                 }
             }
 

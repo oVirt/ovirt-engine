@@ -57,7 +57,7 @@ public class ConfigKeyFactory {
         String alternateKey = node.get("alternateKey") == null ? "" : node.get("alternateKey").asText();
 
         // If the isReloadable attribute isn't specified - assume it is false
-        boolean reloadable = (node.get("isReloadable") == null ) ? false : node.get("isReloadable").booleanValue();
+        boolean reloadable = (node.get("isReloadable") == null) ? false : node.get("isReloadable").booleanValue();
         ConfigKey configKey = new ConfigKey(type, description, alternateKey, key, "", validValues,
                 "", getHelperByType(type), reloadable, isDeprecated(key));
         configKey.setParser(parser);

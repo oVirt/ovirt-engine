@@ -67,20 +67,20 @@ public class SubTabNetworkProfileView extends AbstractSubTabTableView<NetworkVie
         getTable().addColumn(networkColumn, constants.networkVnicProfile(), "200px"); //$NON-NLS-1$
 
         AbstractTextColumn<VnicProfileView> dcColumn = new AbstractLinkColumn<VnicProfileView>(
-                new FieldUpdater<VnicProfileView, String>() {
-            @Override
-            public void update(int index, VnicProfileView profileView, String value) {
-                Map<String, String> parameters = new HashMap<>();
-                parameters.put(FragmentParams.NAME.getName(), profileView.getDataCenterName());
-                getPlaceTransitionHandler().handlePlaceTransition(
+            new FieldUpdater<VnicProfileView, String>() {
+                @Override
+                public void update(int index, VnicProfileView profileView, String value) {
+                    Map<String, String> parameters = new HashMap<>();
+                    parameters.put(FragmentParams.NAME.getName(), profileView.getDataCenterName());
+                    getPlaceTransitionHandler().handlePlaceTransition(
                         WebAdminApplicationPlaces.dataCenterStorageSubTabPlace, parameters);
-            }
-        }) {
-            @Override
-            public String getValue(VnicProfileView object) {
-                return object.getDataCenterName();
-            }
-        };
+                }
+            }) {
+                @Override
+                public String getValue(VnicProfileView object) {
+                    return object.getDataCenterName();
+                }
+            };
         dcColumn.makeSortable();
         getTable().addColumn(dcColumn, constants.dcVnicProfile(), "200px"); //$NON-NLS-1$
 

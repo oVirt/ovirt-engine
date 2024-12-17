@@ -144,30 +144,30 @@ public class BackendExportDomainDisksResourceTest
 
     protected void setUpGetEntityExpectations(StorageDomainType domainType, Guid getStoragePoolsByStorageDomainId, boolean notFound, Object failure) {
         switch (domainType) {
-        case Data:
-            setUpEntityQueryExpectations(QueryType.GetVmTemplate,
-                                         GetVmTemplateParameters.class,
-                                         new String[] { "Id" },
-                                         new Object[] { TEMPLATE_ID },
-                                         notFound ? null : getEntity(1),
-                                         failure);
-            break;
-        case ImportExport:
-            setUpEntityQueryExpectations(QueryType.GetStoragePoolsByStorageDomainId,
-                                         IdQueryParameters.class,
-                                         new String[] { "Id" },
-                                         new Object[] { getStoragePoolsByStorageDomainId },
-                                         setUpStoragePool(),
-                                         null);
-            setUpEntityQueryExpectations(QueryType.GetTemplatesFromExportDomain,
-                                         GetAllFromExportDomainQueryParameters.class,
-                                         new String[] { "StoragePoolId", "StorageDomainId" },
-                                         new Object[] { DATA_CENTER_ID, STORAGE_DOMAIN_ID },
-                                         setUpTemplates(notFound),
-                                         failure);
-            break;
-        default:
-            break;
+            case Data:
+                setUpEntityQueryExpectations(QueryType.GetVmTemplate,
+                                            GetVmTemplateParameters.class,
+                                            new String[] { "Id" },
+                                            new Object[] { TEMPLATE_ID },
+                                            notFound ? null : getEntity(1),
+                                            failure);
+                break;
+            case ImportExport:
+                setUpEntityQueryExpectations(QueryType.GetStoragePoolsByStorageDomainId,
+                                            IdQueryParameters.class,
+                                            new String[] { "Id" },
+                                            new Object[] { getStoragePoolsByStorageDomainId },
+                                            setUpStoragePool(),
+                                            null);
+                setUpEntityQueryExpectations(QueryType.GetTemplatesFromExportDomain,
+                                            GetAllFromExportDomainQueryParameters.class,
+                                            new String[] { "StoragePoolId", "StorageDomainId" },
+                                            new Object[] { DATA_CENTER_ID, STORAGE_DOMAIN_ID },
+                                            setUpTemplates(notFound),
+                                            failure);
+                break;
+            default:
+                break;
         }
     }
 

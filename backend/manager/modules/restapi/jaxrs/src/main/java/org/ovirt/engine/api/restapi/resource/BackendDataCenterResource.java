@@ -82,7 +82,7 @@ public class BackendDataCenterResource extends AbstractBackendActionableResource
 
     @Override
     public QuotasResource getQuotasResource() {
-         return inject(new BackendQuotasResource(id));
+        return inject(new BackendQuotasResource(id));
     }
 
     @Override

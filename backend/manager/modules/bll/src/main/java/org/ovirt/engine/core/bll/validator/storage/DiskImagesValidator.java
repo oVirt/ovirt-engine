@@ -138,12 +138,12 @@ public class DiskImagesValidator {
         for (DiskImage diskImage : diskImages) {
             List<VmDevice> devices = getVmDeviceDao().getVmDevicesByDeviceId(diskImage.getId(), null);
             for (VmDevice device : devices) {
-               if (device.getSnapshotId() != null && (!onlyPlugged || device.isPlugged())) {
-                   VM vm = getVmDao().get(device.getVmId());
-                   Snapshot snapshot = getSnapshotDao().get(device.getSnapshotId());
-                   pluggedDiskSnapshotInfo.add(String.format("%s ,%s, %s",
-                           diskImage.getDiskAlias(), snapshot.getDescription(), vm.getName()));
-               }
+                if (device.getSnapshotId() != null && (!onlyPlugged || device.isPlugged())) {
+                    VM vm = getVmDao().get(device.getVmId());
+                    Snapshot snapshot = getSnapshotDao().get(device.getSnapshotId());
+                    pluggedDiskSnapshotInfo.add(String.format("%s ,%s, %s",
+                        diskImage.getDiskAlias(), snapshot.getDescription(), vm.getName()));
+                }
             }
         }
 
@@ -323,7 +323,7 @@ public class DiskImagesValidator {
     }
 
     protected VmDeviceDao getVmDeviceDao() {
-       return Injector.get(VmDeviceDao.class);
+        return Injector.get(VmDeviceDao.class);
     }
 
     protected VmDao getVmDao() {

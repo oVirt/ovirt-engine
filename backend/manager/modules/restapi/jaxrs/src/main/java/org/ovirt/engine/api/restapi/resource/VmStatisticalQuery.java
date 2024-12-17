@@ -56,19 +56,19 @@ public class VmStatisticalQuery extends AbstractStatisticalQuery<Vm, org.ovirt.e
         Double cpuSys = s.getCpuSys() == null ? zero : s.getCpuSys();
 
         List<Statistic> statistics = asList(
-          setDatum(clone(MEM_CONFIG), mem),
-          setDatum(clone(MEM_USED), memUsedByCent / 100),
-          setDatum(clone(CPU_GUEST), cpuUser),
-          setDatum(clone(CPU_OVERHEAD), cpuSys),
-          setDatum(clone(CPU_TOTAL), cpuUser + cpuSys),
-          setDatum(clone(MIGRATION_PROGRESS), migrationProgress),
-          setDatum(clone(MEM_BUFFERED), memBuffered),
-          setDatum(clone(MEM_CACHED), memCached),
-          setDatum(clone(MEM_FREE), memFree),
-          setDatum(clone(MEM_UNUSED), memUnused),
-          setDatum(clone(NETWORK_TOTAL), networkUsagePercent),
-          setDatum(clone(DISKS_USAGE), disksUsage),
-          setDatum(clone(ELAPSED_TIME), elapsedTime)
+            setDatum(clone(MEM_CONFIG), mem),
+            setDatum(clone(MEM_USED), memUsedByCent / 100),
+            setDatum(clone(CPU_GUEST), cpuUser),
+            setDatum(clone(CPU_OVERHEAD), cpuSys),
+            setDatum(clone(CPU_TOTAL), cpuUser + cpuSys),
+            setDatum(clone(MIGRATION_PROGRESS), migrationProgress),
+            setDatum(clone(MEM_BUFFERED), memBuffered),
+            setDatum(clone(MEM_CACHED), memCached),
+            setDatum(clone(MEM_FREE), memFree),
+            setDatum(clone(MEM_UNUSED), memUnused),
+            setDatum(clone(NETWORK_TOTAL), networkUsagePercent),
+            setDatum(clone(DISKS_USAGE), disksUsage),
+            setDatum(clone(ELAPSED_TIME), elapsedTime)
         );
 
         statistics.add(addHistoryData(clone(CPU_USAGE_HISTORY), entity.getCpuUsageHistory()));

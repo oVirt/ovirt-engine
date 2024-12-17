@@ -29,7 +29,7 @@ public class StorageDomainStatic implements BusinessEntity<Guid>, Nameable {
     private String name;
 
     @ValidDescription(message = "VALIDATION_STORAGE_DOMAIN_DESCRIPTION_INVALID", groups = { CreateEntity.class,
-            UpdateEntity.class })
+        UpdateEntity.class })
     @Size(min = 0, max = BusinessEntitiesDefinitions.GENERAL_MAX_SIZE,
             message = "VALIDATION_STORAGE_DOMAIN_DESCRIPTION_MAX",
             groups = { CreateEntity.class, UpdateEntity.class })

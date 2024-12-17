@@ -56,14 +56,14 @@ public class GetArchitectureCapabilitiesQuery<P extends ArchCapabilitiesParamete
             ArchitectureType architecture,
             Version version) {
         switch (archCapabilitiesVerb) {
-        case GetMigrationSupport:
-            return FeatureSupported.isMigrationSupported(architecture, version);
-        case GetSuspendSupport:
-            return FeatureSupported.isSuspendSupportedByArchitecture(architecture, version);
-        case GetMemoryHotUnplugSupport:
-            return FeatureSupported.hotUnplugMemory(version, architecture);
-        case GetTpmDeviceSupport:
-            return FeatureSupported.isTpmDeviceSupported(version, architecture);
+            case GetMigrationSupport:
+                return FeatureSupported.isMigrationSupported(architecture, version);
+            case GetSuspendSupport:
+                return FeatureSupported.isSuspendSupportedByArchitecture(architecture, version);
+            case GetMemoryHotUnplugSupport:
+                return FeatureSupported.hotUnplugMemory(version, architecture);
+            case GetTpmDeviceSupport:
+                return FeatureSupported.isTpmDeviceSupported(version, architecture);
         }
         return false;
     }

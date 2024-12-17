@@ -46,7 +46,7 @@ public class BackendHostsResourceTest
     protected static final String[] ADDRESSES = { "10.11.12.13", "13.12.11.10", "10.01.10.01" };
     protected static final VDSStatus[] VDS_STATUS = { VDSStatus.Up, VDSStatus.Down, VDSStatus.Up };
     protected static final HostStatus[] HOST_STATUS = { HostStatus.UP, HostStatus.DOWN,
-            HostStatus.UP };
+        HostStatus.UP };
     protected static final String ROOT_PASSWORD = "s3CR3t";
 
     public BackendHostsResourceTest() {

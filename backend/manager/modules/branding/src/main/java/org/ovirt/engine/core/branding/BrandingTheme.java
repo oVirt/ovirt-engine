@@ -272,11 +272,11 @@ public class BrandingTheme {
         List<String> expandedCssList = new ArrayList<>();
 
         for (String cssFileOrRef : inputCssList) {
-          if (StringUtils.isBlank(cssFileOrRef)) {
-              continue;
-          }
+            if (StringUtils.isBlank(cssFileOrRef)) {
+                continue;
+            }
 
-          Matcher refMatcher = REF_PATTERN.matcher(cssFileOrRef);
+            Matcher refMatcher = REF_PATTERN.matcher(cssFileOrRef);
             if (refMatcher.matches()) {
                 List<String> refExpanded = getThemeStylesheets(refMatcher.group(1));
                 expandedCssList.addAll(refExpanded);

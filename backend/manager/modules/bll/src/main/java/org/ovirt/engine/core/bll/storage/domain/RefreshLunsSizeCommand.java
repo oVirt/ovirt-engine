@@ -82,8 +82,8 @@ public class RefreshLunsSizeCommand<T extends ExtendSANStorageDomainParameters> 
 
         for (LUNs lun : getParameters().getLunsList()) {
             if (lunsSet.contains(lun.getLUNId())) {
-                    // LUN is part of the storage domain
-                    lunsSet.remove(lun.getLUNId());
+                // LUN is part of the storage domain
+                lunsSet.remove(lun.getLUNId());
             }
         }
         return lunsSet.isEmpty();
@@ -167,7 +167,7 @@ public class RefreshLunsSizeCommand<T extends ExtendSANStorageDomainParameters> 
                 if (size == -1) {
                     size = vdsSizePair.getSecond().getDeviceSize();
                 } else if (!size.equals(vdsSizePair.getSecond().getDeviceSize())) {
-                        failed = true;
+                    failed = true;
                 }
             }
             if (failed) {

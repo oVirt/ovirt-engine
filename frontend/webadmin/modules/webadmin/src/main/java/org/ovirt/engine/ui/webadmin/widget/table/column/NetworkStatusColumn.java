@@ -22,12 +22,12 @@ public class NetworkStatusColumn extends AbstractImageResourceColumn<Network> {
 
     public ImageResource getValue(NetworkCluster net_cluster) {
         switch (net_cluster.getStatus()) {
-        case OPERATIONAL:
-            return resources.upImage();
-        case NON_OPERATIONAL:
-            return resources.downImage();
-        default:
-            return resources.downImage();
+            case OPERATIONAL:
+                return resources.upImage();
+            case NON_OPERATIONAL:
+                return resources.downImage();
+            default:
+                return resources.downImage();
         }
     }
 

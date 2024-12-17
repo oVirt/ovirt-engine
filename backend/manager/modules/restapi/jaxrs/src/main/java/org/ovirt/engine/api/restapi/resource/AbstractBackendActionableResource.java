@@ -138,17 +138,17 @@ public abstract class AbstractBackendActionableResource <R extends BaseResource,
         // resource should never be queried)
         //
         return new ActionResource() {
-                    @Override
-                    public Response get() {
-                        URI uri = URI.create(LinkHelper.addLinks(newModel(id)).getHref());
-                        Response.Status status = Response.Status.MOVED_PERMANENTLY;
-                        return Response.status(status).location(uri).build();
-                    }
-                    @Override
-                    public Action getAction() {
-                        return null;
-                    }
-                };
+            @Override
+            public Response get() {
+                URI uri = URI.create(LinkHelper.addLinks(newModel(id)).getHref());
+                Response.Status status = Response.Status.MOVED_PERMANENTLY;
+                return Response.status(status).location(uri).build();
+            }
+            @Override
+            public Action getAction() {
+                return null;
+            }
+        };
     }
 
 
@@ -232,8 +232,8 @@ public abstract class AbstractBackendActionableResource <R extends BaseResource,
             StorageDomainStatic storageDomain =
                     getEntity(org.ovirt.engine.core.common.businessentities.StorageDomainStatic.class,
                     QueryType.GetStorageDomainByName,
-                    new NameQueryParameters(name),
-                    "Storage: name=" + name);
+                        new NameQueryParameters(name),
+                        "Storage: name=" + name);
 
             if (storageDomain != null) {
                 return storageDomain.getId();

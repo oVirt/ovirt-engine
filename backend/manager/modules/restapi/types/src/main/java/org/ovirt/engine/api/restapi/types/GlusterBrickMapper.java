@@ -46,7 +46,7 @@ public class GlusterBrickMapper {
         }
 
         if (StringUtils.isNotEmpty(fromBrick.getQualifiedName())) {
-           brick.setName(fromBrick.getQualifiedName());
+            brick.setName(fromBrick.getQualifiedName());
         }
 
         if (fromBrick.getBrickDirectory() != null) {
@@ -66,14 +66,14 @@ public class GlusterBrickMapper {
 
     private static GlusterBrickStatus mapBrickStatus(org.ovirt.engine.core.common.businessentities.gluster.GlusterStatus status) {
         switch (status) {
-        case UP:
-            return GlusterBrickStatus.UP;
-        case DOWN:
-            return GlusterBrickStatus.DOWN;
-        case UNKNOWN:
-            return GlusterBrickStatus.UNKNOWN;
-        default:
-            return null;
+            case UP:
+                return GlusterBrickStatus.UP;
+            case DOWN:
+                return GlusterBrickStatus.DOWN;
+            case UNKNOWN:
+                return GlusterBrickStatus.UNKNOWN;
+            default:
+                return null;
         }
     }
 }

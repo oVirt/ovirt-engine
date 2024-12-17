@@ -13,10 +13,10 @@ import org.ovirt.engine.core.compat.Guid;
 public class EntitiesTest {
 
     private static final Guid[] GUIDs = {
-            new Guid("000000000000-0000-0000-0000-00000001"),
-            new Guid("000000000000-0000-0000-0000-00000002"),
-            new Guid("000000000000-0000-0000-0000-00000003"),
-            new Guid("000000000000-0000-0000-0000-00000004") };
+        new Guid("000000000000-0000-0000-0000-00000001"),
+        new Guid("000000000000-0000-0000-0000-00000002"),
+        new Guid("000000000000-0000-0000-0000-00000003"),
+        new Guid("000000000000-0000-0000-0000-00000004") };
 
     @Test
     public void businessEntitiesById() {

@@ -84,22 +84,22 @@ public class SubTabClusterNetworkView extends AbstractSubTabTableView<Cluster, N
         getTable().addColumn(statusIconColumn, "", "20px"); //$NON-NLS-1$ //$NON-NLS-2$
 
         AbstractTextColumn<Network> nameColumn = new AbstractLinkColumn<Network>(
-                new FieldUpdater<Network, String>() {
-            @Override
-            public void update(int index, Network network, String value) {
-                Map<String, String> parameters = new HashMap<>();
-                parameters.put(FragmentParams.NAME.getName(), network.getName());
-                parameters.put(FragmentParams.DATACENTER.getName(),
-                        getModelProvider().getMainModel().getSelectedItem().getStoragePoolName());
-                getPlaceTransitionHandler().handlePlaceTransition(
-                        WebAdminApplicationPlaces.networkGeneralSubTabPlace, parameters);
-            }
-        }) {
-            @Override
-            public String getValue(Network object) {
-                return object.getName();
-            }
-        };
+            new FieldUpdater<Network, String>() {
+                @Override
+                public void update(int index, Network network, String value) {
+                    Map<String, String> parameters = new HashMap<>();
+                    parameters.put(FragmentParams.NAME.getName(), network.getName());
+                    parameters.put(FragmentParams.DATACENTER.getName(),
+                            getModelProvider().getMainModel().getSelectedItem().getStoragePoolName());
+                    getPlaceTransitionHandler().handlePlaceTransition(
+                            WebAdminApplicationPlaces.networkGeneralSubTabPlace, parameters);
+                }
+            }) {
+                @Override
+                public String getValue(Network object) {
+                    return object.getName();
+                }
+            };
         nameColumn.makeSortable();
         getTable().addColumn(nameColumn, constants.nameNetwork(), "400px"); //$NON-NLS-1$
 

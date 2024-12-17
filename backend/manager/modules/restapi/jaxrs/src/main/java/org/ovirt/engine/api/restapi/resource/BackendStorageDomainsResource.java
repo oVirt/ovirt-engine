@@ -291,44 +291,44 @@ public class BackendStorageDomainsResource
         StorageDomainStatic entity = mapToStatic(storageDomain);
         Response resp = null;
         switch (entity.getStorageType()) {
-        case ISCSI:
-        case FCP:
-            if (storageDomain.isSetImport() && storageDomain.isImport()) {
-                validateParameters(storageDomain, "id");
-                resp = addExistingSAN(storageDomain, entity.getStorageType(), hostId);
-            } else {
-                resp = addSAN(storageDomain, entity.getStorageType(), entity, hostId);
-            }
-            break;
-        case NFS:
-            if (!storageConnectionFromUser.isSetId()) {
-                validateParameters(storageDomain.getStorage(), "address");
-            }
-            resp = addDomain(ActionType.AddNFSStorageDomain, storageDomain, entity, hostId, cnx);
-            break;
-        case LOCALFS:
-            resp = addDomain(ActionType.AddLocalStorageDomain, storageDomain, entity, hostId, cnx);
-            break;
-        case POSIXFS:
-            if (!storageConnectionFromUser.isSetId()) {
-                validateParameters(storageDomain.getStorage(), "vfsType");
-            }
-            resp = addDomain(ActionType.AddPosixFsStorageDomain, storageDomain, entity, hostId, cnx);
-            break;
-        case GLUSTERFS:
-            if (!storageConnectionFromUser.isSetId()) {
-                validateParameters(storageDomain.getStorage(), "vfsType");
-            }
-            resp = addDomain(ActionType.AddGlusterFsStorageDomain, storageDomain, entity, hostId, cnx);
-            break;
-        case MANAGED_BLOCK_STORAGE:
-            resp = addManagedBlockStorageDomain(ActionType.AddManagedBlockStorageDomain,
-                    entity,
-                    storageDomain.getStorage().getDriverOptions(),
-                    storageDomain.getStorage().getDriverSensitiveOptions());
-            break;
-        default:
-            break;
+            case ISCSI:
+            case FCP:
+                if (storageDomain.isSetImport() && storageDomain.isImport()) {
+                    validateParameters(storageDomain, "id");
+                    resp = addExistingSAN(storageDomain, entity.getStorageType(), hostId);
+                } else {
+                    resp = addSAN(storageDomain, entity.getStorageType(), entity, hostId);
+                }
+                break;
+            case NFS:
+                if (!storageConnectionFromUser.isSetId()) {
+                    validateParameters(storageDomain.getStorage(), "address");
+                }
+                resp = addDomain(ActionType.AddNFSStorageDomain, storageDomain, entity, hostId, cnx);
+                break;
+            case LOCALFS:
+                resp = addDomain(ActionType.AddLocalStorageDomain, storageDomain, entity, hostId, cnx);
+                break;
+            case POSIXFS:
+                if (!storageConnectionFromUser.isSetId()) {
+                    validateParameters(storageDomain.getStorage(), "vfsType");
+                }
+                resp = addDomain(ActionType.AddPosixFsStorageDomain, storageDomain, entity, hostId, cnx);
+                break;
+            case GLUSTERFS:
+                if (!storageConnectionFromUser.isSetId()) {
+                    validateParameters(storageDomain.getStorage(), "vfsType");
+                }
+                resp = addDomain(ActionType.AddGlusterFsStorageDomain, storageDomain, entity, hostId, cnx);
+                break;
+            case MANAGED_BLOCK_STORAGE:
+                resp = addManagedBlockStorageDomain(ActionType.AddManagedBlockStorageDomain,
+                        entity,
+                        storageDomain.getStorage().getDriverOptions(),
+                        storageDomain.getStorage().getDriverSensitiveOptions());
+                break;
+            default:
+                break;
         }
 
         if (resp != null) {
@@ -353,18 +353,18 @@ public class BackendStorageDomainsResource
         // Mapping the connection properties only in case it is a non-filtered session
         if (!isFiltered()) {
             switch (entity.getStorageType()) {
-            case ISCSI:
-                mapVolumeGroupIscsi(model, entity);
-                break;
-            case FCP:
-                mapVolumeGroupFcp(model, entity);
-                break;
-            case NFS:
-            case LOCALFS:
-            case POSIXFS:
-            case GLUSTERFS:
-                mapFileDomain(model, entity);
-                break;
+                case ISCSI:
+                    mapVolumeGroupIscsi(model, entity);
+                    break;
+                case FCP:
+                    mapVolumeGroupFcp(model, entity);
+                    break;
+                case NFS:
+                case LOCALFS:
+                case POSIXFS:
+                case GLUSTERFS:
+                    mapFileDomain(model, entity);
+                    break;
             }
         }
 

@@ -16,10 +16,10 @@ public class HostStatisticalQuery extends AbstractStatisticalQuery<Host, VDS> {
     private static final Statistic MEM_USED = create("memory.used", "Used memory", GAUGE, BYTES, INTEGER);
     private static final Statistic MEM_FREE = create("memory.free", "Free memory", GAUGE, BYTES, INTEGER);
     private static final Statistic MEM_SHARED = create("memory.shared",
- "The amount of memory, in bytes, shared among Virtual-Machines on this Host by Kernel Same-page Merging (KSM)",
- GAUGE,
- BYTES,
- INTEGER);
+        "The amount of memory, in bytes, shared among Virtual-Machines on this Host by Kernel Same-page Merging (KSM)",
+        GAUGE,
+        BYTES,
+        INTEGER);
     private static final Statistic SWAP_TOTAL = create("swap.total", "Total swap", GAUGE, BYTES, INTEGER);
     private static final Statistic SWAP_FREE = create("swap.free", "Free swap", GAUGE, BYTES, INTEGER);
     private static final Statistic SWAP_USED = create("swap.used", "Used swap", GAUGE, BYTES, INTEGER);

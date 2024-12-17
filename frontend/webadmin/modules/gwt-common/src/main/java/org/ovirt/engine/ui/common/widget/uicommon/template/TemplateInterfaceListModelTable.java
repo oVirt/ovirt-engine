@@ -70,16 +70,16 @@ public class TemplateInterfaceListModelTable extends AbstractModelBoundTableWidg
 
         AbstractTextColumn<VmNetworkInterface> networkNameColumn = new AbstractLinkColumn<VmNetworkInterface>(
                 new FieldUpdater<VmNetworkInterface, String>() {
-            @Override
-            public void update(int index, VmNetworkInterface networkInterface, String value) {
-                Map<String, String> parameters = new HashMap<>();
-                parameters.put(FragmentParams.NAME.getName(), networkInterface.getNetworkName());
-                parameters.put(FragmentParams.DATACENTER.getName(),
+                @Override
+                public void update(int index, VmNetworkInterface networkInterface, String value) {
+                    Map<String, String> parameters = new HashMap<>();
+                    parameters.put(FragmentParams.NAME.getName(), networkInterface.getNetworkName());
+                    parameters.put(FragmentParams.DATACENTER.getName(),
                         templateListModel.getSelectedItem().getStoragePoolName());
-                getPlaceTransitionHandler().handlePlaceTransition(
+                    getPlaceTransitionHandler().handlePlaceTransition(
                         WebAdminApplicationPlaces.networkGeneralSubTabPlace, parameters);
-            }
-        }) {
+                }
+            }) {
             @Override
             public String getValue(VmNetworkInterface object) {
                 return object.getNetworkName();
@@ -89,23 +89,23 @@ public class TemplateInterfaceListModelTable extends AbstractModelBoundTableWidg
         getTable().addColumn(networkNameColumn, constants.networkNameInterface(), "200px"); //$NON-NLS-1$
 
         AbstractTextColumn<VmNetworkInterface> profileNameColumn = new AbstractLinkColumn<VmNetworkInterface>(
-                new FieldUpdater<VmNetworkInterface, String>() {
-            @Override
-            public void update(int index, VmNetworkInterface networkInterface, String value) {
-                Map<String, String> parameters = new HashMap<>();
-                parameters.put(FragmentParams.NAME.getName(), networkInterface.getVnicProfileName());
-                parameters.put(FragmentParams.NETWORK.getName(), networkInterface.getNetworkName());
-                parameters.put(FragmentParams.DATACENTER.getName(),
+            new FieldUpdater<VmNetworkInterface, String>() {
+                @Override
+                public void update(int index, VmNetworkInterface networkInterface, String value) {
+                    Map<String, String> parameters = new HashMap<>();
+                    parameters.put(FragmentParams.NAME.getName(), networkInterface.getVnicProfileName());
+                    parameters.put(FragmentParams.NETWORK.getName(), networkInterface.getNetworkName());
+                    parameters.put(FragmentParams.DATACENTER.getName(),
                         templateListModel.getSelectedItem().getStoragePoolName());
-                getPlaceTransitionHandler().handlePlaceTransition(
+                    getPlaceTransitionHandler().handlePlaceTransition(
                         WebAdminApplicationPlaces.vnicProfileVmSubTabPlace, parameters);
-            }
-        }) {
-            @Override
-            public String getValue(VmNetworkInterface object) {
-                return object.getVnicProfileName();
-            }
-        };
+                }
+            }) {
+                @Override
+                public String getValue(VmNetworkInterface object) {
+                    return object.getVnicProfileName();
+                }
+            };
         getTable().addColumn(profileNameColumn, constants.profileNameInterface(), "150px"); //$NON-NLS-1$
 
         AbstractBooleanColumn<VmNetworkInterface> linkStateColumn =

@@ -51,7 +51,7 @@ public class CreateSnapshotForVmCommandTest extends BaseCommandTest {
     @InjectMocks
     private CreateSnapshotForVmCommand<CreateSnapshotForVmParameters> cmd =
             new CreateSnapshotForVmCommand<>
-                    (new CreateSnapshotForVmParameters(Guid.newGuid(), "", false), null);
+        (new CreateSnapshotForVmParameters(Guid.newGuid(), "", false), null);
 
     @Mock
     private VmValidator vmValidator;
@@ -125,7 +125,7 @@ public class CreateSnapshotForVmCommandTest extends BaseCommandTest {
     @Test
     public void testVMIsNotValid() {
         when(vmValidator.vmNotSavingRestoring()).thenReturn
-                (new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_VM_IS_SAVING_RESTORING));
+            (new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_VM_IS_SAVING_RESTORING));
         doReturn(getEmptyDiskList()).when(cmd).getDisksList();
         ValidateTestUtils.runAndAssertValidateFailure(cmd, EngineMessage.ACTION_TYPE_FAILED_VM_IS_SAVING_RESTORING);
     }
@@ -157,7 +157,7 @@ public class CreateSnapshotForVmCommandTest extends BaseCommandTest {
     @Test
     public void testVmDuringMigration() {
         doReturn(new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_MIGRATION_IN_PROGRESS)).when(vmValidator)
-                .vmNotDuringMigration();
+            .vmNotDuringMigration();
         doReturn(getEmptyDiskList()).when(cmd).getDisksList();
         ValidateTestUtils.runAndAssertValidateFailure(cmd, EngineMessage.ACTION_TYPE_FAILED_MIGRATION_IN_PROGRESS);
     }
@@ -166,19 +166,19 @@ public class CreateSnapshotForVmCommandTest extends BaseCommandTest {
     public void testSaveMemoryPciPassthroughFailure() {
         cmd.getParameters().setSaveMemory(true);
         doReturn(new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_VM_HAS_ATTACHED_PCI_HOST_DEVICES))
-                .when(vmValidator)
-                .vmNotHavingPciPassthroughDevices();
+            .when(vmValidator)
+            .vmNotHavingPciPassthroughDevices();
         doReturn(getEmptyDiskList()).when(cmd).getDisksList();
-        ValidateTestUtils.runAndAssertValidateFailure
-                (cmd, EngineMessage.ACTION_TYPE_FAILED_VM_HAS_ATTACHED_PCI_HOST_DEVICES);
+        ValidateTestUtils.runAndAssertValidateFailure(cmd,
+            EngineMessage.ACTION_TYPE_FAILED_VM_HAS_ATTACHED_PCI_HOST_DEVICES);
     }
 
     @Test
     public void testNoMemoryPciPassthroughSuccess() {
         cmd.getParameters().setSaveMemory(false);
         doReturn(new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_VM_HAS_ATTACHED_PCI_HOST_DEVICES))
-                .when(vmValidator)
-                .vmNotHavingPciPassthroughDevices();
+            .when(vmValidator)
+            .vmNotHavingPciPassthroughDevices();
         doReturn(getEmptyDiskList()).when(cmd).getDisksList();
         ValidateTestUtils.runAndAssertValidateSuccess(cmd);
     }
@@ -190,8 +190,8 @@ public class CreateSnapshotForVmCommandTest extends BaseCommandTest {
                 .when(vmValidator)
                 .vmNotHavingScsiPassthroughDevices();
         doReturn(getEmptyDiskList()).when(cmd).getDisksList();
-        ValidateTestUtils.runAndAssertValidateFailure
-                (cmd, EngineMessage.ACTION_TYPE_FAILED_VM_HAS_ATTACHED_SCSI_HOST_DEVICES);
+        ValidateTestUtils.runAndAssertValidateFailure(cmd,
+            EngineMessage.ACTION_TYPE_FAILED_VM_HAS_ATTACHED_SCSI_HOST_DEVICES);
     }
 
     @Test
@@ -211,8 +211,8 @@ public class CreateSnapshotForVmCommandTest extends BaseCommandTest {
                 .when(vmValidator)
                 .vmNotHavingNvdimmDevices();
         doReturn(getEmptyDiskList()).when(cmd).getDisksList();
-        ValidateTestUtils.runAndAssertValidateFailure
-                (cmd, EngineMessage.ACTION_TYPE_FAILED_VM_HAS_ATTACHED_NVDIMM_DEVICES);
+        ValidateTestUtils.runAndAssertValidateFailure(cmd,
+            EngineMessage.ACTION_TYPE_FAILED_VM_HAS_ATTACHED_NVDIMM_DEVICES);
     }
 
     @Test
@@ -341,8 +341,8 @@ public class CreateSnapshotForVmCommandTest extends BaseCommandTest {
         doReturn(Collections.emptyList()).when(cmd).getDisksList();
         doReturn(new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN)).when(multipleStorageDomainsValidator)
                 .allDomainsExistAndActive();
-        ValidateTestUtils.runAndAssertValidateFailure
-                (cmd, EngineMessage.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN);
+        ValidateTestUtils.runAndAssertValidateFailure(cmd,
+            EngineMessage.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN);
     }
 
     @Test

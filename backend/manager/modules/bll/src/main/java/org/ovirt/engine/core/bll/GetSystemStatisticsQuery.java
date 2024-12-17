@@ -85,7 +85,7 @@ public class GetSystemStatisticsQuery<P extends GetSystemStatisticsQueryParamete
 
     private int getActiveHostsStat() {
         String[] activeVdsStatuses =
-                {String.valueOf(VDSStatus.Up.getValue()),
+        {String.valueOf(VDSStatus.Up.getValue()),
                         String.valueOf(VDSStatus.PreparingForMaintenance.getValue())};
         return systemStatisticsDao.getSystemStatisticsValue(HOST_ENTITY_NAME,
                 StringUtils.join(activeVdsStatuses, COMMA_DELIMITER));

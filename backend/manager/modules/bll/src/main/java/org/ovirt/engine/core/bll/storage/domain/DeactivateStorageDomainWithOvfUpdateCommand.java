@@ -93,24 +93,24 @@ public class DeactivateStorageDomainWithOvfUpdateCommand<T extends DeactivateSto
         log.info("Command '{}' id '{}' executing step '{}'", getActionType(), getCommandId(),
                 getParameters().getNextCommandStep());
         switch (getParameters().getNextCommandStep()) {
-        case UPDATE_OVF_STORE:
-            getParameters().setCommandStep(DeactivateStorageDomainWithOvfUpdateStep.UPDATE_OVF_STORE);
-            runInternalAction(ActionType.UpdateOvfStoreForStorageDomain,
-                    createUpdateOvfStoreParams(),
-                    createStepsContext(StepEnum.UPDATE_OVF));
-            getParameters().setNextCommandStep(
-                    DeactivateStorageDomainWithOvfUpdateStep.DEACTIVATE_STORAGE_DOMAIN
-            );
-            break;
-        case DEACTIVATE_STORAGE_DOMAIN:
-            getParameters().setCommandStep(DeactivateStorageDomainWithOvfUpdateStep.DEACTIVATE_STORAGE_DOMAIN);
-            executeDeactivateCommand();
-            getParameters().setNextCommandStep(DeactivateStorageDomainWithOvfUpdateStep.COMPLETE);
-            break;
-        case COMPLETE:
-            getParameters().setCommandStep(DeactivateStorageDomainWithOvfUpdateStep.COMPLETE);
-            setCommandStatus(CommandStatus.SUCCEEDED);
-            return false;
+            case UPDATE_OVF_STORE:
+                getParameters().setCommandStep(DeactivateStorageDomainWithOvfUpdateStep.UPDATE_OVF_STORE);
+                runInternalAction(ActionType.UpdateOvfStoreForStorageDomain,
+                        createUpdateOvfStoreParams(),
+                        createStepsContext(StepEnum.UPDATE_OVF));
+                getParameters().setNextCommandStep(
+                        DeactivateStorageDomainWithOvfUpdateStep.DEACTIVATE_STORAGE_DOMAIN
+                );
+                break;
+            case DEACTIVATE_STORAGE_DOMAIN:
+                getParameters().setCommandStep(DeactivateStorageDomainWithOvfUpdateStep.DEACTIVATE_STORAGE_DOMAIN);
+                executeDeactivateCommand();
+                getParameters().setNextCommandStep(DeactivateStorageDomainWithOvfUpdateStep.COMPLETE);
+                break;
+            case COMPLETE:
+                getParameters().setCommandStep(DeactivateStorageDomainWithOvfUpdateStep.COMPLETE);
+                setCommandStatus(CommandStatus.SUCCEEDED);
+                return false;
         }
         persistCommandIfNeeded();
         return true;

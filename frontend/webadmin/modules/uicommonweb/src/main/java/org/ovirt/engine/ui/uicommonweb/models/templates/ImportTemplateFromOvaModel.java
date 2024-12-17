@@ -149,23 +149,23 @@ public class ImportTemplateFromOvaModel extends ImportTemplateFromExportDomainMo
         AsyncDataProvider.getInstance().getTemplateList(
                 createSearchPattern(externalTemplates),
                 new AsyncQuery<>(returnValue -> {
-                        UIConstants constants = ConstantsManager.getInstance().getConstants();
-                        List<ImportTemplateData> templateDataList = new ArrayList<>();
-                        List<VmTemplate> vmtList = returnValue.getReturnValue();
-                        for (VmTemplate template : externalTemplates) {
-                            ImportTemplateData templateData = new ImportTemplateData(template);
-                            boolean templateExistsInSystem = vmtList.contains(template);
-                            templateData.setExistsInSystem(templateExistsInSystem);
-                            if (templateExistsInSystem) {
-                                templateData.enforceClone(constants.importTemplateThatExistsInSystemMustClone());
-                            } else if (!template.isBaseTemplate() &&
-                                    vmtList.stream().anyMatch(t -> t.getId().equals(template.getBaseTemplateId()))) {
-                                templateData.enforceClone(constants.importTemplateWithoutBaseMustClone());
-                            }
-                            templateDataList.add(templateData);
+                    UIConstants constants = ConstantsManager.getInstance().getConstants();
+                    List<ImportTemplateData> templateDataList = new ArrayList<>();
+                    List<VmTemplate> vmtList = returnValue.getReturnValue();
+                    for (VmTemplate template : externalTemplates) {
+                        ImportTemplateData templateData = new ImportTemplateData(template);
+                        boolean templateExistsInSystem = vmtList.contains(template);
+                        templateData.setExistsInSystem(templateExistsInSystem);
+                        if (templateExistsInSystem) {
+                            templateData.enforceClone(constants.importTemplateThatExistsInSystemMustClone());
+                        } else if (!template.isBaseTemplate() &&
+                            vmtList.stream().anyMatch(t -> t.getId().equals(template.getBaseTemplateId()))) {
+                            templateData.enforceClone(constants.importTemplateWithoutBaseMustClone());
                         }
-                        setItems(templateDataList);
-                        withDataCenterLoaded(r -> doInit(), dataCenterId);
+                        templateDataList.add(templateData);
+                    }
+                    setItems(templateDataList);
+                    withDataCenterLoaded(r -> doInit(), dataCenterId);
                 }));
     }
 

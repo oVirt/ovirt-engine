@@ -30,17 +30,17 @@ public class GlusterVolumeSnapshotStatusCell extends AbstractCell<GlusterVolumeS
         ImageResource statusImage = null;
 
         switch (status) {
-        case ACTIVATED:
-            statusImage = resources.upImage();
-            break;
-        case DEACTIVATED:
-            statusImage = resources.downImage();
-            break;
-        case UNKNOWN:
-            statusImage = resources.questionMarkImage();
-            break;
-        default:
-            statusImage = resources.downImage();
+            case ACTIVATED:
+                statusImage = resources.upImage();
+                break;
+            case DEACTIVATED:
+                statusImage = resources.downImage();
+                break;
+            case UNKNOWN:
+                statusImage = resources.questionMarkImage();
+                break;
+            default:
+                statusImage = resources.downImage();
         }
 
         // Generate the HTML for the image:

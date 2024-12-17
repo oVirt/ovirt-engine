@@ -559,17 +559,17 @@ public class JsonRpcVdsServer implements IVdsServer {
         });
         FutureTask<Map<String, Object>> future = new FutureTask<Map<String, Object>>(callable) {
 
-                    @Override
-                    public boolean isDone() {
-                        if (callable.isDone()) {
-                            if (isPolicyReset) {
-                                updateHeartbeatPolicy(client.getClientRetryPolicy(), true);
-                            }
-                            return true;
+                @Override
+                public boolean isDone() {
+                    if (callable.isDone()) {
+                        if (isPolicyReset) {
+                            updateHeartbeatPolicy(client.getClientRetryPolicy(), true);
                         }
-                        return !callable.isCallableInvoked() && super.isDone();
+                        return true;
                     }
-                };
+                return !callable.isCallableInvoked() && super.isDone();
+                }
+        };
         ThreadPoolUtil.execute(future);
         return future;
     }
@@ -1057,11 +1057,11 @@ public class JsonRpcVdsServer implements IVdsServer {
 
         FutureTask<Map<String, Object>> future = new FutureTask<Map<String, Object>>(callable) {
 
-                    @Override
-                    public boolean isDone() {
-                        return callable.isDone();
-                    }
-                };
+                @Override
+                public boolean isDone() {
+                    return callable.isDone();
+                }
+        };
 
         ThreadPoolUtil.execute(future);
         return future;
@@ -2149,12 +2149,12 @@ public class JsonRpcVdsServer implements IVdsServer {
             String jobUUID) {
         JsonRpcRequest request =
                 new RequestBuilder("Host.convertExternalVm")
-        .withParameter("uri", uri)
-        .withParameter("username", username)
-        .withParameter("password", password)
-        .withParameter("vminfo", vm)
-        .withParameter("jobid", jobUUID)
-        .build();
+                .withParameter("uri", uri)
+                .withParameter("username", username)
+                .withParameter("password", password)
+                .withParameter("vminfo", vm)
+                .withParameter("jobid", jobUUID)
+                .build();
         Map<String, Object> response = new FutureMap(this.client, request);
         return new StatusOnlyReturn(response);
     }
@@ -2163,10 +2163,10 @@ public class JsonRpcVdsServer implements IVdsServer {
     public StatusOnlyReturn convertVmFromOva(String ovaPath, Map<String, Object> vm, String jobUUID) {
         JsonRpcRequest request =
                 new RequestBuilder("Host.convertExternalVmFromOva")
-        .withParameter("ova_path", ovaPath)
-        .withParameter("vminfo", vm)
-        .withParameter("jobid", jobUUID)
-        .build();
+                .withParameter("ova_path", ovaPath)
+                .withParameter("vminfo", vm)
+                .withParameter("jobid", jobUUID)
+                .build();
         Map<String, Object> response = new FutureMap(this.client, request);
         return new StatusOnlyReturn(response);
     }
@@ -2175,12 +2175,12 @@ public class JsonRpcVdsServer implements IVdsServer {
     public OvfReturn getConvertedVm(String jobUUID) {
         JsonRpcRequest request =
                 new RequestBuilder("Host.getConvertedVm")
-        .withParameter("jobid", jobUUID)
-        .build();
+                .withParameter("jobid", jobUUID)
+                .build();
         Map<String, Object> response =
                 new FutureMap(this.client, request)
-        .withResponseKey("ovf")
-        .withResponseType(String.class);
+                .withResponseKey("ovf")
+                .withResponseType(String.class);
         return new OvfReturn(response);
     }
 
@@ -2188,8 +2188,8 @@ public class JsonRpcVdsServer implements IVdsServer {
     public StatusOnlyReturn deleteV2VJob(String jobUUID) {
         JsonRpcRequest request =
                 new RequestBuilder("Host.deleteV2VJob")
-        .withParameter("jobid", jobUUID)
-        .build();
+                .withParameter("jobid", jobUUID)
+                .build();
         Map<String, Object> response = new FutureMap(this.client, request);
         return new StatusOnlyReturn(response);
     }
@@ -2198,8 +2198,8 @@ public class JsonRpcVdsServer implements IVdsServer {
     public StatusOnlyReturn abortV2VJob(String jobUUID) {
         JsonRpcRequest request =
                 new RequestBuilder("Host.abortV2VJob")
-        .withParameter("jobid", jobUUID)
-        .build();
+                .withParameter("jobid", jobUUID)
+                .build();
         Map<String, Object> response = new FutureMap(this.client, request);
         return new StatusOnlyReturn(response);
     }

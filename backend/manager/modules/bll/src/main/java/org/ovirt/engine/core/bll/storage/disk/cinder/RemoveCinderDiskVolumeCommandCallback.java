@@ -36,9 +36,9 @@ public class RemoveCinderDiskVolumeCommandCallback extends ConcurrentChildComman
         ImageStatus imageStatus = checkImageStatus(removedVolume, removeCinderDiskVolumeCommand);
         if (imageStatus != null && imageStatus != removedVolume.getImageStatus()) {
             switch (imageStatus) {
-            case ILLEGAL:
-                setCommandEndStatus(command, true, status, childCmdIds);
-                break;
+                case ILLEGAL:
+                    setCommandEndStatus(command, true, status, childCmdIds);
+                    break;
             }
         }
     }

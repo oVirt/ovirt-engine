@@ -251,40 +251,40 @@ public class VmInfoBuildUtils {
             return;
         }
         switch (cinderVolumeDriver) {
-        case RBD:
-            Map<String, Object> connectionInfoData = cinderDisk.getCinderConnectionInfo().getData();
-            struct.put(VdsProperties.Path, connectionInfoData.get("name"));
-            struct.put(VdsProperties.Format, VolumeFormat.RAW.toString().toLowerCase());
-            struct.put(VdsProperties.PropagateErrors, PropagateErrors.Off.toString().toLowerCase());
-            struct.put(VdsProperties.Protocol, cinderDisk.getCinderConnectionInfo().getDriverVolumeType());
-            struct.put(VdsProperties.DiskType, VdsProperties.NETWORK);
+            case RBD:
+                Map<String, Object> connectionInfoData = cinderDisk.getCinderConnectionInfo().getData();
+                struct.put(VdsProperties.Path, connectionInfoData.get("name"));
+                struct.put(VdsProperties.Format, VolumeFormat.RAW.toString().toLowerCase());
+                struct.put(VdsProperties.PropagateErrors, PropagateErrors.Off.toString().toLowerCase());
+                struct.put(VdsProperties.Protocol, cinderDisk.getCinderConnectionInfo().getDriverVolumeType());
+                struct.put(VdsProperties.DiskType, VdsProperties.NETWORK);
 
-            List<String> hostAddresses = (ArrayList<String>) connectionInfoData.get("hosts");
-            List<String> hostPorts = (ArrayList<String>) connectionInfoData.get("ports");
-            List<Map<String, Object>> hosts = new ArrayList<>();
-            // Looping over hosts addresses to create 'hosts' element
-            // (Cinder should ensure that the addresses and ports lists are synced in order).
-            for (int i = 0; i < hostAddresses.size(); i++) {
-                Map<String, Object> hostMap = new HashMap<>();
-                hostMap.put(VdsProperties.NetworkDiskName, hostAddresses.get(i));
-                hostMap.put(VdsProperties.NetworkDiskPort, hostPorts.get(i));
-                hostMap.put(VdsProperties.NetworkDiskTransport, VdsProperties.Tcp);
-                hosts.add(hostMap);
-            }
-            struct.put(VdsProperties.NetworkDiskHosts, hosts);
+                List<String> hostAddresses = (ArrayList<String>) connectionInfoData.get("hosts");
+                List<String> hostPorts = (ArrayList<String>) connectionInfoData.get("ports");
+                List<Map<String, Object>> hosts = new ArrayList<>();
+                // Looping over hosts addresses to create 'hosts' element
+                // (Cinder should ensure that the addresses and ports lists are synced in order).
+                for (int i = 0; i < hostAddresses.size(); i++) {
+                    Map<String, Object> hostMap = new HashMap<>();
+                    hostMap.put(VdsProperties.NetworkDiskName, hostAddresses.get(i));
+                    hostMap.put(VdsProperties.NetworkDiskPort, hostPorts.get(i));
+                    hostMap.put(VdsProperties.NetworkDiskTransport, VdsProperties.Tcp);
+                    hosts.add(hostMap);
+                }
+                struct.put(VdsProperties.NetworkDiskHosts, hosts);
 
-            boolean authEnabled = (boolean) connectionInfoData.get(VdsProperties.CinderAuthEnabled);
-            String secretType = (String) connectionInfoData.get(VdsProperties.CinderSecretType);
-            String authUsername = (String) connectionInfoData.get(VdsProperties.CinderAuthUsername);
-            String secretUuid = (String) connectionInfoData.get(VdsProperties.CinderSecretUuid);
-            if (authEnabled) {
-                Map<String, Object> authMap = new HashMap<>();
-                authMap.put(VdsProperties.NetworkDiskAuthSecretType, secretType);
-                authMap.put(VdsProperties.NetworkDiskAuthUsername, authUsername);
-                authMap.put(VdsProperties.NetworkDiskAuthSecretUuid, secretUuid);
-                struct.put(VdsProperties.NetworkDiskAuth, authMap);
-            }
-            break;
+                boolean authEnabled = (boolean) connectionInfoData.get(VdsProperties.CinderAuthEnabled);
+                String secretType = (String) connectionInfoData.get(VdsProperties.CinderSecretType);
+                String authUsername = (String) connectionInfoData.get(VdsProperties.CinderAuthUsername);
+                String secretUuid = (String) connectionInfoData.get(VdsProperties.CinderSecretUuid);
+                if (authEnabled) {
+                    Map<String, Object> authMap = new HashMap<>();
+                    authMap.put(VdsProperties.NetworkDiskAuthSecretType, secretType);
+                    authMap.put(VdsProperties.NetworkDiskAuthUsername, authUsername);
+                    authMap.put(VdsProperties.NetworkDiskAuthSecretUuid, secretUuid);
+                    struct.put(VdsProperties.NetworkDiskAuth, authMap);
+                }
+                break;
         }
     }
 
@@ -885,12 +885,12 @@ public class VmInfoBuildUtils {
 
     public String getEmulatedMachineByClusterArch(ArchitectureType arch) {
         switch (arch) {
-        case ppc64:
-        case ppc64le:
-            return "pseries";
-        case x86_64:
-        default:
-            return "pc";
+            case ppc64:
+            case ppc64le:
+                return "pseries";
+            case x86_64:
+            default:
+                return "pc";
         }
     }
 
@@ -971,16 +971,16 @@ public class VmInfoBuildUtils {
 
     public String diskInterfaceToDevName(String iface) {
         switch (iface) {
-        case "virtio":
-            return "vd";
-        case "fdc":
-            return "fd";
-        case "scsi":
-        case "sata":
-            return "sd";
-        case "ide":
-        default:
-            return "hd";
+            case "virtio":
+                return "vd";
+            case "fdc":
+                return "fd";
+            case "scsi":
+            case "sata":
+                return "sd";
+            case "ide":
+            default:
+                return "hd";
         }
     }
 
@@ -1466,38 +1466,38 @@ public class VmInfoBuildUtils {
         Integer defaultControllerIndex = controllerIndexMap.get(diskInterface);
 
         switch (diskInterface) {
-        case SPAPR_VSCSI:
-            if (StringUtils.isEmpty(device.getAddress())) {
-                Integer unitIndex = vmDeviceSpaprVscsiUnitMap.get(defaultControllerIndex).get(device);
-                device.setAddress(createAddressForScsiDisk(defaultControllerIndex, unitIndex).toString());
-            }
-            break;
-        case VirtIO_SCSI:
-            Integer unitIndex = null;
-            int controllerIndex = defaultControllerIndex;
-            VmDevice deviceFromMap = device;
-            for (Map.Entry<Integer, Map<VmDevice, Integer>> controllerToDevices : vmDeviceVirtioScsiUnitMap.entrySet()) {
-                Optional<VmDevice> maybeDeviceFromMap = controllerToDevices.getValue().keySet().stream()
-                        .filter(d -> d.getId().equals(device.getId()))
-                        .findFirst();
-                if (maybeDeviceFromMap.isPresent()) {
-                    deviceFromMap = maybeDeviceFromMap.get();
-                    controllerIndex = controllerToDevices.getKey();
-                    unitIndex = controllerToDevices.getValue().get(deviceFromMap);
-                    break;
+            case SPAPR_VSCSI:
+                if (StringUtils.isEmpty(device.getAddress())) {
+                    Integer unitIndex = vmDeviceSpaprVscsiUnitMap.get(defaultControllerIndex).get(device);
+                    device.setAddress(createAddressForScsiDisk(defaultControllerIndex, unitIndex).toString());
                 }
-            }
+                break;
+            case VirtIO_SCSI:
+                Integer unitIndex = null;
+                int controllerIndex = defaultControllerIndex;
+                VmDevice deviceFromMap = device;
+                for (Map.Entry<Integer, Map<VmDevice, Integer>> controllerToDevices : vmDeviceVirtioScsiUnitMap.entrySet()) {
+                    Optional<VmDevice> maybeDeviceFromMap = controllerToDevices.getValue().keySet().stream()
+                            .filter(d -> d.getId().equals(device.getId()))
+                            .findFirst();
+                    if (maybeDeviceFromMap.isPresent()) {
+                        deviceFromMap = maybeDeviceFromMap.get();
+                        controllerIndex = controllerToDevices.getKey();
+                        unitIndex = controllerToDevices.getValue().get(deviceFromMap);
+                        break;
+                    }
+                }
 
-            if (StringUtils.isEmpty(deviceFromMap.getAddress())) {
-                if (unitIndex == null) {
-                    // should never get here, but for safety having this fallback and generating a new unit id
-                    unitIndex = getAvailableUnitForScsiDisk(vmDeviceVirtioScsiUnitMap.get(controllerIndex), false, false);
-                    log.debug("The unit was null for disk '{}' on controller '{}', generating a new one '{}'", disk.getId(), controllerIndex, unitIndex);
+                if (StringUtils.isEmpty(deviceFromMap.getAddress())) {
+                    if (unitIndex == null) {
+                        // should never get here, but for safety having this fallback and generating a new unit id
+                        unitIndex = getAvailableUnitForScsiDisk(vmDeviceVirtioScsiUnitMap.get(controllerIndex), false, false);
+                        log.debug("The unit was null for disk '{}' on controller '{}', generating a new one '{}'", disk.getId(), controllerIndex, unitIndex);
+                    }
+                    device.setAddress(createAddressForScsiDisk(controllerIndex, unitIndex).toString());
                 }
-                device.setAddress(createAddressForScsiDisk(controllerIndex, unitIndex).toString());
-            }
-            break;
-        default:
+                break;
+            default:
         }
     }
 
@@ -1530,10 +1530,10 @@ public class VmInfoBuildUtils {
 
     public int getDefaultHugepageSize(VM vm) {
         switch (vm.getClusterArch().getFamily()) {
-        case ppc:
-            return DEFAULT_HUGEPAGESIZE_PPC64LE;
-        default:
-            return DEFAULT_HUGEPAGESIZE_X86_64;
+            case ppc:
+                return DEFAULT_HUGEPAGESIZE_PPC64LE;
+            default:
+                return DEFAULT_HUGEPAGESIZE_X86_64;
         }
     }
 

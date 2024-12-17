@@ -115,7 +115,7 @@ public class CurrentFilter implements Filter {
             ConfigCommon.defaultConfigurationVersion
         );
         parameters.setSessionId(sessionId);
-        QueryReturnValue result = backend.runPublicQuery( QueryType.GetConfigurationValue, parameters);
+        QueryReturnValue result = backend.runPublicQuery(QueryType.GetConfigurationValue, parameters);
         return ApplicationMode.from(result.getReturnValue());
     }
 
@@ -133,21 +133,21 @@ public class CurrentFilter implements Filter {
         buffer.append(host);
         int port = request.getServerPort();
         switch (scheme) {
-        case "http":
-            if (port != 80) {
+            case "http":
+                if (port != 80) {
+                    buffer.append(":");
+                    buffer.append(port);
+                }
+                break;
+            case "https":
+                if (port != 443) {
+                    buffer.append(":");
+                    buffer.append(port);
+                }
+                break;
+            default:
                 buffer.append(":");
                 buffer.append(port);
-            }
-            break;
-        case "https":
-            if (port != 443) {
-                buffer.append(":");
-                buffer.append(port);
-            }
-            break;
-        default:
-            buffer.append(":");
-            buffer.append(port);
         }
         return buffer.toString();
     }

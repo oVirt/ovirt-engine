@@ -236,9 +236,9 @@ public class HotPlugDiskToVmCommandTest extends BaseCommandTest {
     protected void mockInterfaceList() {
         ArrayList<String> diskInterfaces = new ArrayList<>(
                 Arrays.asList(new String[]{
-                        "IDE",
-                        "VirtIO",
-                        "VirtIO_SCSI"
+                    "IDE",
+                    "VirtIO",
+                    "VirtIO_SCSI"
                 }));
 
         when(osRepository.getDiskInterfaces(anyInt(), any(), any())).thenReturn(diskInterfaces);

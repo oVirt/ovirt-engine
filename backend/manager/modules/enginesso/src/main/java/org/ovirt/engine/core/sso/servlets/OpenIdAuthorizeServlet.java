@@ -82,17 +82,17 @@ public class OpenIdAuthorizeServlet extends OAuthAuthorizeServlet {
         log.debug("Entered login queryString: {}", request.getQueryString());
 
         switch (ssoSession.getStatus()) {
-        case unauthenticated:
-            if (StringUtils.isNotEmpty(ssoSession.getAccessToken()) &&
-                    StringUtils.isNotEmpty(ssoSession.getAuthorizationCode())) {
-                ssoSession = (SsoSession) ssoSession.clone();
-                request.getSession().setAttribute(SsoConstants.OVIRT_SSO_SESSION, ssoSession);
-            }
-            break;
-        case authenticated:
-            ssoSession.setTokenIssued(false);
-            ssoSession.setActive(true);
-            break;
+            case unauthenticated:
+                if (StringUtils.isNotEmpty(ssoSession.getAccessToken()) &&
+                        StringUtils.isNotEmpty(ssoSession.getAuthorizationCode())) {
+                    ssoSession = (SsoSession) ssoSession.clone();
+                    request.getSession().setAttribute(SsoConstants.OVIRT_SSO_SESSION, ssoSession);
+                }
+                break;
+            case authenticated:
+                ssoSession.setTokenIssued(false);
+                ssoSession.setActive(true);
+                break;
         }
 
         super.login(request, response, ssoSession);

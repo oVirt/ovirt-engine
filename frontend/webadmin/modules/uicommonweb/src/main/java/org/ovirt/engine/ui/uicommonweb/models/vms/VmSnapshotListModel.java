@@ -534,7 +534,7 @@ public class VmSnapshotListModel extends SearchableListModel<VM, Snapshot> {
             model.setHashName("commit_snapshot"); //$NON-NLS-1$
             model.setMessage(ConstantsManager.getInstance()
                     .getMessages()
-                    .areYouSureYouWantToCommitSnapshot( DateTimeFormat.getFormat(DATE_FORMAT).format(snapshot.getCreationDate()),
+                    .areYouSureYouWantToCommitSnapshot(DateTimeFormat.getFormat(DATE_FORMAT).format(snapshot.getCreationDate()),
                             snapshot.getDescription()));
 
             model.getCommands().add(UICommand.createDefaultOkUiCommand("OnCommit", this)); //$NON-NLS-1$

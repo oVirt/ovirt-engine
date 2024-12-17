@@ -340,14 +340,13 @@ public class VolumeGeoRepListModel extends SearchableListModel<GlusterVolumeEnti
                         geoRepConfigModel.setMessage(ConstantsManager.getInstance().getConstants().errorInFetchingVolumeOptionList());
                     } else {
                         List<GlusterGeoRepSessionConfiguration> sessionConfigs = returnValue.getReturnValue();
-                        List<EntityModel<Pair<Boolean, GlusterGeoRepSessionConfiguration>>> sessionConfigEntities =
-                                new ArrayList<>();
-                                for (GlusterGeoRepSessionConfiguration currentSession : sessionConfigs) {
-                                    sessionConfigEntities.add(new EntityModel<>(new Pair<>(false,
-                                            currentSession)));
-                                }
-                                geoRepConfigModel.getConfigsModel().setItems(sessionConfigEntities);
-                                geoRepConfigModel.copyConfigsToMap(sessionConfigs);
+                        List<EntityModel<Pair<Boolean, GlusterGeoRepSessionConfiguration>>> sessionConfigEntities = new ArrayList<>();
+                        for (GlusterGeoRepSessionConfiguration currentSession : sessionConfigs) {
+                            sessionConfigEntities.add(new EntityModel<>(new Pair<>(false,
+                                currentSession)));
+                        }
+                        geoRepConfigModel.getConfigsModel().setItems(sessionConfigEntities);
+                        geoRepConfigModel.copyConfigsToMap(sessionConfigs);
                     }
                 }));
     }
@@ -397,7 +396,7 @@ public class VolumeGeoRepListModel extends SearchableListModel<GlusterVolumeEnti
                 parameters,
                 callbacks,
                 result -> fetchConfigForSession(geoRepConfigModel.getGeoRepSession()),
-        this);
+            this);
     }
 
     private void addUICommandsToConfigWindow(GlusterVolumeGeoReplicationSessionConfigModel geoRepConfigModel) {
@@ -594,8 +593,7 @@ public class VolumeGeoRepListModel extends SearchableListModel<GlusterVolumeEnti
                 }
             }
         },
-        this,
-        false);
+            this, false);
     }
 
     private void setErrorMessage(ActionReturnValue result, GlusterVolumeGeoRepActionConfirmationModel cModel) {

@@ -128,7 +128,7 @@ public class StorageQosMetricParametersModel extends Model {
 
     private void validateValue(EntityModel<String> entity, Integer maxValue) {
         entity.validateEntity(new IValidation[] {
-                new IntegerValidation(0, maxValue) });
+            new IntegerValidation(0, maxValue) });
     }
 
     @Override
@@ -162,8 +162,8 @@ public class StorageQosMetricParametersModel extends Model {
     private void updateChangeability() {
         //Suppress update of changeability when entities weren't constructed yet.
         if (getChoiceGroupNone() == null || getChoiceGroupNone().getEntity() == null ||
-           getChoiceGroupTotal() == null || getChoiceGroupTotal().getEntity() == null ||
-           getChoiceGroupReadWrite() == null || getChoiceGroupReadWrite().getEntity() == null) {
+            getChoiceGroupTotal() == null || getChoiceGroupTotal().getEntity() == null ||
+            getChoiceGroupReadWrite() == null || getChoiceGroupReadWrite().getEntity() == null) {
             return;
         }
 

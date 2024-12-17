@@ -73,18 +73,18 @@ public class VmJobDaoImpl extends MassOperationsGenericDao<VmJob, Guid> implemen
         VmJobType jobType = VmJobType.forValue(rs.getInt("job_type"));
 
         switch (jobType) {
-        case BLOCK:
-            VmBlockJob blockJob = new VmBlockJob();
-            blockJob.setBlockJobType(VmBlockJobType.forValue(rs.getInt("block_job_type")));
-            blockJob.setBandwidth(rs.getLong("bandwidth"));
-            blockJob.setCursorCur(rs.getLong("cursor_cur"));
-            blockJob.setCursorEnd(rs.getLong("cursor_end"));
-            blockJob.setImageGroupId(getGuidDefaultEmpty(rs, "image_group_id"));
-            entity = blockJob;
-            break;
-        default:
-            entity = new VmJob();
-            break;
+            case BLOCK:
+                VmBlockJob blockJob = new VmBlockJob();
+                blockJob.setBlockJobType(VmBlockJobType.forValue(rs.getInt("block_job_type")));
+                blockJob.setBandwidth(rs.getLong("bandwidth"));
+                blockJob.setCursorCur(rs.getLong("cursor_cur"));
+                blockJob.setCursorEnd(rs.getLong("cursor_end"));
+                blockJob.setImageGroupId(getGuidDefaultEmpty(rs, "image_group_id"));
+                entity = blockJob;
+                break;
+            default:
+                entity = new VmJob();
+                break;
         }
 
         entity.setId(getGuidDefaultEmpty(rs, "vm_job_id"));

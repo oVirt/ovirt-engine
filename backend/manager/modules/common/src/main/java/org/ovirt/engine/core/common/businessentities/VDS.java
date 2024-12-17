@@ -1607,17 +1607,17 @@ public class VDS implements Queryable, BusinessEntityWithStatus<Guid, VDSStatus>
         boolean result = false;
 
         switch (this.getStatus()) {
-        case Down:
-        case InstallFailed:
-        case Maintenance:
-        case NonOperational:
-        case NonResponsive:
-        case Kdumping:  // it should happen only after restart when host is stuck in status Kdumping
-            result = true;
-            break;
+            case Down:
+            case InstallFailed:
+            case Maintenance:
+            case NonOperational:
+            case NonResponsive:
+            case Kdumping:  // it should happen only after restart when host is stuck in status Kdumping
+                result = true;
+                break;
 
-        default:
-            break;
+            default:
+                break;
         }
 
         return result;

@@ -256,7 +256,7 @@ public class SessionDataContainer {
                         "Session has expired for principal %1$s",
                         getUserName(entry.getKey()));
                 if (sessionValid) {
-                   SsoOAuthServiceUtils.revoke((String) sessionMap.get(SSO_ACCESS_TOKEN_PARAMETER_NAME), "");
+                    SsoOAuthServiceUtils.revoke((String) sessionMap.get(SSO_ACCESS_TOKEN_PARAMETER_NAME), "");
                 }
             }
         }
@@ -450,7 +450,7 @@ public class SessionDataContainer {
                 getPrincipalName(sessionId),
                 message,
                 msgArgs
-                );
+        );
         engineSessionDao.remove(getEngineSessionSeqId(sessionId));
         sessionInfoMap.remove(sessionId);
     }

@@ -52,14 +52,14 @@ public class SetNonOperationalVdsCommand<T extends SetNonOperationalVdsParameter
             ThreadPoolUtil.execute(() -> {
                 // migrate vms according to cluster migrateOnError option
                 switch (getCluster().getMigrateOnError()) {
-                case YES:
-                    migrateAllVms(getExecutionContext());
-                    break;
-                case HA_ONLY:
-                    migrateAllVms(getExecutionContext(), true);
-                    break;
-                default:
-                    break;
+                    case YES:
+                        migrateAllVms(getExecutionContext());
+                        break;
+                    case HA_ONLY:
+                        migrateAllVms(getExecutionContext(), true);
+                        break;
+                    default:
+                        break;
                 }
             });
         }
@@ -105,48 +105,48 @@ public class SetNonOperationalVdsCommand<T extends SetNonOperationalVdsParameter
             addCustomValue(e.getKey(), e.getValue());
         }
         switch (getParameters().getNonOperationalReason()) {
-        case NETWORK_UNREACHABLE:
-            return getSucceeded() ? AuditLogType.VDS_SET_NONOPERATIONAL_NETWORK
-                    : AuditLogType.VDS_SET_NONOPERATIONAL_FAILED;
-        case STORAGE_DOMAIN_UNREACHABLE:
-            return getSucceeded() ? AuditLogType.VDS_SET_NONOPERATIONAL_DOMAIN
-                    : AuditLogType.VDS_SET_NONOPERATIONAL_DOMAIN_FAILED;
-        case TIMEOUT_RECOVERING_FROM_CRASH:
-            return AuditLogType.VDS_RECOVER_FAILED;
-        case KVM_NOT_RUNNING:
-            return AuditLogType.VDS_RUN_IN_NO_KVM_MODE;
-        case VERSION_INCOMPATIBLE_WITH_CLUSTER:
-            return AuditLogType.VDS_VERSION_NOT_SUPPORTED_FOR_CLUSTER;
-        case CLUSTER_VERSION_INCOMPATIBLE_WITH_CLUSTER:
-            return AuditLogType.VDS_CLUSTER_VERSION_NOT_SUPPORTED;
-        case CPU_TYPE_UNSUPPORTED_IN_THIS_CLUSTER_VERSION:
-            return AuditLogType.CPU_TYPE_UNSUPPORTED_IN_THIS_CLUSTER_VERSION;
-        case VM_NETWORK_IS_BRIDGELESS:
-            return AuditLogType.VDS_SET_NON_OPERATIONAL_VM_NETWORK_IS_BRIDGELESS;
-        case GLUSTER_COMMAND_FAILED:
-            return AuditLogType.GLUSTER_COMMAND_FAILED;
-        case GLUSTER_HOST_UUID_NOT_FOUND:
-            return AuditLogType.GLUSTER_HOST_UUID_NOT_FOUND;
-        case GLUSTER_HOST_UUID_ALREADY_EXISTS:
-            return AuditLogType.GLUSTER_HOST_UUID_ALREADY_EXISTS;
-        case EMULATED_MACHINES_INCOMPATIBLE_WITH_CLUSTER:
-            return AuditLogType.EMULATED_MACHINES_INCOMPATIBLE_WITH_CLUSTER;
-        case EMULATED_MACHINES_INCOMPATIBLE_WITH_CLUSTER_LEVEL:
+            case NETWORK_UNREACHABLE:
+                return getSucceeded() ? AuditLogType.VDS_SET_NONOPERATIONAL_NETWORK
+                        : AuditLogType.VDS_SET_NONOPERATIONAL_FAILED;
+            case STORAGE_DOMAIN_UNREACHABLE:
+                return getSucceeded() ? AuditLogType.VDS_SET_NONOPERATIONAL_DOMAIN
+                        : AuditLogType.VDS_SET_NONOPERATIONAL_DOMAIN_FAILED;
+            case TIMEOUT_RECOVERING_FROM_CRASH:
+                return AuditLogType.VDS_RECOVER_FAILED;
+            case KVM_NOT_RUNNING:
+                return AuditLogType.VDS_RUN_IN_NO_KVM_MODE;
+            case VERSION_INCOMPATIBLE_WITH_CLUSTER:
+                return AuditLogType.VDS_VERSION_NOT_SUPPORTED_FOR_CLUSTER;
+            case CLUSTER_VERSION_INCOMPATIBLE_WITH_CLUSTER:
+                return AuditLogType.VDS_CLUSTER_VERSION_NOT_SUPPORTED;
+            case CPU_TYPE_UNSUPPORTED_IN_THIS_CLUSTER_VERSION:
+                return AuditLogType.CPU_TYPE_UNSUPPORTED_IN_THIS_CLUSTER_VERSION;
+            case VM_NETWORK_IS_BRIDGELESS:
+                return AuditLogType.VDS_SET_NON_OPERATIONAL_VM_NETWORK_IS_BRIDGELESS;
+            case GLUSTER_COMMAND_FAILED:
+                return AuditLogType.GLUSTER_COMMAND_FAILED;
+            case GLUSTER_HOST_UUID_NOT_FOUND:
+                return AuditLogType.GLUSTER_HOST_UUID_NOT_FOUND;
+            case GLUSTER_HOST_UUID_ALREADY_EXISTS:
+                return AuditLogType.GLUSTER_HOST_UUID_ALREADY_EXISTS;
+            case EMULATED_MACHINES_INCOMPATIBLE_WITH_CLUSTER:
+                return AuditLogType.EMULATED_MACHINES_INCOMPATIBLE_WITH_CLUSTER;
+            case EMULATED_MACHINES_INCOMPATIBLE_WITH_CLUSTER_LEVEL:
                 return AuditLogType.EMULATED_MACHINES_INCOMPATIBLE_WITH_CLUSTER_LEVEL;
-        case RNG_SOURCES_INCOMPATIBLE_WITH_CLUSTER:
-            return AuditLogType.RNG_SOURCES_INCOMPATIBLE_WITH_CLUSTER;
-        case MIXING_RHEL_VERSIONS_IN_CLUSTER:
-            return AuditLogType.MIXING_RHEL_VERSIONS_IN_CLUSTER;
-        case UNTRUSTED:
-            return AuditLogType.VDS_UNTRUSTED;
-        case HOST_FEATURES_INCOMPATIBILE_WITH_CLUSTER:
-            return AuditLogType.HOST_FEATURES_INCOMPATIBILE_WITH_CLUSTER;
-        case LIBRBD_PACKAGE_NOT_AVAILABLE:
-            return AuditLogType.NO_LIBRBD_PACKAGE_AVAILABLE_ON_VDS;
-        case VDS_CANNOT_CONNECT_TO_GLUSTERFS:
-            return AuditLogType.VDS_CANNOT_CONNECT_TO_GLUSTERFS;
-        default:
-            return getSucceeded() ? AuditLogType.VDS_SET_NONOPERATIONAL : AuditLogType.VDS_SET_NONOPERATIONAL_FAILED;
+            case RNG_SOURCES_INCOMPATIBLE_WITH_CLUSTER:
+                return AuditLogType.RNG_SOURCES_INCOMPATIBLE_WITH_CLUSTER;
+            case MIXING_RHEL_VERSIONS_IN_CLUSTER:
+                return AuditLogType.MIXING_RHEL_VERSIONS_IN_CLUSTER;
+            case UNTRUSTED:
+                return AuditLogType.VDS_UNTRUSTED;
+            case HOST_FEATURES_INCOMPATIBILE_WITH_CLUSTER:
+                return AuditLogType.HOST_FEATURES_INCOMPATIBILE_WITH_CLUSTER;
+            case LIBRBD_PACKAGE_NOT_AVAILABLE:
+                return AuditLogType.NO_LIBRBD_PACKAGE_AVAILABLE_ON_VDS;
+            case VDS_CANNOT_CONNECT_TO_GLUSTERFS:
+                return AuditLogType.VDS_CANNOT_CONNECT_TO_GLUSTERFS;
+            default:
+                return getSucceeded() ? AuditLogType.VDS_SET_NONOPERATIONAL : AuditLogType.VDS_SET_NONOPERATIONAL_FAILED;
         }
     }
 }

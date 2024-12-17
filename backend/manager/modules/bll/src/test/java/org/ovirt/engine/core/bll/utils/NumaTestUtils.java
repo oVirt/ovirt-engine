@@ -27,13 +27,13 @@ public class NumaTestUtils {
     }
 
     public static VmNumaNode createVmNumaNodeWithId(int index, Guid guid) {
-       final VmNumaNode numaNode = createVmNumaNode(index);
+        final VmNumaNode numaNode = createVmNumaNode(index);
         numaNode.setId(guid);
         return numaNode;
     }
 
     public static VmNumaNode createVmNumaNodeWithId(int index, List<VdsNumaNode> vdsNumaNodes, Guid guid) {
-       final VmNumaNode numaNode = createVmNumaNode(index, vdsNumaNodes);
+        final VmNumaNode numaNode = createVmNumaNode(index, vdsNumaNodes);
         numaNode.setId(guid);
         return numaNode;
     }

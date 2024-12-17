@@ -131,26 +131,26 @@ public class GlusterVolumeMapper {
             GlusterVolumeType glusterVolumeType,
             org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeType template) {
         switch (glusterVolumeType) {
-        case DISTRIBUTE:
-            return org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeType.DISTRIBUTE;
-        case REPLICATE:
-            return org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeType.REPLICATE;
-        case DISTRIBUTED_REPLICATE:
-            return org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeType.DISTRIBUTED_REPLICATE;
-        case STRIPE:
-            return org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeType.STRIPE;
-        case DISTRIBUTED_STRIPE:
-            return org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeType.DISTRIBUTED_STRIPE;
-        case STRIPED_REPLICATE:
-            return org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeType.STRIPED_REPLICATE;
-        case DISTRIBUTED_STRIPED_REPLICATE:
-            return org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeType.DISTRIBUTED_STRIPED_REPLICATE;
-        case DISPERSE:
-            return org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeType.DISPERSE;
-        case DISTRIBUTED_DISPERSE:
-            return org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeType.DISTRIBUTED_DISPERSE;
-        default:
-            return null;
+            case DISTRIBUTE:
+                return org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeType.DISTRIBUTE;
+            case REPLICATE:
+                return org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeType.REPLICATE;
+            case DISTRIBUTED_REPLICATE:
+                return org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeType.DISTRIBUTED_REPLICATE;
+            case STRIPE:
+                return org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeType.STRIPE;
+            case DISTRIBUTED_STRIPE:
+                return org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeType.DISTRIBUTED_STRIPE;
+            case STRIPED_REPLICATE:
+                return org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeType.STRIPED_REPLICATE;
+            case DISTRIBUTED_STRIPED_REPLICATE:
+                return org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeType.DISTRIBUTED_STRIPED_REPLICATE;
+            case DISPERSE:
+                return org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeType.DISPERSE;
+            case DISTRIBUTED_DISPERSE:
+                return org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeType.DISTRIBUTED_DISPERSE;
+            default:
+                return null;
         }
     }
 
@@ -158,26 +158,26 @@ public class GlusterVolumeMapper {
     public static GlusterVolumeType map(org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeType glusterVolumeType,
             GlusterVolumeType template) {
         switch (glusterVolumeType) {
-        case DISTRIBUTE:
-            return GlusterVolumeType.DISTRIBUTE;
-        case REPLICATE:
-            return GlusterVolumeType.REPLICATE;
-        case DISTRIBUTED_REPLICATE:
-            return GlusterVolumeType.DISTRIBUTED_REPLICATE;
-        case STRIPE:
-            return GlusterVolumeType.STRIPE;
-        case DISTRIBUTED_STRIPE:
-            return GlusterVolumeType.DISTRIBUTED_STRIPE;
-        case STRIPED_REPLICATE:
-            return GlusterVolumeType.STRIPED_REPLICATE;
-        case DISTRIBUTED_STRIPED_REPLICATE:
-            return GlusterVolumeType.DISTRIBUTED_STRIPED_REPLICATE;
-        case DISPERSE:
-            return GlusterVolumeType.DISPERSE;
-        case DISTRIBUTED_DISPERSE:
-            return GlusterVolumeType.DISTRIBUTED_DISPERSE;
-        default:
-            return null;
+            case DISTRIBUTE:
+                return GlusterVolumeType.DISTRIBUTE;
+            case REPLICATE:
+                return GlusterVolumeType.REPLICATE;
+            case DISTRIBUTED_REPLICATE:
+                return GlusterVolumeType.DISTRIBUTED_REPLICATE;
+            case STRIPE:
+                return GlusterVolumeType.STRIPE;
+            case DISTRIBUTED_STRIPE:
+                return GlusterVolumeType.DISTRIBUTED_STRIPE;
+            case STRIPED_REPLICATE:
+                return GlusterVolumeType.STRIPED_REPLICATE;
+            case DISTRIBUTED_STRIPED_REPLICATE:
+                return GlusterVolumeType.DISTRIBUTED_STRIPED_REPLICATE;
+            case DISPERSE:
+                return GlusterVolumeType.DISPERSE;
+            case DISTRIBUTED_DISPERSE:
+                return GlusterVolumeType.DISTRIBUTED_DISPERSE;
+            default:
+                return null;
         }
     }
 
@@ -186,12 +186,12 @@ public class GlusterVolumeMapper {
             TransportType transportType,
             org.ovirt.engine.core.common.businessentities.gluster.TransportType template) {
         switch (transportType) {
-        case TCP:
-            return org.ovirt.engine.core.common.businessentities.gluster.TransportType.TCP;
-        case RDMA:
-            return org.ovirt.engine.core.common.businessentities.gluster.TransportType.RDMA;
-        default:
-            return null;
+            case TCP:
+                return org.ovirt.engine.core.common.businessentities.gluster.TransportType.TCP;
+            case RDMA:
+                return org.ovirt.engine.core.common.businessentities.gluster.TransportType.RDMA;
+            default:
+                return null;
         }
     }
 
@@ -199,12 +199,12 @@ public class GlusterVolumeMapper {
     public static TransportType map(org.ovirt.engine.core.common.businessentities.gluster.TransportType transportType,
             TransportType template) {
         switch (transportType) {
-        case TCP:
-            return TransportType.TCP;
-        case RDMA:
-            return TransportType.RDMA;
-        default:
-            return null;
+            case TCP:
+                return TransportType.TCP;
+            case RDMA:
+                return TransportType.RDMA;
+            default:
+                return null;
         }
     }
 
@@ -213,14 +213,14 @@ public class GlusterVolumeMapper {
             AccessProtocol accessProtocol,
             org.ovirt.engine.core.common.businessentities.gluster.AccessProtocol template) {
         switch (accessProtocol) {
-        case GLUSTER:
-            return org.ovirt.engine.core.common.businessentities.gluster.AccessProtocol.GLUSTER;
-        case NFS:
-            return org.ovirt.engine.core.common.businessentities.gluster.AccessProtocol.NFS;
-        case CIFS:
-            return org.ovirt.engine.core.common.businessentities.gluster.AccessProtocol.CIFS;
-        default:
-            return null;
+            case GLUSTER:
+                return org.ovirt.engine.core.common.businessentities.gluster.AccessProtocol.GLUSTER;
+            case NFS:
+                return org.ovirt.engine.core.common.businessentities.gluster.AccessProtocol.NFS;
+            case CIFS:
+                return org.ovirt.engine.core.common.businessentities.gluster.AccessProtocol.CIFS;
+            default:
+                return null;
         }
     }
 
@@ -228,25 +228,25 @@ public class GlusterVolumeMapper {
     public static AccessProtocol map(org.ovirt.engine.core.common.businessentities.gluster.AccessProtocol accessProtocol,
             String template) {
         switch (accessProtocol) {
-        case GLUSTER:
-            return AccessProtocol.GLUSTER;
-        case NFS:
-            return AccessProtocol.NFS;
-        case CIFS:
-            return AccessProtocol.CIFS;
-        default:
-            return null;
+            case GLUSTER:
+                return AccessProtocol.GLUSTER;
+            case NFS:
+                return AccessProtocol.NFS;
+            case CIFS:
+                return AccessProtocol.CIFS;
+            default:
+                return null;
         }
     }
 
     private static GlusterVolumeStatus mapVolumeStatus(org.ovirt.engine.core.common.businessentities.gluster.GlusterStatus status) {
         switch (status) {
-        case UP:
-            return GlusterVolumeStatus.UP;
-        case DOWN:
-            return GlusterVolumeStatus.DOWN;
-        default:
-            return null;
+            case UP:
+                return GlusterVolumeStatus.UP;
+            case DOWN:
+                return GlusterVolumeStatus.DOWN;
+            default:
+                return null;
         }
     }
 }

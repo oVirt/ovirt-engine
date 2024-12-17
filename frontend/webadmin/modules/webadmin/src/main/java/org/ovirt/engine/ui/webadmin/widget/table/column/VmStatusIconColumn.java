@@ -133,7 +133,7 @@ public class VmStatusIconColumn<T> extends AbstractColumn<T, VM> {
     }
 
     private static boolean hasDifferentTimezone(VM vm) {
-       return vm.isDifferentTimeZone();
+        return vm.isDifferentTimeZone();
     }
 
     private static boolean isNameChanged(VM vm) {

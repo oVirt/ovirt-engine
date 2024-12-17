@@ -55,16 +55,16 @@ public class ConnectStorageServerVDSCommand<P extends StorageServerConnectionMan
     protected void proceedProxyReturnValue() {
         EngineError returnStatus = getReturnValueFromStatus(getReturnStatus());
         switch (returnStatus) {
-        case StorageServerConnectionRefIdAlreadyInUse:
-        case StorageServerConnectionRefIdDoesNotExist:
-            VDSExceptionBase outEx = new VDSErrorException(String.format("Failed in vdscommand %1$s, error = %2$s",
-                    getCommandName(), getReturnStatus().message));
-            initializeVdsError(returnStatus);
-            getVDSReturnValue().setSucceeded(false);
-            throw outEx;
-        default:
-            super.proceedProxyReturnValue();
-            break;
+            case StorageServerConnectionRefIdAlreadyInUse:
+            case StorageServerConnectionRefIdDoesNotExist:
+                VDSExceptionBase outEx = new VDSErrorException(String.format("Failed in vdscommand %1$s, error = %2$s",
+                        getCommandName(), getReturnStatus().message));
+                initializeVdsError(returnStatus);
+                getVDSReturnValue().setSucceeded(false);
+                throw outEx;
+            default:
+                super.proceedProxyReturnValue();
+                break;
         }
     }
 

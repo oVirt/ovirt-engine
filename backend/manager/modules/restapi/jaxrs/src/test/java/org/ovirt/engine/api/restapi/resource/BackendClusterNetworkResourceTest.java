@@ -157,7 +157,7 @@ public class BackendClusterNetworkResourceTest
         assertTrue(model.getUsages().getUsages().contains(NetworkUsage.DEFAULT_ROUTE));
         assertTrue(model.isSetRequired());
         assertEquals(true, model.isRequired());
-   }
+    }
 
 
     protected void setUpEntityQueryExpectations(int times, boolean isDisplay, boolean isMigration, boolean isRequired, boolean isDefaultRoute) {

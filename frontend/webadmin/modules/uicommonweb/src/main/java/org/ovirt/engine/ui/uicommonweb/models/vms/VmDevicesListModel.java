@@ -84,7 +84,7 @@ public class VmDevicesListModel<E extends VM>
                             }
                             setItems(frontendDevices);
                         }
-            }) { };
+                }) { };
             super.syncSearch(QueryType.GetVmDevicesForVm, new IdQueryParameters(vm.getId()), asyncQuery);
         }
     }

@@ -18,14 +18,14 @@ public class SnapshotStatusColumn extends AbstractImageResourceColumn<Snapshot> 
     public ImageResource getValue(Snapshot snapshot) {
 
         switch (snapshot.getStatus()) {
-        case OK:
-            return resources.snapshotImage();
-        case LOCKED:
-            return resources.waitImage();
-        case IN_PREVIEW:
-            return resources.snapshotImage();
-        default:
-            return resources.snapshotImage();
+            case OK:
+                return resources.snapshotImage();
+            case LOCKED:
+                return resources.waitImage();
+            case IN_PREVIEW:
+                return resources.snapshotImage();
+            default:
+                return resources.snapshotImage();
         }
     }
 

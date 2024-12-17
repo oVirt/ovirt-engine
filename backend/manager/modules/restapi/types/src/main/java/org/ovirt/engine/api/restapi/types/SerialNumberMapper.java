@@ -32,12 +32,12 @@ public class SerialNumberMapper {
             return null;
         }
         switch (serialNumberPolicy) {
-        case HOST:
-            return org.ovirt.engine.core.common.businessentities.SerialNumberPolicy.HOST_ID;
-        case VM:
-            return org.ovirt.engine.core.common.businessentities.SerialNumberPolicy.VM_ID;
-        case CUSTOM:
-            return org.ovirt.engine.core.common.businessentities.SerialNumberPolicy.CUSTOM;
+            case HOST:
+                return org.ovirt.engine.core.common.businessentities.SerialNumberPolicy.HOST_ID;
+            case VM:
+                return org.ovirt.engine.core.common.businessentities.SerialNumberPolicy.VM_ID;
+            case CUSTOM:
+                return org.ovirt.engine.core.common.businessentities.SerialNumberPolicy.CUSTOM;
         }
         return null;
     }
@@ -48,12 +48,12 @@ public class SerialNumberMapper {
             return null;
         }
         switch (serialNumberPolicy) {
-        case HOST_ID:
-            return SerialNumberPolicy.HOST;
-        case VM_ID:
-            return SerialNumberPolicy.VM;
-        case CUSTOM:
-            return SerialNumberPolicy.CUSTOM;
+            case HOST_ID:
+                return SerialNumberPolicy.HOST;
+            case VM_ID:
+                return SerialNumberPolicy.VM;
+            case CUSTOM:
+                return SerialNumberPolicy.CUSTOM;
         }
         return null;
     }

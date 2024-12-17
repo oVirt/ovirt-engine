@@ -266,7 +266,7 @@ public class NumaValidator {
      * @return whether the vm can run on all pinned hosts (hostsNodesMap) or not
      */
     public ValidationResult validateNumaCompatibility(final VM vm, final List<VmNumaNode> vmNumaNodes,
-    final Map<Guid, List<VdsNumaNode>> hostsNumaNodesMap) {
+        final Map<Guid, List<VdsNumaNode>> hostsNumaNodesMap) {
         for (Map.Entry<Guid, List<VdsNumaNode>> entry : hostsNumaNodesMap.entrySet()) {
             Guid pinnedVds = entry.getKey();
             List<VdsNumaNode> pinnedVdsNumaNodes = entry.getValue();

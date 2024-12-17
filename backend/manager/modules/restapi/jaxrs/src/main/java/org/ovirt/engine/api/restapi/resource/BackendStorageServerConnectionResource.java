@@ -86,7 +86,7 @@ public class BackendStorageServerConnectionResource extends
             StorageServerConnections connection = map(incoming, entity);
             Guid hostId = Guid.Empty;
             if (incoming.getHost() != null) {
-               hostId = getHostId(incoming.getHost());
+                hostId = getHostId(incoming.getHost());
             }
             return new StorageServerConnectionParametersBase(connection, hostId, isForce());
         }

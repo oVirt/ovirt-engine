@@ -41,11 +41,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
  */
 public class JsonObjectSerializerTest {
 
-     public static Stream<MockConfigDescriptor<?>> mockConfiguration() {
-         return Stream.of(
-                  MockConfigDescriptor.of(ConfigValues.PropagateDiskErrors, false)
-         );
-     }
+    public static Stream<MockConfigDescriptor<?>> mockConfiguration() {
+        return Stream.of(
+                MockConfigDescriptor.of(ConfigValues.PropagateDiskErrors, false)
+        );
+    }
 
 
     @Test

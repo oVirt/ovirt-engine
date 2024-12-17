@@ -343,7 +343,7 @@ public class VmTemplate extends VmBase implements BusinessEntityWithStatus<Guid,
             message = "VALIDATION_VM_TEMPLATE_NAME_MAX",
             groups = { Default.class, ImportEntity.class, ImportClonedEntity.class })
     @ValidI18NName(message = "ACTION_TYPE_FAILED_NAME_MAY_NOT_CONTAIN_SPECIAL_CHARS", groups = { CreateEntity.class,
-            UpdateEntity.class, ImportEntity.class, ImportClonedEntity.class })
+        UpdateEntity.class, ImportEntity.class, ImportClonedEntity.class })
     public String getName() {
         return super.getName();
     }

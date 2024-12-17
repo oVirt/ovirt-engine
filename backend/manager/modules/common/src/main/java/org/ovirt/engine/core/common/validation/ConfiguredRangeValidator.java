@@ -37,4 +37,4 @@ public class ConfiguredRangeValidator implements ConstraintValidator<ConfiguredR
         }
         return result;
     }
-    }
+}

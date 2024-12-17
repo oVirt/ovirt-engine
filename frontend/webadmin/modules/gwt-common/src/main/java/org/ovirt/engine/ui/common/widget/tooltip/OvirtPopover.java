@@ -47,7 +47,7 @@ public class OvirtPopover extends Popover {
 
     @Override
     public void show() {
-        Scheduler.get().scheduleDeferred( () -> {
+        Scheduler.get().scheduleDeferred(() -> {
             isVisible = true;
         });
         if (autoClose) {

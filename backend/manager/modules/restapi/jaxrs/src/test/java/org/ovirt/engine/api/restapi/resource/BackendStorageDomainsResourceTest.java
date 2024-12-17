@@ -46,9 +46,9 @@ public class BackendStorageDomainsResourceTest
         extends AbstractBackendCollectionResourceTest<StorageDomain, org.ovirt.engine.core.common.businessentities.StorageDomain, BackendStorageDomainsResource> {
 
     protected static final StorageDomainType[] TYPES = { StorageDomainType.DATA,
-            StorageDomainType.ISO, StorageDomainType.EXPORT };
+        StorageDomainType.ISO, StorageDomainType.EXPORT };
     protected static final StorageType[] STORAGE_TYPES = { StorageType.NFS, StorageType.NFS,
-            StorageType.LOCALFS, StorageType.POSIXFS };
+        StorageType.LOCALFS, StorageType.POSIXFS };
 
     protected static final int LOCAL_IDX = 2;
     protected static final int POSIX_IDX = 3;
@@ -62,15 +62,15 @@ public class BackendStorageDomainsResourceTest
     protected static final Integer PORT = 3260;
 
     protected static final org.ovirt.engine.core.common.businessentities.StorageDomainType[] TYPES_MAPPED = {
-            org.ovirt.engine.core.common.businessentities.StorageDomainType.Data,
-            org.ovirt.engine.core.common.businessentities.StorageDomainType.ISO,
-            org.ovirt.engine.core.common.businessentities.StorageDomainType.ImportExport };
+        org.ovirt.engine.core.common.businessentities.StorageDomainType.Data,
+        org.ovirt.engine.core.common.businessentities.StorageDomainType.ISO,
+        org.ovirt.engine.core.common.businessentities.StorageDomainType.ImportExport };
 
     protected static final org.ovirt.engine.core.common.businessentities.storage.StorageType[] STORAGE_TYPES_MAPPED = {
-            org.ovirt.engine.core.common.businessentities.storage.StorageType.NFS,
-            org.ovirt.engine.core.common.businessentities.storage.StorageType.NFS,
-            org.ovirt.engine.core.common.businessentities.storage.StorageType.LOCALFS,
-            org.ovirt.engine.core.common.businessentities.storage.StorageType.POSIXFS };
+        org.ovirt.engine.core.common.businessentities.storage.StorageType.NFS,
+        org.ovirt.engine.core.common.businessentities.storage.StorageType.NFS,
+        org.ovirt.engine.core.common.businessentities.storage.StorageType.LOCALFS,
+        org.ovirt.engine.core.common.businessentities.storage.StorageType.POSIXFS };
 
     public BackendStorageDomainsResourceTest() {
         super(new BackendStorageDomainsResource(), SearchType.StorageDomain, "Storage : ");
@@ -260,10 +260,10 @@ public class BackendStorageDomainsResourceTest
         setUriInfo(setUpActionExpectations(ActionType.AddStorageServerConnection,
                 StorageServerConnectionParametersBase.class,
                 new String[] { "StorageServerConnection.Connection",
-                        "StorageServerConnection.StorageType",
-                        "StorageServerConnection.MountOptions",
-                        "StorageServerConnection.VfsType",
-                        "VdsId" },
+                    "StorageServerConnection.StorageType",
+                    "StorageServerConnection.MountOptions",
+                    "StorageServerConnection.VfsType",
+                    "VdsId" },
                 new Object[] { ADDRESSES[POSIX_IDX] + ":" + PATHS[POSIX_IDX],
                         STORAGE_TYPES_MAPPED[POSIX_IDX],
                         MOUNT_OPTIONS[POSIX_IDX], VFS_TYPES[POSIX_IDX], GUIDS[0] },

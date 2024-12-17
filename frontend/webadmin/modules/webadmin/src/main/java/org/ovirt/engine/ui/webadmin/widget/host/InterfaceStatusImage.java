@@ -18,12 +18,12 @@ public class InterfaceStatusImage extends Image {
 
     public static ImageResource getResource(InterfaceStatus status) {
         switch (status) {
-        case UP:
-            return resources.upImage();
-        case NONE:
-        case DOWN:
-        default:
-            return resources.downImage();
+            case UP:
+                return resources.upImage();
+            case NONE:
+            case DOWN:
+            default:
+                return resources.downImage();
         }
     }
 

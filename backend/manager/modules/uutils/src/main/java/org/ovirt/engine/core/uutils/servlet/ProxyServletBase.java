@@ -133,7 +133,7 @@ public class ProxyServletBase extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
-    throws ServletException, IOException {
+        throws ServletException, IOException {
 
         if (url == null) {
             response.sendError(response.SC_NOT_FOUND, "Cannot proxy, no URL is configured.");

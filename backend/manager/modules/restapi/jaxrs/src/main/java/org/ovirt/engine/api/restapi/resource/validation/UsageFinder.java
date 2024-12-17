@@ -97,16 +97,16 @@ public class UsageFinder {
 
     private String getMethodName(String httpMethod) {
         switch (httpMethod) {
-        case "POST":
-            return "add";
-        case "PUT":
-            return "update";
-        case "GET":
-            return "get";
-        case "DELETE":
-            return "remove";
-        default:
-            return ""; //shouldn't reach here.
+            case "POST":
+                return "add";
+            case "PUT":
+                return "update";
+            case "GET":
+                return "get";
+            case "DELETE":
+                return "remove";
+            default:
+                return ""; //shouldn't reach here.
         }
     }
 

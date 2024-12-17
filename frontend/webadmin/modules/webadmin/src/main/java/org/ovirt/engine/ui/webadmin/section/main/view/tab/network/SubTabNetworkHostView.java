@@ -88,21 +88,21 @@ public class SubTabNetworkHostView extends AbstractSubTabTableView<NetworkView, 
     };
 
     private final AbstractTextColumn<PairQueryable<VdsNetworkInterface, VDS>> nameColumn =
-            new AbstractLinkColumn<PairQueryable<VdsNetworkInterface, VDS>>(
-                    new FieldUpdater<PairQueryable<VdsNetworkInterface, VDS>, String>() {
-        @Override
-        public void update(int index, PairQueryable<VdsNetworkInterface, VDS> host, String value) {
-            Map<String, String> parameters = new HashMap<>();
-            parameters.put(FragmentParams.NAME.getName(), host.getSecond().getName());
-            getPlaceTransitionHandler().handlePlaceTransition(
-                    WebAdminApplicationPlaces.hostGeneralSubTabPlace, parameters);
-        }
-    }) {
-        @Override
-        public String getValue(PairQueryable<VdsNetworkInterface, VDS> object) {
-            return object.getSecond().getName();
-        }
-    };
+        new AbstractLinkColumn<PairQueryable<VdsNetworkInterface, VDS>>(
+            new FieldUpdater<PairQueryable<VdsNetworkInterface, VDS>, String>() {
+                @Override
+                public void update(int index, PairQueryable<VdsNetworkInterface, VDS> host, String value) {
+                    Map<String, String> parameters = new HashMap<>();
+                    parameters.put(FragmentParams.NAME.getName(), host.getSecond().getName());
+                    getPlaceTransitionHandler().handlePlaceTransition(
+                            WebAdminApplicationPlaces.hostGeneralSubTabPlace, parameters);
+                }
+            }) {
+                @Override
+                public String getValue(PairQueryable<VdsNetworkInterface, VDS> object) {
+                    return object.getSecond().getName();
+                }
+            };
 
 
     private final AbstractTextColumn<PairQueryable<VdsNetworkInterface, VDS>> clusterColumn = new AbstractTextColumn<PairQueryable<VdsNetworkInterface, VDS>>() {

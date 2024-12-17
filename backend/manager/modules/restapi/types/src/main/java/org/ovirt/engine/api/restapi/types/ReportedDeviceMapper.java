@@ -56,12 +56,12 @@ public class ReportedDeviceMapper {
                 IpVersion version = IpHelper.getVersion(ip);
                 if (version != null) {
                     switch (version) {
-                    case V4:
-                        ipv4.add(ip.getAddress());
-                        break;
-                    case V6:
-                        ipv6.add(ip.getAddress());
-                        break;
+                        case V4:
+                            ipv4.add(ip.getAddress());
+                            break;
+                        case V6:
+                            ipv6.add(ip.getAddress());
+                            break;
                     }
                 }
             }
@@ -75,8 +75,8 @@ public class ReportedDeviceMapper {
     @Mapping(from = ReportedDeviceType.class, to = String.class)
     public static String map(ReportedDeviceType type) {
         switch (type) {
-        case NETWORK:
-            return "network";
+            case NETWORK:
+                return "network";
         }
         return null;
     }

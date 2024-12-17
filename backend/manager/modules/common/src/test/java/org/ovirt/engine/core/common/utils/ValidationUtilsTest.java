@@ -18,10 +18,10 @@ public class ValidationUtilsTest {
     public void testIsInvalidHostname() {
         String[] straValidHosts =
                 new String[] { "blahblah", "www.redhat.com", "www.rhn.redhat.com", "127.0.0.1",
-                        "1::2", "1:0002:34:4:5:6:7:8" };
+                    "1::2", "1:0002:34:4:5:6:7:8" };
         String[] straInvalidHosts =
                 new String[] { "www.redhat#com", "123/456", "www@redhat.com", "www.řhň.řěďháť.čőm", "你好世界",
-                        "שלוםעולם" };
+                    "שלוםעולם" };
         for (String s : straValidHosts) {
             assertTrue(ValidationUtils.validHostname(s), "Valid host name: " + s);
         }

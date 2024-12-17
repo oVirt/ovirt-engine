@@ -41,7 +41,7 @@ public class DiskOperationsHelper {
     }
 
     public static void copy(Model windowModel, List<DiskImage> selectedItems) {
-        if ( selectedItems == null || windowModel == null) {
+        if (selectedItems == null || windowModel == null) {
             return;
         }
 

@@ -274,34 +274,35 @@ public class ImportVmFromExportDomainPopupView extends AbstractModelBoundPopupVi
         table.addColumn(nameColumn, constants.nameVm(), "150px"); //$NON-NLS-1$
 
         AbstractCheckboxColumn<Object> collapseSnapshotsColumn =
-                new AbstractCheckboxColumn<Object>((index, model, value) -> {
-                            ((ImportVmData) model).getCollapseSnapshots().setEntity(value);
-                            customSelectionCellFormatType.setEnabled(value);
-                            diskTable.asEditor().edit(importModel.getImportDiskListModel());
-                        }) {
-            @Override
-            public Boolean getValue(Object model) {
-                return ((ImportVmData) model).getCollapseSnapshots().getEntity();
+            new AbstractCheckboxColumn<Object>((index, model, value) -> {
+                ((ImportVmData) model).getCollapseSnapshots().setEntity(value);
+                customSelectionCellFormatType.setEnabled(value);
+                diskTable.asEditor().edit(importModel.getImportDiskListModel());
             }
-
-            @Override
-            protected boolean canEdit(Object model) {
-                return ((ImportVmData) model).getCollapseSnapshots().getIsChangable();
-            }
-            @Override
-            protected String getDisabledMessage(Object model) {
-                return ((ImportVmData) model).getCollapseSnapshots().getChangeProhibitionReason();
-            }
-
-            @Override
-            public SafeHtml getTooltip(Object object) {
-                SafeHtml superTooltip = super.getTooltip(object);
-                if (superTooltip == null) {
-                    return SafeHtmlUtils.fromSafeConstant(constants.importAllocationModifiedCollapse());
+            ) {
+                @Override
+                public Boolean getValue(Object model) {
+                    return ((ImportVmData) model).getCollapseSnapshots().getEntity();
                 }
-                return superTooltip;
-            }
-        };
+
+                @Override
+                protected boolean canEdit(Object model) {
+                    return ((ImportVmData) model).getCollapseSnapshots().getIsChangable();
+                }
+                @Override
+                protected String getDisabledMessage(Object model) {
+                    return ((ImportVmData) model).getCollapseSnapshots().getChangeProhibitionReason();
+                }
+
+                @Override
+                public SafeHtml getTooltip(Object object) {
+                    SafeHtml superTooltip = super.getTooltip(object);
+                    if (superTooltip == null) {
+                        return SafeHtmlUtils.fromSafeConstant(constants.importAllocationModifiedCollapse());
+                    }
+                    return superTooltip;
+                }
+            };
         table.addColumn(collapseSnapshotsColumn, constants.collapseSnapshots(), "130px"); //$NON-NLS-1$
 
         AbstractCheckboxColumn<Object> cloneVMColumn = new AbstractCheckboxColumn<Object>((index, model, value) -> {

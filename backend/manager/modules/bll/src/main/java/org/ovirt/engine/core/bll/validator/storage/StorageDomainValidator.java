@@ -390,7 +390,7 @@ public class StorageDomainValidator {
         }
         // V2 is applicable only for block data storage domains
         if (validationSucceeded && storageFormat == StorageFormatType.V2) {
-            if ( !(storageDomainFunction.isDataDomain() && storageType.isBlockDomain()) ) {
+            if (!(storageDomainFunction.isDataDomain() && storageType.isBlockDomain())) {
                 validationSucceeded = false;
             }
         }

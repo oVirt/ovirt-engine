@@ -14,28 +14,28 @@ public class OvfReaderWriterUtils {
         }
 
         switch (type) {
-        case MDEV:
-        case SOUND:
-            return true;
-        case CONSOLE:
-            return VmDeviceType.CONSOLE.getName().equals(device);
-        case SMARTCARD:
-            return VmDeviceType.SMARTCARD.getName().equals(device);
-        case REDIR:
-            return VmDeviceType.SPICEVMC.getName().equals(device);
-        case BALLOON:
-            return VmDeviceType.MEMBALLOON.getName().equals(device);
-        case WATCHDOG:
-            return VmDeviceType.WATCHDOG.getName().equals(device);
-        case RNG:
-            return VmDeviceType.VIRTIO.getName().equals(device);
-        case CONTROLLER:
-            return VmDeviceType.VIRTIOSERIAL.getName().equals(device)
-                    || VmDeviceType.VIRTIOSCSI.getName().equals(device);
-        case HOSTDEV:
-            return includeHostDev;
-        default:
-            return false;
+            case MDEV:
+            case SOUND:
+                return true;
+            case CONSOLE:
+                return VmDeviceType.CONSOLE.getName().equals(device);
+            case SMARTCARD:
+                return VmDeviceType.SMARTCARD.getName().equals(device);
+            case REDIR:
+                return VmDeviceType.SPICEVMC.getName().equals(device);
+            case BALLOON:
+                return VmDeviceType.MEMBALLOON.getName().equals(device);
+            case WATCHDOG:
+                return VmDeviceType.WATCHDOG.getName().equals(device);
+            case RNG:
+                return VmDeviceType.VIRTIO.getName().equals(device);
+            case CONTROLLER:
+                return VmDeviceType.VIRTIOSERIAL.getName().equals(device)
+                        || VmDeviceType.VIRTIOSCSI.getName().equals(device);
+            case HOSTDEV:
+                return includeHostDev;
+            default:
+                return false;
         }
     }
 }

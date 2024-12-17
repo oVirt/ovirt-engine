@@ -96,5 +96,5 @@ public class EntityLocationMap extends HashMap<Class<?>, LocationByParentMap> {
         for (ServiceTreeNode subServiceNode : node.getSubServices()) {
             handleNode(subServiceNode, map);
         }
-     }
+    }
 }

@@ -141,7 +141,7 @@ public class AddVmFromSnapshotCommand<T extends AddVmFromSnapshotParameters> ext
     private void adjustDisksImageConfiguration(Collection<DiskImage> diskImages) {
         for (DiskImage diskImage : diskImages) {
             // Adjust disk image configuration if needed.
-            if ( diskImage.getVolumeType().equals(VolumeType.Sparse) && diskImage.getVolumeFormat().equals(VolumeFormat.RAW) &&
+            if (diskImage.getVolumeType().equals(VolumeType.Sparse) && diskImage.getVolumeFormat().equals(VolumeFormat.RAW) &&
                     getDestintationDomainTypeFromDisk(diskImage).isBlockDomain()) {
                 diskImage.setVolumeFormat(VolumeFormat.COW);
             }

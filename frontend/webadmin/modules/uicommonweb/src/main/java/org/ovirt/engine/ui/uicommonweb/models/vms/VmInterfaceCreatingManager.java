@@ -53,7 +53,7 @@ public class VmInterfaceCreatingManager extends BaseInterfaceCreatingManager {
                 addInterfaceResult ->
                         Frontend.getInstance().runMultipleActions(ActionType.UpdateVmInterface,
                         updateVnicParameters,
-                        updateInterfaceResult -> Frontend.getInstance().runMultipleActions(ActionType.RemoveVmInterface,
+                            updateInterfaceResult -> Frontend.getInstance().runMultipleActions(ActionType.RemoveVmInterface,
                                 removeVnicParameters,
                                 removeInterfaceResult -> {
                                     if (isAddingNewVm) {

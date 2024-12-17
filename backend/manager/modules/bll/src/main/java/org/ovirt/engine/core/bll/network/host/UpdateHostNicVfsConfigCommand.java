@@ -87,8 +87,8 @@ public class UpdateHostNicVfsConfigCommand extends VfsConfigCommandBase<UpdateHo
     }
 
     private boolean refreshHost() {
-            VdsActionParameters vdsActionParams = new VdsActionParameters(getVdsId());
-            return runInternalAction(ActionType.RefreshHost, vdsActionParams).getSucceeded();
+        VdsActionParameters vdsActionParams = new VdsActionParameters(getVdsId());
+        return runInternalAction(ActionType.RefreshHost, vdsActionParams).getSucceeded();
     }
 
     @Override

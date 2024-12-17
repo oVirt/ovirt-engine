@@ -215,13 +215,13 @@ public class HostSetupNetworksModel extends EntityModel<VDS> {
     private NetworkItemModel<?> getItemModel(String key, String type) {
         if (type != null) {
             switch (type) {
-            case NIC:
-                return nicModelByName.get(key);
-            case NETWORK:
-                return networkModelByName.get(key);
-            case LABEL:
-                NetworkLabelModel labelModel = networkLabelModelByLabel.get(key);
-                return labelModel == null ? newLabelModel : labelModel;
+                case NIC:
+                    return nicModelByName.get(key);
+                case NETWORK:
+                    return networkModelByName.get(key);
+                case LABEL:
+                    NetworkLabelModel labelModel = networkLabelModelByLabel.get(key);
+                    return labelModel == null ? newLabelModel : labelModel;
             }
         }
 
@@ -476,11 +476,11 @@ public class HostSetupNetworksModel extends EntityModel<VDS> {
 
         // cancel command
         UICommand cancelCommand = new UICommand("Cancel", new BaseCommandTarget() { //$NON-NLS-1$
-                    @Override
-                    public void executeCommand(UICommand command) {
-                        sourceListModel.setConfirmWindow(null);
-                    }
-                });
+            @Override
+            public void executeCommand(UICommand command) {
+                sourceListModel.setConfirmWindow(null);
+            }
+        });
         cancelCommand.setTitle(ConstantsManager.getInstance().getConstants().cancel());
         cancelCommand.setIsCancel(true);
 
@@ -499,11 +499,11 @@ public class HostSetupNetworksModel extends EntityModel<VDS> {
         Model popupWindow;
 
         UICommand cancelCommand = new UICommand("Cancel", new BaseCommandTarget() { //$NON-NLS-1$
-                    @Override
-                    public void executeCommand(UICommand command) {
-                        sourceListModel.setConfirmWindow(null);
-                    }
-                });
+            @Override
+            public void executeCommand(UICommand command) {
+                sourceListModel.setConfirmWindow(null);
+            }
+        });
         cancelCommand.setTitle(ConstantsManager.getInstance().getConstants().cancel());
         cancelCommand.setIsCancel(true);
 
@@ -577,22 +577,22 @@ public class HostSetupNetworksModel extends EntityModel<VDS> {
             final SetupNetworksLabelModel labelPopup = new SetupNetworksLabelModel(dcLabels);
             labelPopup.getCommands().add(new UICommand("OK", new BaseCommandTarget() { //$NON-NLS-1$
 
-                        @Override
-                        public void executeCommand(UICommand uiCommand) {
-                            if (!labelPopup.validate()) {
-                                return;
-                            }
+                @Override
+                public void executeCommand(UICommand uiCommand) {
+                    if (!labelPopup.validate()) {
+                        return;
+                    }
 
-                            sourceListModel.setConfirmWindow(null);
-                            String label = labelPopup.getLabel().getEntity();
-                            dcLabels.add(label);
-                            NetworkOperation.LABEL.getCommand(new NetworkLabelModel(label, HostSetupNetworksModel.this),
-                                    networkCommand.getOp2(),
-                                    hostSetupNetworksParametersData)
-                                    .execute();
-                            redraw();
-                        }
-                    }));
+                    sourceListModel.setConfirmWindow(null);
+                    String label = labelPopup.getLabel().getEntity();
+                    dcLabels.add(label);
+                    NetworkOperation.LABEL.getCommand(new NetworkLabelModel(label, HostSetupNetworksModel.this),
+                        networkCommand.getOp2(),
+                        hostSetupNetworksParametersData)
+                        .execute();
+                    redraw();
+                }
+            }));
             popupWindow = labelPopup;
         } else {
             // just execute the command

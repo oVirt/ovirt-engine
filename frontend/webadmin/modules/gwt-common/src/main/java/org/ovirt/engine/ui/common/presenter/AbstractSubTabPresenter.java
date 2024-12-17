@@ -42,7 +42,7 @@ import com.gwtplatform.mvp.shared.proxy.PlaceRequest.Builder;
  * @param <P> Proxy type (extends TabContentProxyPlace)
  */
 public abstract class AbstractSubTabPresenter<T, M extends ListWithDetailsModel, D extends HasEntity,
-  V extends AbstractSubTabPresenter.ViewDef<T>, P extends TabContentProxyPlace<?>>
+    V extends AbstractSubTabPresenter.ViewDef<T>, P extends TabContentProxyPlace<?>>
         extends AbstractTabPresenter<V, P> implements PlaceTransitionHandler, MainSelectedItemChangeListener<T> {
 
     @GenEvent

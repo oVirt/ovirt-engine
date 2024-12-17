@@ -16,10 +16,10 @@ public class GetValidator implements EngineConfigValidator {
      */
     @Override
     public void validate(ConfigActionType actionType, EngineConfigMap engineConfigMap) throws IllegalArgumentException {
-            if (engineConfigMap.getKey() == null) {
+        if (engineConfigMap.getKey() == null) {
             log.debug("validator for 'get' action: Missing key for get action.");
-                throw new IllegalArgumentException("Missing key for get action.");
-            }
+            throw new IllegalArgumentException("Missing key for get action.");
+        }
     }
 }
 

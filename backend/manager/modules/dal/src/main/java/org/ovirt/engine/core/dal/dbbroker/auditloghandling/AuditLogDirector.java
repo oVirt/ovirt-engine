@@ -81,17 +81,17 @@ public class AuditLogDirector {
     private void logMessage(AuditLog auditLog) {
         String logMessage = getMessageToLog(auditLog);
         switch (auditLog.getSeverity()) {
-        case NORMAL:
-            log.info(logMessage);
-            break;
-        case ERROR:
-            log.error(logMessage);
-            break;
-        case ALERT:
-        case WARNING:
-        default:
-            log.warn(logMessage);
-            break;
+            case NORMAL:
+                log.info(logMessage);
+                break;
+            case ERROR:
+                log.error(logMessage);
+                break;
+            case ALERT:
+            case WARNING:
+            default:
+                log.warn(logMessage);
+                break;
         }
     }
 

@@ -155,7 +155,7 @@ public class FenceAgentListModel extends SortedListModel<FenceAgentModel> {
         if (concurrentList != null && concurrentList.getSelectedItem() != null
                 && values.indexOf(concurrentList.getSelectedItem()) > -1) {
             concurrentList.setItems(values, concurrentList.getSelectedItem());
-        } else if (concurrentList != null ) {
+        } else if (concurrentList != null) {
             concurrentList.setItems(values);
         }
     }

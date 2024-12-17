@@ -132,7 +132,7 @@ public class FirstMatchSimpleFilterTest {
         filter.addFilterEntries(
                 Collections.singletonList(
                         new FirstMatchSimpleFilter.FilterEntry("message0", null, false, "smtp", "dbtest1@redhat.com"))
-                );
+        );
         filter.processEvent(new E("message0"));
         filter.processEvent(new E("message1"));
         assertTrue(smtp.getEvents().contains("message0-->dbtest1@redhat.com"));
@@ -144,7 +144,7 @@ public class FirstMatchSimpleFilterTest {
         filter.addFilterEntries(
                 FirstMatchSimpleFilter.parse("include:VDC_STOP(snmp:) " +
                         "exclude:*")
-                );
+        );
         filter.processEvent(new E("VDC_STOP"));
         assertTrue(snmp.getEvents().contains("VDC_STOP-->"));
     }
@@ -216,10 +216,10 @@ public class FirstMatchSimpleFilterTest {
         filter.clearFilterEntries();
         filter.addFilterEntries(Collections.singletonList(
                 new FirstMatchSimpleFilter.FilterEntry("kuku", null, false, "snmp", "pupu"))
-                );
+        );
         filter.addFilterEntries(Collections.singletonList(
                 new FirstMatchSimpleFilter.FilterEntry("kuku", null, false, "smtp", "pupu"))
-                );
+        );
         filter.addFilterEntries(
                 FirstMatchSimpleFilter.parse(
                         "" +

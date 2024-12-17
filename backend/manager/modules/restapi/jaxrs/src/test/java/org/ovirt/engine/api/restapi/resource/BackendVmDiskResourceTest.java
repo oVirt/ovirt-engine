@@ -296,7 +296,7 @@ public class BackendVmDiskResourceTest
         when(entity.getFlushLatency()).thenReturn(50.0);
         when(entity.getDiskStorageType()).thenReturn(DiskStorageType.IMAGE);
         setUpGetEntityExpectations(1, entity);
-                return entity;
+        return entity;
     }
 
     protected void verifyQuery(AbstractStatisticalQuery<Disk, DiskImage> query, DiskImage entity) throws Exception {

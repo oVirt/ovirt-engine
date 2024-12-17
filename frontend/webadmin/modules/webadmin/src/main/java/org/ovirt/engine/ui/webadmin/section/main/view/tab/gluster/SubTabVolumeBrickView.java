@@ -84,7 +84,7 @@ public class SubTabVolumeBrickView extends AbstractSubTabTableView<GlusterVolume
 
         getTable().addColumn(directoryColumn, constants.brickDirectoryVolumeBrick(), "400px"); //$NON-NLS-1$
 
-        getTable().addColumn(new Column<GlusterBrickEntity, BrickProperties>( new BrickCapacityCell()) {
+        getTable().addColumn(new Column<GlusterBrickEntity, BrickProperties>(new BrickCapacityCell()) {
             @Override
             public BrickProperties getValue(GlusterBrickEntity object) {
                 return object.getBrickProperties();

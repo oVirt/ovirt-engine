@@ -158,18 +158,18 @@ public class ExportVmToOvaCommand<T extends ExportVmToOvaParameters> extends Exp
     @Override
     public AuditLogType getAuditLogTypeValue() {
         switch (getActionState()) {
-        case EXECUTE:
-            return getSucceeded() ?
-                    AuditLogType.IMPORTEXPORT_STARTING_EXPORT_VM_TO_OVA
-                    : AuditLogType.IMPORTEXPORT_EXPORT_VM_TO_OVA_FAILED;
+            case EXECUTE:
+                return getSucceeded() ?
+                        AuditLogType.IMPORTEXPORT_STARTING_EXPORT_VM_TO_OVA
+                        : AuditLogType.IMPORTEXPORT_EXPORT_VM_TO_OVA_FAILED;
 
-        case END_SUCCESS:
-            return getSucceeded() ?
-                    AuditLogType.IMPORTEXPORT_EXPORT_VM_TO_OVA
-                    : AuditLogType.IMPORTEXPORT_EXPORT_VM_TO_OVA_FAILED;
+            case END_SUCCESS:
+                return getSucceeded() ?
+                        AuditLogType.IMPORTEXPORT_EXPORT_VM_TO_OVA
+                        : AuditLogType.IMPORTEXPORT_EXPORT_VM_TO_OVA_FAILED;
 
-        default:
-            return AuditLogType.IMPORTEXPORT_EXPORT_VM_TO_OVA_FAILED;
+            default:
+                return AuditLogType.IMPORTEXPORT_EXPORT_VM_TO_OVA_FAILED;
         }
     }
 
@@ -196,18 +196,18 @@ public class ExportVmToOvaCommand<T extends ExportVmToOvaParameters> extends Exp
     @Override
     public boolean performNextOperation(int completedChildCount) {
         switch (getParameters().getPhase()) {
-        case CREATE_SNAPSHOT:
-            getParameters().setPhase(Phase.CREATE_OVA);
-            break;
+            case CREATE_SNAPSHOT:
+                getParameters().setPhase(Phase.CREATE_OVA);
+                break;
 
-        case CREATE_OVA:
-            getParameters().setPhase(Phase.REMOVE_SNAPSHOT);
-            break;
+            case CREATE_OVA:
+                getParameters().setPhase(Phase.REMOVE_SNAPSHOT);
+                break;
 
-        case REMOVE_SNAPSHOT:
-            return false;
+            case REMOVE_SNAPSHOT:
+                return false;
 
-        default:
+            default:
         }
 
         persistCommandIfNeeded();

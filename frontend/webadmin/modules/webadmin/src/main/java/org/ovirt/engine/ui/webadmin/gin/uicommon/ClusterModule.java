@@ -77,39 +77,39 @@ public class ClusterModule extends AbstractGinModule {
             final Provider<SharedMacPoolPopupPresenterWidget> macPoolPopupProvider,
             final Provider<ClusterListModel<Void>> clusterProvider,
             final Provider<ClusterWarningsPopupPresenterWidget> clusterWarningsPopupProvider) {
-        MainViewModelProvider<Cluster, ClusterListModel<Void>> result = new MainViewModelProvider<Cluster, ClusterListModel<Void>>
-                (eventBus, defaultConfirmPopupProvider) {
-            @Override
-            public AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(ClusterListModel<Void> source,
-                    UICommand lastExecutedCommand, Model windowModel) {
-                if (lastExecutedCommand == getModel().getNewCommand()
-                        || lastExecutedCommand == getModel().getEditCommand()) {
-                    return popupProvider.get();
-                } else if (lastExecutedCommand == getModel().getGuideCommand()) {
-                    return guidePopupProvider.get();
-                } else if (lastExecutedCommand == getModel().getAddMacPoolCommand()) {
-                    return macPoolPopupProvider.get();
-                } else if (lastExecutedCommand == getModel().getAddMultipleHostsCommand()) {
-                    return addMultipleHostsPopupProvider.get();
-                } else {
-                    return super.getModelPopup(source, lastExecutedCommand, windowModel);
+        MainViewModelProvider<Cluster, ClusterListModel<Void>> result = new MainViewModelProvider<Cluster, ClusterListModel<Void>>(eventBus,
+            defaultConfirmPopupProvider) {
+                @Override
+                public AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(ClusterListModel<Void> source,
+                        UICommand lastExecutedCommand, Model windowModel) {
+                    if (lastExecutedCommand == getModel().getNewCommand()
+                            || lastExecutedCommand == getModel().getEditCommand()) {
+                        return popupProvider.get();
+                    } else if (lastExecutedCommand == getModel().getGuideCommand()) {
+                        return guidePopupProvider.get();
+                    } else if (lastExecutedCommand == getModel().getAddMacPoolCommand()) {
+                        return macPoolPopupProvider.get();
+                    } else if (lastExecutedCommand == getModel().getAddMultipleHostsCommand()) {
+                        return addMultipleHostsPopupProvider.get();
+                    } else {
+                        return super.getModelPopup(source, lastExecutedCommand, windowModel);
+                    }
                 }
-            }
 
-            @Override
-            public AbstractModelBoundPopupPresenterWidget<? extends ConfirmationModel, ?> getConfirmModelPopup(ClusterListModel<Void> source,
-                    UICommand lastExecutedCommand) {
-                if (lastExecutedCommand == getModel().getRemoveCommand()) {
-                    return removeConfirmPopupProvider.get();
-                } else if (lastExecutedCommand == getModel().getResetEmulatedMachineCommand()) {
-                    return defaultConfirmPopupProvider.get();
-                } else if (source.getConfirmWindow() instanceof ClusterWarningsModel) {
-                    return clusterWarningsPopupProvider.get();
-                } else {
-                    return super.getConfirmModelPopup(source, lastExecutedCommand);
+                @Override
+                public AbstractModelBoundPopupPresenterWidget<? extends ConfirmationModel, ?> getConfirmModelPopup(ClusterListModel<Void> source,
+                        UICommand lastExecutedCommand) {
+                    if (lastExecutedCommand == getModel().getRemoveCommand()) {
+                        return removeConfirmPopupProvider.get();
+                    } else if (lastExecutedCommand == getModel().getResetEmulatedMachineCommand()) {
+                        return defaultConfirmPopupProvider.get();
+                    } else if (source.getConfirmWindow() instanceof ClusterWarningsModel) {
+                        return clusterWarningsPopupProvider.get();
+                    } else {
+                        return super.getConfirmModelPopup(source, lastExecutedCommand);
+                    }
                 }
-            }
-        };
+            };
         result.setModelProvider(clusterProvider);
         return result;
     }

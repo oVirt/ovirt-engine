@@ -82,11 +82,11 @@ public class OvirtGlusterSchedulingService {
                 job.setEndDate(convertDate(endDate));
             }
 
-            } catch (ParseException e) {
+        } catch (ParseException e) {
             log.error("Error while converting the date to simple date format startDate: {} endDate:{}",
                     startDate,
                     endDate);
-            }
+        }
         if (StringUtils.isNotBlank(timeZone)) {
             job.setTimeZone(timeZone);
         }

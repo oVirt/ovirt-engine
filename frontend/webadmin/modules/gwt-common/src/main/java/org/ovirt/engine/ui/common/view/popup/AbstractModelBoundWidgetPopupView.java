@@ -60,7 +60,7 @@ public abstract class AbstractModelBoundWidgetPopupView<T extends Model> extends
     }
 
     protected AbstractModelBoundPopupWidget<T> getContentWidget() {
-       return popupWidget;
+        return popupWidget;
     }
 
     protected void setNoScroll(boolean value) {

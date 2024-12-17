@@ -59,7 +59,7 @@ public class AlertListModel extends SearchableListModel<Void, AuditLog> implemen
         if (command == getDismissCommand()) {
             dismissAlert();
         } else if (command == getDisplayAllCommand()) {
-             displayAllAlerts();
+            displayAllAlerts();
         } else if (command == getClearAllCommand()) {
             clearAllAlerts();
         }

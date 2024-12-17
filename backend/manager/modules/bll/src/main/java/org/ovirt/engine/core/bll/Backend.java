@@ -599,32 +599,32 @@ public class Backend implements BackendInternal, BackendCommandObjectsHandler {
     public QueryReturnValue runPublicQuery(QueryType actionType, QueryParametersBase parameters) {
         parameters.setRefresh(false);
         switch (actionType) {
-        case GetAAAProfileList:
-        case RegisterVds:
-        case CheckDBConnection:
-        case GetDbUserBySession:
-        case GetEngineSessionIdForSsoToken:
-        case ValidateSession:
-        case GetDefaultAllowedOrigins:
-            return runQueryImpl(actionType, parameters, false);
-        case GetConfigurationValue:
-            GetConfigurationValueParameters configParameters = (GetConfigurationValueParameters) parameters;
-            switch (configParameters.getConfigValue()) {
-            case VdcVersion:
-            case ProductRPMVersion:
-            case ApplicationMode:
-            case UserSessionTimeOutInterval:
-            case CORSSupport:
-            case CORSAllowedOrigins:
-            case CORSAllowDefaultOrigins:
-            case CORSDefaultOriginSuffixes:
+            case GetAAAProfileList:
+            case RegisterVds:
+            case CheckDBConnection:
+            case GetDbUserBySession:
+            case GetEngineSessionIdForSsoToken:
+            case ValidateSession:
+            case GetDefaultAllowedOrigins:
                 return runQueryImpl(actionType, parameters, false);
+            case GetConfigurationValue:
+                GetConfigurationValueParameters configParameters = (GetConfigurationValueParameters) parameters;
+                switch (configParameters.getConfigValue()) {
+                    case VdcVersion:
+                    case ProductRPMVersion:
+                    case ApplicationMode:
+                    case UserSessionTimeOutInterval:
+                    case CORSSupport:
+                    case CORSAllowedOrigins:
+                    case CORSAllowDefaultOrigins:
+                    case CORSDefaultOriginSuffixes:
+                        return runQueryImpl(actionType, parameters, false);
+                    default:
+                        break;
+                }
+
             default:
                 break;
-            }
-
-        default:
-            break;
         }
 
         return getErrorQueryReturnValue(EngineMessage.USER_CANNOT_RUN_QUERY_NOT_PUBLIC);
@@ -693,7 +693,7 @@ public class Backend implements BackendInternal, BackendCommandObjectsHandler {
                 user == null ? "." : String.format(" for user %s@%s.", user.getLoginName(), user.getDomain()));
     }
 
-   @Override
+    @Override
     public CommandBase<?> createAction(ActionType actionType, ActionParametersBase parameters, CommandContext context) {
         return CommandsFactory.createCommand(actionType, parameters, context);
     }

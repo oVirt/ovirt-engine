@@ -227,7 +227,7 @@ public class UpdateStoragePoolCommandTest extends BaseCommandTest {
     public void poolHasDefaultCluster() {
         addDefaultClusterToPool();
         doReturn(new ValidationResult
-                (EngineMessage.ACTION_TYPE_FAILED_STORAGE_POOL_WITH_DEFAULT_CLUSTER_CANNOT_BE_LOCALFS))
+        (EngineMessage.ACTION_TYPE_FAILED_STORAGE_POOL_WITH_DEFAULT_CLUSTER_CANNOT_BE_LOCALFS))
                 .when(poolValidator).isNotLocalfsWithDefaultCluster();
         ValidateTestUtils.runAndAssertValidateFailure(cmd, EngineMessage.ACTION_TYPE_FAILED_STORAGE_POOL_WITH_DEFAULT_CLUSTER_CANNOT_BE_LOCALFS);
     }

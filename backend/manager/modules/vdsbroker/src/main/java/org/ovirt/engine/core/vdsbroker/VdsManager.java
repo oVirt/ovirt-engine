@@ -334,19 +334,19 @@ public class VdsManager {
 
     private HostMonitoringInterface createHostMonitoring() {
         switch (cachedVds.getVdsType()) {
-        case KubevirtNode:
-            return new KubevirtNodesMonitoring(this, providerDao, prometheusUrlResolver);
-        default:
-            return new HostMonitoring(this,
-                    cachedVds,
-                    monitoringStrategy,
-                    resourceManager,
-                    clusterDao,
-                    vdsDynamicDao,
-                    interfaceDao,
-                    vdsNumaNodeDao,
-                    networkDao,
-                    auditLogDirector);
+            case KubevirtNode:
+                return new KubevirtNodesMonitoring(this, providerDao, prometheusUrlResolver);
+            default:
+                return new HostMonitoring(this,
+                        cachedVds,
+                        monitoringStrategy,
+                        resourceManager,
+                        clusterDao,
+                        vdsDynamicDao,
+                        interfaceDao,
+                        vdsNumaNodeDao,
+                        networkDao,
+                        auditLogDirector);
         }
     }
 
@@ -722,7 +722,7 @@ public class VdsManager {
                 vds.setPreviousStatus(vds.getStatus());
                 if (this.cachedVds != null) {
                     this.cachedVds.setPreviousStatus(vds.getStatus());
-                 }
+                }
             }
             // update to new status
             vds.setStatus(status);
@@ -735,40 +735,40 @@ public class VdsManager {
                 invalidateVdsCachedData();
             }
             switch (status) {
-            case NonOperational:
-                if (this.cachedVds != null) {
-                    this.cachedVds.setNonOperationalReason(vds.getNonOperationalReason());
-                }
-                if (vds.getVmCount() > 0) {
+                case NonOperational:
+                    if (this.cachedVds != null) {
+                        this.cachedVds.setNonOperationalReason(vds.getNonOperationalReason());
+                    }
+                    if (vds.getVmCount() > 0) {
+                        break;
+                    }
+                case NonResponsive:
+                case Down:
+                case Maintenance:
+                    vds.setCpuSys(0.0);
+                    vds.setCpuUser(0.0);
+                    vds.setCpuIdle(0.0);
+                    vds.setCpuLoad(0.0);
+                    vds.setUsageCpuPercent(0);
+                    vds.setUsageMemPercent(0);
+                    vds.setUsageNetworkPercent(0);
+                    if (this.cachedVds != null) {
+                        this.cachedVds.setCpuSys(0.0);
+                        this.cachedVds.setCpuUser(0.0);
+                        this.cachedVds.setCpuIdle(0.0);
+                        this.cachedVds.setCpuLoad(0.0);
+                        this.cachedVds.setUsageCpuPercent(0);
+                        this.cachedVds.setUsageMemPercent(0);
+                        this.cachedVds.setUsageNetworkPercent(0);
+                    }
+                    updateCpuTopology();
                     break;
-                }
-            case NonResponsive:
-            case Down:
-            case Maintenance:
-                vds.setCpuSys(0.0);
-                vds.setCpuUser(0.0);
-                vds.setCpuIdle(0.0);
-                vds.setCpuLoad(0.0);
-                vds.setUsageCpuPercent(0);
-                vds.setUsageMemPercent(0);
-                vds.setUsageNetworkPercent(0);
-                if (this.cachedVds != null) {
-                    this.cachedVds.setCpuSys(0.0);
-                    this.cachedVds.setCpuUser(0.0);
-                    this.cachedVds.setCpuIdle(0.0);
-                    this.cachedVds.setCpuLoad(0.0);
-                    this.cachedVds.setUsageCpuPercent(0);
-                    this.cachedVds.setUsageMemPercent(0);
-                    this.cachedVds.setUsageNetworkPercent(0);
-                }
-                updateCpuTopology();
-                break;
-            case Up:
-                vds.setInFenceFlow(false);
-                updateCpuTopology();
-                break;
-            default:
-                break;
+                case Up:
+                    vds.setInFenceFlow(false);
+                    updateCpuTopology();
+                    break;
+                default:
+                    break;
             }
         }
     }
@@ -1049,21 +1049,21 @@ public class VdsManager {
      */
     private void logNetworkException(VDSNetworkException e) {
         switch (cachedVds.getStatus()) {
-        case Down:
-            break;
-        case NonResponsive:
-            log.debug(
-                    "Failed to refresh VDS, network error, continuing, vds='{}'({}): {}",
-                    cachedVds.getName(),
-                    cachedVds.getId(),
-                    e.getMessage());
-            break;
-        default:
-            log.warn(
-                    "Failed to refresh VDS, network error, continuing, vds='{}'({}): {}",
-                    cachedVds.getName(),
-                    cachedVds.getId(),
-                    e.getMessage());
+            case Down:
+                break;
+            case NonResponsive:
+                log.debug(
+                        "Failed to refresh VDS, network error, continuing, vds='{}'({}): {}",
+                        cachedVds.getName(),
+                        cachedVds.getId(),
+                        e.getMessage());
+                break;
+            default:
+                log.warn(
+                        "Failed to refresh VDS, network error, continuing, vds='{}'({}): {}",
+                        cachedVds.getName(),
+                        cachedVds.getId(),
+                        e.getMessage());
         }
         log.debug("Exception", e);
     }

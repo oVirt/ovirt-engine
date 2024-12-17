@@ -66,23 +66,23 @@ public class MainVolumeView extends AbstractMainWithDetailsTableView<GlusterVolu
         getTable().addColumn(statusColumn, constants.empty(), "30px"); //$NON-NLS-1$
 
         AbstractTextColumn<GlusterVolumeEntity> nameColumn =
-                new AbstractLinkColumn<GlusterVolumeEntity>(new FieldUpdater<GlusterVolumeEntity, String>() {
+            new AbstractLinkColumn<GlusterVolumeEntity>(new FieldUpdater<GlusterVolumeEntity, String>() {
 
-            @Override
-            public void update(int index, GlusterVolumeEntity volume, String value) {
-                Map<String, String> parameters = new HashMap<>();
-                parameters.put(FragmentParams.NAME.getName(), volume.getName());
-                //The link was clicked, now fire an event to switch to details.
-                getPlaceTransitionHandler().handlePlaceTransition(
+                @Override
+                public void update(int index, GlusterVolumeEntity volume, String value) {
+                    Map<String, String> parameters = new HashMap<>();
+                    parameters.put(FragmentParams.NAME.getName(), volume.getName());
+                    //The link was clicked, now fire an event to switch to details.
+                    getPlaceTransitionHandler().handlePlaceTransition(
                         WebAdminApplicationPlaces.volumeGeneralSubTabPlace, parameters);
-            }
+                }
 
-        }) {
-            @Override
-            public String getValue(GlusterVolumeEntity object) {
-                return object.getName();
-            }
-        };
+            }) {
+                @Override
+                public String getValue(GlusterVolumeEntity object) {
+                    return object.getName();
+                }
+            };
         nameColumn.makeSortable();
 
         getTable().addColumn(nameColumn, constants.nameVolume(), "150px"); //$NON-NLS-1$
@@ -97,13 +97,13 @@ public class MainVolumeView extends AbstractMainWithDetailsTableView<GlusterVolu
         getTable().addColumn(clusterColumn, constants.clusterVolume(), "150px"); //$NON-NLS-1$
 
         AbstractTextColumn<GlusterVolumeEntity> volumeTypeColumn =
-                new AbstractEnumColumn<GlusterVolumeEntity, GlusterVolumeType>() {
+            new AbstractEnumColumn<GlusterVolumeEntity, GlusterVolumeType>() {
 
-            @Override
-            protected GlusterVolumeType getRawValue(GlusterVolumeEntity object) {
-                return object.getVolumeType();
-            }
-        };
+                @Override
+                protected GlusterVolumeType getRawValue(GlusterVolumeEntity object) {
+                    return object.getVolumeType();
+                }
+            };
         volumeTypeColumn.makeSortable();
         getTable().addColumn(volumeTypeColumn, constants.volumeTypeVolume(), "150px"); //$NON-NLS-1$
 
@@ -158,19 +158,18 @@ public class MainVolumeView extends AbstractMainWithDetailsTableView<GlusterVolu
 
         getTable().addColumn(new VolumeActivityColumn<GlusterVolumeEntity>(
                 new VolumeActivityCompositeCell<GlusterTaskSupport>(compositeList)),
-        constants.activitiesOnVolume(),
-        "100px"); //$NON-NLS-1$
+            constants.activitiesOnVolume(),
+            "100px"); //$NON-NLS-1$
 
         AbstractTextColumn<GlusterVolumeEntity> snapshotCountColumn =
-                new AbstractTextColumn<GlusterVolumeEntity>() {
-            @Override
-            public String getValue(GlusterVolumeEntity object) {
-                return object.getSnapshotsCount().toString();
-            }
-        };
+            new AbstractTextColumn<GlusterVolumeEntity>() {
+                @Override
+                public String getValue(GlusterVolumeEntity object) {
+                    return object.getSnapshotsCount().toString();
+                }
+            };
         snapshotCountColumn.makeSortable();
         getTable().addColumn(snapshotCountColumn, constants.noOfSnapshotsLabel(), "100px"); //$NON-NLS-1$
-
     }
 
     private MenuCell<GlusterTaskSupport> getRebalanceActivityMenu() {

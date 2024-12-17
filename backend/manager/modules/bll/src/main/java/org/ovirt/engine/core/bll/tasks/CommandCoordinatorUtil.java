@@ -224,7 +224,7 @@ public class CommandCoordinatorUtil implements BackendService {
      * @return The async task to be saved
      */
     public AsyncTask getAsyncTaskFromDb(Guid asyncTaskId) {
-         return coco.get().getAsyncTaskFromDb(asyncTaskId);
+        return coco.get().getAsyncTaskFromDb(asyncTaskId);
     }
 
     /**
@@ -349,7 +349,7 @@ public class CommandCoordinatorUtil implements BackendService {
      * @param status The new status of the command
      */
     public void updateCommandStatus(Guid commandId, CommandStatus status) {
-         coco.get().updateCommandStatus(commandId, status);
+        coco.get().updateCommandStatus(commandId, status);
     }
 
     /**

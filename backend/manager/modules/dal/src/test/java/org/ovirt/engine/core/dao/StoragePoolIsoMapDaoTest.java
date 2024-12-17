@@ -19,7 +19,7 @@ public class StoragePoolIsoMapDaoTest extends
     @Override
     protected StoragePoolIsoMap generateNewEntity() {
         return new StoragePoolIsoMap
-                (FixturesTool.STORAGE_DOMAIN_SCALE_SD6, FixturesTool.DATA_CENTER, StorageDomainStatus.Unattached);
+        (FixturesTool.STORAGE_DOMAIN_SCALE_SD6, FixturesTool.DATA_CENTER, StorageDomainStatus.Unattached);
     }
 
     @Override

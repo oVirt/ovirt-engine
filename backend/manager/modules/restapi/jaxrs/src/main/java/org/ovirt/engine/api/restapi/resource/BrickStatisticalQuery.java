@@ -28,7 +28,7 @@ public class BrickStatisticalQuery extends AbstractStatisticalQuery<GlusterBrick
     private static final Statistic MEM_MALL_FORDBLKS = create("malloc.fordblks", "Total free space", GAUGE, StatisticUnit.BYTES, ValueType.INTEGER);
     private static final Statistic MEM_MALL_KEEPCOST = create("malloc.keepcost", "Releasable free space", GAUGE, StatisticUnit.BYTES, ValueType.INTEGER);
 
-    public BrickStatisticalQuery(GlusterBrick parent ) {
+    public BrickStatisticalQuery(GlusterBrick parent) {
         this(null, parent);
     }
 

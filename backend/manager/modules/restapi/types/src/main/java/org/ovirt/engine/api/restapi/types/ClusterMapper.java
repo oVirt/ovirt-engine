@@ -338,15 +338,15 @@ public class ClusterMapper {
             return null;
         }
         switch (model) {
-        case MIGRATE:
-            return MigrateOnErrorOptions.YES;
-        case DO_NOT_MIGRATE:
-            return MigrateOnErrorOptions.NO;
-        case MIGRATE_HIGHLY_AVAILABLE:
-            return MigrateOnErrorOptions.HA_ONLY;
-        default:
-            assert false : "unknown migrate-on-error value: " + model.toString();
-            return null;
+            case MIGRATE:
+                return MigrateOnErrorOptions.YES;
+            case DO_NOT_MIGRATE:
+                return MigrateOnErrorOptions.NO;
+            case MIGRATE_HIGHLY_AVAILABLE:
+                return MigrateOnErrorOptions.HA_ONLY;
+            default:
+                assert false : "unknown migrate-on-error value: " + model.toString();
+                return null;
         }
     }
 
@@ -356,15 +356,15 @@ public class ClusterMapper {
             return null;
         }
         switch (model) {
-        case YES:
-            return MigrateOnError.MIGRATE;
-        case NO:
-            return MigrateOnError.DO_NOT_MIGRATE;
-        case HA_ONLY:
-            return MigrateOnError.MIGRATE_HIGHLY_AVAILABLE;
-        default:
-            assert false : "unknown migrate-on-error value: " + model.toString();
-            return null;
+            case YES:
+                return MigrateOnError.MIGRATE;
+            case NO:
+                return MigrateOnError.DO_NOT_MIGRATE;
+            case HA_ONLY:
+                return MigrateOnError.MIGRATE_HIGHLY_AVAILABLE;
+            default:
+                assert false : "unknown migrate-on-error value: " + model.toString();
+                return null;
         }
     }
 

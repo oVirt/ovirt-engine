@@ -40,10 +40,10 @@ public class KubevirtMonitoring {
         } catch (IOException e) {
             throw new RuntimeException(e.getMessage(), e);
         }
-   }
+    }
 
-   public void register(Provider<KubevirtProviderProperties> provider) {
-       clusterToJob.computeIfAbsent(provider.getId(),
+    public void register(Provider<KubevirtProviderProperties> provider) {
+        clusterToJob.computeIfAbsent(provider.getId(),
                id -> Injector.injectMembers(new ClusterMonitoring(provider)).start());
     }
 

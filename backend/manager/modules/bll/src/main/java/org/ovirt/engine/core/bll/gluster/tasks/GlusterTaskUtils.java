@@ -121,13 +121,13 @@ public class GlusterTaskUtils {
 
     public boolean isTaskSuccess(JobExecutionStatus status) {
         switch (status) {
-        case ABORTED:
-        case FAILED:
-            return false;
-        case FINISHED:
-            return true;
-        default:
-            return false;
+            case ABORTED:
+            case FAILED:
+                return false;
+            case FINISHED:
+                return true;
+            default:
+                return false;
         }
     }
 
@@ -162,26 +162,26 @@ public class GlusterTaskUtils {
         String jobStatus = task.getStatus().toString();
         if (task.getType() == GlusterTaskType.REMOVE_BRICK) {
             switch (task.getStatus()) {
-            case FINISHED:
-                jobStatus = REMOVE_BRICK_FINISHED;
-                break;
-            case STARTED:
-                jobStatus = REMOVE_BRICK_IN_PROGRESS;
-                break;
-            case FAILED:
-                jobStatus = REMOVE_BRICK_FAILED;
-                break;
-            default:
-                break;
+                case FINISHED:
+                    jobStatus = REMOVE_BRICK_FINISHED;
+                    break;
+                case STARTED:
+                    jobStatus = REMOVE_BRICK_IN_PROGRESS;
+                    break;
+                case FAILED:
+                    jobStatus = REMOVE_BRICK_FAILED;
+                    break;
+                default:
+                    break;
             }
         }
         if (task.getType() == GlusterTaskType.REBALANCE) {
             switch (task.getStatus()) {
-            case STARTED:
-                jobStatus = REBALANCE_IN_PROGRESS;
-                break;
-            default:
-                break;
+                case STARTED:
+                    jobStatus = REBALANCE_IN_PROGRESS;
+                    break;
+                default:
+                    break;
             }
         }
         return jobStatus;
@@ -210,7 +210,7 @@ public class GlusterTaskUtils {
 
     public void logEventMessage(GlusterAsyncTask task, JobExecutionStatus oldStatus, Cluster cluster) {
         GlusterVolumeEntity volume = volumeDao.getVolumeByGlusterTask(task.getTaskId());
-        if ( volume == null) {
+        if (volume == null) {
             if (task.getTaskParameters() != null) {
                 String volName = task.getTaskParameters().getVolumeName();
                 volume = volumeDao.getByName(cluster.getId(), volName);

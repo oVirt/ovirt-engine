@@ -28,15 +28,15 @@ public enum GlusterTaskType {
         return step;
     }
 
-     public static GlusterTaskType forValue(StepEnum step) {
+    public static GlusterTaskType forValue(StepEnum step) {
         return mappings.get(step);
     }
 
-     public static GlusterTaskType fromValue(String v) {
-         try {
-             return valueOf(v.toUpperCase());
-         } catch (IllegalArgumentException e) {
-             return GlusterTaskType.UNKNOWN;
-         }
-     }
+    public static GlusterTaskType fromValue(String v) {
+        try {
+            return valueOf(v.toUpperCase());
+        } catch (IllegalArgumentException e) {
+            return GlusterTaskType.UNKNOWN;
+        }
+    }
 }

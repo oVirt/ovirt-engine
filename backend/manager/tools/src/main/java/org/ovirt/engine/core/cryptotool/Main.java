@@ -53,66 +53,57 @@ public class Main {
     }
 
     private enum Action {
-        PBE_ENCODE(
-            argMap -> System.out.println(
-                EnvelopePBE.encode(
-                    (String) argMap.get("algorithm"),
-                    (Integer) argMap.get("key-size"),
-                    (Integer) argMap.get("iterations"),
-                    null,
-                    getPassword("Password: ", (String) argMap.get("password"))
-                )
-            )
-        ),
-        PBE_CHECK(
-            argMap -> {
-                if (
-                    !EnvelopePBE.check(
-                        new String(readStream(System.in), StandardCharsets.UTF_8),
+        PBE_ENCODE(argMap -> System.out.println(
+                        EnvelopePBE.encode(
+                        (String) argMap.get("algorithm"),
+                        (Integer) argMap.get("key-size"),
+                        (Integer) argMap.get("iterations"),
+                        null,
                         getPassword("Password: ", (String) argMap.get("password"))
                     )
-                ) {
-                    System.err.println("FAILED");
-                    throw new ExitException("Check failed", 1);
-                }
-            }
+            )
         ),
-        ENC_ENCODE(
-            argMap -> {
-                try (InputStream in = new FileInputStream((String) argMap.get("certificate"))) {
-                    System.out.println(
-                        EnvelopeEncryptDecrypt.encrypt(
-                            (String) argMap.get("algorithm"),
-                            (Integer) argMap.get("key-size"),
-                            CertificateFactory.getInstance("X.509").generateCertificate(in),
-                            (Integer) argMap.get("block-size"),
-                            readStream(System.in)
-                        )
-                    );
-                }
+        PBE_CHECK(argMap -> {
+            if (
+                !EnvelopePBE.check(
+                    new String(readStream(System.in), StandardCharsets.UTF_8),
+                getPassword("Password: ", (String) argMap.get("password"))
+            )) {
+                System.err.println("FAILED");
+                throw new ExitException("Check failed", 1);
             }
-        ),
-        ENC_DECODE(
-            argMap -> {
-                String keystorePassword = getPassword("Key store password: ", (String) argMap.get("keystore-password"));
-                System.out.write(
-                    EnvelopeEncryptDecrypt.decrypt(
-                        getPrivateKeyEntry(
-                            getKeyStore(
-                                (String) argMap.get("keystore-type"),
-                                (String) argMap.get("keystore"),
-                                keystorePassword
+        }),
+        ENC_ENCODE(argMap -> {
+            try (InputStream in = new FileInputStream((String) argMap.get("certificate"))) {
+                System.out.println(
+                                    EnvelopeEncryptDecrypt.encrypt(
+                                    (String) argMap.get("algorithm"),
+                                    (Integer) argMap.get("key-size"),
+                                    CertificateFactory.getInstance("X.509").generateCertificate(in),
+                                    (Integer) argMap.get("block-size"),
+                                    readStream(System.in)
+                                ));
+            }
+        }),
+        ENC_DECODE(argMap -> {
+            String keystorePassword = getPassword("Key store password: ", (String) argMap.get("keystore-password"));
+            System.out.write(
+                        EnvelopeEncryptDecrypt.decrypt(
+                            getPrivateKeyEntry(
+                                getKeyStore(
+                                    (String) argMap.get("keystore-type"),
+                                    (String) argMap.get("keystore"),
+                                    keystorePassword
+                                ),
+                                (String) argMap.get("keystore-alias"),
+                                    argMap.get("key-password") != null ?
+                                    getPassword("Key password: ", (String) argMap.get("key-password")) :
+                                    keystorePassword
                             ),
-                            (String) argMap.get("keystore-alias"),
-                                argMap.get("key-password") != null ?
-                                getPassword("Key password: ", (String) argMap.get("key-password")) :
-                                keystorePassword
-                        ),
                         new String(readStream(System.in), StandardCharsets.UTF_8)
                     )
-                );
-            }
-        );
+            );
+        });
 
         private Logic logic;
 

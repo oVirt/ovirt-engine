@@ -26,8 +26,7 @@ public class BackendAssignedCpuProfileResourceTest
 
     @Test
     public void testBadGuid() {
-        verifyNotFoundException
-                (assertThrows(WebApplicationException.class, () -> new BackendCpuProfileResource("foo")));
+        verifyNotFoundException(assertThrows(WebApplicationException.class, () -> new BackendCpuProfileResource("foo")));
     }
 
     @Test

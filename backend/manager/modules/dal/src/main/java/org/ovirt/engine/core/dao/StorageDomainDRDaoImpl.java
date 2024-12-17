@@ -73,11 +73,11 @@ public class StorageDomainDRDaoImpl extends BaseDao implements StorageDomainDRDa
 
     @Override
     public void saveOrUpdate(StorageDomainDR storageDomainDR) {
-       if (get(storageDomainDR.getStorageDomainId(), storageDomainDR.getGeoRepSessionId()) != null) {
-           update(storageDomainDR);
-       } else {
-           save(storageDomainDR);
-       }
+        if (get(storageDomainDR.getStorageDomainId(), storageDomainDR.getGeoRepSessionId()) != null) {
+            update(storageDomainDR);
+        } else {
+            save(storageDomainDR);
+        }
 
     }
 

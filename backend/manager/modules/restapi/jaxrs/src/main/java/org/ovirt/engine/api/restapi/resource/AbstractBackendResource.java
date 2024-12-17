@@ -309,7 +309,7 @@ public abstract class AbstractBackendResource<R extends BaseResource, Q>
         if (subCollectionMembersToExclude != null && subCollectionMembersToExclude.length > 0) {
             for (String excludeMember : subCollectionMembersToExclude) {
                 if (member.equals(excludeMember)) {
-                        return true;
+                    return true;
                 }
             }
         }

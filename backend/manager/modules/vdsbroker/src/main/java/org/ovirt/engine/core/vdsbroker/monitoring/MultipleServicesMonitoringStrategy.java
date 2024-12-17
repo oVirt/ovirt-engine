@@ -12,20 +12,20 @@ public class MultipleServicesMonitoringStrategy implements MonitoringStrategy {
     public MultipleServicesMonitoringStrategy() {
     }
 
-    public void addMonitoringStrategy( MonitoringStrategy monitoringStrategy ) {
+    public void addMonitoringStrategy(MonitoringStrategy monitoringStrategy) {
         strategies.add(monitoringStrategy);
     }
 
     @Override
     public void processHardwareCapabilities(VDS vds) {
-        for ( MonitoringStrategy monitoringStrategy : strategies ) {
+        for (MonitoringStrategy monitoringStrategy : strategies) {
             monitoringStrategy.processHardwareCapabilities(vds);
         }
     }
 
     @Override
     public void processSoftwareCapabilities(VDS vds) {
-        for ( MonitoringStrategy monitoringStrategy : strategies ) {
+        for (MonitoringStrategy monitoringStrategy : strategies) {
             monitoringStrategy.processSoftwareCapabilities(vds);
         }
     }
@@ -33,7 +33,7 @@ public class MultipleServicesMonitoringStrategy implements MonitoringStrategy {
     @Override
     public boolean canMoveToMaintenance(VDS vds) {
         // In this case, if all the services can move the VDS to maintenance then we return true
-        for ( MonitoringStrategy monitoringStrategy : strategies ) {
+        for (MonitoringStrategy monitoringStrategy : strategies) {
             if (!monitoringStrategy.canMoveToMaintenance(vds)) {
                 return false;
             }
@@ -44,7 +44,7 @@ public class MultipleServicesMonitoringStrategy implements MonitoringStrategy {
     @Override
     public boolean isMonitoringNeeded(VDS vds) {
         // In this case, if one of the services needs monitoring then we return true
-        for ( MonitoringStrategy monitoringStrategy : strategies ) {
+        for (MonitoringStrategy monitoringStrategy : strategies) {
             if (monitoringStrategy.isMonitoringNeeded(vds)) {
                 return true;
             }
@@ -55,7 +55,7 @@ public class MultipleServicesMonitoringStrategy implements MonitoringStrategy {
     @Override
     public boolean processHardwareCapabilitiesNeeded(VDS oldVds, VDS newVds) {
         // In this case, if one of the services needs hardware capabilities processing then we return true
-        for ( MonitoringStrategy monitoringStrategy : strategies ) {
+        for (MonitoringStrategy monitoringStrategy : strategies) {
             if (monitoringStrategy.processHardwareCapabilitiesNeeded(oldVds, newVds)) {
                 return true;
             }

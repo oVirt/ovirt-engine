@@ -114,10 +114,10 @@ public class NotificationProperties extends ShellLikeConfd {
 
         // validate non negative args
         for (String property : new String[] {
-                DAYS_TO_KEEP_HISTORY,
-                DAYS_TO_SEND_ON_STARTUP,
-                FAILED_QUERIES_NOTIFICATION_THRESHOLD,
-                IDLE_INTERVAL }) {
+            DAYS_TO_KEEP_HISTORY,
+            DAYS_TO_SEND_ON_STARTUP,
+            FAILED_QUERIES_NOTIFICATION_THRESHOLD,
+            IDLE_INTERVAL }) {
             validateNonNegetive(property);
         }
     }

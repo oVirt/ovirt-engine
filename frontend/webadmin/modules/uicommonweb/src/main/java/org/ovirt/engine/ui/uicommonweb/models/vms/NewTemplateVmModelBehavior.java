@@ -208,7 +208,7 @@ public class NewTemplateVmModelBehavior extends VmModelBehaviorBase<UnitVmModel>
                     diskModel.getAlias().setEntity(diskImage.getDiskAlias());
                     diskModel.setVm(getVm());
                     break;
-            case MANAGED_BLOCK_STORAGE:
+                case MANAGED_BLOCK_STORAGE:
                     ManagedBlockStorageDisk managedBlockDisk = (ManagedBlockStorageDisk) disk;
                     diskModel.setSize(new EntityModel<>((int) managedBlockDisk.getSizeInGigabytes()));
                     ListModel managedBlockVolumeTypes = new ListModel();

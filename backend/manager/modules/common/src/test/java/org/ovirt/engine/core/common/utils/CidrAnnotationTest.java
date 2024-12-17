@@ -50,10 +50,10 @@ public class CidrAnnotationTest {
     @ParameterizedTest
     @MethodSource(value = "namesParams")
     public void checkCidrNetworkAddressAnnotation
-            (String cidr,
-                    IpVersion ipVersion,
-                    boolean validCidrFormatExpectedResult,
-                    boolean validNetworkAddressExpectedResult) {
+    (String cidr,
+        IpVersion ipVersion,
+        boolean validCidrFormatExpectedResult,
+        boolean validNetworkAddressExpectedResult) {
         ExternalSubnet container = createContainer(cidr, ipVersion);
         Set<ConstraintViolation<ExternalSubnet>> result = validator.validate(container);
         if (!validCidrFormatExpectedResult) {

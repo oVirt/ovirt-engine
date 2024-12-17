@@ -122,7 +122,7 @@ public class GlusterLocalVolumeInfo {
     }
 
     private Integer getVdoSavings(GlusterVDOVolume v) {
-        if ( v.getLogicalBlocks() == 0 || v.getPhysicalBlocks() == 0) {
+        if (v.getLogicalBlocks() == 0 || v.getPhysicalBlocks() == 0) {
             return 0;
         }
         return (int) (((v.getLogicalBlocks() - v.getPhysicalBlocks()) / v.getLogicalBlocks().doubleValue()) * 100);

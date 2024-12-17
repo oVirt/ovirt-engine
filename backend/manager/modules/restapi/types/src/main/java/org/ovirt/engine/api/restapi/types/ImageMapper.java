@@ -22,19 +22,19 @@ public class ImageMapper {
 
     public static ImageFileType mapImageType(org.ovirt.engine.core.common.businessentities.storage.ImageFileType imageFileType) {
         switch (imageFileType) {
-        case ISO:
-            return ImageFileType.ISO;
-        case Floppy:
-            return ImageFileType.FLOPPY;
-        case Disk:
-            return ImageFileType.DISK;
-        case Unknown:
-            // Explicitly map UNKNOWN to null, as it doesn't make
-            // sense in the API.
-            return null;
-        default:
-            log.warn("Don't know how to map image type '{}', will return null.", imageFileType);
-            return null;
+            case ISO:
+                return ImageFileType.ISO;
+            case Floppy:
+                return ImageFileType.FLOPPY;
+            case Disk:
+                return ImageFileType.DISK;
+            case Unknown:
+                // Explicitly map UNKNOWN to null, as it doesn't make
+                // sense in the API.
+                return null;
+            default:
+                log.warn("Don't know how to map image type '{}', will return null.", imageFileType);
+                return null;
         }
     }
 }

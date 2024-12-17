@@ -37,7 +37,7 @@ public class HtmlParameters {
 
     private static String[] encodeParameters(String[] values) {
         for (int index = 0; index < values.length; ++index) {
-                values[index] = encodeParameter(values[index]);
+            values[index] = encodeParameter(values[index]);
         }
         return values;
     }

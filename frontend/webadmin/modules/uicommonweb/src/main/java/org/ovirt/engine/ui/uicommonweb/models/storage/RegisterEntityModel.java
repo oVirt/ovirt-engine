@@ -251,10 +251,10 @@ public abstract class RegisterEntityModel<T, E extends ImportEntityData<T>> exte
         EntityModel<String> name = new EntityModel<>(entityData.getName());
         name.validateEntity(
                 new IValidation[] {
-                        new NotEmptyValidation(),
-                        new LengthValidation(maxNameLength),
-                        new I18NNameValidation(),
-                        uniqueNameValidation(entityData)
+                    new NotEmptyValidation(),
+                    new LengthValidation(maxNameLength),
+                    new I18NNameValidation(),
+                    uniqueNameValidation(entityData)
                 });
 
         return name;

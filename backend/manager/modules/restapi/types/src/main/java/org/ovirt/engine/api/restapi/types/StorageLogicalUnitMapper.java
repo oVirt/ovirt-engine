@@ -132,14 +132,14 @@ public class StorageLogicalUnitMapper {
     @Mapping(from = org.ovirt.engine.core.common.businessentities.storage.LunStatus.class, to = LunStatus.class)
     public static LunStatus map(org.ovirt.engine.core.common.businessentities.storage.LunStatus status, LunStatus template) {
         switch (status) {
-        case Free:
-            return LunStatus.FREE;
-        case Used:
-            return LunStatus.USED;
-        case Unusable:
-            return LunStatus.UNUSABLE;
-        default:
-            return null;
+            case Free:
+                return LunStatus.FREE;
+            case Used:
+                return LunStatus.USED;
+            case Unusable:
+                return LunStatus.UNUSABLE;
+            default:
+                return null;
         }
     }
 }

@@ -214,11 +214,10 @@ public class RegisterServlet extends HttpServlet {
                 String m = String.format("Invalid registration protocol version %s", version);
                 log.error(m);
                 response.sendError(response.SC_BAD_REQUEST, m);
-            break;
-
+                break;
             case 1:
                 doV1(request, response);
-            break;
+                break;
         }
     }
 }

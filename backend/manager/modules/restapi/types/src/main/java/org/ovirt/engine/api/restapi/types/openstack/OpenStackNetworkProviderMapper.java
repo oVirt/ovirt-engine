@@ -185,20 +185,20 @@ public class OpenStackNetworkProviderMapper {
 
     private static ProviderType mapProviderType(OpenStackNetworkProviderType type) {
         switch (type) {
-        case NEUTRON:
-            return ProviderType.OPENSTACK_NETWORK;
-        case EXTERNAL:
-            return ProviderType.EXTERNAL_NETWORK;
+            case NEUTRON:
+                return ProviderType.OPENSTACK_NETWORK;
+            case EXTERNAL:
+                return ProviderType.EXTERNAL_NETWORK;
         }
         throw new IllegalArgumentException("Unknown network provider type \"" + type.name() + "\"");
     }
 
     private static OpenStackNetworkProviderType mapProviderType(ProviderType type) {
         switch (type) {
-        case OPENSTACK_NETWORK:
-            return OpenStackNetworkProviderType.NEUTRON;
-        case EXTERNAL_NETWORK:
-            return OpenStackNetworkProviderType.EXTERNAL;
+            case OPENSTACK_NETWORK:
+                return OpenStackNetworkProviderType.NEUTRON;
+            case EXTERNAL_NETWORK:
+                return OpenStackNetworkProviderType.EXTERNAL;
         }
         throw new IllegalArgumentException("Provider type not allowed: \"" + type.name() + "\"");
     }

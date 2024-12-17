@@ -90,7 +90,7 @@ public abstract class ErrataListWithDetailsPopupPresenterWidget<T extends
     @Override
     public void onUnbind() {
         super.onUnbind();
-        if ( changeListener != null) {
+        if (changeListener != null) {
             modelProvider.getModel().getPropertyChangedEvent().removeListener(changeListener);
         }
     }

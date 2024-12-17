@@ -46,9 +46,9 @@ public class VmTypeColumn extends AbstractSafeHtmlColumn<VM> {
     private static ImageResource getPoolVmImageResource(VmType vmType, boolean nextRunConfigurationExists) {
         switch (vmType) {
             case Server:
-               return nextRunConfigurationExists ? resources.manyServersChangesImage() : resources.manyServersImage();
+                return nextRunConfigurationExists ? resources.manyServersChangesImage() : resources.manyServersImage();
             case HighPerformance:
-               return nextRunConfigurationExists ? resources.manyHighPerformancesChangesImage() : resources.manyHighPerformancesImage();
+                return nextRunConfigurationExists ? resources.manyHighPerformancesChangesImage() : resources.manyHighPerformancesImage();
             case Desktop:
             default:
                 return nextRunConfigurationExists ? resources.manyDesktopsChangesImage() : resources.manyDesktopsImage();

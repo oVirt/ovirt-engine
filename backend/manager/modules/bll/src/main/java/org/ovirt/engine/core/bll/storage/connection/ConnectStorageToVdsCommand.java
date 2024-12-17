@@ -97,7 +97,7 @@ public class ConnectStorageToVdsCommand<T extends StorageServerConnectionParamet
     }
 
     protected boolean isValidStorageConnectionPort(String port) {
-         return !StringUtils.isEmpty(port) && StringUtils.isNumeric(port) && Integer.parseInt(port) > 0;
+        return !StringUtils.isEmpty(port) && StringUtils.isNumeric(port) && Integer.parseInt(port) > 0;
     }
 
     protected boolean isValidConnection(StorageServerConnections conn) {

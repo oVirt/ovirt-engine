@@ -60,12 +60,12 @@ public class LocationInfoHelper {
 
     private static String volumeFormatToString(VolumeFormat format) {
         switch (format) {
-        case COW:
-            return "cow";
-        case RAW:
-            return "raw";
-        default:
-            throw new RuntimeException("Invalid format");
+            case COW:
+                return "cow";
+            case RAW:
+                return "raw";
+            default:
+                throw new RuntimeException("Invalid format");
         }
     }
 }

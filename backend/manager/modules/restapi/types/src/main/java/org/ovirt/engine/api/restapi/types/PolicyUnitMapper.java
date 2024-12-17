@@ -61,15 +61,15 @@ public class PolicyUnitMapper {
             return null;
         }
         switch (model) {
-        case FILTER:
-            return PolicyUnitType.FILTER;
-        case WEIGHT:
-            return PolicyUnitType.WEIGHT;
-        case LOAD_BALANCING:
-            return PolicyUnitType.LOAD_BALANCING;
-        default:
-            assert false : "unknown Policy Unit Type value: " + model.toString();
-            return null;
+            case FILTER:
+                return PolicyUnitType.FILTER;
+            case WEIGHT:
+                return PolicyUnitType.WEIGHT;
+            case LOAD_BALANCING:
+                return PolicyUnitType.LOAD_BALANCING;
+            default:
+                assert false : "unknown Policy Unit Type value: " + model.toString();
+                return null;
         }
     }
 
@@ -80,15 +80,15 @@ public class PolicyUnitMapper {
             return null;
         }
         switch (model) {
-        case FILTER:
-            return org.ovirt.engine.api.model.PolicyUnitType.FILTER;
-        case WEIGHT:
-            return org.ovirt.engine.api.model.PolicyUnitType.WEIGHT;
-        case LOAD_BALANCING:
-            return org.ovirt.engine.api.model.PolicyUnitType.LOAD_BALANCING;
-        default:
-            assert false : "unknown Policy Unit Type value: " + model.toString();
-            return null;
+            case FILTER:
+                return org.ovirt.engine.api.model.PolicyUnitType.FILTER;
+            case WEIGHT:
+                return org.ovirt.engine.api.model.PolicyUnitType.WEIGHT;
+            case LOAD_BALANCING:
+                return org.ovirt.engine.api.model.PolicyUnitType.LOAD_BALANCING;
+            default:
+                assert false : "unknown Policy Unit Type value: " + model.toString();
+                return null;
         }
     }
 }

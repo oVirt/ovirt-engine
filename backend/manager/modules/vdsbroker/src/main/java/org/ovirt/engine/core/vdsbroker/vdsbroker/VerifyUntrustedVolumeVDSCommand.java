@@ -5,8 +5,8 @@ import org.ovirt.engine.core.vdsbroker.irsbroker.StatusReturn;
 
 public class VerifyUntrustedVolumeVDSCommand<P extends ImageActionsVDSCommandParameters> extends ImageActionsVDSCommandBase<P> {
     public VerifyUntrustedVolumeVDSCommand(P parameters) {
-            super(parameters);
-        }
+        super(parameters);
+    }
 
     @Override
     protected StatusReturn executeImageActionVdsBrokerCommand(String spId,

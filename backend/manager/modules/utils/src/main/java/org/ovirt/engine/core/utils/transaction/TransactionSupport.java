@@ -73,14 +73,14 @@ public class TransactionSupport {
         }
 
         switch (scope) {
-        case RequiresNew:
-            return executeInNewTransaction(code);
-        case Suppress:
-            return executeInSuppressed(tm, code);
-        case Required:
-            return executeInRequired(tm, code);
-        default:
-            throw new RuntimeException("Undefined Scope: " + scope);
+            case RequiresNew:
+                return executeInNewTransaction(code);
+            case Suppress:
+                return executeInSuppressed(tm, code);
+            case Required:
+                return executeInRequired(tm, code);
+            default:
+                throw new RuntimeException("Undefined Scope: " + scope);
         }
     }
 

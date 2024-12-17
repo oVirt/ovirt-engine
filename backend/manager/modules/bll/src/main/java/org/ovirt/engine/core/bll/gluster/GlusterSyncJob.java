@@ -871,13 +871,13 @@ public class GlusterSyncJob extends GlusterJob {
         }
 
         if (existingVolume.getVolumeType().isReplicatedType() &&
-                !Objects.equals(existingVolume.getReplicaCount(), fetchedVolume.getReplicaCount())) {
-                existingVolume.setReplicaCount(fetchedVolume.getReplicaCount());
-                changed = true;
+            !Objects.equals(existingVolume.getReplicaCount(), fetchedVolume.getReplicaCount())) {
+            existingVolume.setReplicaCount(fetchedVolume.getReplicaCount());
+            changed = true;
         }
 
         if (existingVolume.getVolumeType().isStripedType() &&
-                !Objects.equals(existingVolume.getStripeCount(), fetchedVolume.getStripeCount())) {
+            !Objects.equals(existingVolume.getStripeCount(), fetchedVolume.getStripeCount())) {
             existingVolume.setStripeCount(fetchedVolume.getStripeCount());
             changed = true;
         }

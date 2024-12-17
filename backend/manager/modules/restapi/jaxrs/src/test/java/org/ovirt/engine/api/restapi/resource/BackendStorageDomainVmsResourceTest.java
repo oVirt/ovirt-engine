@@ -91,18 +91,18 @@ public class BackendStorageDomainVmsResourceTest
                                      setUpStorageDomain(domainType));
 
         switch (domainType) {
-        case Data:
-            break;
-        case ImportExport:
-            setUpEntityQueryExpectations(QueryType.GetVmsFromExportDomain,
-                                         GetAllFromExportDomainQueryParameters.class,
-                                         new String[] { "StoragePoolId", "StorageDomainId"},
-                                         new Object[] { DATA_CENTER_ID, STORAGE_DOMAIN_ID},
-                                         setUpVms(),
-                                         failure);
-            break;
-        default:
-            break;
+            case Data:
+                break;
+            case ImportExport:
+                setUpEntityQueryExpectations(QueryType.GetVmsFromExportDomain,
+                                            GetAllFromExportDomainQueryParameters.class,
+                                            new String[] { "StoragePoolId", "StorageDomainId"},
+                                            new Object[] { DATA_CENTER_ID, STORAGE_DOMAIN_ID},
+                                            setUpVms(),
+                                            failure);
+                break;
+            default:
+                break;
         }
     }
 

@@ -98,13 +98,13 @@ public abstract class GlusterHookStatusChangeCommand<T extends GlusterHookParame
         for (Pair<VDS, VDSReturnValue> pairResult : pairResults) {
 
             VDSReturnValue retValue = pairResult.getSecond();
-            if (retValue.getSucceeded() ) {
+            if (retValue.getSucceeded()) {
                 atLeastOneSuccess = true;
                 // update status in database
                 updateServerHookStatusInDb(getGlusterHook().getId(), pairResult.getFirst().getId(), getNewStatus());
             } else {
                 errors.add(retValue.getVdsError().getMessage());
-             }
+            }
         }
 
         setSucceeded(atLeastOneSuccess);
@@ -135,7 +135,7 @@ public abstract class GlusterHookStatusChangeCommand<T extends GlusterHookParame
         if (jobProperties == null) {
             jobProperties = super.getJobMessageProperties();
             if (getGlusterHook() != null) {
-                 jobProperties.put(GlusterConstants.HOOK_NAME, getGlusterHook().getName());
+                jobProperties.put(GlusterConstants.HOOK_NAME, getGlusterHook().getName());
             }
         }
 

@@ -42,21 +42,21 @@ public class MainProviderView extends AbstractMainWithDetailsTableView<Provider,
         getTable().enableColumnResizing();
 
         AbstractTextColumn<Provider> nameColumn = new AbstractLinkColumn<Provider>(
-                new FieldUpdater<Provider, String>() {
+            new FieldUpdater<Provider, String>() {
 
-            @Override
-            public void update(int index, Provider provider, String value) {
-                Map<String, String> parameters = new HashMap<>();
-                parameters.put(FragmentParams.NAME.getName(), provider.getName());
-                //The link was clicked, now fire an event to switch to details.
-                getPlaceTransitionHandler().handlePlaceTransition(
-                        WebAdminApplicationPlaces.providerGeneralSubTabPlace, parameters);
-            }
+                @Override
+                public void update(int index, Provider provider, String value) {
+                    Map<String, String> parameters = new HashMap<>();
+                    parameters.put(FragmentParams.NAME.getName(), provider.getName());
+                    //The link was clicked, now fire an event to switch to details.
+                    getPlaceTransitionHandler().handlePlaceTransition(
+                            WebAdminApplicationPlaces.providerGeneralSubTabPlace, parameters);
+                }
 
-        }) {
-            @Override
-            public String getValue(Provider object) {
-                return object.getName();
+            }) {
+                @Override
+                public String getValue(Provider object) {
+                    return object.getName();
             }
         };
         nameColumn.makeSortable(ProviderConditionFieldAutoCompleter.NAME);

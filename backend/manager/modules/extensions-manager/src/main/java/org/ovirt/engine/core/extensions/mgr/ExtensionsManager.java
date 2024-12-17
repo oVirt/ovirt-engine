@@ -224,7 +224,7 @@ public class ExtensionsManager extends Observable {
                     ).mput(
                             Base.ContextKeys.PROVIDES,
                             splitString(props.getProperty(Base.ConfigKeys.PROVIDES, ""))
-                    );
+            );
 
             log.info("Loading extension '{}'", entry.name);
             ExtMap output = entry.extension.invoke(
@@ -245,14 +245,14 @@ public class ExtensionsManager extends Observable {
                                     entry.extension.getContext().get(Base.ContextKeys.INSTANCE_NAME)
                                     )
                             )
-                    );
-           if (output.<Integer>get(Base.InvokeKeys.RESULT) != Base.InvokeResult.SUCCESS) {
-               throw new RuntimeException(
+            );
+            if (output.<Integer>get(Base.InvokeKeys.RESULT) != Base.InvokeResult.SUCCESS) {
+                throw new RuntimeException(
                        String.format("Invoke of LOAD returned with error code: %1$s",
                        output.<Integer>get(Base.InvokeKeys.RESULT)
                        )
-               );
-           }
+                );
+            }
         } catch (Exception e) {
             throw new RuntimeException(String.format("Error loading extension '%1$s': %2$s", entry.name, e.getMessage()), e);
         }
@@ -341,7 +341,7 @@ public class ExtensionsManager extends Observable {
                                     Base.ExtensionRecord.CONTEXT,
                                     entry.extension.getContext()
                             )
-                    );
+            );
         }
         setChanged();
         notifyObservers();
@@ -373,7 +373,7 @@ public class ExtensionsManager extends Observable {
                     emptyIfNull(context.get(Base.ContextKeys.BUILD_INTERFACE_VERSION)),
                     entry.getFileName(),
                     entry.initialized
-                        );
+                );
             }
         }
         log.info("End of enabled extensions list");

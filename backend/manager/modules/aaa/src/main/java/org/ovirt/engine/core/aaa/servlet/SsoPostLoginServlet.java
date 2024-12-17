@@ -114,7 +114,7 @@ public class SsoPostLoginServlet extends HttpServlet {
                                 request.getRemoteAddr(),
                                 (Collection<ExtMap>) payload.get("group_ids"),
                                 loginAsAdmin));
-                if (!queryRetVal.getSucceeded() ) {
+                if (!queryRetVal.getSucceeded()) {
                     if (queryRetVal.getActionReturnValue() == CreateUserSessionsError.NUM_OF_SESSIONS_EXCEEDED) {
                         throw new RuntimeException(String.format(
                                 "Unable to login user %s@%s with profile [%s]" +

@@ -13,7 +13,7 @@ public class OSParserTest {
     @ParameterizedTest
     @MethodSource
     public void verifyOsFormatCanBeParsed
-            (String name, int major, int minor, int release, int build, String fullVersion) {
+    (String name, int major, int minor, int release, int build, String fullVersion) {
 
         final Version version = new Version(major, minor, release, build);
         final OS validOs = OS.fromPackageVersionString(name);

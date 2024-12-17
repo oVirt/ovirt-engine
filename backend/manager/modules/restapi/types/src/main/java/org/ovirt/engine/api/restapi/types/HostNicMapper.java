@@ -324,23 +324,23 @@ public class HostNicMapper {
 
     public static Integer tryParse(String text) {
         try {
-          return Integer.valueOf(text);
+            return Integer.valueOf(text);
         } catch (NumberFormatException e) {
-          return null;
+            return null;
         }
-      }
+    }
 
     public static NicStatus mapNicStatus(InterfaceStatus status) {
         if (status == null) {
             return null;
         }
         switch (status) {
-        case UP:
-            return NicStatus.UP;
-        case DOWN:
-            return NicStatus.DOWN;
-        default:
-            return null;
+            case UP:
+                return NicStatus.UP;
+            case DOWN:
+                return NicStatus.DOWN;
+            default:
+                return null;
         }
     }
 

@@ -479,7 +479,7 @@ public class TryBackToAllSnapshotsOfVmCommand<T extends TryBackToAllSnapshotsOfV
                 UpdateVmCommand.getExclusiveLocksForUpdateVm(getVm()),
                 UpdateVmCommand.getSharedLocksForUpdateVm(getVm()));
     }
-    protected boolean tryBackAllCinderDisks( List<CinderDisk> cinderDisks, Guid newSnapshotId) {
+    protected boolean tryBackAllCinderDisks(List<CinderDisk> cinderDisks, Guid newSnapshotId) {
         for (CinderDisk disk : cinderDisks) {
             ImagesContainterParametersBase params = buildCinderChildCommandParameters(disk, newSnapshotId);
             ActionReturnValue actionReturnValue = runInternalAction(
@@ -541,16 +541,16 @@ public class TryBackToAllSnapshotsOfVmCommand<T extends TryBackToAllSnapshotsOfV
     @Override
     public AuditLogType getAuditLogTypeValue() {
         switch (getActionState()) {
-        case EXECUTE:
-            return getSucceeded() ? AuditLogType.USER_TRY_BACK_TO_SNAPSHOT
-                    : AuditLogType.USER_FAILED_TRY_BACK_TO_SNAPSHOT;
+            case EXECUTE:
+                return getSucceeded() ? AuditLogType.USER_TRY_BACK_TO_SNAPSHOT
+                        : AuditLogType.USER_FAILED_TRY_BACK_TO_SNAPSHOT;
 
-        case END_SUCCESS:
-            return getSucceeded() ? AuditLogType.USER_TRY_BACK_TO_SNAPSHOT_FINISH_SUCCESS
-                    : AuditLogType.USER_TRY_BACK_TO_SNAPSHOT_FINISH_FAILURE;
+            case END_SUCCESS:
+                return getSucceeded() ? AuditLogType.USER_TRY_BACK_TO_SNAPSHOT_FINISH_SUCCESS
+                        : AuditLogType.USER_TRY_BACK_TO_SNAPSHOT_FINISH_FAILURE;
 
-        default:
-            return AuditLogType.USER_TRY_BACK_TO_SNAPSHOT_FINISH_FAILURE;
+            default:
+                return AuditLogType.USER_TRY_BACK_TO_SNAPSHOT_FINISH_FAILURE;
         }
     }
 

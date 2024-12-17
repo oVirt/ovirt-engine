@@ -97,21 +97,21 @@ public class VmCommonUtils {
     }
 
     private static ConfigValues getMaxMemConfigValueByOsId(int osId) {
-         OsRepository osRepository = SimpleDependencyInjector.getInstance().get(OsRepository.class);
-         return osRepository.get64bitOss().contains(osId)
+        OsRepository osRepository = SimpleDependencyInjector.getInstance().get(OsRepository.class);
+        return osRepository.get64bitOss().contains(osId)
                  ? (osRepository.getOsArchitectures().get(osId).getFamily() == ArchitectureType.ppc
                         ? ConfigValues.VMPpc64BitMaxMemorySizeInMB
                         : ConfigValues.VM64BitMaxMemorySizeInMB)
                  : ConfigValues.VM32BitMaxMemorySizeInMB;
-     }
+    }
 
-     public static int getMaxMemorySizeDefault(int memorySize) {
+    public static int getMaxMemorySizeDefault(int memorySize) {
         final int maxMemoryDefaultRatio = 4;
         return maxMemoryDefaultRatio * memorySize;
-     }
+    }
 
-     public static int calcMinMemory(int memory, int overcommit) {
-         double overCommitFactor = 100.0 / overcommit;
-         return (int) (memory * overCommitFactor);
-     }
+    public static int calcMinMemory(int memory, int overcommit) {
+        double overCommitFactor = 100.0 / overcommit;
+        return (int) (memory * overCommitFactor);
+    }
 }

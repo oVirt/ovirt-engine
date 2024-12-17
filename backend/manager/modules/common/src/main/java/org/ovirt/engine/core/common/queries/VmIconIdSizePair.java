@@ -15,7 +15,7 @@ public class VmIconIdSizePair implements Serializable {
     private VmIconIdSizePair() {
     }
 
-    public VmIconIdSizePair( Guid small, Guid large) {
+    public VmIconIdSizePair(Guid small, Guid large) {
         if (large == null || small == null) {
             throw new IllegalArgumentException("Argument should not be null");
         }

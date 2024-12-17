@@ -32,7 +32,7 @@ public class PauseGlusterVolumeGeoRepSessionCommandTest extends GeoRepSessionCom
         cmd.setGlusterVolumeId(startedVolumeId);
         cmd.getParameters().setGeoRepSessionId(geoRepSessionId);
         doReturn(getGeoRepSession(geoRepSessionId, GeoRepSessionStatus.ACTIVE, startedVolumeId)).when(geoRepDao)
-.getById(geoRepSessionId);
+        .getById(geoRepSessionId);
         assertTrue(cmd.validate());
     }
 

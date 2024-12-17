@@ -373,20 +373,20 @@ public class ListModel<T> extends Model {
      */
     private void synchronizeSelection() {
         switch (selectionModel.getMode()) {
-        case SINGLE_SELECTION:
-            setSelectedItem(selectionModel.asSingleSelectionModel().getSelectedObject());
-            break;
-        case MULTI_SELECTION:
-            List<T> selectedItems = selectionModel.getSelectedObjects();
-            setSelectedItems(selectedItems);
-            if (selectedItems.size() == 1) {
-                setSelectedItem(selectedItems.get(0));
-            } else if (selectedItems.size() == 0) {
-                setSelectedItem(null);
-            }
-            break;
-        default:
-            break;
+            case SINGLE_SELECTION:
+                setSelectedItem(selectionModel.asSingleSelectionModel().getSelectedObject());
+                break;
+            case MULTI_SELECTION:
+                List<T> selectedItems = selectionModel.getSelectedObjects();
+                setSelectedItems(selectedItems);
+                if (selectedItems.size() == 1) {
+                    setSelectedItem(selectedItems.get(0));
+                } else if (selectedItems.size() == 0) {
+                    setSelectedItem(null);
+                }
+                break;
+            default:
+                break;
         }
     }
 

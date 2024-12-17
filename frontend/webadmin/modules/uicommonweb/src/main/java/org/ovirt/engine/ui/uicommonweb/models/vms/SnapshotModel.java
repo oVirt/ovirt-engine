@@ -311,8 +311,8 @@ public class SnapshotModel extends EntityModel<Snapshot> {
 
     public boolean validate() {
         getDescription().validateEntity(new IValidation[] { new NotEmptyValidation(),
-                new SpecialAsciiI18NOrNoneValidation(),
-                new LengthValidation(BusinessEntitiesDefinitions.GENERAL_MAX_SIZE) });
+            new SpecialAsciiI18NOrNoneValidation(),
+            new LengthValidation(BusinessEntitiesDefinitions.GENERAL_MAX_SIZE) });
 
         return getDescription().getIsValid();
     }
@@ -331,27 +331,27 @@ public class SnapshotModel extends EntityModel<Snapshot> {
 
     private boolean validateNewSnapshotByStatus(SnapshotStatus snapshotStatus) {
         switch (snapshotStatus) {
-        case LOCKED:
-            setMessage(ConstantsManager.getInstance().getConstants().snapshotCannotBeCreatedLockedSnapshotMsg());
-            return false;
-        case IN_PREVIEW:
-            setMessage(ConstantsManager.getInstance().getConstants().snapshotCannotBeCreatedPreviewSnapshotMsg());
-            return false;
-        default:
-            return true;
+            case LOCKED:
+                setMessage(ConstantsManager.getInstance().getConstants().snapshotCannotBeCreatedLockedSnapshotMsg());
+                return false;
+            case IN_PREVIEW:
+                setMessage(ConstantsManager.getInstance().getConstants().snapshotCannotBeCreatedPreviewSnapshotMsg());
+                return false;
+            default:
+                return true;
         }
     }
 
     private boolean validateNewSnapshotByType(SnapshotType snapshotType) {
         switch (snapshotType) {
-        case STATELESS:
-            setMessage(ConstantsManager.getInstance().getConstants().snapshotCannotBeCreatedStatelessSnapshotMsg());
-            return false;
-        case PREVIEW:
-            setMessage(ConstantsManager.getInstance().getConstants().snapshotCannotBeCreatedPreviewSnapshotMsg());
-            return false;
-        default:
-            return true;
+            case STATELESS:
+                setMessage(ConstantsManager.getInstance().getConstants().snapshotCannotBeCreatedStatelessSnapshotMsg());
+                return false;
+            case PREVIEW:
+                setMessage(ConstantsManager.getInstance().getConstants().snapshotCannotBeCreatedPreviewSnapshotMsg());
+                return false;
+            default:
+                return true;
         }
     }
 
@@ -378,18 +378,18 @@ public class SnapshotModel extends EntityModel<Snapshot> {
         ArrayList<ActionParametersBase> params = new ArrayList<>();
         Set<Guid> snapshotDisksIds = null;
         if (getSnapshotDisks().getSelectedItems() != null) {
-                snapshotDisksIds = getSnapshotDisks()
-                        .getSelectedItems()
-                        .stream()
-                        .map(BaseDisk::getId)
-                        .collect(Collectors.toSet());
+            snapshotDisksIds = getSnapshotDisks()
+                .getSelectedItems()
+                .stream()
+                .map(BaseDisk::getId)
+                .collect(Collectors.toSet());
         }
 
         CreateSnapshotForVmParameters param =
-                new CreateSnapshotForVmParameters(vm.getId(),
-                        getDescription().getEntity(),
-                        getMemory().getEntity(),
-                        snapshotDisksIds);
+            new CreateSnapshotForVmParameters(vm.getId(),
+                getDescription().getEntity(),
+                getMemory().getEntity(),
+                snapshotDisksIds);
         param.setQuotaId(vm.getQuotaId());
         params.add(param);
 

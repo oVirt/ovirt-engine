@@ -16,14 +16,14 @@ public class ResiliencePolicyLabel extends ValueLabel<MigrateOnErrorOptions> {
             @Override
             public String render(MigrateOnErrorOptions migrateOnErrorOptions) {
                 switch (migrateOnErrorOptions) {
-                case YES:
-                    return constants.yes();
-                case NO:
-                    return constants.no();
-                case HA_ONLY:
-                    return constants.highPriorityOnly();
-                default:
-                    return null;
+                    case YES:
+                        return constants.yes();
+                    case NO:
+                        return constants.no();
+                    case HA_ONLY:
+                        return constants.highPriorityOnly();
+                    default:
+                        return null;
                 }
             }
         });

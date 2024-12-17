@@ -63,49 +63,49 @@ public class MainNetworkView extends AbstractMainWithDetailsTableView<NetworkVie
         getTable().enableColumnResizing();
 
         AbstractTextColumn<NetworkView> nameColumn = new AbstractLinkColumn<NetworkView>(
-                new FieldUpdater<NetworkView, String>() {
+            new FieldUpdater<NetworkView, String>() {
 
-            @Override
-            public void update(int index, NetworkView network, String value) {
-                Map<String, String> parameters = new HashMap<>();
-                parameters.put(FragmentParams.NAME.getName(), network.getName());
-                parameters.put(FragmentParams.DATACENTER.getName(), network.getDataCenterName());
-                //The link was clicked, now fire an event to switch to details.
-                getPlaceTransitionHandler().handlePlaceTransition(
+                @Override
+                public void update(int index, NetworkView network, String value) {
+                    Map<String, String> parameters = new HashMap<>();
+                    parameters.put(FragmentParams.NAME.getName(), network.getName());
+                    parameters.put(FragmentParams.DATACENTER.getName(), network.getDataCenterName());
+                    //The link was clicked, now fire an event to switch to details.
+                    getPlaceTransitionHandler().handlePlaceTransition(
                         WebAdminApplicationPlaces.networkGeneralSubTabPlace, parameters);
-            }
+                }
 
-        }) {
-            @Override
-            public String getValue(NetworkView object) {
-                return object.getName();
-            }
-        };
+            }) {
+                @Override
+                public String getValue(NetworkView object) {
+                    return object.getName();
+                }
+            };
         nameColumn.makeSortable(NetworkConditionFieldAutoCompleter.NAME);
 
         getTable().addColumn(nameColumn, constants.nameNetwork(), "200px"); //$NON-NLS-1$
 
         CommentColumn<NetworkView> commentColumn = new CommentColumn<>();
         getTable().addColumnWithHtmlHeader(commentColumn,
-                SafeHtmlUtils.fromSafeConstant(constants.commentLabel()),
-                "75px"); //$NON-NLS-1$
+            SafeHtmlUtils.fromSafeConstant(constants.commentLabel()),
+            "75px"); //$NON-NLS-1$
         boolean virtMode = ApplicationModeHelper.isModeSupported(ApplicationMode.VirtOnly);
 
         AbstractTextColumn<NetworkView> dcColumn = new AbstractLinkColumn<NetworkView>(
-                new FieldUpdater<NetworkView, String>() {
-            @Override
-            public void update(int index, NetworkView networkView, String value) {
-                Map<String, String> parameters = new HashMap<>();
-                parameters.put(FragmentParams.NAME.getName(), networkView.getDataCenterName());
-                getPlaceTransitionHandler().handlePlaceTransition(
+            new FieldUpdater<NetworkView, String>() {
+                @Override
+                public void update(int index, NetworkView networkView, String value) {
+                    Map<String, String> parameters = new HashMap<>();
+                    parameters.put(FragmentParams.NAME.getName(), networkView.getDataCenterName());
+                    getPlaceTransitionHandler().handlePlaceTransition(
                         WebAdminApplicationPlaces.dataCenterStorageSubTabPlace, parameters);
-            }
-        }) {
-            @Override
-            public String getValue(NetworkView object) {
-                return object.getDataCenterName();
-            }
-        };
+                }
+            }) {
+                @Override
+                public String getValue(NetworkView object) {
+                    return object.getDataCenterName();
+                }
+            };
         dcColumn.makeSortable(NetworkConditionFieldAutoCompleter.DATA_CENTER);
 
         getTable().ensureColumnVisible(dcColumn, constants.dcNetwork(), virtMode, "200px"); //$NON-NLS-1$
@@ -121,41 +121,41 @@ public class MainNetworkView extends AbstractMainWithDetailsTableView<NetworkVie
         getTable().addColumn(descriptionColumn, constants.descriptionNetwork(), "300px"); //$NON-NLS-1$
 
         /* Here are only listed those roles,
-         * which applies for given network in all clusters. Meaning, management network role need not to be set for
-         * given network on all clusters, and because of that it's missing here.
-         */
+        * which applies for given network in all clusters. Meaning, management network role need not to be set for
+        * given network on all clusters, and because of that it's missing here.
+        */
         AbstractSafeHtmlColumn<NetworkView> roleColumn =
-                new AbstractSafeHtmlColumn<NetworkView>() {
-                    @Override
-                    public SafeHtml getValue(NetworkView networkView) {
+            new AbstractSafeHtmlColumn<NetworkView>() {
+                @Override
+                public SafeHtml getValue(NetworkView networkView) {
 
-                        List<SafeHtml> images = new LinkedList<>();
+                    List<SafeHtml> images = new LinkedList<>();
 
-                        if (networkView.isVmNetwork()) {
+                    if (networkView.isVmNetwork()) {
 
-                            images.add(vmImage);
-                        } else {
-                            images.add(emptyImage);
-                        }
-
-                        return MultiImageColumnHelper.getValue(images);
+                        images.add(vmImage);
+                    } else {
+                        images.add(emptyImage);
                     }
 
-                    @Override
-                    public SafeHtml getTooltip(NetworkView networkView) {
-                        Map<SafeHtml, String> imagesToText = new LinkedHashMap<>();
-                        if (networkView.isVmNetwork()) {
-                            imagesToText.put(vmImage, constants.vmItemInfo());
+                    return MultiImageColumnHelper.getValue(images);
+                }
 
-                        }
+                @Override
+                public SafeHtml getTooltip(NetworkView networkView) {
+                    Map<SafeHtml, String> imagesToText = new LinkedHashMap<>();
+                    if (networkView.isVmNetwork()) {
+                        imagesToText.put(vmImage, constants.vmItemInfo());
 
-                        return MultiImageColumnHelper.getTooltip(imagesToText);
                     }
-                };
+
+                    return MultiImageColumnHelper.getTooltip(imagesToText);
+                }
+            };
 
         getTable().addColumn(roleColumn, constants.roleNetwork(), "60px"); //$NON-NLS-1$
 
-         AbstractTextColumn<NetworkView> vlanColumn = new AbstractTextColumn<NetworkView>() {
+        AbstractTextColumn<NetworkView> vlanColumn = new AbstractTextColumn<NetworkView>() {
             @Override
             public String getValue(NetworkView object) {
                 return object.getVlanId() == null ? "-" : object.getVlanId().toString(); //$NON-NLS-1$

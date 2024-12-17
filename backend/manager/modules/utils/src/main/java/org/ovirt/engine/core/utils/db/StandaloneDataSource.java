@@ -58,12 +58,12 @@ public class StandaloneDataSource implements DataSource {
 
         // Register a shutdown hook to close the connection when finishing:
         Runtime.getRuntime().addShutdownHook(
-           new Thread() {
-               @Override
-               public void run() {
-                   closeConnection();
-               }
-           }
+            new Thread() {
+                @Override
+                public void run() {
+                    closeConnection();
+                }
+            }
         );
     }
 

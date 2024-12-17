@@ -25,8 +25,8 @@ public class BackendVnicProfileResourceTest
 
     @Test
     public void testBadGuid() {
-        verifyNotFoundException
-                (assertThrows(WebApplicationException.class, () -> new BackendVnicProfileResource("foo")));
+        verifyNotFoundException(assertThrows(WebApplicationException.class,
+            () -> new BackendVnicProfileResource("foo")));
     }
 
     @Test

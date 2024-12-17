@@ -702,7 +702,7 @@ public class VmGeneralModel extends AbstractGeneralModel<VM> {
             } else if (vm.getGuestMemoryUnused() != null && vm.getGuestMemoryUnused() != 0) {
                 setGuestMemInfoUsingUnusedMem(true);
                 setGuestFreeCachedBufferedCombinedMemInfo((vm.getGuestMemoryFree() / 1024L) + " / " // $NON-NLS-1$
-                                                        + ((vm.getGuestMemoryFree() - vm.getGuestMemoryUnused()) / 1024L )
+                                                        + ((vm.getGuestMemoryFree() - vm.getGuestMemoryUnused()) / 1024L)
                                                         + " MB"); // $NON-NLS-1$
             } else {
                 setGuestFreeCachedBufferedMemInfo(null); // Handled in form

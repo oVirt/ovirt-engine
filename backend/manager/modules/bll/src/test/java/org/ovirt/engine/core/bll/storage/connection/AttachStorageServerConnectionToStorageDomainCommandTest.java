@@ -99,37 +99,37 @@ public class AttachStorageServerConnectionToStorageDomainCommandTest extends Bas
 
     @Test
     public void executeCommandNotFirstDummyLun() {
-       LUNs dummyLun = new LUNs();
-       dummyLun.setLUNId(BusinessEntitiesDefinitions.DUMMY_LUN_ID_PREFIX + domain.getId());
-       when(lunDao.get(dummyLun.getLUNId())).thenReturn(dummyLun);
+        LUNs dummyLun = new LUNs();
+        dummyLun.setLUNId(BusinessEntitiesDefinitions.DUMMY_LUN_ID_PREFIX + domain.getId());
+        when(lunDao.get(dummyLun.getLUNId())).thenReturn(dummyLun);
 
-       List<StorageServerConnections> connectionsForDomain = new ArrayList<>();
-       StorageServerConnections connection = new StorageServerConnections();
-       connection.setId(Guid.newGuid().toString());
-       connection.setStorageType(StorageType.ISCSI);
-       connection.setIqn("iqn.1.2.3.4.com");
-       connection.setConnection("123.345.266.255");
-       connectionsForDomain.add(connection);
-       when(connectionDao.getAllForDomain(domain.getId())).thenReturn(connectionsForDomain);
-       //dummy lun already exists, thus no need to save
-       verify(lunDao, never()).save(dummyLun);
-       verify(lunMapDao, never()).save(new LUNStorageServerConnectionMap());
-       command.executeCommand();
-       CommandAssertUtils.checkSucceeded(command, true);
+        List<StorageServerConnections> connectionsForDomain = new ArrayList<>();
+        StorageServerConnections connection = new StorageServerConnections();
+        connection.setId(Guid.newGuid().toString());
+        connection.setStorageType(StorageType.ISCSI);
+        connection.setIqn("iqn.1.2.3.4.com");
+        connection.setConnection("123.345.266.255");
+        connectionsForDomain.add(connection);
+        when(connectionDao.getAllForDomain(domain.getId())).thenReturn(connectionsForDomain);
+        //dummy lun already exists, thus no need to save
+        verify(lunDao, never()).save(dummyLun);
+        verify(lunMapDao, never()).save(new LUNStorageServerConnectionMap());
+        command.executeCommand();
+        CommandAssertUtils.checkSucceeded(command, true);
     }
 
     @Test
     public void executeCommandFirstDummyLun() {
-       List<StorageServerConnections> connectionsForDomain = new ArrayList<>();
-       StorageServerConnections connection = new StorageServerConnections();
-       connection.setId(Guid.newGuid().toString());
-       connection.setStorageType(StorageType.ISCSI);
-       connection.setIqn("iqn.1.2.3.4.com");
-       connection.setConnection("123.345.266.255");
-       connectionsForDomain.add(connection);
-       when(connectionDao.getAllForDomain(domain.getId())).thenReturn(connectionsForDomain);
-       command.executeCommand();
-       CommandAssertUtils.checkSucceeded(command, true);
+        List<StorageServerConnections> connectionsForDomain = new ArrayList<>();
+        StorageServerConnections connection = new StorageServerConnections();
+        connection.setId(Guid.newGuid().toString());
+        connection.setStorageType(StorageType.ISCSI);
+        connection.setIqn("iqn.1.2.3.4.com");
+        connection.setConnection("123.345.266.255");
+        connectionsForDomain.add(connection);
+        when(connectionDao.getAllForDomain(domain.getId())).thenReturn(connectionsForDomain);
+        command.executeCommand();
+        CommandAssertUtils.checkSucceeded(command, true);
     }
 
 }

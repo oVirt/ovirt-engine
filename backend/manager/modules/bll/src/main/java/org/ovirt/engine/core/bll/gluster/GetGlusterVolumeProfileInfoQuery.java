@@ -33,7 +33,7 @@ public class GetGlusterVolumeProfileInfoQuery<P extends GlusterVolumeProfilePara
 
         GlusterVolumeProfileInfo profileInfo = (GlusterVolumeProfileInfo) returnValue.getReturnValue();
         if (!nfs) {
-           populateBrickNames(profileInfo);
+            populateBrickNames(profileInfo);
         }
         getQueryReturnValue().setReturnValue(profileInfo);
     }

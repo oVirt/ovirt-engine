@@ -152,7 +152,7 @@ public class ListModelSearchBox<T, M extends SearchableListModel<?, T>> extends 
     @Override
     public void setVisible(boolean value) {
         if (value) {
-            Scheduler.get().scheduleDeferred( () -> {
+            Scheduler.get().scheduleDeferred(() -> {
                 searchBox.setFocus(true);
                 currentFocusIndex = -1;
             });

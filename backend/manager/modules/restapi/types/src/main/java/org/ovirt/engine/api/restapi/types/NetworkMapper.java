@@ -191,12 +191,12 @@ public class NetworkMapper {
 
     private static NetworkStatus mapNetworkStatus(org.ovirt.engine.core.common.businessentities.network.NetworkStatus status) {
         switch (status) {
-        case NON_OPERATIONAL:
-            return NetworkStatus.NON_OPERATIONAL;
-        case OPERATIONAL:
-            return NetworkStatus.OPERATIONAL;
-        default:
-            return null;
+            case NON_OPERATIONAL:
+                return NetworkStatus.NON_OPERATIONAL;
+            case OPERATIONAL:
+                return NetworkStatus.OPERATIONAL;
+            default:
+                return null;
         }
     }
 }

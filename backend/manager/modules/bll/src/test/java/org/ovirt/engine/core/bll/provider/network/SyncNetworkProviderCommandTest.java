@@ -140,7 +140,7 @@ public class SyncNetworkProviderCommandTest extends BaseCommandTest {
             provider.setType(ProviderType.EXTERNAL_NETWORK);
             provider.setId(PROVIDER_ID);
         }
-         return provider;
+        return provider;
     }
 
     private List<Network> getProviderNetworks() {

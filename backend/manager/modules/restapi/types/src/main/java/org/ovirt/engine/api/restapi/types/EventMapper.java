@@ -218,32 +218,32 @@ public class EventMapper {
     public static LogSeverity map(AuditLogSeverity entityStatus,
             LogSeverity template) {
         switch (entityStatus) {
-        case NORMAL:
-            return LogSeverity.NORMAL;
-        case WARNING:
-            return LogSeverity.WARNING;
-        case ERROR:
-            return LogSeverity.ERROR;
-        case ALERT:
-            return LogSeverity.ALERT;
-        default:
-            return null;
+            case NORMAL:
+                return LogSeverity.NORMAL;
+            case WARNING:
+                return LogSeverity.WARNING;
+            case ERROR:
+                return LogSeverity.ERROR;
+            case ALERT:
+                return LogSeverity.ALERT;
+            default:
+                return null;
         }
     }
 
     @Mapping(from = LogSeverity.class, to = AuditLogSeverity.class)
     public static AuditLogSeverity map(LogSeverity template, AuditLogSeverity entityStatus) {
         switch (template) {
-        case ALERT:
-            return AuditLogSeverity.ALERT;
-        case ERROR:
-            return AuditLogSeverity.ERROR;
-        case NORMAL:
-            return AuditLogSeverity.NORMAL;
-        case WARNING:
-            return AuditLogSeverity.WARNING;
-        default:
-            return null;
+            case ALERT:
+                return AuditLogSeverity.ALERT;
+            case ERROR:
+                return AuditLogSeverity.ERROR;
+            case NORMAL:
+                return AuditLogSeverity.NORMAL;
+            case WARNING:
+                return AuditLogSeverity.WARNING;
+            default:
+                return null;
         }
     }
 }

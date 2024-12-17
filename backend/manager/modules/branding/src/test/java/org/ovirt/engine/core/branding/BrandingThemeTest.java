@@ -64,7 +64,7 @@ public class BrandingThemeTest {
 
     @Test
     public void testGetCascadingResource() {
-        assertTrue( //$NON-NLS-1$
+        assertTrue(//$NON-NLS-1$
                 testTheme.getCascadingResource("favicon").getFile().getAbsolutePath().contains("/01-test.brand/images/favicon.ico"),
                 "getCascadingResource not reading file from resources.properties"); //$NON-NLS-1$ //$NON-NLS-2$
         assertEquals("someMadeUp/contentType",
@@ -74,7 +74,7 @@ public class BrandingThemeTest {
 
     @Test
     public void testGetCascadingResourceMissingKey() {
-        assertNull( //$NON-NLS-1$
+        assertNull(//$NON-NLS-1$
                 testTheme.getCascadingResource("this_is_not_a_valid_key"),
                 "getCascadingResource not using resources.properties properly"); //$NON-NLS-1$
     }
@@ -90,7 +90,7 @@ public class BrandingThemeTest {
                 testThemeRootPath, 2); //$NON-NLS-1$
         assertTrue(theme4.load(), "Theme 4 should load"); //$NON-NLS-1$
 
-        assertNull( //$NON-NLS-1$
+        assertNull(//$NON-NLS-1$
                 theme4.getCascadingResource("this_file_is_missing_anyway"),
                 "getCascadingResource not handling missing resources.properties gracefully"); //$NON-NLS-1$
     }
@@ -106,7 +106,7 @@ public class BrandingThemeTest {
                 testThemeRootPath, 2); //$NON-NLS-1$
         assertTrue(theme5.load(), "Theme 5 should load"); //$NON-NLS-1$
 
-        assertNull( //$NON-NLS-1$
+        assertNull(//$NON-NLS-1$
                 theme5.getCascadingResource("this_file_is_missing_anyway"),
                 "getCascadingResource not handling missing resources key gracefully"); //$NON-NLS-1$
     }
@@ -133,7 +133,7 @@ public class BrandingThemeTest {
         BrandingTheme theme1 = new BrandingTheme(testThemePath.getAbsolutePath(),
                 testThemeRootPath, 2); //$NON-NLS-1$
         assertTrue(theme1.load(), "Theme 1 should load"); //$NON-NLS-1$
-        assertFalse( //$NON-NLS-1$
+        assertFalse(//$NON-NLS-1$
                 theme1.shouldReplaceWelcomePageSectionTemplate(), "should replace template should be false");
 
     }

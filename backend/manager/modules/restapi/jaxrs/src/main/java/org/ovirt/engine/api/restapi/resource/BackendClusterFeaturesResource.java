@@ -14,7 +14,7 @@ import org.ovirt.engine.api.resource.ClusterFeaturesResource;
 import org.ovirt.engine.core.common.businessentities.AdditionalFeature;
 
 public class BackendClusterFeaturesResource extends AbstractBackendCollectionResource<ClusterFeature, org.ovirt.engine.core.common.businessentities.AdditionalFeature>
-implements ClusterFeaturesResource {
+    implements ClusterFeaturesResource {
     private String version;
 
     public BackendClusterFeaturesResource(String version) {

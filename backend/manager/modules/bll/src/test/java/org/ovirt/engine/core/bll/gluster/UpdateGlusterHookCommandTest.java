@@ -71,7 +71,7 @@ public class UpdateGlusterHookCommandTest extends GlusterHookCommandTest<UpdateG
             vdsReturnValue.setVdsError(new VDSError(errorCode, ""));
         }
         when(vdsBrokerFrontend.runVdsCommand(eq(VDSCommandType.UpdateGlusterHook), any())).thenReturn(vdsReturnValue);
-     }
+    }
 
     private void mockForReadContent(boolean succeeded, EngineError errorCode) {
         when(hooksDao.getGlusterServerHook(HOOK_ID, SERVER_ID)).thenReturn(getGlusterServerHook(0, GlusterHookStatus.ENABLED));

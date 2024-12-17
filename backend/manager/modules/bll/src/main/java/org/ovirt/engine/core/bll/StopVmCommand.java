@@ -51,15 +51,15 @@ public class StopVmCommand<T extends StopVmParameters> extends StopVmCommandBase
             return getSucceeded() ? AuditLogType.USER_STOP_SUSPENDED_VM : AuditLogType.USER_STOP_SUSPENDED_VM_FAILED;
         } else {
             switch (getParameters().getStopVmType()) {
-            case NORMAL:
-                return getSucceeded() ? AuditLogType.USER_STOP_VM : AuditLogType.USER_FAILED_STOP_VM;
+                case NORMAL:
+                    return getSucceeded() ? AuditLogType.USER_STOP_VM : AuditLogType.USER_FAILED_STOP_VM;
 
-            case CANNOT_SHUTDOWN:
-                return getSucceeded() ? AuditLogType.USER_STOPPED_VM_INSTEAD_OF_SHUTDOWN
-                        : AuditLogType.USER_FAILED_STOPPING_VM_INSTEAD_OF_SHUTDOWN;
+                case CANNOT_SHUTDOWN:
+                    return getSucceeded() ? AuditLogType.USER_STOPPED_VM_INSTEAD_OF_SHUTDOWN
+                            : AuditLogType.USER_FAILED_STOPPING_VM_INSTEAD_OF_SHUTDOWN;
 
-            default: // shouldn't get here:
-                return AuditLogType.UNASSIGNED;
+                default: // shouldn't get here:
+                    return AuditLogType.UNASSIGNED;
             }
         }
     }

@@ -107,8 +107,8 @@ public class AddVmFromTemplateCommandTest extends AddVmCommandTestBase<AddVmFrom
         doReturn(new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN)).
                 when(storageDomainValidator).hasSpaceForClonedDisks(any());
 
-        ValidateTestUtils.runAndAssertValidateFailure
-                (cmd, EngineMessage.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN);
+        ValidateTestUtils.runAndAssertValidateFailure(cmd,
+            EngineMessage.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN);
     }
 
     private void mockMaxPciSlots() {

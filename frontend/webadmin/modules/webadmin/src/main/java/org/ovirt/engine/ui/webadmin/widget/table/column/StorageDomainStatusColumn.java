@@ -18,27 +18,27 @@ public class StorageDomainStatusColumn extends AbstractImageResourceColumn<Stora
     @Override
     public ImageResource getValue(StorageDomain sp) {
         switch (sp.getStatus()) {
-        case Unattached:
-            if (sp.getStorageType() == StorageType.GLANCE) {
-                return resources.openstackImage();
-            } else {
-                return resources.tornChainImage();
-            }
-        case Active:
-            return resources.upImage();
-        case Inactive:
-            return resources.downImage();
-        case Uninitialized:
-            return resources.unconfiguredImage();
-        case Activating:
-        case Locked:
-        case PreparingForMaintenance:
-        case Detaching:
-            return resources.lockImage();
-        case Maintenance:
-            return resources.maintenanceImage();
-        default:
-            return resources.downImage();
+            case Unattached:
+                if (sp.getStorageType() == StorageType.GLANCE) {
+                    return resources.openstackImage();
+                } else {
+                    return resources.tornChainImage();
+                }
+            case Active:
+                return resources.upImage();
+            case Inactive:
+                return resources.downImage();
+            case Uninitialized:
+                return resources.unconfiguredImage();
+            case Activating:
+            case Locked:
+            case PreparingForMaintenance:
+            case Detaching:
+                return resources.lockImage();
+            case Maintenance:
+                return resources.maintenanceImage();
+            default:
+                return resources.downImage();
         }
     }
 

@@ -357,15 +357,15 @@ public class ToStringBuilder {
     public String build() {
         final int bufferLength = buffer.length();
         if (bufferLength > 0) {
-           final char lastChar = buffer.charAt(bufferLength - 1);
-           if (lastChar == VALUE_SUFFIX) {
-               // at least one attribute was added to list
-               buffer.append(ATTRIBUTES_LIST_SUFFIX);
-           } else if (lastChar == CLASS_NAME_SUFFIX) {
-               // only class name was added to buffer
-               buffer.append(ATTRIBUTES_LIST_PREFIX);
-               buffer.append(ATTRIBUTES_LIST_SUFFIX);
-           }
+            final char lastChar = buffer.charAt(bufferLength - 1);
+            if (lastChar == VALUE_SUFFIX) {
+                // at least one attribute was added to list
+                buffer.append(ATTRIBUTES_LIST_SUFFIX);
+            } else if (lastChar == CLASS_NAME_SUFFIX) {
+                // only class name was added to buffer
+                buffer.append(ATTRIBUTES_LIST_PREFIX);
+                buffer.append(ATTRIBUTES_LIST_SUFFIX);
+            }
         }
         return buffer.toString();
     }

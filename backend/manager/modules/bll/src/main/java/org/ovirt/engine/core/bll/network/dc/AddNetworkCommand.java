@@ -149,16 +149,16 @@ public class AddNetworkCommand<T extends AddNetworkStoragePoolParameters> extend
     @Override
     public AuditLogType getAuditLogTypeValue() {
         switch (getActionState()) {
-        case EXECUTE:
-            if (!getSucceeded()) {
-                return NETWORK_ADD_NETWORK_START_ERROR;
-            } else if (skipHostSetupNetworks()) {
-                return NETWORK_ADD_NOTHING_TO_DO;
-            } else {
-                return NETWORK_ADD_NETWORK_STARTED;
-            }
-        case END_SUCCESS:
-            return NETWORK_ADD_NETWORK;
+            case EXECUTE:
+                if (!getSucceeded()) {
+                    return NETWORK_ADD_NETWORK_START_ERROR;
+                } else if (skipHostSetupNetworks()) {
+                    return NETWORK_ADD_NOTHING_TO_DO;
+                } else {
+                    return NETWORK_ADD_NETWORK_STARTED;
+                }
+            case END_SUCCESS:
+                return NETWORK_ADD_NETWORK;
         }
         return NETWORK_ADD_NETWORK_FAILED;
     }

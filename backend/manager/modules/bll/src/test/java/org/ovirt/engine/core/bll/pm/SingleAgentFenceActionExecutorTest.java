@@ -68,9 +68,9 @@ public class SingleAgentFenceActionExecutorTest {
     @Test
     public void successfulGetStatus() {
         FenceOperationResult expectedResult =
-                new FenceOperationResult(Status.SUCCESS, PowerStatus.ON);
+            new FenceOperationResult(Status.SUCCESS, PowerStatus.ON);
         FenceOperationResult[] expectedResults = {
-                expectedResult
+            expectedResult
         };
         mockFenceActionResults(expectedResults);
 
@@ -87,7 +87,7 @@ public class SingleAgentFenceActionExecutorTest {
         FenceOperationResult expectedResult =
                 new FenceOperationResult(Status.ERROR, PowerStatus.UNKNOWN);
         FenceOperationResult[] expectedResults = {
-                expectedResult
+            expectedResult
         };
         mockFenceActionResults(expectedResults);
 
@@ -102,12 +102,12 @@ public class SingleAgentFenceActionExecutorTest {
     @Test
     public void successfulStart() {
         FenceOperationResult expectedResult =
-                new FenceOperationResult(Status.SUCCESS, PowerStatus.ON);
+            new FenceOperationResult(Status.SUCCESS, PowerStatus.ON);
         FenceOperationResult[] expectedResults = {
-                // result of start action
-                new FenceOperationResult(Status.SUCCESS, PowerStatus.UNKNOWN),
-                // result of 1st status action
-                expectedResult
+            // result of start action
+            new FenceOperationResult(Status.SUCCESS, PowerStatus.UNKNOWN),
+            // result of 1st status action
+            expectedResult
         };
         mockFenceActionResults(expectedResults);
 
@@ -122,13 +122,13 @@ public class SingleAgentFenceActionExecutorTest {
     @Test
     public void successfulStartWithStatusRetry() {
         FenceOperationResult expectedResult =
-                new FenceOperationResult(Status.SUCCESS, PowerStatus.ON);
+            new FenceOperationResult(Status.SUCCESS, PowerStatus.ON);
         FenceOperationResult[] expectedResults = {
-                // result of start action
-                new FenceOperationResult(Status.SUCCESS, PowerStatus.UNKNOWN),
-                // result of 1st status action
-                new FenceOperationResult(Status.SUCCESS, PowerStatus.ON),
-                expectedResult
+            // result of start action
+            new FenceOperationResult(Status.SUCCESS, PowerStatus.UNKNOWN),
+            // result of 1st status action
+            new FenceOperationResult(Status.SUCCESS, PowerStatus.ON),
+            expectedResult
         };
         mockFenceActionResults(expectedResults);
 
@@ -143,20 +143,20 @@ public class SingleAgentFenceActionExecutorTest {
     @Test
     public void failedStartStatusRetriesExceeded() {
         FenceOperationResult expectedResult =
-                new FenceOperationResult(Status.ERROR, PowerStatus.OFF);
+            new FenceOperationResult(Status.ERROR, PowerStatus.OFF);
         FenceOperationResult[] expectedResults = {
-                // result of 1st start action
-                new FenceOperationResult(Status.SUCCESS, PowerStatus.UNKNOWN),
-                // result of 1st status action
-                new FenceOperationResult(Status.SUCCESS, PowerStatus.OFF),
-                // result of 2nd status action
-                new FenceOperationResult(Status.SUCCESS, PowerStatus.OFF),
-                // result of 2nd start action
-                new FenceOperationResult(Status.SUCCESS, PowerStatus.UNKNOWN),
-                // result of 1st status action
-                new FenceOperationResult(Status.SUCCESS, PowerStatus.OFF),
-                // result of 2nd status action
-                new FenceOperationResult(Status.SUCCESS, PowerStatus.OFF),
+            // result of 1st start action
+            new FenceOperationResult(Status.SUCCESS, PowerStatus.UNKNOWN),
+            // result of 1st status action
+            new FenceOperationResult(Status.SUCCESS, PowerStatus.OFF),
+            // result of 2nd status action
+            new FenceOperationResult(Status.SUCCESS, PowerStatus.OFF),
+            // result of 2nd start action
+            new FenceOperationResult(Status.SUCCESS, PowerStatus.UNKNOWN),
+            // result of 1st status action
+            new FenceOperationResult(Status.SUCCESS, PowerStatus.OFF),
+            // result of 2nd status action
+            new FenceOperationResult(Status.SUCCESS, PowerStatus.OFF),
         };
         mockFenceActionResults(expectedResults);
 
@@ -171,16 +171,16 @@ public class SingleAgentFenceActionExecutorTest {
     @Test
     public void failedStartUnknownStatusLimitExceeded() {
         FenceOperationResult expectedResult =
-                new FenceOperationResult(Status.ERROR, PowerStatus.UNKNOWN);
+            new FenceOperationResult(Status.ERROR, PowerStatus.UNKNOWN);
         FenceOperationResult[] expectedResults = {
-                // result of 1st start action
-                new FenceOperationResult(Status.SUCCESS, PowerStatus.UNKNOWN),
-                // result of 1st status action
-                new FenceOperationResult(Status.SUCCESS, PowerStatus.UNKNOWN),
-                // result of 2nd start action
-                new FenceOperationResult(Status.SUCCESS, PowerStatus.UNKNOWN),
-                // result of 1st status action
-                new FenceOperationResult(Status.SUCCESS, PowerStatus.UNKNOWN),
+            // result of 1st start action
+            new FenceOperationResult(Status.SUCCESS, PowerStatus.UNKNOWN),
+            // result of 1st status action
+            new FenceOperationResult(Status.SUCCESS, PowerStatus.UNKNOWN),
+            // result of 2nd start action
+            new FenceOperationResult(Status.SUCCESS, PowerStatus.UNKNOWN),
+            // result of 1st status action
+            new FenceOperationResult(Status.SUCCESS, PowerStatus.UNKNOWN),
         };
         mockFenceActionResults(expectedResults);
 
@@ -195,16 +195,16 @@ public class SingleAgentFenceActionExecutorTest {
     @Test
     public void successfulStartUnknownStatusLimitExceededOn1stAttempt() {
         FenceOperationResult expectedResult =
-                new FenceOperationResult(Status.SUCCESS, PowerStatus.ON);
+            new FenceOperationResult(Status.SUCCESS, PowerStatus.ON);
         FenceOperationResult[] expectedResults = {
-                // result of 1st start action
-                new FenceOperationResult(Status.SUCCESS, PowerStatus.UNKNOWN),
-                // result of 1st status action
-                new FenceOperationResult(Status.SUCCESS, PowerStatus.UNKNOWN),
-                // result of 2nd start action
-                new FenceOperationResult(Status.SUCCESS, PowerStatus.UNKNOWN),
-                // result of 1st status action
-                new FenceOperationResult(Status.SUCCESS, PowerStatus.ON),
+            // result of 1st start action
+            new FenceOperationResult(Status.SUCCESS, PowerStatus.UNKNOWN),
+            // result of 1st status action
+            new FenceOperationResult(Status.SUCCESS, PowerStatus.UNKNOWN),
+            // result of 2nd start action
+            new FenceOperationResult(Status.SUCCESS, PowerStatus.UNKNOWN),
+            // result of 1st status action
+            new FenceOperationResult(Status.SUCCESS, PowerStatus.ON),
         };
         mockFenceActionResults(expectedResults);
 
@@ -219,14 +219,14 @@ public class SingleAgentFenceActionExecutorTest {
     @Test
     public void successfulStartWithStartRetry() {
         FenceOperationResult expectedResult =
-                new FenceOperationResult(Status.SUCCESS, PowerStatus.ON);
+            new FenceOperationResult(Status.SUCCESS, PowerStatus.ON);
         FenceOperationResult[] expectedResults = {
-                // result of the 1st start action
-                new FenceOperationResult(Status.ERROR, PowerStatus.UNKNOWN),
-                // result of the 2nd start action
-                new FenceOperationResult(Status.SUCCESS, PowerStatus.UNKNOWN),
-                // result of status action
-                expectedResult
+            // result of the 1st start action
+            new FenceOperationResult(Status.ERROR, PowerStatus.UNKNOWN),
+            // result of the 2nd start action
+            new FenceOperationResult(Status.SUCCESS, PowerStatus.UNKNOWN),
+            // result of status action
+            expectedResult
         };
         mockFenceActionResults(expectedResults);
 
@@ -241,10 +241,10 @@ public class SingleAgentFenceActionExecutorTest {
     @Test
     public void failedStopWithStopRetry() {
         FenceOperationResult expectedResult =
-                new FenceOperationResult(Status.ERROR, PowerStatus.UNKNOWN);
+            new FenceOperationResult(Status.ERROR, PowerStatus.UNKNOWN);
         FenceOperationResult[] expectedResults = {
-                // result of the 1st stop action
-                new FenceOperationResult(Status.ERROR, PowerStatus.UNKNOWN),
+            // result of the 1st stop action
+            new FenceOperationResult(Status.ERROR, PowerStatus.UNKNOWN),
         };
         mockFenceActionResults(expectedResults);
 

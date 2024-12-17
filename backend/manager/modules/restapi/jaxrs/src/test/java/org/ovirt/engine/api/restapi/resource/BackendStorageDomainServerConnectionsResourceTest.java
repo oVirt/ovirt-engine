@@ -27,10 +27,10 @@ import org.ovirt.engine.core.common.queries.QueryType;
 @MockitoSettings(strictness = Strictness.LENIENT)
 public class BackendStorageDomainServerConnectionsResourceTest extends AbstractBackendCollectionResourceTest<StorageConnection, StorageServerConnections, BackendStorageDomainServerConnectionsResource> {
     protected static final StorageType[] STORAGE_TYPES_MAPPED = {
-            StorageType.NFS,
-            StorageType.LOCALFS,
-            StorageType.POSIXFS,
-            StorageType.ISCSI };
+        StorageType.NFS,
+        StorageType.LOCALFS,
+        StorageType.POSIXFS,
+        StorageType.ISCSI };
 
     public BackendStorageDomainServerConnectionsResourceTest() {
         super(new BackendStorageDomainServerConnectionsResource(GUIDS[3]), null, "");

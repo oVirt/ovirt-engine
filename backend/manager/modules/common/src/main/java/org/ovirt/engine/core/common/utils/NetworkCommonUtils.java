@@ -104,9 +104,9 @@ public class NetworkCommonUtils {
      * @return Base interface name if the nic is a vlan device.
      *         Otherwise, the name of the nic
      */
-     public static String stripVlan(VdsNetworkInterface nic) {
-         return isVlan(nic) ? nic.getBaseInterface() : nic.getName();
-     }
+    public static String stripVlan(VdsNetworkInterface nic) {
+        return isVlan(nic) ? nic.getBaseInterface() : nic.getName();
+    }
 
      /**
       * Determine if a given network interface is a vlan device
@@ -115,9 +115,9 @@ public class NetworkCommonUtils {
       *            the nic to check.
       * @return <code>true</code> iff the nic is a vlan.
       */
-     public static boolean isVlan(VdsNetworkInterface nic) {
-         return nic.getVlanId() != null;
-     }
+    public static boolean isVlan(VdsNetworkInterface nic) {
+        return nic.getVlanId() != null;
+    }
 
     public static boolean isEl8(String kernelVersion) {
         return kernelVersion != null && kernelVersion.toLowerCase().contains("el8"); //$NON-NLS-1$

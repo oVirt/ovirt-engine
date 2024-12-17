@@ -470,16 +470,16 @@ public abstract class ImportVmTemplateCommandBase<T extends ImportVmTemplatePara
     @Override
     public AuditLogType getAuditLogTypeValue() {
         switch (getActionState()) {
-        case EXECUTE:
-            return getSucceeded() ? AuditLogType.IMPORTEXPORT_STARTING_IMPORT_TEMPLATE
-                    : AuditLogType.IMPORTEXPORT_IMPORT_TEMPLATE_FAILED;
+            case EXECUTE:
+                return getSucceeded() ? AuditLogType.IMPORTEXPORT_STARTING_IMPORT_TEMPLATE
+                        : AuditLogType.IMPORTEXPORT_IMPORT_TEMPLATE_FAILED;
 
-        case END_SUCCESS:
-            return getSucceeded() ? AuditLogType.IMPORTEXPORT_IMPORT_TEMPLATE
-                    : AuditLogType.IMPORTEXPORT_IMPORT_TEMPLATE_FAILED;
+            case END_SUCCESS:
+                return getSucceeded() ? AuditLogType.IMPORTEXPORT_IMPORT_TEMPLATE
+                        : AuditLogType.IMPORTEXPORT_IMPORT_TEMPLATE_FAILED;
 
-        default:
-            return AuditLogType.IMPORTEXPORT_IMPORT_TEMPLATE_FAILED;
+            default:
+                return AuditLogType.IMPORTEXPORT_IMPORT_TEMPLATE_FAILED;
         }
     }
 

@@ -108,13 +108,13 @@ public class PollVmStatsRefresher extends VmStatsRefresher {
     /* visible for testing only */
     boolean isMonitoringNeeded(VDSStatus status) {
         switch (status) {
-        default:
-            return false;
-        case Up:
-        case Error:
-        case NonOperational:
-        case PreparingForMaintenance:
-            return true;
+            default:
+                return false;
+            case Up:
+            case Error:
+            case NonOperational:
+            case PreparingForMaintenance:
+                return true;
         }
     }
 

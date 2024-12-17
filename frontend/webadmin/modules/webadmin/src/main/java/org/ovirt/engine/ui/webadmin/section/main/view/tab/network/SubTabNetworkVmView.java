@@ -110,28 +110,28 @@ public class SubTabNetworkVmView extends AbstractSubTabTableView<NetworkView, Pa
     }
 
     private final VmStatusIconColumn<PairQueryable<VmNetworkInterface, VM>> vmStatusIconColumn =
-            new VmStatusIconColumn<PairQueryable<VmNetworkInterface, VM>>() {
-                {
-                    setContextMenuTitle(constants.statusVm());
-                }
-            };
+        new VmStatusIconColumn<PairQueryable<VmNetworkInterface, VM>>() {
+            {
+                setContextMenuTitle(constants.statusVm());
+            }
+        };
 
     private final AbstractTextColumn<PairQueryable<VmNetworkInterface, VM>> nameColumn =
-                new AbstractLinkColumn<PairQueryable<VmNetworkInterface, VM>>(
-                        new FieldUpdater<PairQueryable<VmNetworkInterface, VM>, String>() {
+        new AbstractLinkColumn<PairQueryable<VmNetworkInterface, VM>>(
+            new FieldUpdater<PairQueryable<VmNetworkInterface, VM>, String>() {
+                @Override
+                public void update(int index, PairQueryable<VmNetworkInterface, VM> vm, String value) {
+                    Map<String, String> parameters = new HashMap<>();
+                    parameters.put(FragmentParams.NAME.getName(), vm.getSecond().getName());
+                    getPlaceTransitionHandler().handlePlaceTransition(
+                            WebAdminApplicationPlaces.virtualMachineGeneralSubTabPlace, parameters);
+                }
+            }) {
             @Override
-            public void update(int index, PairQueryable<VmNetworkInterface, VM> vm, String value) {
-                Map<String, String> parameters = new HashMap<>();
-                parameters.put(FragmentParams.NAME.getName(), vm.getSecond().getName());
-                getPlaceTransitionHandler().handlePlaceTransition(
-                        WebAdminApplicationPlaces.virtualMachineGeneralSubTabPlace, parameters);
+            public String getValue(PairQueryable<VmNetworkInterface, VM> object) {
+                return object.getSecond().getName();
             }
-    }) {
-        @Override
-        public String getValue(PairQueryable<VmNetworkInterface, VM> object) {
-            return object.getSecond().getName();
-        }
-    };
+        };
 
     private final AbstractTextColumn<PairQueryable<VmNetworkInterface, VM>> clusterColumn =
             new AbstractTextColumn<PairQueryable<VmNetworkInterface, VM>>() {
@@ -210,28 +210,28 @@ public class SubTabNetworkVmView extends AbstractSubTabTableView<NetworkView, Pa
             };
 
     private final AbstractRenderedTextColumn<PairQueryable<VmNetworkInterface, VM>, Number> totalRxColumn =
-            new AbstractRenderedTextColumn<PairQueryable<VmNetworkInterface, VM>, Number>(totalRenderer) {
-        @Override
-        protected Number getRawValue(PairQueryable<VmNetworkInterface, VM> object) {
-            return object.getFirst() == null ? null : object.getFirst().getStatistics().getReceivedBytes();
-        }
-    };
+        new AbstractRenderedTextColumn<PairQueryable<VmNetworkInterface, VM>, Number>(totalRenderer) {
+            @Override
+            protected Number getRawValue(PairQueryable<VmNetworkInterface, VM> object) {
+                return object.getFirst() == null ? null : object.getFirst().getStatistics().getReceivedBytes();
+            }
+        };
 
     private final AbstractRenderedTextColumn<PairQueryable<VmNetworkInterface, VM>, Number> totalTxColumn =
-            new AbstractRenderedTextColumn<PairQueryable<VmNetworkInterface, VM>, Number>(totalRenderer) {
-        @Override
-        protected Number getRawValue(PairQueryable<VmNetworkInterface, VM> object) {
-            return object.getFirst() == null ? null : object.getFirst().getStatistics().getTransmittedBytes();
-        }
-    };
+        new AbstractRenderedTextColumn<PairQueryable<VmNetworkInterface, VM>, Number>(totalRenderer) {
+            @Override
+            protected Number getRawValue(PairQueryable<VmNetworkInterface, VM> object) {
+                return object.getFirst() == null ? null : object.getFirst().getStatistics().getTransmittedBytes();
+            }
+        };
 
     private final AbstractTextColumn<PairQueryable<VmNetworkInterface, VM>> descriptionColumn =
-            new AbstractTextColumn<PairQueryable<VmNetworkInterface, VM>>() {
-                @Override
-                public String getValue(PairQueryable<VmNetworkInterface, VM> object) {
-                    return object.getSecond().getDescription();
-                }
-            };
+        new AbstractTextColumn<PairQueryable<VmNetworkInterface, VM>>() {
+            @Override
+            public String getValue(PairQueryable<VmNetworkInterface, VM> object) {
+                return object.getSecond().getDescription();
+            }
+        };
 
     private void initTable() {
         getTable().enableColumnResizing();

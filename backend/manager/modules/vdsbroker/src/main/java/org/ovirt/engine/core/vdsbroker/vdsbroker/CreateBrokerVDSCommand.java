@@ -106,44 +106,44 @@ public class CreateBrokerVDSCommand<P extends CreateVDSCommandParameters> extend
 
     private VmDevice getPayload() {
         switch (getParameters().getInitializationType()) {
-        case Sysprep:
-            String sysPrepContent = sysprepHandler.getSysPrep(
-                    getParameters().getVm(),
-                    getParameters().getSysPrepParams());
+            case Sysprep:
+                String sysPrepContent = sysprepHandler.getSysPrep(
+                        getParameters().getVm(),
+                        getParameters().getSysPrepParams());
 
-            return (!"".equals(sysPrepContent)) ?
-                    vmInfoBuildUtils.createSysprepPayloadDevice(sysPrepContent, getParameters().getVm())
-                    : null;
+                return (!"".equals(sysPrepContent)) ?
+                        vmInfoBuildUtils.createSysprepPayloadDevice(sysPrepContent, getParameters().getVm())
+                        : null;
 
-        case CloudInit:
-            Map<String, byte[]> cloudInitContent;
-            try {
-                cloudInitContent = vmInfoBuildUtils.buildPayloadCloudInit(getParameters().getVm().getVmInit());
-            } catch (Exception e) {
-                throw new RuntimeException("Failed to build cloud-init data:", e);
-            }
+            case CloudInit:
+                Map<String, byte[]> cloudInitContent;
+                try {
+                    cloudInitContent = vmInfoBuildUtils.buildPayloadCloudInit(getParameters().getVm().getVmInit());
+                } catch (Exception e) {
+                    throw new RuntimeException("Failed to build cloud-init data:", e);
+                }
 
-            return (cloudInitContent != null && !cloudInitContent.isEmpty()) ?
-                    vmInfoBuildUtils.createCloudInitPayloadDevice(cloudInitContent, getParameters().getVm())
-                    : null;
+                return (cloudInitContent != null && !cloudInitContent.isEmpty()) ?
+                        vmInfoBuildUtils.createCloudInitPayloadDevice(cloudInitContent, getParameters().getVm())
+                        : null;
 
-        case Ignition:
-            Map<String, byte[]> ignitionContent;
-            try {
-                String[] version = osRepository.getVmInitMap().get(getParameters().getVm().getVmOsId()).split("_");
-                Version ver = version.length <= 1 ? null : new Version(version[1]);
-                ignitionContent = vmInfoBuildUtils.buildPayloadIgnition(getParameters().getVm().getVmInit(), ver);
-            } catch (Exception e) {
-                throw new RuntimeException("Failed to build ignition data:", e);
-            }
+            case Ignition:
+                Map<String, byte[]> ignitionContent;
+                try {
+                    String[] version = osRepository.getVmInitMap().get(getParameters().getVm().getVmOsId()).split("_");
+                    Version ver = version.length <= 1 ? null : new Version(version[1]);
+                    ignitionContent = vmInfoBuildUtils.buildPayloadIgnition(getParameters().getVm().getVmInit(), ver);
+                } catch (Exception e) {
+                    throw new RuntimeException("Failed to build ignition data:", e);
+                }
 
-            return (ignitionContent != null && !ignitionContent.isEmpty()) ?
-                    vmInfoBuildUtils.createCloudInitPayloadDevice(ignitionContent, getParameters().getVm())
-                    : null;
+                return (ignitionContent != null && !ignitionContent.isEmpty()) ?
+                        vmInfoBuildUtils.createCloudInitPayloadDevice(ignitionContent, getParameters().getVm())
+                        : null;
 
-        case None:
-        default:
-            return getParameters().getVmPayload();
+            case None:
+            default:
+                return getParameters().getVmPayload();
         }
     }
 }

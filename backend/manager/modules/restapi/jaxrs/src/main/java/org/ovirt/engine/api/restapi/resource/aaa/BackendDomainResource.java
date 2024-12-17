@@ -11,7 +11,7 @@ import org.ovirt.engine.api.restapi.resource.AbstractBackendSubResource;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendDomainResource extends AbstractBackendSubResource<Domain, Directory>
-implements DomainResource {
+    implements DomainResource {
     private String id;
     private BackendDomainsResource parent;
 

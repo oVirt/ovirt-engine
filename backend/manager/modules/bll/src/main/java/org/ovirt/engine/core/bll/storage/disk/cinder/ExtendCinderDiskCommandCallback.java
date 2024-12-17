@@ -46,12 +46,12 @@ public class ExtendCinderDiskCommandCallback extends ConcurrentChildCommandsExec
                 .getDiskStatus(getDiskId(extendCinderDiskCommand));
         if (imageStatus != null && imageStatus != getDisk(extendCinderDiskCommand).getImageStatus()) {
             switch (imageStatus) {
-            case OK:
-                setCommandEndStatus(command, false, status, childCmdIds);
-                break;
-            case ILLEGAL:
-                setCommandEndStatus(command, true, status, childCmdIds);
-                break;
+                case OK:
+                    setCommandEndStatus(command, false, status, childCmdIds);
+                    break;
+                case ILLEGAL:
+                    setCommandEndStatus(command, true, status, childCmdIds);
+                    break;
             }
         }
     }

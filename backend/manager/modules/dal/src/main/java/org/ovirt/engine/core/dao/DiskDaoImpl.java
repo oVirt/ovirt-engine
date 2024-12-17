@@ -175,10 +175,10 @@ public class DiskDaoImpl extends BaseDao implements DiskDao {
     }
 
     private static final RowMapper<Disk> diskRowMapper = (rs, rowNum) -> {
-            Disk disk = null;
-            DiskStorageType diskStorageType = DiskStorageType.forValue(rs.getInt("disk_storage_type"));
+        Disk disk = null;
+        DiskStorageType diskStorageType = DiskStorageType.forValue(rs.getInt("disk_storage_type"));
 
-            switch (diskStorageType) {
+        switch (diskStorageType) {
             case MANAGED_BLOCK_STORAGE:
                 disk = ManagedBlockStorageRowMapper.instance.mapRow(rs, rowNum);
                 break;
@@ -194,9 +194,9 @@ public class DiskDaoImpl extends BaseDao implements DiskDao {
             case CINDER:
                 disk = CinderDiskRowMapper.instance.mapRow(rs, rowNum);
                 break;
-            }
+        }
 
-            return disk;
+        return disk;
     };
 
     private static final RowMapper<Disk> diskForVmRowMapper = (rs, rowNum) -> {

@@ -97,9 +97,9 @@ public class CopyImageGroupWithDataCommand<T extends CopyImageGroupWithDataComma
     }
 
     private void cloneStructureNotCollapsed() {
-        CloneImageGroupVolumesStructureCommandParameters p = new CloneImageGroupVolumesStructureCommandParameters
-                (getParameters().getStoragePoolId(), getParameters().getSrcDomain(), getParameters().getDestDomain(),
-                        getParameters().getImageGroupID(), getActionType(), getParameters());
+        CloneImageGroupVolumesStructureCommandParameters p = new CloneImageGroupVolumesStructureCommandParameters(getParameters().getStoragePoolId(),
+            getParameters().getSrcDomain(), getParameters().getDestDomain(),
+            getParameters().getImageGroupID(), getActionType(), getParameters());
         p.setParentParameters(getParameters());
         p.setParentCommand(getActionType());
         p.setDestImageGroupId(getParameters().getDestImageGroupId());

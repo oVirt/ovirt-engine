@@ -214,7 +214,7 @@ public class ClusterGuideModel extends GuideModel<Cluster> {
                 for (StoragePool dataCenter: dataCenters) {
                     //Find at least one compatible data-center, so we can show the button.
                     if (getEntity().getCompatibilityVersion().compareTo(
-                            dataCenter.getCompatibilityVersion()) >= 0 ) {
+                            dataCenter.getCompatibilityVersion()) >= 0) {
                         if (dataCenter.isLocal()) {
                             //Check if there are any clusters associated with this data-center already.
                             localDataCenters.add(dataCenter);
@@ -524,7 +524,7 @@ public class ClusterGuideModel extends GuideModel<Cluster> {
                         setWindow(null);
 
                     },
-            this);
+                this);
         } else {
             setWindow(null);
         }

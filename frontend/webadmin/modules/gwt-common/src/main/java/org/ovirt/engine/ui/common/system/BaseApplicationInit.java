@@ -121,7 +121,7 @@ public abstract class BaseApplicationInit<T extends LoginModel> implements Boots
         // Add model login event handler
         loginModel.getLoggedInEvent().addListener((ev, sender, args) -> onLogin(loginModel));
 
-        loginModel.getCreateInstanceOnly().getEntityChangedEvent().addListener((ev, sender, args) -> currentUserRole.setCreateInstanceOnly(loginModel.getCreateInstanceOnly().getEntity() ));
+        loginModel.getCreateInstanceOnly().getEntityChangedEvent().addListener((ev, sender, args) -> currentUserRole.setCreateInstanceOnly(loginModel.getCreateInstanceOnly().getEntity()));
     }
 
     /**

@@ -17,19 +17,19 @@ public class DcStatusColumn extends AbstractImageResourceColumn<StoragePool> {
     @Override
     public ImageResource getValue(StoragePool dc) {
         switch (dc.getStatus()) {
-        case Contend:
-            return resources.waitImage();
-        case Maintenance:
-            return resources.maintenanceImage();
-        case NotOperational:
-        case NonResponsive:
-        case Uninitialized:
-            return resources.downImage();
-        case Up:
-            return resources.upImage();
+            case Contend:
+                return resources.waitImage();
+            case Maintenance:
+                return resources.maintenanceImage();
+            case NotOperational:
+            case NonResponsive:
+            case Uninitialized:
+                return resources.downImage();
+            case Up:
+                return resources.upImage();
 
-        default:
-            break;
+            default:
+                break;
         }
         return null;
     }

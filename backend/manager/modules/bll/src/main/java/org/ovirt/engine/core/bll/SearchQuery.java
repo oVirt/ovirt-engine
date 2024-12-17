@@ -185,78 +185,78 @@ public class SearchQuery<P extends SearchParameters> extends QueriesCommandBase<
     protected void executeQueryCommand() {
         List<? extends Queryable> returnValue = new ArrayList<>();
         switch (getParameters().getSearchTypeValue()) {
-        case VM:
-            returnValue = searchVmsFromDb();
-            break;
-        case DirectoryGroup:
-            returnValue = searchDirectoryGroups();
-            break;
-        case DirectoryUser:
-            returnValue = searchDirectoryUsers();
-            break;
-        case AuditLog:
-            returnValue = searchAuditLogEvents();
-            break;
-        case DBUser:
-            returnValue = searchDbUsers();
-            break;
-        case DBGroup:
-            returnValue = searchDbGroups();
-            break;
-        case VDS:
-            returnValue = searchVDSsByDb();
-            break;
-        case VmTemplate:
-            returnValue = searchVmTemplates();
-            break;
-        case VmPools:
-            returnValue = searchVmPools();
-            break;
-        case Cluster:
-            returnValue = searchClusters();
-            break;
-        case StoragePool:
-            returnValue = searchStoragePool();
-            break;
-        case StorageDomain:
-            returnValue = searchStorageDomain();
-            break;
-        case Quota:
-            returnValue = searchQuota();
-            break;
-        case Disk:
-            returnValue = searchDisk();
-            break;
-        case GlusterVolume:
-            returnValue = searchGlusterVolumes();
-            break;
-        case Network:
-            returnValue = searchNetworks();
-            break;
-        case Provider:
-            returnValue = searchProviders();
-            break;
-        case InstanceType:
-            returnValue = searchInstanceTypes();
-            break;
-        case ImageType:
-            returnValue = searchImageTypes();
-            break;
-        case Session:
-            returnValue = searchSessions();
-            break;
-        case ImageTransfer:
-            returnValue = searchImageTransfer();
-            break;
-        case Job:
-            returnValue = searchJobs();
-            break;
-        case VnicProfile:
-            returnValue = searchVnicProfiles();
-            break;
-        default:
-            log.error("Search object type not handled: {}", getParameters().getSearchTypeValue());
-            break;
+            case VM:
+                returnValue = searchVmsFromDb();
+                break;
+            case DirectoryGroup:
+                returnValue = searchDirectoryGroups();
+                break;
+            case DirectoryUser:
+                returnValue = searchDirectoryUsers();
+                break;
+            case AuditLog:
+                returnValue = searchAuditLogEvents();
+                break;
+            case DBUser:
+                returnValue = searchDbUsers();
+                break;
+            case DBGroup:
+                returnValue = searchDbGroups();
+                break;
+            case VDS:
+                returnValue = searchVDSsByDb();
+                break;
+            case VmTemplate:
+                returnValue = searchVmTemplates();
+                break;
+            case VmPools:
+                returnValue = searchVmPools();
+                break;
+            case Cluster:
+                returnValue = searchClusters();
+                break;
+            case StoragePool:
+                returnValue = searchStoragePool();
+                break;
+            case StorageDomain:
+                returnValue = searchStorageDomain();
+                break;
+            case Quota:
+                returnValue = searchQuota();
+                break;
+            case Disk:
+                returnValue = searchDisk();
+                break;
+            case GlusterVolume:
+                returnValue = searchGlusterVolumes();
+                break;
+            case Network:
+                returnValue = searchNetworks();
+                break;
+            case Provider:
+                returnValue = searchProviders();
+                break;
+            case InstanceType:
+                returnValue = searchInstanceTypes();
+                break;
+            case ImageType:
+                returnValue = searchImageTypes();
+                break;
+            case Session:
+                returnValue = searchSessions();
+                break;
+            case ImageTransfer:
+                returnValue = searchImageTransfer();
+                break;
+            case Job:
+                returnValue = searchJobs();
+                break;
+            case VnicProfile:
+                returnValue = searchVnicProfiles();
+                break;
+            default:
+                log.error("Search object type not handled: {}", getParameters().getSearchTypeValue());
+                break;
         }
         getQueryReturnValue().setReturnValue(returnValue);
     }
@@ -407,7 +407,7 @@ public class SearchQuery<P extends SearchParameters> extends QueriesCommandBase<
         if (retVal.isPresent()) {
             clusters.forEach(cluster -> cluster.setClusterCompatibilityLevelUpgradeNeeded(
                             retVal.get().compareTo(cluster.getCompatibilityVersion()) > 0)
-                    );
+            );
         }
         for (Cluster cluster: clusters) {
             if (cluster.isManaged()) {
@@ -498,10 +498,10 @@ public class SearchQuery<P extends SearchParameters> extends QueriesCommandBase<
     }
 
     private static final String[] AD_SEARCH_TYPES = {
-            SearchObjects.AD_USER_OBJ_NAME,
-            SearchObjects.AD_USER_PLU_OBJ_NAME,
-            SearchObjects.AD_GROUP_OBJ_NAME,
-            SearchObjects.AD_GROUP_PLU_OBJ_NAME
+        SearchObjects.AD_USER_OBJ_NAME,
+        SearchObjects.AD_USER_PLU_OBJ_NAME,
+        SearchObjects.AD_GROUP_OBJ_NAME,
+        SearchObjects.AD_GROUP_PLU_OBJ_NAME
     };
 
     private static final Pattern adSearchPattern = Pattern.compile(

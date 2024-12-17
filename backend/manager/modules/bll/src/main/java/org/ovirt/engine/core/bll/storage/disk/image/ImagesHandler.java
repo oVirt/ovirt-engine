@@ -527,11 +527,11 @@ public class ImagesHandler {
 
     public static boolean checkImageConfiguration(StorageDomainStatic storageDomain,
             DiskImageBase diskInfo, List<String> messages) {
-       return checkImageConfiguration(storageDomain,
-               diskInfo.getVolumeType(),
-               diskInfo.getVolumeFormat(),
-               diskInfo.getBackup(),
-               messages);
+        return checkImageConfiguration(storageDomain,
+                diskInfo.getVolumeType(),
+                diskInfo.getVolumeFormat(),
+                diskInfo.getBackup(),
+                messages);
     }
 
     private static boolean checkImageConfiguration(StorageDomainStatic storageDomain, VolumeType volumeType, VolumeFormat volumeFormat, DiskBackup diskBackup) {
@@ -987,7 +987,7 @@ public class ImagesHandler {
         if (isInitialSizeSupportedForFormat(destFormat, dstDomain)) {
 
             double totalSizeForClonedDisk = getTotalActualSizeOfDisk(sourceImage,
-            storageDomainDao.get(srcDomain).getStorageStaticData());
+                storageDomainDao.get(srcDomain).getStorageStaticData());
 
             return computeCowImageNeededSize(sourceImage.getVolumeFormat(), Double.valueOf(totalSizeForClonedDisk).longValue());
         }

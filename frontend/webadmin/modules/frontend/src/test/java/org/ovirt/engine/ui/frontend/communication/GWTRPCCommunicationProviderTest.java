@@ -79,18 +79,18 @@ public class GWTRPCCommunicationProviderTest {
                 new VdcOperation<>(ActionType.AddDisk, testParameters,
                 new VdcOperationCallback<VdcOperation<ActionType, ActionParametersBase>, ActionReturnValue>() {
 
-            @Override
-            public void onSuccess(VdcOperation<ActionType, ActionParametersBase> operation,
-                    ActionReturnValue result) {
-                assertEquals(testResult, result, "Test results should match"); //$NON-NLS-1$
-                assertEquals(operationList.get(0), operation, "Operations should match"); //$NON-NLS-1$
-            }
+                    @Override
+                    public void onSuccess(VdcOperation<ActionType, ActionParametersBase> operation,
+                        ActionReturnValue result) {
+                        assertEquals(testResult, result, "Test results should match"); //$NON-NLS-1$
+                        assertEquals(operationList.get(0), operation, "Operations should match"); //$NON-NLS-1$
+                    }
 
-            @Override
-            public void onFailure(VdcOperation<ActionType, ActionParametersBase> operation, Throwable caught) {
-                fail("Should not get here"); //$NON-NLS-1$
-            }
-        });
+                    @Override
+                    public void onFailure(VdcOperation<ActionType, ActionParametersBase> operation, Throwable caught) {
+                        fail("Should not get here"); //$NON-NLS-1$
+                    }
+                });
         operationList.add(testOperation);
         testProvider.transmitOperation(testOperation);
         verify(mockService).runAction(eq(ActionType.AddDisk), eq(testParameters), actionCallback.capture());
@@ -106,18 +106,18 @@ public class GWTRPCCommunicationProviderTest {
                 new VdcOperation<>(ActionType.AddDisk, testParameters,
                 new VdcOperationCallback<VdcOperation<ActionType, ActionParametersBase>, ActionReturnValue>() {
 
-            @Override
-            public void onSuccess(VdcOperation<ActionType, ActionParametersBase> operation,
-                    ActionReturnValue result) {
-                fail("Should not get here"); //$NON-NLS-1$
-            }
+                    @Override
+                    public void onSuccess(VdcOperation<ActionType, ActionParametersBase> operation,
+                        ActionReturnValue result) {
+                        fail("Should not get here"); //$NON-NLS-1$
+                    }
 
-            @Override
-            public void onFailure(VdcOperation<ActionType, ActionParametersBase> operation, Throwable exception) {
-                assertEquals(operationList.get(0), operation, "Operations should match"); //$NON-NLS-1$
-                assertEquals(testException, exception, "Exceptions should match"); //$NON-NLS-1$
-            }
-        });
+                    @Override
+                    public void onFailure(VdcOperation<ActionType, ActionParametersBase> operation, Throwable exception) {
+                        assertEquals(operationList.get(0), operation, "Operations should match"); //$NON-NLS-1$
+                        assertEquals(testException, exception, "Exceptions should match"); //$NON-NLS-1$
+                    }
+                });
         operationList.add(testOperation);
         testProvider.transmitOperation(testOperation);
         verify(mockService).runAction(eq(ActionType.AddDisk), eq(testParameters), actionCallback.capture());
@@ -133,18 +133,18 @@ public class GWTRPCCommunicationProviderTest {
                 new VdcOperation<>(QueryType.Search, testParameters,
                 new VdcOperationCallback<VdcOperation<QueryType, QueryParametersBase>, QueryReturnValue>() {
 
-            @Override
-            public void onSuccess(VdcOperation<QueryType, QueryParametersBase> operation,
-                    QueryReturnValue result) {
-                assertEquals(testResult, result, "Test results should match"); //$NON-NLS-1$
-                assertEquals(operationList.get(0), operation, "Operations should match"); //$NON-NLS-1$
-            }
+                    @Override
+                    public void onSuccess(VdcOperation<QueryType, QueryParametersBase> operation,
+                        QueryReturnValue result) {
+                        assertEquals(testResult, result, "Test results should match"); //$NON-NLS-1$
+                        assertEquals(operationList.get(0), operation, "Operations should match"); //$NON-NLS-1$
+                    }
 
-            @Override
-            public void onFailure(VdcOperation<QueryType, QueryParametersBase> operation, Throwable caught) {
-                fail("Should not get here"); //$NON-NLS-1$
-            }
-        });
+                    @Override
+                    public void onFailure(VdcOperation<QueryType, QueryParametersBase> operation, Throwable caught) {
+                        fail("Should not get here"); //$NON-NLS-1$
+                    }
+                });
         operationList.add(testOperation);
         testProvider.transmitOperation(testOperation);
         verify(mockService).runQuery(eq(QueryType.Search), eq(testParameters), queryCallback.capture());
@@ -160,18 +160,18 @@ public class GWTRPCCommunicationProviderTest {
                 new VdcOperation<>(QueryType.Search, testParameters,
                 new VdcOperationCallback<VdcOperation<QueryType, QueryParametersBase>, QueryReturnValue>() {
 
-            @Override
-            public void onSuccess(VdcOperation<QueryType, QueryParametersBase> operation,
-                    QueryReturnValue result) {
-                fail("Should not get here"); //$NON-NLS-1$
-            }
+                    @Override
+                    public void onSuccess(VdcOperation<QueryType, QueryParametersBase> operation,
+                        QueryReturnValue result) {
+                        fail("Should not get here"); //$NON-NLS-1$
+                    }
 
-            @Override
-            public void onFailure(VdcOperation<QueryType, QueryParametersBase> operation, Throwable exception) {
-                assertEquals(operationList.get(0), operation, "Operations should match"); //$NON-NLS-1$
-                assertEquals(testException, exception, "Exceptions should match"); //$NON-NLS-1$
-            }
-        });
+                    @Override
+                    public void onFailure(VdcOperation<QueryType, QueryParametersBase> operation, Throwable exception) {
+                        assertEquals(operationList.get(0), operation, "Operations should match"); //$NON-NLS-1$
+                        assertEquals(testException, exception, "Exceptions should match"); //$NON-NLS-1$
+                    }
+                });
         operationList.add(testOperation);
         testProvider.transmitOperation(testOperation);
         verify(mockService).runQuery(eq(QueryType.Search), eq(testParameters), queryCallback.capture());

@@ -42,7 +42,7 @@ public class BackendInstanceTypeGraphicsConsolesResource
                         // be detected as parent and the link would contain 'null'.
                         org.ovirt.engine.api.model.InstanceType.class
                 ))
-            );
+        );
 
         return consoles;
     }

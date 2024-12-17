@@ -137,10 +137,10 @@ public class BackendTemplateDiskResourceTest
                 getEntity(3));
         setUriInfo(setUpActionExpectations(ActionType.MoveOrCopyDisk,
                                            MoveOrCopyImageGroupParameters.class,
-                                           new String[] { "ImageId", "ImageGroupID", "SourceDomainId",
-                                                   "StorageDomainId", "Operation" },
-                                           new Object[] { GUIDS[1], GUIDS[3], Guid.Empty, GUIDS[3], ImageOperation
-                                                   .Copy }));
+                                            new String[] { "ImageId", "ImageGroupID", "SourceDomainId",
+                                                "StorageDomainId", "Operation" },
+                                            new Object[] { GUIDS[1], GUIDS[3], Guid.Empty, GUIDS[3], ImageOperation
+                                                    .Copy }));
 
         verifyActionResponse(resource.copy(setUpCopyParams(false)));
     }

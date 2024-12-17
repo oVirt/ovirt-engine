@@ -36,7 +36,7 @@ public class DisksContentTypeSelectionList extends FlowPanel {
         add(label);
         diskContentTypeList = getDiskContentTypeList();
         add(diskContentTypeList);
-   }
+    }
 
     private ListModelListBox<DiskContentType> getDiskContentTypeList() {
         ListModelListBox<DiskContentType> l = new ListModelListBox<>(new ContentTypeRenderer());

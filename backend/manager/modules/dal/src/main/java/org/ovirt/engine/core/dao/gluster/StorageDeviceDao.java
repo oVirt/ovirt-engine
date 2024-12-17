@@ -19,4 +19,4 @@ public interface StorageDeviceDao extends ModificationDao<StorageDevice, Guid>, 
 
     void updateIsFreeFlag(Guid deviceId, boolean isFree);
 
- }
+}

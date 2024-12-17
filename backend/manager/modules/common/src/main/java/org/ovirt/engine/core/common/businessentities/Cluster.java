@@ -34,7 +34,7 @@ public class Cluster implements Queryable, BusinessEntity<Guid>, HasStoragePool,
     @NotNull(message = "VALIDATION_CLUSTER_NAME_NOT_NULL", groups = { CreateEntity.class, UpdateEntity.class })
     @Size(min = 1, max = BusinessEntitiesDefinitions.CLUSTER_NAME_SIZE, message = "VALIDATION_CLUSTER_NAME_MAX",
             groups = {
-            CreateEntity.class, UpdateEntity.class })
+                CreateEntity.class, UpdateEntity.class })
     @ValidI18NName(message = "VALIDATION_CLUSTER_NAME_INVALID", groups = { CreateEntity.class, UpdateEntity.class })
     private String name;
 
@@ -328,19 +328,19 @@ public class Cluster implements Queryable, BusinessEntity<Guid>, HasStoragePool,
     }
 
     public int getUpgradePercentComplete() {
-      return upgradePercentComplete;
+        return upgradePercentComplete;
     }
 
     public void setUpgradePercentComplete(int upgradePercentComplete) {
-      this.upgradePercentComplete = upgradePercentComplete;
+        this.upgradePercentComplete = upgradePercentComplete;
     }
 
     public String getUpgradeCorrelationId() {
-      return upgradeCorrelationId;
+        return upgradeCorrelationId;
     }
 
     public void setUpgradeCorrelationId(String upgradeCorrelationId) {
-      this.upgradeCorrelationId = upgradeCorrelationId;
+        this.upgradeCorrelationId = upgradeCorrelationId;
     }
 
     public boolean getSmtDisabled() {
@@ -745,7 +745,7 @@ public class Cluster implements Queryable, BusinessEntity<Guid>, HasStoragePool,
     }
 
     public String getHostNamesOutOfSync() {
-            return hostNamesOutOfSync;
+        return hostNamesOutOfSync;
     }
 
     public void setHostNamesOutOfSync(String hostNamesOutOfSync) {

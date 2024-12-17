@@ -51,7 +51,7 @@ public interface VdsDynamicDao extends GenericDao<VdsDynamic, Guid>, StatusAware
      * @param host
      *            the host to be updated
      */
-     void updateStatusAndReasons(VdsDynamic host);
+    void updateStatusAndReasons(VdsDynamic host);
 
     /**
      * Checks if exists a host with the given status in the given cluster.

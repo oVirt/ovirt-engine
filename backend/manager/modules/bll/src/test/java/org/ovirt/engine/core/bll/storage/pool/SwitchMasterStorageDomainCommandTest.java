@@ -68,57 +68,50 @@ public class SwitchMasterStorageDomainCommandTest extends BaseCommandTest {
     @Test
     public void testNullStoragePool() {
         when(command.getStoragePool()).thenReturn(null);
-        ValidateTestUtils.runAndAssertValidateFailure
-                ("validate did not fail on a null storage pool", command,
-                        EngineMessage.ACTION_TYPE_FAILED_STORAGE_POOL_NOT_EXIST);
+        ValidateTestUtils.runAndAssertValidateFailure("validate did not fail on a null storage pool", command,
+            EngineMessage.ACTION_TYPE_FAILED_STORAGE_POOL_NOT_EXIST);
     }
 
     @Test
     public void testEmptyDomainID() {
         when(command.getStorageDomainId()).thenReturn(Guid.Empty);
-        ValidateTestUtils.runAndAssertValidateFailure
-                ("validate did not fail on an empty storage domain ID", command,
-                        EngineMessage.STORAGE_DOMAIN_DOES_NOT_EXIST);
+        ValidateTestUtils.runAndAssertValidateFailure("validate did not fail on an empty storage domain ID", command,
+            EngineMessage.STORAGE_DOMAIN_DOES_NOT_EXIST);
     }
 
     @Test
     public void testAlreadyMasterDomainID() {
         when(command.getStorageDomainId()).thenReturn(currentMasterStorageDomainId);
-        ValidateTestUtils.runAndAssertValidateFailure
-                ("validate did not fail on the current master storage domain ID", command,
-                        EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_ALREADY_MASTER);
+        ValidateTestUtils.runAndAssertValidateFailure("validate did not fail on the current master storage domain ID", command,
+            EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_ALREADY_MASTER);
     }
 
     @Test
     public void testDomainNotInPool() {
         doReturn(null).when(storageDomainDao).getForStoragePool(newMasterStorageDomainId, storagePoolId);
-        ValidateTestUtils.runAndAssertValidateFailure
-                ("validate did not fail on storage domain that not in the pool", command,
-                        EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_NOT_IN_STORAGE_POOL);
+        ValidateTestUtils.runAndAssertValidateFailure("validate did not fail on storage domain that not in the pool", command,
+            EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_NOT_IN_STORAGE_POOL);
     }
 
     @Test
     public void testDomainNotActive() {
         newMasterStorageDomain.setStatus(StorageDomainStatus.Maintenance);
-        ValidateTestUtils.runAndAssertValidateFailure
-                ("validate did not fail on storage domain that is not active", command,
-                        EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_MUST_BE_ACTIVE);
+        ValidateTestUtils.runAndAssertValidateFailure("validate did not fail on storage domain that is not active", command,
+            EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_MUST_BE_ACTIVE);
     }
 
     @Test
     public void testDomainMarkedAsBackup() {
         newMasterStorageDomain.setBackup(true);
-        ValidateTestUtils.runAndAssertValidateFailure
-                ("validate did not fail on storage domain that marked as backup", command,
-                        EngineMessage.ACTION_TYPE_FAILED_ACTION_IS_SUPPORTED_ONLY_FOR_DATA_DOMAINS);
+        ValidateTestUtils.runAndAssertValidateFailure("validate did not fail on storage domain that marked as backup", command,
+            EngineMessage.ACTION_TYPE_FAILED_ACTION_IS_SUPPORTED_ONLY_FOR_DATA_DOMAINS);
     }
 
     @Test
     public void testHasRunningTasks() {
         doReturn(true).when(command).hasRunningTasks(storagePoolId);
-        ValidateTestUtils.runAndAssertValidateFailure
-                ("validate did not fail on storage pool that has running tasks", command,
-                        EngineMessage.ACTION_TYPE_FAILED_STORAGE_POOL_HAS_RUNNING_TASKS);
+        ValidateTestUtils.runAndAssertValidateFailure("validate did not fail on storage pool that has running tasks", command,
+            EngineMessage.ACTION_TYPE_FAILED_STORAGE_POOL_HAS_RUNNING_TASKS);
     }
 
     @Test
@@ -134,7 +127,7 @@ public class SwitchMasterStorageDomainCommandTest extends BaseCommandTest {
         listStorageDomains.forEach(sd -> {
             doNothing().when(storageDomainStaticDao).update(sd.getStorageStaticData());
             doNothing().when(storagePoolIsoMapDao)
-                    .updateStatus(sd.getStoragePoolIsoMapData().getId(), sd.getStoragePoolIsoMapData().getStatus());
+                .updateStatus(sd.getStoragePoolIsoMapData().getId(), sd.getStoragePoolIsoMapData().getStatus());
         });
 
         // Skip the VDS call

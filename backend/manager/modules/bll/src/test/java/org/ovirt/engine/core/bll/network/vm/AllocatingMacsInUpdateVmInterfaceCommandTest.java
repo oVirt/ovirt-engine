@@ -32,9 +32,9 @@ public class AllocatingMacsInUpdateVmInterfaceCommandTest extends AllocateReleas
         when(macPool.addMac(updatingNic.getMacAddress())).thenReturn(false);
 
         assertThrows(EngineException.class, () -> {
-                    underTest.initMacPoolData();
-                    underTest.allocateMacFromRequest();
-                });
+            underTest.initMacPoolData();
+            underTest.allocateMacFromRequest();
+        });
 
         //There's no snapshot, new mac of updated nic must be allocated in mac pool, but mac is not available
     }

@@ -138,27 +138,27 @@ public class DisksFilterTest {
     }
 
     private Disk createDisk
-            (DiskStorageType type, boolean isActive, boolean isShareable, boolean isSnapable, boolean isPlugged) {
+    (DiskStorageType type, boolean isActive, boolean isShareable, boolean isSnapable, boolean isPlugged) {
         Disk disk = null;
         switch (type) {
-        case IMAGE:
-            disk = new DiskImage();
-            setDiskImageProperties((DiskImage) disk, isActive, isShareable, isSnapable);
-            break;
-        case LUN:
-            if (isSnapable) {
-                throw new IllegalArgumentException("A LUN disk cannot be snapable");
-            }
-            disk = new LunDisk();
-            break;
-        case CINDER:
-            disk = new CinderDisk();
-            setDiskImageProperties((DiskImage) disk, isActive, isShareable, isSnapable);
-            break;
-        case MANAGED_BLOCK_STORAGE:
-            disk = new ManagedBlockStorageDisk();
-            setDiskImageProperties((DiskImage) disk, isActive, isShareable, isSnapable);
-            break;
+            case IMAGE:
+                disk = new DiskImage();
+                setDiskImageProperties((DiskImage) disk, isActive, isShareable, isSnapable);
+                break;
+            case LUN:
+                if (isSnapable) {
+                    throw new IllegalArgumentException("A LUN disk cannot be snapable");
+                }
+                disk = new LunDisk();
+                break;
+            case CINDER:
+                disk = new CinderDisk();
+                setDiskImageProperties((DiskImage) disk, isActive, isShareable, isSnapable);
+                break;
+            case MANAGED_BLOCK_STORAGE:
+                disk = new ManagedBlockStorageDisk();
+                setDiskImageProperties((DiskImage) disk, isActive, isShareable, isSnapable);
+                break;
         }
         disk.setPlugged(isPlugged);
         return disk;

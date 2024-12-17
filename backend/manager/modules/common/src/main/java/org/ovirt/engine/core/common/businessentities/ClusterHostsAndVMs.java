@@ -35,11 +35,11 @@ public class ClusterHostsAndVMs implements Queryable {
     }
 
     public int getHostsWithUpdateAvailable() {
-      return hostsWithUpdateAvailable;
+        return hostsWithUpdateAvailable;
     }
 
     public void setHostsWithUpdateAvailable(int hostsWithUpdateAvailable) {
-      this.hostsWithUpdateAvailable = hostsWithUpdateAvailable;
+        this.hostsWithUpdateAvailable = hostsWithUpdateAvailable;
     }
 
     public int getVms() {

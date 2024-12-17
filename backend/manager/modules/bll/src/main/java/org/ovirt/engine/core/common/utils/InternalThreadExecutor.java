@@ -94,12 +94,12 @@ public class InternalThreadExecutor extends ThreadPoolExecutor implements Dynami
             throw new InvalidAttributeValueException("Attribute value not a integer: " + value);
         }
         switch (name) {
-        case CORE_THREADS:
-            this.setCorePoolSize((Integer) value);
-            break;
-        case MAX_THREADS:
-            this.setMaximumPoolSize((Integer) value);
-            break;
+            case CORE_THREADS:
+                this.setCorePoolSize((Integer) value);
+                break;
+            case MAX_THREADS:
+                this.setMaximumPoolSize((Integer) value);
+                break;
         }
         this.properties.put(name, (Integer) value);
     }

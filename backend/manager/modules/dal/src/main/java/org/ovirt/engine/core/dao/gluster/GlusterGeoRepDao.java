@@ -61,4 +61,4 @@ public interface GlusterGeoRepDao extends Dao {
     public GlusterGeoRepSessionConfiguration getGeoRepSessionConfigByKey(Guid sessionId, String configKey);
 
     public List<GlusterGeoRepSession> getAllSessions();
- }
+}

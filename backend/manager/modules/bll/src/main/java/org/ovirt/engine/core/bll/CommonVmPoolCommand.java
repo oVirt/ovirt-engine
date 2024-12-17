@@ -424,7 +424,7 @@ public abstract class CommonVmPoolCommand<T extends AddVmPoolParameters> extends
         }
 
         if (getParameters().getVmPool().getPrestartedVms() >
-        getParameters().getVmPool().getAssignedVmsCount() + getParameters().getVmsCount()) {
+            getParameters().getVmPool().getAssignedVmsCount() + getParameters().getVmsCount()) {
             return failValidation(EngineMessage.ACTION_TYPE_FAILED_PRESTARTED_VMS_CANNOT_EXCEED_VMS_COUNT);
         }
 

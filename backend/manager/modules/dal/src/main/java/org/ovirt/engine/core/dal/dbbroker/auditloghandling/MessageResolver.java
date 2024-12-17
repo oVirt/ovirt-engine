@@ -52,14 +52,14 @@ public class MessageResolver {
             if (value == null || value.isEmpty()) {
                 // replace value with UNKNOWN_VARIABLE_VALUE if value not defined
                 switch (token) {
-                case REASON_TOKEN:
-                    value = UNKNOWN_REASON_VALUE;
-                    break;
-                case OPTIONAL_REASON_TOKEN:
-                    value = "";
-                    break;
-                default:
-                    value = UNKNOWN_VARIABLE_VALUE;
+                    case REASON_TOKEN:
+                        value = UNKNOWN_REASON_VALUE;
+                        break;
+                    case OPTIONAL_REASON_TOKEN:
+                        value = "";
+                        break;
+                    default:
+                        value = UNKNOWN_VARIABLE_VALUE;
                 }
             }
             matcher.appendReplacement(buffer, Matcher.quoteReplacement(value)); // put the value into message

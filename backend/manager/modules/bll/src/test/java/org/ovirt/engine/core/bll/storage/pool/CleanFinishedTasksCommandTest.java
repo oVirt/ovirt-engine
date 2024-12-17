@@ -75,33 +75,29 @@ public class CleanFinishedTasksCommandTest extends BaseCommandTest {
     @Test
     public void testValidateFailureNullStoragePoolID() {
         when(command.getStoragePoolId()).thenReturn(null);
-        ValidateTestUtils.runAndAssertValidateFailure
-                ("Validate did not fail on a null storage pool", command,
-                        EngineMessage.ACTION_TYPE_FAILED_STORAGE_POOL_NOT_EXIST);
+        ValidateTestUtils.runAndAssertValidateFailure("Validate did not fail on a null storage pool", command,
+            EngineMessage.ACTION_TYPE_FAILED_STORAGE_POOL_NOT_EXIST);
     }
 
     @Test
     public void testValidateFailureEmptyStoragePoolID() {
         when(command.getStoragePoolId()).thenReturn(Guid.Empty);
-        ValidateTestUtils.runAndAssertValidateFailure
-                ("Validate did not fail on an empty storage pool ID", command,
-                        EngineMessage.ACTION_TYPE_FAILED_STORAGE_POOL_NOT_EXIST);
+        ValidateTestUtils.runAndAssertValidateFailure("Validate did not fail on an empty storage pool ID", command,
+            EngineMessage.ACTION_TYPE_FAILED_STORAGE_POOL_NOT_EXIST);
     }
 
     @Test
     public void testValidateFailureRandomStoragePoolID() {
         when(command.getStoragePoolId()).thenReturn(Guid.newGuid());
-        ValidateTestUtils.runAndAssertValidateFailure
-                ("Validate did not fail on randomly generated storage pool ID", command,
-                        EngineMessage.ACTION_TYPE_FAILED_STORAGE_POOL_NOT_EXIST);
+        ValidateTestUtils.runAndAssertValidateFailure("Validate did not fail on randomly generated storage pool ID", command,
+            EngineMessage.ACTION_TYPE_FAILED_STORAGE_POOL_NOT_EXIST);
     }
 
     @Test
     public void testValidateFailureStoragePoolNotInUpStatus() {
         storagePool.setStatus(StoragePoolStatus.Maintenance);
-        ValidateTestUtils.runAndAssertValidateFailure
-                ("Validate did not fail on storage pool that is not in the UP status", command,
-                        EngineMessage.ACTION_TYPE_FAILED_STORAGE_POOL_STATUS_ILLEGAL);
+        ValidateTestUtils.runAndAssertValidateFailure("Validate did not fail on storage pool that is not in the UP status", command,
+            EngineMessage.ACTION_TYPE_FAILED_STORAGE_POOL_STATUS_ILLEGAL);
     }
 
     @Test

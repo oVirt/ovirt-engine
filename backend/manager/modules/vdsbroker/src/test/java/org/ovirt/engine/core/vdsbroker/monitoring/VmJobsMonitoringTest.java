@@ -181,8 +181,8 @@ public class VmJobsMonitoringTest {
     public Map<Guid, List<VmJob>> initJobsFromVdsm() {
         job1FromVdsm = job1FromDb;
         return new HashMap<Guid, List<VmJob>>() {{
-            put(VM_ID_1, Arrays.asList(job1FromVdsm, job2FromVdsm));
-            put(VM_ID_2, Arrays.asList(job3FromVdsm, job5FromVdsm));
-        }};
+                put(VM_ID_1, Arrays.asList(job1FromVdsm, job2FromVdsm));
+                put(VM_ID_2, Arrays.asList(job3FromVdsm, job5FromVdsm));
+            }};
     }
 }

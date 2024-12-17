@@ -103,7 +103,7 @@ public class GlusterHookSyncJobTest {
     private List<GlusterHookEntity> getHooksList(int listCount, boolean setIds) {
         List<GlusterHookEntity> hookList = new ArrayList<>();
         for (int i = 0; i < listCount; i++) {
-            hookList.add(getHook( i , setIds));
+            hookList.add(getHook(i , setIds));
         }
         return hookList;
     }

@@ -148,7 +148,7 @@ public class DisksFilter {
      */
     @SafeVarargs
     private static <T extends Disk> List<T> filterDisksByStorageType
-        (Collection<? extends Disk> disks, DiskStorageTypePredicate<T> storageTypePredicate, Predicate<Disk>... predicates) {
+    (Collection<? extends Disk> disks, DiskStorageTypePredicate<T> storageTypePredicate, Predicate<Disk>... predicates) {
         Predicate<Disk> chain = Stream.concat(Stream.of(storageTypePredicate), Arrays.stream(predicates)).reduce(Predicate::and).orElse(p -> true);
 
         return disks.stream().filter(chain)

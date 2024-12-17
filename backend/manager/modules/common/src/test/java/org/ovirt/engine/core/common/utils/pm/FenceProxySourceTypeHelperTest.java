@@ -52,7 +52,7 @@ public class FenceProxySourceTypeHelperTest {
         };
 
         for (String invalidValue : validValues) {
-                FenceProxySourceTypeHelper.parseFromString(invalidValue);
+            FenceProxySourceTypeHelper.parseFromString(invalidValue);
         }
     }
 
@@ -62,10 +62,10 @@ public class FenceProxySourceTypeHelperTest {
     @Test
     public void parseInvalidString() {
         String[] invalidValues = {
-                "clust",           // invalid fence proxy source type
-                "clust,dc",        // invalid fence proxy source type
-                "cluster,d",       // invalid fence proxy source type
-                "cluster, dc"      // space should not be used
+            "clust",           // invalid fence proxy source type
+            "clust,dc",        // invalid fence proxy source type
+            "cluster,d",       // invalid fence proxy source type
+            "cluster, dc"      // space should not be used
         };
 
         for (String invalidValue : invalidValues) {

@@ -34,14 +34,14 @@ public class CancelMigrateVDSCommand<P extends CancelMigrationVDSParameters> ext
     protected void proceedProxyReturnValue() {
         EngineError returnStatus = getReturnValueFromStatus(getReturnStatus());
         switch (returnStatus) {
-        case noVM:
-            VDSExceptionBase outEx =
-                    createDefaultConcreteException("Cancel migration has failed. Please try again in a few moments and track the VM's event list for details");
-            initializeVdsError(returnStatus);
-            outEx.setVdsError(new VDSError(EngineError.MIGRATION_CANCEL_ERROR_NO_VM, getReturnStatus().message));
-            throw outEx;
-        default:
-            super.proceedProxyReturnValue();
+            case noVM:
+                VDSExceptionBase outEx =
+                        createDefaultConcreteException("Cancel migration has failed. Please try again in a few moments and track the VM's event list for details");
+                initializeVdsError(returnStatus);
+                outEx.setVdsError(new VDSError(EngineError.MIGRATION_CANCEL_ERROR_NO_VM, getReturnStatus().message));
+                throw outEx;
+            default:
+                super.proceedProxyReturnValue();
         }
     }
 }

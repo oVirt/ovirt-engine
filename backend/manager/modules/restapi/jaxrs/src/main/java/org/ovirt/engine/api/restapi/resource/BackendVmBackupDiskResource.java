@@ -21,4 +21,4 @@ public class BackendVmBackupDiskResource
     protected Disk getDisk() {
         return performGet(QueryType.GetDiskByDiskId, new IdQueryParameters(guid));
     }
- }
+}

@@ -14,7 +14,7 @@ import com.google.gwt.i18n.client.ConstantsWithLookup;
 
 public class ConstantsWithLookupTest {
     public static Stream<Arguments> nameInEnum
-            (Class<? extends Enum> enumClass, Class<? extends ConstantsWithLookup> constantsClass) {
+    (Class<? extends Enum> enumClass, Class<? extends ConstantsWithLookup> constantsClass) {
         return Arrays.stream(constantsClass.getMethods())
                 .filter(m -> m.getParameterTypes().length == 0 && m.getReturnType().equals(String.class))
                 .map(Method::getName)

@@ -36,7 +36,7 @@ public class ScanStorageForUnregisteredDisksCommandTest extends BaseCommandTest 
     @InjectMocks
     private ScanStorageForUnregisteredDisksCommand<StorageDomainParametersBase> cmd =
             new ScanStorageForUnregisteredDisksCommand<>
-                    (new StorageDomainParametersBase(Guid.newGuid(), Guid.newGuid()), null);
+        (new StorageDomainParametersBase(Guid.newGuid(), Guid.newGuid()), null);
 
     private Guid storageId = Guid.newGuid();
 

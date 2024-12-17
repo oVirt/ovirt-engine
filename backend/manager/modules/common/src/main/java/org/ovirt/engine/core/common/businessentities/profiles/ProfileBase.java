@@ -22,7 +22,7 @@ public abstract class ProfileBase implements Queryable, BusinessEntity<Guid>, Na
     @NotNull(groups = { UpdateEntity.class, RemoveEntity.class })
     private Guid id;
     @Size(min = 1, max = BusinessEntitiesDefinitions.PROFILE_NAME_SIZE, groups = { CreateEntity.class,
-            UpdateEntity.class })
+        UpdateEntity.class })
     @ValidName(message = "VALIDATION_NAME_INVALID", groups = { CreateEntity.class, UpdateEntity.class })
     private String name;
     private Guid qosId;

@@ -99,8 +99,8 @@ public class RestoreAllSnapshotsCommandTest extends BaseCommandTest {
     @Test
     public void validateFailsOnSnapshotNotExists() {
         when(snapshotDao.exists(any(Guid.class), any(Guid.class))).thenReturn(false);
-        ValidateTestUtils.runAndAssertValidateFailure
-                (spyCommand, EngineMessage.ACTION_TYPE_FAILED_VM_SNAPSHOT_DOES_NOT_EXIST);
+        ValidateTestUtils.runAndAssertValidateFailure(spyCommand,
+            EngineMessage.ACTION_TYPE_FAILED_VM_SNAPSHOT_DOES_NOT_EXIST);
     }
 
     @Test
@@ -111,8 +111,8 @@ public class RestoreAllSnapshotsCommandTest extends BaseCommandTest {
         mockSnapshotFromDb();
         mockSnapshot.setType(SnapshotType.REGULAR);
         mockSnapshot.setStatus(SnapshotStatus.OK);
-        ValidateTestUtils.runAndAssertValidateFailure
-                (spyCommand, EngineMessage.ACTION_TYPE_FAILED_VM_SNAPSHOT_NOT_IN_PREVIEW);
+        ValidateTestUtils.runAndAssertValidateFailure(spyCommand,
+            EngineMessage.ACTION_TYPE_FAILED_VM_SNAPSHOT_NOT_IN_PREVIEW);
     }
 
     private List<DiskImage> createDiskImageList() {

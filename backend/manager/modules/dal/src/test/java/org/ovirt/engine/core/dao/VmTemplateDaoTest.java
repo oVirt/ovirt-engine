@@ -31,8 +31,8 @@ public class VmTemplateDaoTest extends BaseGenericDaoTestCase<Guid, VmTemplate, 
     private static final int NUMBER_OF_TEMPLATES_IN_DB = 8;
     private static final Guid EXISTING_IMAGE_TYPE_ID = new Guid("5849b030-626e-47cb-ad90-3ce782d831b3");
     protected static final Guid[] HOST_GUIDS = {FixturesTool.VDS_RHEL6_NFS_SPM,
-            FixturesTool.HOST_ID,
-            FixturesTool.GLUSTER_BRICK_SERVER1};
+        FixturesTool.HOST_ID,
+        FixturesTool.GLUSTER_BRICK_SERVER1};
 
     @Override
     protected VmTemplate generateNewEntity() {

@@ -232,10 +232,10 @@ public class DataCenterModel extends Model implements HasValidatedTabs {
 
     public boolean validate() {
         getName().validateEntity(new IValidation[] {
-                new NotEmptyValidation(),
-                new LengthValidation(40),
-                new LengthValidation(getMaxNameLength()),
-                new AsciiNameValidation() });
+            new NotEmptyValidation(),
+            new LengthValidation(40),
+            new LengthValidation(getMaxNameLength()),
+            new AsciiNameValidation() });
 
         getVersion().validateSelectedItem(new IValidation[] { new NotEmptyValidation() });
 

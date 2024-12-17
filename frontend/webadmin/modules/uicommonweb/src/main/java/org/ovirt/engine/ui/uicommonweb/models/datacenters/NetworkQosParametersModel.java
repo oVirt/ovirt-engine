@@ -64,17 +64,17 @@ public class NetworkQosParametersModel extends Model {
         }
 
         getAverage().validateEntity(new IValidation[] {
-                new NotEmptyValidation(),
-                new IntegerValidation(0,
-                                      (Integer) AsyncDataProvider.getInstance().getConfigValuePreConverted(ConfigValues.MaxAverageNetworkQoSValue)) });
+            new NotEmptyValidation(),
+            new IntegerValidation(0,
+                (Integer) AsyncDataProvider.getInstance().getConfigValuePreConverted(ConfigValues.MaxAverageNetworkQoSValue)) });
         getPeak().validateEntity(new IValidation[] {
-                new NotEmptyValidation(),
-                new IntegerValidation(0,
-                                      (Integer) AsyncDataProvider.getInstance().getConfigValuePreConverted(ConfigValues.MaxPeakNetworkQoSValue)) });
+            new NotEmptyValidation(),
+            new IntegerValidation(0,
+                (Integer) AsyncDataProvider.getInstance().getConfigValuePreConverted(ConfigValues.MaxPeakNetworkQoSValue)) });
         getBurst().validateEntity(new IValidation[] {
-                new NotEmptyValidation(),
-                new IntegerValidation(0,
-                                      (Integer) AsyncDataProvider.getInstance().getConfigValuePreConverted(ConfigValues.MaxBurstNetworkQoSValue)) });
+            new NotEmptyValidation(),
+            new IntegerValidation(0,
+                (Integer) AsyncDataProvider.getInstance().getConfigValuePreConverted(ConfigValues.MaxBurstNetworkQoSValue)) });
 
         setIsValid(getAverage().getIsValid() && getPeak().getIsValid() && getBurst().getIsValid());
         return getIsValid();

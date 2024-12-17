@@ -33,16 +33,16 @@ public class ValidNameValidatorTest {
 
     public static Stream<Arguments> checkName() {
         return Stream.of(
-                Arguments.of("abc", true ),
-                Arguments.of("123", true ),
-                Arguments.of("abc123", true ),
-                Arguments.of("123abc", true ),
-                Arguments.of(null, true ),
-                Arguments.of(" ", false ),
-                Arguments.of("", false ),
-                Arguments.of("abc ", false ),
-                Arguments.of(" abc", false ),
-                Arguments.of("abc cde", false ),
+                Arguments.of("abc", true),
+                Arguments.of("123", true),
+                Arguments.of("abc123", true),
+                Arguments.of("123abc", true),
+                Arguments.of(null, true),
+                Arguments.of(" ", false),
+                Arguments.of("", false),
+                Arguments.of("abc ", false),
+                Arguments.of(" abc", false),
+                Arguments.of("abc cde", false),
                 Arguments.of("abc*", false)
         );
     }

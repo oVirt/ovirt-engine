@@ -138,21 +138,21 @@ public class BackendApiResourceTest {
     };
 
     private static final String[] relationshipsGlusterOnly = {
-            "clusters",
-            "clusters/search",
-            "events",
-            "events/search",
-            "hosts",
-            "hosts/search",
-            "networks",
-            "networks/search",
-            "roles",
-            "tags",
-            "users",
-            "users/search",
-            "groups",
-            "groups/search",
-            "domains",
+        "clusters",
+        "clusters/search",
+        "events",
+        "events/search",
+        "hosts",
+        "hosts/search",
+        "networks",
+        "networks/search",
+        "roles",
+        "tags",
+        "users",
+        "users/search",
+        "groups",
+        "groups/search",
+        "domains",
     };
 
     private static final String[] hrefs = {
@@ -211,21 +211,21 @@ public class BackendApiResourceTest {
     };
 
     private static final String[] hrefsGlusterOnly = {
-            BASE_PATH + "/clusters",
-            BASE_PATH + "/clusters?search={query}",
-            BASE_PATH + "/events",
-            BASE_PATH + "/events;from={event_id}?search={query}",
-            BASE_PATH + "/hosts",
-            BASE_PATH + "/hosts?search={query}",
-            BASE_PATH + "/networks",
-            BASE_PATH + "/networks?search={query}",
-            BASE_PATH + "/roles",
-            BASE_PATH + "/tags",
-            BASE_PATH + "/users",
-            BASE_PATH + "/users?search={query}",
-            BASE_PATH + "/groups",
-            BASE_PATH + "/groups?search={query}",
-            BASE_PATH + "/domains",
+        BASE_PATH + "/clusters",
+        BASE_PATH + "/clusters?search={query}",
+        BASE_PATH + "/events",
+        BASE_PATH + "/events;from={event_id}?search={query}",
+        BASE_PATH + "/hosts",
+        BASE_PATH + "/hosts?search={query}",
+        BASE_PATH + "/networks",
+        BASE_PATH + "/networks?search={query}",
+        BASE_PATH + "/roles",
+        BASE_PATH + "/tags",
+        BASE_PATH + "/users",
+        BASE_PATH + "/users?search={query}",
+        BASE_PATH + "/groups",
+        BASE_PATH + "/groups?search={query}",
+        BASE_PATH + "/domains",
     };
 
     public BackendApiResourceTest() {

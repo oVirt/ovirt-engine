@@ -52,30 +52,30 @@ public class ProviderDaoImpl extends DefaultGenericDao<Provider<?>, Guid> implem
 
         if (entity.getAdditionalProperties() != null) {
             switch (entity.getType()) {
-            case EXTERNAL_NETWORK:
-            case OPENSTACK_NETWORK:
-                OpenstackNetworkProviderProperties networkProperties =
-                        (OpenstackNetworkProviderProperties) entity.getAdditionalProperties();
-                readOnly = networkProperties.getReadOnly();
-                pluginType = networkProperties.getPluginType();
-                autoSync = networkProperties.getAutoSync();
-            case OPENSTACK_IMAGE:
-            case OPENSTACK_VOLUME:
-                OpenStackProviderProperties openStackProviderProperties =
-                        (OpenStackProviderProperties) entity.getAdditionalProperties();
-                tenantName = openStackProviderProperties.getTenantName();
-                userDomainName = openStackProviderProperties.getUserDomainName();
-                projectName = openStackProviderProperties.getProjectName();
-                projectDomainName = openStackProviderProperties.getProjectDomainName();
-                break;
-            case VMWARE:
-            case KVM:
-            case XEN:
-            case KUBEVIRT:
-                additionalProperties = entity.getAdditionalProperties();
-                break;
-            default:
-                break;
+                case EXTERNAL_NETWORK:
+                case OPENSTACK_NETWORK:
+                    OpenstackNetworkProviderProperties networkProperties =
+                            (OpenstackNetworkProviderProperties) entity.getAdditionalProperties();
+                    readOnly = networkProperties.getReadOnly();
+                    pluginType = networkProperties.getPluginType();
+                    autoSync = networkProperties.getAutoSync();
+                case OPENSTACK_IMAGE:
+                case OPENSTACK_VOLUME:
+                    OpenStackProviderProperties openStackProviderProperties =
+                            (OpenStackProviderProperties) entity.getAdditionalProperties();
+                    tenantName = openStackProviderProperties.getTenantName();
+                    userDomainName = openStackProviderProperties.getUserDomainName();
+                    projectName = openStackProviderProperties.getProjectName();
+                    projectDomainName = openStackProviderProperties.getProjectDomainName();
+                    break;
+                case VMWARE:
+                case KVM:
+                case XEN:
+                case KUBEVIRT:
+                    additionalProperties = entity.getAdditionalProperties();
+                    break;
+                default:
+                    break;
             }
         }
 
@@ -155,32 +155,32 @@ public class ProviderDaoImpl extends DefaultGenericDao<Provider<?>, Guid> implem
 
         private AdditionalProperties mapAdditionalProperties(ResultSet rs, Provider<?> entity) throws SQLException {
             switch (entity.getType()) {
-            case EXTERNAL_NETWORK:
-            case OPENSTACK_NETWORK:
-                OpenstackNetworkProviderProperties networkProperties = new OpenstackNetworkProviderProperties();
-                mapOpenStackProperties(rs, networkProperties);
-                networkProperties.setReadOnly(rs.getBoolean("read_only"));
-                networkProperties.setAutoSync(rs.getBoolean("auto_sync"));
-                networkProperties.setPluginType(rs.getString("plugin_type"));
-                return networkProperties;
-            case OPENSTACK_IMAGE:
-                OpenStackImageProviderProperties imageProperties = new OpenStackImageProviderProperties();
-                mapOpenStackProperties(rs, imageProperties);
-                return imageProperties;
-            case OPENSTACK_VOLUME:
-                OpenStackVolumeProviderProperties volumeProperties = new OpenStackVolumeProviderProperties();
-                mapOpenStackProperties(rs, volumeProperties);
-                return volumeProperties;
-            case VMWARE:
-                return SerializationFactory.getDeserializer().deserialize(rs.getString("additional_properties"), VmwareVmProviderProperties.class);
-            case KVM:
-                return SerializationFactory.getDeserializer().deserialize(rs.getString("additional_properties"), KVMVmProviderProperties.class);
-            case XEN:
-                return SerializationFactory.getDeserializer().deserialize(rs.getString("additional_properties"), XENVmProviderProperties.class);
-            case KUBEVIRT:
-                return SerializationFactory.getDeserializer().deserialize(rs.getString("additional_properties"), KubevirtProviderProperties.class);
-            default:
-                return null;
+                case EXTERNAL_NETWORK:
+                case OPENSTACK_NETWORK:
+                    OpenstackNetworkProviderProperties networkProperties = new OpenstackNetworkProviderProperties();
+                    mapOpenStackProperties(rs, networkProperties);
+                    networkProperties.setReadOnly(rs.getBoolean("read_only"));
+                    networkProperties.setAutoSync(rs.getBoolean("auto_sync"));
+                    networkProperties.setPluginType(rs.getString("plugin_type"));
+                    return networkProperties;
+                case OPENSTACK_IMAGE:
+                    OpenStackImageProviderProperties imageProperties = new OpenStackImageProviderProperties();
+                    mapOpenStackProperties(rs, imageProperties);
+                    return imageProperties;
+                case OPENSTACK_VOLUME:
+                    OpenStackVolumeProviderProperties volumeProperties = new OpenStackVolumeProviderProperties();
+                    mapOpenStackProperties(rs, volumeProperties);
+                    return volumeProperties;
+                case VMWARE:
+                    return SerializationFactory.getDeserializer().deserialize(rs.getString("additional_properties"), VmwareVmProviderProperties.class);
+                case KVM:
+                    return SerializationFactory.getDeserializer().deserialize(rs.getString("additional_properties"), KVMVmProviderProperties.class);
+                case XEN:
+                    return SerializationFactory.getDeserializer().deserialize(rs.getString("additional_properties"), XENVmProviderProperties.class);
+                case KUBEVIRT:
+                    return SerializationFactory.getDeserializer().deserialize(rs.getString("additional_properties"), KubevirtProviderProperties.class);
+                default:
+                    return null;
             }
         }
 

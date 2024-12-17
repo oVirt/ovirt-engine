@@ -33,19 +33,18 @@ public class DestroyVDSCommand<P extends DestroyVmVDSCommandParameters> extends 
      */
     @Override
     protected void proceedProxyReturnValue() {
-            EngineError returnStatus = getReturnValueFromStatus(getReturnStatus());
-            switch (returnStatus) {
-                case noVM:
-                    if (getParameters().isIgnoreNoVm()) { // do not log error
-                        log.info("Failed to destroy VM '{}' because VM does not exist, ignoring", getParameters().getVmId());
-                        return;
-                    }
-
-                    log.info("Destroy VM couldn't find VM '{}'. If after Cancel Migration and VM is UP on source, " +
-                            "ignore next error, it's just a clean-up call", getParameters().getVmId());
-                    // do not break here
-                default:
-                    super.proceedProxyReturnValue();
-            }
+        EngineError returnStatus = getReturnValueFromStatus(getReturnStatus());
+        switch (returnStatus) {
+            case noVM:
+                if (getParameters().isIgnoreNoVm()) { // do not log error
+                    log.info("Failed to destroy VM '{}' because VM does not exist, ignoring", getParameters().getVmId());
+                    return;
+                }
+                log.info("Destroy VM couldn't find VM '{}'. If after Cancel Migration and VM is UP on source, " +
+                    "ignore next error, it's just a clean-up call", getParameters().getVmId());
+                // do not break here
+            default:
+                super.proceedProxyReturnValue();
+        }
     }
 }

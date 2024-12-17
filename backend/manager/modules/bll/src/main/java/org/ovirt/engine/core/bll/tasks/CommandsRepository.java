@@ -138,7 +138,7 @@ public class CommandsRepository {
                 !Guid.isNullOrEmpty(cmdEntity.getParentCommandId()) &&
                         commandsCache.get(cmdEntity.getParentCommandId()) != null &&
                         commandsCache.get(cmdEntity.getParentCommandId()).isCallbackEnabled()
-                ) {
+        ) {
             buildCmdHierarchy(cmdEntity);
             if (!cmdEntity.isCallbackNotified()) {
                 addToCallbackMap(cmdEntity);

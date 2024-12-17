@@ -117,7 +117,7 @@ public class InterfaceDaoImplTest extends BaseDaoTestCase<InterfaceDao> {
             } else {
                 r.getQos().setOutAverageLinkshare(31);
                 r.getQos().setOutAverageUpperlimit(32);
-                r.getQos().setOutAverageRealtime(33 );
+                r.getQos().setOutAverageRealtime(33);
                 hostNetworkQosDao.update(r.getQos());
             }
         });

@@ -161,9 +161,9 @@ public abstract class AffinityLabelModel extends Model {
 
     protected boolean validate() {
         getName().validateEntity(new IValidation[] {
-                new NotEmptyValidation(),
-                new LengthValidation(255),
-                new I18NNameValidation() });
+            new NotEmptyValidation(),
+            new LengthValidation(255),
+            new I18NNameValidation() });
 
         return getName().getIsValid();
     }

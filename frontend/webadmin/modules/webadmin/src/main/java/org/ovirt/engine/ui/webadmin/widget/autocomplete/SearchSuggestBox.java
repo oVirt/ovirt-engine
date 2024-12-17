@@ -211,17 +211,17 @@ public class SearchSuggestBox extends SuggestBox implements HasElementId {
             String color = ""; //$NON-NLS-1$
 
             switch (suggestionPart.getPartType()) {
-            case Valid:
-                color = "grey"; //$NON-NLS-1$
-                break;
+                case Valid:
+                    color = "grey"; //$NON-NLS-1$
+                    break;
 
-            case New:
-                color = "black"; //$NON-NLS-1$
-                break;
+                case New:
+                    color = "black"; //$NON-NLS-1$
+                    break;
 
-            case Erroneous:
-                color = "red"; //$NON-NLS-1$
-                break;
+                case Erroneous:
+                    color = "red"; //$NON-NLS-1$
+                    break;
             }
 
             SafeHtmlBuilder sb = new SafeHtmlBuilder();

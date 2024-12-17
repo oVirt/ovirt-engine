@@ -255,10 +255,10 @@ public class TemplateBackupModel extends ManageBackupModel<VmTemplate> {
                     confirmModel.setHashName("import_template"); //$NON-NLS-1$
                     confirmModel.setMessage(messages.importProcessHasBegunForTemplates(StringHelper.trimEnd(importedTemplates.toString().trim(), ',')));
                     confirmModel.getCommands().add(new UICommand(CANCEL_CONFIRMATION_COMMAND, templateBackupModel) //$NON-NLS-1$
-                            .setTitle(constants.close())
-                            .setIsDefault(true)
-                            .setIsCancel(true)
-                            );
+                        .setTitle(constants.close())
+                        .setIsDefault(true)
+                        .setIsCancel(true)
+                    );
                 }
             }
 
@@ -327,9 +327,9 @@ public class TemplateBackupModel extends ManageBackupModel<VmTemplate> {
 
         // Add 'Close' command
         model.setCloseCommand(new UICommand(CANCEL_COMMAND, this) //$NON-NLS-1$
-        .setTitle(ConstantsManager.getInstance().getConstants().close())
-        .setIsDefault(true)
-        .setIsCancel(true)
+            .setTitle(ConstantsManager.getInstance().getConstants().close())
+            .setIsDefault(true)
+            .setIsCancel(true)
         );
         ((TemplateImportDiskListModel) ((ImportTemplateFromExportDomainModel) getWindow()).getImportDiskListModel()).setExtendedItems(extendedItems);
     }
@@ -337,26 +337,26 @@ public class TemplateBackupModel extends ManageBackupModel<VmTemplate> {
     @Override
     public void executeCommand(UICommand command) {
         switch (command.getName()) {
-        case "OnRemove": //$NON-NLS-1$
-            onRemove();
-            break;
-        case "OnRestore": //$NON-NLS-1$
-            onRestore();
-            break;
-        case "RemoveVmTemplates": //$NON-NLS-1$
-            removeTemplateBackup();
-            break;
-        case "onClone": //$NON-NLS-1$
-            onClone();
-            break;
-        case "closeClone": //$NON-NLS-1$
-            closeClone();
-            break;
-        case "multipleArchsOK": //$NON-NLS-1$
-            multipleArchsOK();
-            break;
-        default:
-            super.executeCommand(command);
+            case "OnRemove": //$NON-NLS-1$
+                onRemove();
+                break;
+            case "OnRestore": //$NON-NLS-1$
+                onRestore();
+                break;
+            case "RemoveVmTemplates": //$NON-NLS-1$
+                removeTemplateBackup();
+                break;
+            case "onClone": //$NON-NLS-1$
+                onClone();
+                break;
+            case "closeClone": //$NON-NLS-1$
+                closeClone();
+                break;
+            case "multipleArchsOK": //$NON-NLS-1$
+                multipleArchsOK();
+                break;
+            default:
+                super.executeCommand(command);
         }
     }
 
@@ -396,12 +396,12 @@ public class TemplateBackupModel extends ManageBackupModel<VmTemplate> {
     protected IValidation[] getClonedNameValidators() {
         final int maxClonedNameLength = getMaxClonedNameLength();
         return new IValidation[] {
-                new NotEmptyValidation(),
-                new LengthValidation(maxClonedNameLength),
-                new I18NNameValidation(ConstantsManager.getInstance()
-                        .getMessages()
-                        .nameMustConataionOnlyAlphanumericChars(maxClonedNameLength)),
-                new UniqueClonedNameValidator(assignedVmNames)
+            new NotEmptyValidation(),
+            new LengthValidation(maxClonedNameLength),
+            new I18NNameValidation(ConstantsManager.getInstance()
+                .getMessages()
+                .nameMustConataionOnlyAlphanumericChars(maxClonedNameLength)),
+            new UniqueClonedNameValidator(assignedVmNames)
         };
     }
 
@@ -477,12 +477,12 @@ public class TemplateBackupModel extends ManageBackupModel<VmTemplate> {
     protected IValidation[] getClonedAppendedNameValidators() {
         final int maxClonedNameLength = getMaxClonedNameLength();
         return new IValidation[] {
-                new NotEmptyValidation(),
-                new LengthValidation(maxClonedNameLength),
-                new I18NNameValidation(ConstantsManager.getInstance()
-                        .getMessages()
-                        .newNameWithSuffixCannotContainBlankOrSpecialChars(maxClonedNameLength)),
-                new UniqueClonedAppendedNameValidator(assignedVmNames)
+            new NotEmptyValidation(),
+            new LengthValidation(maxClonedNameLength),
+            new I18NNameValidation(ConstantsManager.getInstance()
+                .getMessages()
+                .newNameWithSuffixCannotContainBlankOrSpecialChars(maxClonedNameLength)),
+            new UniqueClonedAppendedNameValidator(assignedVmNames)
         };
     }
 

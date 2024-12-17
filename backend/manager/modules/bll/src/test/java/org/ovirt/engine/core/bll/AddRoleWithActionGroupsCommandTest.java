@@ -40,7 +40,6 @@ public class AddRoleWithActionGroupsCommandTest {
                 new AddRoleWithActionGroupsCommand<>(params, null);
 
         command.prepareRoleForCommand();
-        assertEquals
-                (shouldBeInheritable, params.getRole().allowsViewingChildren(), "Wrong inheritable state for command");
+        assertEquals(shouldBeInheritable, params.getRole().allowsViewingChildren(), "Wrong inheritable state for command");
     }
 }

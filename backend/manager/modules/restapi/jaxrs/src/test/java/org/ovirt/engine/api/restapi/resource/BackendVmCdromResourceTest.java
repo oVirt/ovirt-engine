@@ -294,7 +294,7 @@ public class BackendVmCdromResourceTest
             new String[] { "Id" },
             new Object[] { VM_ID },
             result
-         );
+        );
     }
 
     private void verifyModel(Cdrom model) {

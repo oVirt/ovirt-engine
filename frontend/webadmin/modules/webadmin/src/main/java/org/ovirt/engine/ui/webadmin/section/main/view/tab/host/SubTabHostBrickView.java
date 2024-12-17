@@ -67,6 +67,6 @@ public class SubTabHostBrickView extends AbstractSubTabTableView<VDS, GlusterBri
         BrickHealInfoColumn healInfoColumn = new BrickHealInfoColumn();
         getTable().addColumn(healInfoColumn, constants.healInfo(), "110px"); //$NON-NLS-1$
 
-   }
+    }
 
 }

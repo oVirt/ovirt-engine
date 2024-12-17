@@ -90,12 +90,12 @@ public class GlusterVolumeSnapshotConfigureOptionsPopupView extends AbstractMode
         }, constants.clusterSnapshotConfigValue(), "200px"); //$NON-NLS-1$
 
         Column<EntityModel<VolumeSnapshotOptionModel>, String> valueColumn =
-                new Column<EntityModel<VolumeSnapshotOptionModel>, String>(new TextInputCell()) {
-            @Override
-            public String getValue(EntityModel<VolumeSnapshotOptionModel> object) {
-                return ((VolumeSnapshotOptionModel) object.getEntity()).getOptionValue();
-            }
-        };
+            new Column<EntityModel<VolumeSnapshotOptionModel>, String>(new TextInputCell()) {
+                @Override
+                public String getValue(EntityModel<VolumeSnapshotOptionModel> object) {
+                    return ((VolumeSnapshotOptionModel) object.getEntity()).getOptionValue();
+                }
+            };
         configsTable.addColumn(valueColumn, constants.volumeSnapshotConfigValue(), "100px"); //$NON-NLS-1$
 
         valueColumn.setFieldUpdater((index, object, value) -> object.getEntity().setOptionValue(value));

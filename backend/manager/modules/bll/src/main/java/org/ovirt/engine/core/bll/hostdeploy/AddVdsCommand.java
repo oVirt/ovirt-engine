@@ -439,7 +439,7 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
                     "Failed to initiate vdsm-id request on host: {} with error: {}",
                     e.getMessage(),
                     new String(err.toByteArray(), StandardCharsets.UTF_8)
-                    );
+            );
             log.debug("Exception", e);
             return null;
         }

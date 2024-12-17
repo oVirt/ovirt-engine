@@ -609,8 +609,8 @@ public class UpdateDiskCommandTest extends BaseCommandTest {
         initializeCommand();
 
         assertFalse(command.validateCanResizeDisk());
-        ValidateTestUtils.assertValidationMessages
-                ("wrong failure", command, EngineMessage.ACTION_TYPE_FAILED_REQUESTED_DISK_SIZE_IS_TOO_SMALL);
+        ValidateTestUtils.assertValidationMessages("wrong failure",
+            command, EngineMessage.ACTION_TYPE_FAILED_REQUESTED_DISK_SIZE_IS_TOO_SMALL);
     }
 
     @Test
@@ -626,8 +626,8 @@ public class UpdateDiskCommandTest extends BaseCommandTest {
         vmDevice.setReadOnly(true);
 
         assertFalse(command.validateCanResizeDisk());
-        ValidateTestUtils.assertValidationMessages
-                ("wrong failure", command, EngineMessage.ACTION_TYPE_FAILED_CANNOT_RESIZE_READ_ONLY_DISK);
+        ValidateTestUtils.assertValidationMessages("wrong failure",
+            command, EngineMessage.ACTION_TYPE_FAILED_CANNOT_RESIZE_READ_ONLY_DISK);
     }
 
     private void initializeCommand() {

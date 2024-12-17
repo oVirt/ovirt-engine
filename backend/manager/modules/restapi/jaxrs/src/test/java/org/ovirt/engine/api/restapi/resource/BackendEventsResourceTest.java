@@ -42,7 +42,7 @@ public class BackendEventsResourceTest extends AbstractBackendCollectionResource
     static org.ovirt.engine.api.model.Event getModel(int index) {
         org.ovirt.engine.api.model.Event model = new org.ovirt.engine.api.model.Event();
         model.setId(String.valueOf(LOG_IDS[index]));
-        model.setSeverity( LogSeverity.ALERT);
+        model.setSeverity(LogSeverity.ALERT);
         model.setDescription(MESSAGES[index]);
         model.setOrigin(ORIGIN_NAMES[index]);
         model.setCustomId(CUSTOMER_EVENT_IDS[index]);

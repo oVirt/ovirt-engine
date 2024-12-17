@@ -74,7 +74,7 @@ public class BackendGroupsResource
             for (String domain : authzProvidersNames) {
                 Guid domainId = new Guid(domain.getBytes(StandardCharsets.UTF_8));
                 if (domainId.toString().equals(group.getDomain().getId())) {
-                   return domain;
+                    return domain;
                 }
             }
             throw new WebFaultException(

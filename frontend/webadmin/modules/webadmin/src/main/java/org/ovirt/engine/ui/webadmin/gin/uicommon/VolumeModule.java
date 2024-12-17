@@ -73,43 +73,43 @@ public class VolumeModule extends AbstractGinModule {
             final Provider<GlusterVolumeSnapshotCreatePopupPresenterWidget> snapshotPopupProvider,
             final Provider<GlusterVolumeGeoRepCreateSessionPopupPresenterWidget> createGeoRepSessionPopupProvider) {
         MainViewModelProvider<GlusterVolumeEntity, VolumeListModel> result =
-                new MainViewModelProvider<GlusterVolumeEntity, VolumeListModel>(eventBus, defaultConfirmPopupProvider) {
-            @Override
-            public AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(VolumeListModel source,
+            new MainViewModelProvider<GlusterVolumeEntity, VolumeListModel>(eventBus, defaultConfirmPopupProvider) {
+                @Override
+                public AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(VolumeListModel source,
                     UICommand lastExecutedCommand, Model windowModel) {
-                if (lastExecutedCommand == getModel().getNewVolumeCommand()) {
-                    return popupProvider.get();
-                } else if (lastExecutedCommand == getModel().getStatusRebalanceCommand() || lastExecutedCommand.getName().equals("onStopRebalance")) { //$NON-NLS-1$
-                    return rebalanceStatusPopupProvider.get();
-                } else if (lastExecutedCommand == getModel().getShowVolumeProfileDetailsCommand() || lastExecutedCommand.getName().equals("showProfileDetails")) { //$NON-NLS-1$
-                    return volumeProfileStatsPopupProvider.get();
-                } else if (lastExecutedCommand == getModel().getConfigureVolumeSnapshotOptionsCommand()) {
-                    return volumeSnapshotConfigOptionsPopupProvider.get();
-                } else if (lastExecutedCommand == getModel().getConfigureClusterSnapshotOptionsCommand()) {
-                    return clusterSnapshotConfigOptionsPopupProvider.get();
-                } else if (lastExecutedCommand == getModel().getCreateSnapshotCommand()) {
-                    return snapshotPopupProvider.get();
-                } else if (lastExecutedCommand == getModel().getEditSnapshotScheduleCommand()) {
-                    return snapshotPopupProvider.get();
+                        if (lastExecutedCommand == getModel().getNewVolumeCommand()) {
+                            return popupProvider.get();
+                        } else if (lastExecutedCommand == getModel().getStatusRebalanceCommand() || lastExecutedCommand.getName().equals("onStopRebalance")) { //$NON-NLS-1$
+                            return rebalanceStatusPopupProvider.get();
+                        } else if (lastExecutedCommand == getModel().getShowVolumeProfileDetailsCommand() || lastExecutedCommand.getName().equals("showProfileDetails")) { //$NON-NLS-1$
+                            return volumeProfileStatsPopupProvider.get();
+                        } else if (lastExecutedCommand == getModel().getConfigureVolumeSnapshotOptionsCommand()) {
+                            return volumeSnapshotConfigOptionsPopupProvider.get();
+                        } else if (lastExecutedCommand == getModel().getConfigureClusterSnapshotOptionsCommand()) {
+                            return clusterSnapshotConfigOptionsPopupProvider.get();
+                        } else if (lastExecutedCommand == getModel().getCreateSnapshotCommand()) {
+                            return snapshotPopupProvider.get();
+                        } else if (lastExecutedCommand == getModel().getEditSnapshotScheduleCommand()) {
+                            return snapshotPopupProvider.get();
                         } else if (lastExecutedCommand == getModel().getNewGeoRepSessionCommand()) {
                             return createGeoRepSessionPopupProvider.get();
                         } else {
-                    return super.getModelPopup(source, lastExecutedCommand, windowModel);
+                            return super.getModelPopup(source, lastExecutedCommand, windowModel);
+                        }
                 }
-            }
 
-            @Override
-            public AbstractModelBoundPopupPresenterWidget<? extends ConfirmationModel, ?> getConfirmModelPopup(VolumeListModel source,
+                @Override
+                public AbstractModelBoundPopupPresenterWidget<? extends ConfirmationModel, ?> getConfirmModelPopup(VolumeListModel source,
                     UICommand lastExecutedCommand) {
-                if (lastExecutedCommand == getModel().getStopCommand()
-                                || lastExecutedCommand == getModel().getRemoveVolumeCommand()
-                                || lastExecutedCommand == getModel().getStartCommand()) {
-                    return removeConfirmPopupProvider.get();
-                } else {
-                    return super.getConfirmModelPopup(source, lastExecutedCommand);
+                        if (lastExecutedCommand == getModel().getStopCommand()
+                            || lastExecutedCommand == getModel().getRemoveVolumeCommand()
+                            || lastExecutedCommand == getModel().getStartCommand()) {
+                            return removeConfirmPopupProvider.get();
+                        } else {
+                            return super.getConfirmModelPopup(source, lastExecutedCommand);
+                        }
                 }
-            }
-        };
+            };
         result.setModelProvider(modelProvider);
         return result;
     }
@@ -128,42 +128,42 @@ public class VolumeModule extends AbstractGinModule {
             final Provider<VolumeListModel> mainModelProvider,
             final Provider<VolumeBrickListModel> modelProvider) {
         SearchableDetailTabModelProvider<GlusterBrickEntity, VolumeListModel, VolumeBrickListModel> result =
-                new SearchableDetailTabModelProvider<GlusterBrickEntity, VolumeListModel, VolumeBrickListModel>(
-                eventBus, defaultConfirmPopupProvider) {
-            @Override
-            public AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(VolumeBrickListModel source,
-                    UICommand lastExecutedCommand,
-                    Model windowModel) {
-                if (lastExecutedCommand == getModel().getAddBricksCommand()) {
-                    return addBrickPopupProvider.get();
-                } else if (lastExecutedCommand == getModel().getRemoveBricksCommand()) {
-                    return removeBrickPopupProvider.get();
-                } else if (lastExecutedCommand == getModel().getStatusRemoveBricksCommand()) {
-                    return removeBricksStatusPopupProvider.get();
-                } else if (lastExecutedCommand.getName().equals("OnStopRemoveBricks")) {  //$NON-NLS-1$
-                    return removeBricksStatusPopupProvider.get();
-                } else if (lastExecutedCommand == getModel().getReplaceBrickCommand()) {
-                    return replaceBrickPopupProvider.get();
-                } else if (lastExecutedCommand == getModel().getBrickAdvancedDetailsCommand()) {
-                    return brickDetailsPopupProvider.get();
-                } else if (lastExecutedCommand == getModel().getResetBrickCommand()) {
-                    return resetBrickPopupProvider.get();
-                } else {
-                    return super.getModelPopup(source, lastExecutedCommand, windowModel);
+            new SearchableDetailTabModelProvider<GlusterBrickEntity, VolumeListModel, VolumeBrickListModel>(
+            eventBus, defaultConfirmPopupProvider) {
+                @Override
+                public AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(VolumeBrickListModel source,
+                        UICommand lastExecutedCommand,
+                        Model windowModel) {
+                    if (lastExecutedCommand == getModel().getAddBricksCommand()) {
+                        return addBrickPopupProvider.get();
+                    } else if (lastExecutedCommand == getModel().getRemoveBricksCommand()) {
+                        return removeBrickPopupProvider.get();
+                    } else if (lastExecutedCommand == getModel().getStatusRemoveBricksCommand()) {
+                        return removeBricksStatusPopupProvider.get();
+                    } else if (lastExecutedCommand.getName().equals("OnStopRemoveBricks")) {  //$NON-NLS-1$
+                        return removeBricksStatusPopupProvider.get();
+                    } else if (lastExecutedCommand == getModel().getReplaceBrickCommand()) {
+                        return replaceBrickPopupProvider.get();
+                    } else if (lastExecutedCommand == getModel().getBrickAdvancedDetailsCommand()) {
+                        return brickDetailsPopupProvider.get();
+                    } else if (lastExecutedCommand == getModel().getResetBrickCommand()) {
+                        return resetBrickPopupProvider.get();
+                    } else {
+                        return super.getModelPopup(source, lastExecutedCommand, windowModel);
+                    }
                 }
-            }
 
-            @Override
-            public AbstractModelBoundPopupPresenterWidget<? extends ConfirmationModel, ?> getConfirmModelPopup(VolumeBrickListModel source,
+                @Override
+                public AbstractModelBoundPopupPresenterWidget<? extends ConfirmationModel, ?> getConfirmModelPopup(VolumeBrickListModel source,
                     UICommand lastExecutedCommand) {
-                if (lastExecutedCommand == getModel().getRemoveBricksCommand()) {
-                    return removeConfirmPopupProvider.get();
-                } else {
-                    return super.getConfirmModelPopup(source, lastExecutedCommand);
-                }
-            }
+                        if (lastExecutedCommand == getModel().getRemoveBricksCommand()) {
+                            return removeConfirmPopupProvider.get();
+                        } else {
+                            return super.getConfirmModelPopup(source, lastExecutedCommand);
+                        }
+                    }
 
-        };
+            };
         result.setMainModelProvider(mainModelProvider);
         result.setModelProvider(modelProvider);
         return result;
@@ -211,21 +211,21 @@ public class VolumeModule extends AbstractGinModule {
             final Provider<VolumeListModel> mainModelProvider,
             final Provider<VolumeParameterListModel> modelProvider) {
         SearchableDetailTabModelProvider<GlusterVolumeOptionEntity, VolumeListModel, VolumeParameterListModel> result =
-                new SearchableDetailTabModelProvider<GlusterVolumeOptionEntity, VolumeListModel, VolumeParameterListModel>(
-                eventBus, defaultConfirmPopupProvider) {
-            @Override
-            public AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(VolumeParameterListModel source,
+            new SearchableDetailTabModelProvider<GlusterVolumeOptionEntity, VolumeListModel, VolumeParameterListModel>(
+            eventBus, defaultConfirmPopupProvider) {
+                @Override
+                public AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(VolumeParameterListModel source,
                     UICommand lastExecutedCommand,
                     Model windowModel) {
-                if (lastExecutedCommand == getModel().getAddParameterCommand()) {
-                    return addParameterPopupProvider.get();
-                } else if (lastExecutedCommand == getModel().getEditParameterCommand()) {
-                    return editParameterPopupProvider.get();
-                } else {
-                    return super.getModelPopup(source, lastExecutedCommand, windowModel);
-                }
-            }
-        };
+                        if (lastExecutedCommand == getModel().getAddParameterCommand()) {
+                            return addParameterPopupProvider.get();
+                        } else if (lastExecutedCommand == getModel().getEditParameterCommand()) {
+                            return editParameterPopupProvider.get();
+                        } else {
+                            return super.getModelPopup(source, lastExecutedCommand, windowModel);
+                        }
+                    }
+            };
         result.setMainModelProvider(mainModelProvider);
         result.setModelProvider(modelProvider);
         return result;
@@ -239,19 +239,19 @@ public class VolumeModule extends AbstractGinModule {
             final Provider<VolumeListModel> mainModelProvider,
             final Provider<VolumeEventListModel> modelProvider) {
         SearchableDetailTabModelProvider<AuditLog, VolumeListModel, VolumeEventListModel> result =
-                new SearchableDetailTabModelProvider<AuditLog, VolumeListModel, VolumeEventListModel>(
-                eventBus, defaultConfirmPopupProvider) {
-            @Override
-            public AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(VolumeEventListModel source,
+            new SearchableDetailTabModelProvider<AuditLog, VolumeListModel, VolumeEventListModel>(
+            eventBus, defaultConfirmPopupProvider) {
+                @Override
+                public AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(VolumeEventListModel source,
                     UICommand lastExecutedCommand,
                     Model windowModel) {
-                if (lastExecutedCommand.equals(getModel().getDetailsCommand())) {
-                    return eventPopupProvider.get();
-                } else {
-                    return super.getModelPopup(source, lastExecutedCommand, windowModel);
+                        if (lastExecutedCommand.equals(getModel().getDetailsCommand())) {
+                            return eventPopupProvider.get();
+                        } else {
+                            return super.getModelPopup(source, lastExecutedCommand, windowModel);
+                        }
                 }
-            }
-        };
+            };
         result.setMainModelProvider(mainModelProvider);
         result.setModelProvider(modelProvider);
         return result;

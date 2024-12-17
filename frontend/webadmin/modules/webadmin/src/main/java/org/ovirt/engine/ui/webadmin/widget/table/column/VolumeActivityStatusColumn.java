@@ -38,43 +38,43 @@ public class VolumeActivityStatusColumn<T extends GlusterTaskSupport> extends Ab
 
         if (taskType == GlusterTaskType.REBALANCE) {
             switch (value.getAsyncTask().getStatus()) {
-            case STARTED:
-                tooltip = constants.rebalanceInProgress();
-                break;
-            case ABORTED:
-                tooltip = constants.rebalanceStopped();
-                break;
-            case FAILED:
-                tooltip = constants.rebalanceFailed();
-                break;
-            case FINISHED:
-                tooltip = constants.rebalanceCompleted();
-                break;
-            case UNKNOWN:
-                tooltip = constants.rebalanceStatusUnknown();
-                break;
-            default:
-                tooltip = ""; //$NON-NLS-1$
+                case STARTED:
+                    tooltip = constants.rebalanceInProgress();
+                    break;
+                case ABORTED:
+                    tooltip = constants.rebalanceStopped();
+                    break;
+                case FAILED:
+                    tooltip = constants.rebalanceFailed();
+                    break;
+                case FINISHED:
+                    tooltip = constants.rebalanceCompleted();
+                    break;
+                case UNKNOWN:
+                    tooltip = constants.rebalanceStatusUnknown();
+                    break;
+                default:
+                    tooltip = ""; //$NON-NLS-1$
             }
         } else if (taskType == GlusterTaskType.REMOVE_BRICK) {
             switch (value.getAsyncTask().getStatus()) {
-            case STARTED:
-                tooltip = constants.removeBrickInProgress();
-                break;
-            case ABORTED:
-                tooltip = constants.removeBrickStopped();
-                break;
-            case FAILED:
-                tooltip = constants.removeBrickFailed();
-                break;
-            case FINISHED:
-                tooltip = constants.removeBrickCommitRequired();
-                break;
-            case UNKNOWN:
-                tooltip = constants.removeBrickStatusUnknown();
-                break;
-            default:
-                tooltip = ""; //$NON-NLS-1$
+                case STARTED:
+                    tooltip = constants.removeBrickInProgress();
+                    break;
+                case ABORTED:
+                    tooltip = constants.removeBrickStopped();
+                    break;
+                case FAILED:
+                    tooltip = constants.removeBrickFailed();
+                    break;
+                case FINISHED:
+                    tooltip = constants.removeBrickCommitRequired();
+                    break;
+                case UNKNOWN:
+                    tooltip = constants.removeBrickStatusUnknown();
+                    break;
+                default:
+                    tooltip = ""; //$NON-NLS-1$
             }
         }
 

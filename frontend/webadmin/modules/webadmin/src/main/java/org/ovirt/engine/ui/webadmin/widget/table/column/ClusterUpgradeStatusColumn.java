@@ -24,7 +24,7 @@ public class ClusterUpgradeStatusColumn extends AbstractColumn<Cluster, Cluster>
 
     @Override
     public Cluster getValue(Cluster object) {
-      return object;
+        return object;
     }
 
     @Override
@@ -34,7 +34,7 @@ public class ClusterUpgradeStatusColumn extends AbstractColumn<Cluster, Cluster>
 
     private static class StatusTextColumn extends AbstractTextColumn<Cluster> {
         public StatusTextColumn() {
-          super(true);
+            super(true);
         }
 
         @Override
@@ -57,11 +57,11 @@ public class ClusterUpgradeStatusColumn extends AbstractColumn<Cluster, Cluster>
 
         @Override
         public SafeHtml getValue(Cluster object) {
-          if (!object.isUpgradeRunning()) {
-              return null;
-          }
+            if (!object.isUpgradeRunning()) {
+                return null;
+            }
 
-          return super.getValue(object);
+            return super.getValue(object);
         }
 
         @Override
