@@ -801,6 +801,10 @@ public class VmHandler implements BackendService {
      */
     public ValidationResult isGraphicsAndDisplaySupported
         (int osId, Collection<GraphicsType> graphics, DisplayType displayType, BiosType biosType, Version clusterVersion) {
+        // When we have no any display for vm then we don't have to check compatibility of display-graphics for selected OS
+        if (displayType == DisplayType.none) {
+            return ValidationResult.VALID;
+        }
         if (!vmValidationUtils.isGraphicsAndDisplaySupported(osId, clusterVersion, graphics, displayType)) {
             return new ValidationResult(
                     EngineMessage.ACTION_TYPE_FAILED_ILLEGAL_VM_DISPLAY_TYPE_IS_NOT_SUPPORTED_BY_OS);
