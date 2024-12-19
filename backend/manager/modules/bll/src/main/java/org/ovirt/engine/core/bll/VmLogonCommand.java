@@ -49,15 +49,19 @@ public class VmLogonCommand<T extends VmOperationParameterBase> extends VmOperat
         final DbUser currentUser = getCurrentUser();
         final String password = SsoUtils.getPassword(
                 sessionDataContainer.getSsoAccessToken(getParameters().getSessionId()));
-        final String domainController = currentUser != null ? currentUser.getDomain() : "";
-        final boolean sentToVM = runVdsCommand(
-                VDSCommandType.VmLogon,
-                new VmLogonVDSCommandParameters(
-                        getVdsId(),
-                        getVm().getId(),
-                        domainController,
-                        getUserName(),
-                        password)).getSucceeded();
-        setSucceeded(sentToVM);
+        if (password == null) {
+            setSucceeded(true);
+        } else {
+            final String domainController = currentUser != null ? currentUser.getDomain() : "";
+            final boolean sentToVM = runVdsCommand(
+                    VDSCommandType.VmLogon,
+                    new VmLogonVDSCommandParameters(
+                            getVdsId(),
+                            getVm().getId(),
+                            domainController,
+                            getUserName(),
+                            password)).getSucceeded();
+            setSucceeded(sentToVM);
+        }
     }
 }
