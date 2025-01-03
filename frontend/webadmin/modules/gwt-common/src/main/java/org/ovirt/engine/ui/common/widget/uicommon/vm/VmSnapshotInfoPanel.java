@@ -1,10 +1,14 @@
 package org.ovirt.engine.ui.common.widget.uicommon.vm;
 
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 import org.gwtbootstrap3.client.ui.Label;
+import org.ovirt.engine.core.common.businessentities.network.NetworkInterface;
+import org.ovirt.engine.core.common.businessentities.network.NetworkStatistics;
 import org.ovirt.engine.core.common.businessentities.network.VmInterfaceType;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
@@ -266,8 +270,10 @@ public class VmSnapshotInfoPanel extends FlowPanel {
         AbstractTextColumn<VmNetworkInterface> dropsColumn = new AbstractSumUpColumn<VmNetworkInterface>() {
             @Override
             protected Double[] getRawValue(VmNetworkInterface object) {
-                Double receiveDrops = object != null ? object.getStatistics().getReceiveDrops().doubleValue() : null;
-                Double transmitDrops = object != null ? object.getStatistics().getTransmitDrops().doubleValue() : null;
+                Double receiveDrops = Optional.ofNullable(object).map(NetworkInterface::getStatistics)
+                        .map(NetworkStatistics::getReceiveDrops).map(BigInteger::doubleValue).orElse(null);
+                Double transmitDrops = Optional.ofNullable(object).map(NetworkInterface::getStatistics)
+                        .map(NetworkStatistics::getTransmitDrops).map(BigInteger::doubleValue).orElse(null);
                 return new Double[] { receiveDrops, transmitDrops };
             }
         };
