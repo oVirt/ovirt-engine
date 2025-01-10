@@ -539,7 +539,10 @@ public enum QueryType implements Serializable {
     GetSystemOption(QueryAuthType.User),
 
     // Default type instead of having to null check
-    Unknown(QueryAuthType.User);
+    Unknown(QueryAuthType.User),
+
+    // Last Engine Backup
+    GetLastEngineBackup;
 
     /**
      * What kind of authorization the query requires. Although this is essentially a <code>boolean</code>, it's

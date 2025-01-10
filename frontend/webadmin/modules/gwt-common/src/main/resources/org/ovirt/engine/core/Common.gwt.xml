@@ -544,6 +544,9 @@
         <!-- Cpu topology -->
         <include name="common/businessentities/VdsCpuUnit.java"/>
 
+        <!-- For GetLastEngineBackupParameters -->
+        <include name="common/businessentities/EngineBackupScope.java"/>
+
     </source>
 
     <super-source path="ui/uioverrides" />

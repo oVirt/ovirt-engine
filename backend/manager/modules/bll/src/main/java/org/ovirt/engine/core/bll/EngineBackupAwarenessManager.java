@@ -15,6 +15,7 @@ import org.apache.commons.lang.exception.ExceptionUtils;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.BackendService;
 import org.ovirt.engine.core.common.businessentities.EngineBackupLog;
+import org.ovirt.engine.core.common.businessentities.EngineBackupScope;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
@@ -31,21 +32,6 @@ import org.slf4j.LoggerFactory;
  */
 @Singleton
 public class EngineBackupAwarenessManager implements BackendService {
-
-    private enum BackupScope {
-        DB("db"),
-        FILES("files");
-
-        String name;
-
-        BackupScope(String name) {
-            this.name = name;
-        }
-
-        public String getName() {
-            return name;
-        }
-    }
 
     private static final Logger log = LoggerFactory.getLogger(EngineBackupAwarenessManager.class);
     private Lock lock = new ReentrantLock();
@@ -96,8 +82,8 @@ public class EngineBackupAwarenessManager implements BackendService {
         AuditLogable alert = new AuditLogableImpl();
 
         //try to get last backup record
-        EngineBackupLog lastDbBackup = getLastBackupByScope(BackupScope.DB);
-        EngineBackupLog lastFilesBackup = getLastBackupByScope(BackupScope.FILES);
+        EngineBackupLog lastDbBackup = getLastBackupByScope(EngineBackupScope.DB);
+        EngineBackupLog lastFilesBackup = getLastBackupByScope(EngineBackupScope.FILES);
         if (lastDbBackup == null || lastFilesBackup == null) {
             auditLogDirector.log(alert, AuditLogType.ENGINE_NO_FULL_BACKUP);
         } else {
@@ -118,7 +104,7 @@ public class EngineBackupAwarenessManager implements BackendService {
 
     }
 
-    private EngineBackupLog getLastBackupByScope(BackupScope scope) {
+    private EngineBackupLog getLastBackupByScope(EngineBackupScope scope) {
         return engineBackupLogDao.getLastSuccessfulEngineBackup(scope.getName());
     }
 }
