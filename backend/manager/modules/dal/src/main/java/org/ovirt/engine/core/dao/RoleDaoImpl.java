@@ -38,7 +38,7 @@ public class RoleDaoImpl extends BaseDao implements RoleDao {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("id", id);
 
-        return getCallsHandler().executeRead("GetRolsByid", rolesRowMapper, parameterSource);
+        return getCallsHandler().executeRead("GetRoleByid", rolesRowMapper, parameterSource);
     }
 
     @Override
