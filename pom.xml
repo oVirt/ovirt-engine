@@ -64,7 +64,6 @@
     <cors-filter.version>1.0.1</cors-filter.version>
     <cxf.version>2.2.7</cxf.version>
     <dbunit.version>2.7.3</dbunit.version>
-    <dozer.version>5.2.0</dozer.version>
     <eddsa.version>0.3.0</eddsa.version>
     <gin.version>3.0.0</gin.version>
     <guice.version>4.2.3</guice.version>
