@@ -15,7 +15,7 @@
       <artifactId>activation</artifactId>
     </dependency>
     <dependency>
-      <groupId>com.google.gwt</groupId>
+      <groupId>org.gwtproject</groupId>
       <artifactId>gwt-servlet</artifactId>
     </dependency>
     <dependency>
@@ -27,7 +27,7 @@
       <artifactId>jboss-jaxb-api_2.3_spec</artifactId>
     </dependency>
     <dependency>
-      <groupId>com.google.gwt</groupId>
+      <groupId>org.gwtproject</groupId>
       <artifactId>gwt-user</artifactId>
     </dependency>
     <!-- Guice and GIN -->
@@ -47,7 +47,7 @@
       <scope>provided</scope>
     </dependency>
     <dependency>
-      <groupId>com.google.gwt</groupId>
+      <groupId>org.gwtproject</groupId>
       <artifactId>gwt-dev</artifactId>
     </dependency>
     <dependency>
