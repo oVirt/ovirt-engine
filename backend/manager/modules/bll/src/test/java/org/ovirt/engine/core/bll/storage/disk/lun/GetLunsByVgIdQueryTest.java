@@ -15,7 +15,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
 import org.ovirt.engine.core.bll.AbstractQueryTest;
-import org.ovirt.engine.core.common.businessentities.BusinessEntitiesDefinitions;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.businessentities.storage.LUNStorageServerConnectionMap;
 import org.ovirt.engine.core.common.businessentities.storage.LUNs;
@@ -44,7 +43,6 @@ public class GetLunsByVgIdQueryTest extends AbstractQueryTest<GetLunsByVgIdParam
     private static final String PORT = "123456";
     private static final String[] IQNS = { ADDRESS + ":1", ADDRESS + ":2", ADDRESS + ":3" };
     private static final String PHYSICAL_DEVICE_FIELD = "sda";
-    private static final String DUMMY_LUN_ID = BusinessEntitiesDefinitions.DUMMY_LUN_ID_PREFIX + "89871115-e64d-4754-bacd-556cc249761b";
     @Mock
     private VDSBrokerFrontend vdsBrokerFrontendMock;
     @Mock
@@ -56,19 +54,14 @@ public class GetLunsByVgIdQueryTest extends AbstractQueryTest<GetLunsByVgIdParam
 
     @Test
     public void testQuery() {
-        commonTestFlow(false);
+        commonTestFlow();
     }
 
-    @Test
-    public void testQueryDummyLun() {
-        commonTestFlow(true);
-    }
-
-    private void commonTestFlow(boolean withDummyLun) {
+    private void commonTestFlow() {
         when(getQueryParameters().getVgId()).thenReturn(VG_ID);
         when(getQueryParameters().getId()).thenReturn(VDS_ID);
 
-        expectGetLunsForVg(VG_ID, withDummyLun);
+        expectGetLunsForVg(VG_ID);
         expectGetDeviceList();
 
         expectGetLunsMap();
@@ -80,8 +73,8 @@ public class GetLunsByVgIdQueryTest extends AbstractQueryTest<GetLunsByVgIdParam
         checkReturnValue();
     }
 
-    private void expectGetLunsForVg(String vgId, boolean withDummyLun) {
-        when(lunDao.getAllForVolumeGroup(vgId)).thenReturn(setUpLuns(withDummyLun));
+    private void expectGetLunsForVg(String vgId) {
+        when(lunDao.getAllForVolumeGroup(vgId)).thenReturn(setUpLuns());
     }
 
     private void expectGetDeviceList() {
@@ -112,23 +105,18 @@ public class GetLunsByVgIdQueryTest extends AbstractQueryTest<GetLunsByVgIdParam
         }
     }
 
-    private static List<LUNs> setUpLuns(boolean withDummyLun) {
+    private static List<LUNs> setUpLuns() {
         List<LUNs> luns = new ArrayList<>();
         for (String GUID : GUIDS) {
             LUNs lun = new LUNs();
             lun.setLUNId(GUID);
             luns.add(lun);
         }
-        if (withDummyLun) {
-            LUNs dummyLun = new LUNs();
-            dummyLun.setLUNId(DUMMY_LUN_ID);
-            luns.add(dummyLun);
-        }
         return luns;
     }
 
     private static List<LUNs> setUpLunsFromDeviceList() {
-        List<LUNs> luns = setUpLuns(false);
+        List<LUNs> luns = setUpLuns();
         luns.forEach(l -> l.setPathsDictionary(Collections.singletonMap(PHYSICAL_DEVICE_FIELD, true)));
         return luns;
     }

@@ -6,7 +6,6 @@ import static org.mockito.Mockito.when;
 import static org.ovirt.engine.core.bll.ValidateTestUtils.runAndAssertValidateFailure;
 import static org.ovirt.engine.core.bll.ValidateTestUtils.runAndAssertValidateSuccess;
 
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -25,7 +24,6 @@ import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.storage.domain.SyncLunsInfoForBlockStorageDomainCommand.LunHandler;
 import org.ovirt.engine.core.bll.validator.HostValidator;
 import org.ovirt.engine.core.common.action.SyncLunsInfoForBlockStorageDomainParameters;
-import org.ovirt.engine.core.common.businessentities.BusinessEntitiesDefinitions;
 import org.ovirt.engine.core.common.businessentities.storage.LUNs;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
@@ -163,18 +161,6 @@ public class SyncLunsInfoForBlockStorageDomainCommandTest extends BaseCommandTes
         assertEquals(Stream.of(command.saveLunsHandler, command.removeLunsHandler).collect(Collectors.toSet()),
                 lunsToUpdateInDb.keySet());
         assertLunIdInList(lunsToRemoveFromDb, lunFromDbId);
-    }
-
-    @Test
-    public void testGetLunsToRemoveFromDb() {
-        lunFromVg.setLUNId(Guid.newGuid().toString());
-        lunFromDb.setLUNId(Guid.newGuid().toString());
-        LUNs dummyLun = new LUNs();
-        dummyLun.setId(BusinessEntitiesDefinitions.DUMMY_LUN_ID_PREFIX + Guid.newGuid().toString());
-        List<LUNs> lunsFromVgInfo = Collections.singletonList(lunFromVg);
-        List<LUNs> lunsFromDb = Arrays.asList(lunFromDb, dummyLun);
-        assertEquals(command.getLunsToRemoveFromDb(lunsFromVgInfo, lunsFromDb),
-                Collections.singletonList(lunFromDb));
     }
 
     private SyncLunsInfoForBlockStorageDomainParameters createParameters() {
