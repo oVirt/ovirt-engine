@@ -11,7 +11,6 @@ import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.storage.domain.StorageDomainCommandBase;
 import org.ovirt.engine.core.bll.validator.storage.StorageConnectionValidator;
 import org.ovirt.engine.core.common.action.AttachDetachStorageConnectionParameters;
-import org.ovirt.engine.core.common.businessentities.BusinessEntitiesDefinitions;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.businessentities.storage.LUNStorageServerConnectionMap;
 import org.ovirt.engine.core.common.businessentities.storage.LUNs;
@@ -60,28 +59,12 @@ public class AttachStorageConnectionToStorageDomainCommand<T extends AttachDetac
 
     @Override
     protected void executeCommand() {
-        // Create a dummy lun
-        LUNs dummyLun = createDummyLun();
-
-        // Create storage server connection mapping
-        LUNStorageServerConnectionMap connectionMapRecord =
-                new LUNStorageServerConnectionMap(dummyLun.getLUNId(), getParameters().getStorageConnectionId());
-
-        List<StorageServerConnections> connectionsForDomain;
-
-        if (lunDao.get(dummyLun.getLUNId()) == null) {
-            lunDao.save(dummyLun);
-
-            // Save connection maps when creating the dummy lun for the first time
-            connectionsForDomain = storageServerConnectionDao.getAllForDomain(getStorageDomainId());
-            for (StorageServerConnections connection : connectionsForDomain) {
-                saveConnection(new LUNStorageServerConnectionMap(dummyLun.getLUNId(), connection.getId()));
-            }
+        List<LUNs> currentLuns = lunDao.getAllForVolumeGroup(getStorageDomain().getStorage());
+        for (LUNs lun : currentLuns) {
+            LUNStorageServerConnectionMap newStorageServerConnectionMap =
+                new LUNStorageServerConnectionMap(lun.getLUNId(), getParameters().getStorageConnectionId());
+            saveConnection(newStorageServerConnectionMap);
         }
-
-        // Save new connection map
-        saveConnection(connectionMapRecord);
-
         setSucceeded(true);
     }
 
@@ -89,13 +72,6 @@ public class AttachStorageConnectionToStorageDomainCommand<T extends AttachDetac
         if (storageServerConnectionLunMapDao.get(connectionMapRecord.getId()) == null) {
             storageServerConnectionLunMapDao.save(connectionMapRecord);
         }
-    }
-
-    private LUNs createDummyLun() {
-        final LUNs dummyLun = new LUNs();
-        dummyLun.setLUNId(BusinessEntitiesDefinitions.DUMMY_LUN_ID_PREFIX + getStorageDomainId());
-        dummyLun.setVolumeGroupId(getStorageDomain().getStorage());
-        return dummyLun;
     }
 
     @Override

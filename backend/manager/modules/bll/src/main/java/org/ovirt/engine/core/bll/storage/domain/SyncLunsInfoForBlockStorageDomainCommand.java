@@ -21,7 +21,6 @@ import org.ovirt.engine.core.bll.validator.HostValidator;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.LockProperties.Scope;
 import org.ovirt.engine.core.common.action.SyncLunsInfoForBlockStorageDomainParameters;
-import org.ovirt.engine.core.common.businessentities.BusinessEntitiesDefinitions;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.businessentities.storage.LUNStorageServerConnectionMap;
 import org.ovirt.engine.core.common.businessentities.storage.LUNs;
@@ -193,7 +192,6 @@ public class SyncLunsInfoForBlockStorageDomainCommand<T extends SyncLunsInfoForB
     protected List<LUNs> getLunsToRemoveFromDb(List<LUNs> lunsFromVgInfo, List<LUNs> lunsFromDb) {
         Set<String> lunIdsFromVgInfo = lunsFromVgInfo.stream().map(LUNs::getLUNId).collect(Collectors.toSet());
         return lunsFromDb.stream()
-                .filter(lun -> !lun.getLUNId().startsWith(BusinessEntitiesDefinitions.DUMMY_LUN_ID_PREFIX))
                 .filter(lun -> !lunIdsFromVgInfo.contains(lun.getLUNId()))
                 .collect(Collectors.toList());
     }
