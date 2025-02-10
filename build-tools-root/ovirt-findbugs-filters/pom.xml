@@ -12,6 +12,12 @@ SPDX-License-Identifier: Apache-2.0
 
   <modelVersion>4.0.0</modelVersion>
 
+  <parent>
+    <groupId>org.ovirt.engine</groupId>
+    <artifactId>build-tools-root</artifactId>
+    <version>4.5.7-SNAPSHOT</version>
+  </parent>
+
   <groupId>org.ovirt.engine</groupId>
   <artifactId>ovirt-findbugs-filters</artifactId>
   <version>4.5.7-SNAPSHOT</version>
