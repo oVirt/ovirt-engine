@@ -3,12 +3,14 @@ package org.ovirt.engine.api.restapi.resource;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.Mockito.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.ovirt.engine.api.restapi.test.util.TestHelper.eqParams;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -22,6 +24,7 @@ import javax.ws.rs.core.UriInfo;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentMatcher;
 import org.ovirt.engine.api.model.Api;
 import org.ovirt.engine.api.model.Link;
 import org.ovirt.engine.api.model.SpecialObjects;
@@ -29,11 +32,14 @@ import org.ovirt.engine.api.restapi.invocation.Current;
 import org.ovirt.engine.api.restapi.invocation.CurrentManager;
 import org.ovirt.engine.api.restapi.invocation.VersionSource;
 import org.ovirt.engine.api.restapi.logging.MessageBundle;
+import org.ovirt.engine.core.common.businessentities.EngineBackupLog;
+import org.ovirt.engine.core.common.businessentities.EngineBackupScope;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.interfaces.BackendLocal;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.core.common.queries.GetConfigurationValueParameters;
+import org.ovirt.engine.core.common.queries.GetLastEngineBackupParameters;
 import org.ovirt.engine.core.common.queries.GetSystemStatisticsQueryParameters;
 import org.ovirt.engine.core.common.queries.QueryParametersBase;
 import org.ovirt.engine.core.common.queries.QueryReturnValue;
@@ -306,6 +312,7 @@ public class BackendApiResourceTest {
         setUpGetInstanceIdExpectations();
         setUpGetUserBySessionExpectations();
         setUpGetSystemStatisticsExpectations();
+        setUpGetLastDbBackendExpectations();
     }
 
     protected void doTestGlusterOnlyGet() {
@@ -463,6 +470,22 @@ public class BackendApiResourceTest {
 
     private QueryParametersBase getProductVersionParams() {
         return eqParams(QueryParametersBase.class, new String[0], new Object[0]);
+    }
+
+    protected void setUpGetLastDbBackendExpectations() {
+        QueryReturnValue queryResult = new QueryReturnValue();
+        queryResult.setSucceeded(true);
+        EngineBackupLog emptyReturn = new EngineBackupLog();
+        emptyReturn.setDoneAt(new Date());
+        emptyReturn.setScope(EngineBackupScope.DB.getName());
+        queryResult.setReturnValue(emptyReturn);
+        when(backend.runQuery(eq(QueryType.GetLastEngineBackup), argThat(new ArgumentMatcher<GetLastEngineBackupParameters>() {
+            @Override
+            public boolean matches(GetLastEngineBackupParameters argument) {
+                return argument != null && argument.getEngineBackupScope() != null;  // Match any non-null EngineBackupScope
+            }
+        }
+        ))).thenReturn(queryResult);
     }
 
     protected void setUpGetSystemStatisticsExpectations() {
