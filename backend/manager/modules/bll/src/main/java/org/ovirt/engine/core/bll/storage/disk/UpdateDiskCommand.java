@@ -542,6 +542,9 @@ public class UpdateDiskCommand<T extends UpdateDiskParameters> extends AbstractD
                     case LUN:
                         // No specific update for LUN disk
                         break;
+                    default:
+                        log.error("Unsupported disk storage type for extend");
+                        break;
                 }
 
                 reloadDisks();
@@ -673,7 +676,7 @@ public class UpdateDiskCommand<T extends UpdateDiskParameters> extends AbstractD
 
     private void extendDiskImageSize() {
         runInternalAction(ActionType.ExtendImageSize, createExtendParameters(),
-                createStepsContext(StepEnum.EXTEND_IMAGE));
+                createStepsContext(StepEnum.EXTEND_DISK));
     }
 
     private void executeDiskExtend() {
@@ -686,6 +689,9 @@ public class UpdateDiskCommand<T extends UpdateDiskParameters> extends AbstractD
                 break;
             case MANAGED_BLOCK_STORAGE:
                 extendManagedBlockDiskSize();
+                break;
+            default:
+                log.error("Unsupported disk storage type for extend");
                 break;
         }
     }
@@ -798,10 +804,12 @@ public class UpdateDiskCommand<T extends UpdateDiskParameters> extends AbstractD
     }
 
     private CommandContext createStepsContext(StepEnum step) {
+        Map<String, String> stepMessageProperties = new HashMap<>();
+        stepMessageProperties.put("disk", getOldDisk().getDiskAlias());
         Step addedStep = executionHandler.addSubStep(getExecutionContext(),
                 getExecutionContext().getJob().getStep(StepEnum.EXECUTING),
                 step,
-                ExecutionMessageDirector.resolveStepMessage(step, Collections.emptyMap()));
+                ExecutionMessageDirector.resolveStepMessage(step, stepMessageProperties));
         ExecutionContext ctx = new ExecutionContext();
         ctx.setStep(addedStep);
         ctx.setMonitored(true);
@@ -913,6 +921,9 @@ public class UpdateDiskCommand<T extends UpdateDiskParameters> extends AbstractD
             case MANAGED_BLOCK_STORAGE:
             case CINDER:
                 return sizeChanged;
+            default:
+                log.error("Unsupported disk storage type for extend");
+                break;
         }
         return false;
     }
@@ -1077,11 +1088,6 @@ public class UpdateDiskCommand<T extends UpdateDiskParameters> extends AbstractD
         final DiskImage diskImage = (DiskImage) getOldDisk();
         diskImage.setImageStatus(ImageStatus.OK);
         imagesHandler.updateImageStatus(diskImage.getImageId(), ImageStatus.OK);
-    }
-
-    private AmendImageGroupVolumesCommandParameters amendImageGroupVolumesCommandParameters() {
-        DiskImage diskImage = (DiskImage) getNewDisk();
-        return new AmendImageGroupVolumesCommandParameters(diskImage.getId(), diskImage.getQcowCompat());
     }
 
     @Override
