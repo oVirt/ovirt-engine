@@ -122,7 +122,7 @@
     <!-- Extenal plugins versions -->
     <build-helper-maven-plugin.version>3.3.0</build-helper-maven-plugin.version>
     <exec-maven-plugin.version>3.1.0</exec-maven-plugin.version>
-    <jaxb2-maven-plugin.version>3.1.0</jaxb2-maven-plugin.version>
+    <jaxb2-maven-plugin.version>2.5.0</jaxb2-maven-plugin.version>
     <libsass-maven-plugin.version>0.2.8-libsass_3.4.4</libsass-maven-plugin.version>
     <lifecycle-mapping.version>1.0.0</lifecycle-mapping.version>
     <maven-antrun-plugin.version>3.1.0</maven-antrun-plugin.version>
@@ -1077,7 +1077,7 @@
         <plugin>
           <groupId>org.codehaus.mojo</groupId>
           <artifactId>jaxb2-maven-plugin</artifactId>
-          <version>jaxb2-maven-plugin.version</version>
+          <version>${jaxb2-maven-plugin.version}</version>
         </plugin>
         <plugin>
           <groupId>org.codehaus.mojo</groupId>
