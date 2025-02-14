@@ -230,7 +230,6 @@
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>jaxb2-maven-plugin</artifactId>
-        <version>2.5.0</version>
 
         <executions>
           <!-- Generate the Java code from the XML schema of version 4 of the API: -->
