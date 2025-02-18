@@ -104,7 +104,7 @@
     <junit.version>5.7.1</junit.version>
     <mockito.version>3.8.0</mockito.version>
     <openstack-client.version>3.2.9</openstack-client.version>
-    <postgres.jdbc.version>42.2.27</postgres.jdbc.version>
+    <postgres.jdbc.version>42.7.5</postgres.jdbc.version>
     <reflections.version>0.9.9</reflections.version>
     <resteasy.version>3.9.3.Final</resteasy.version>
     <slf4j.version>1.7.22</slf4j.version>
