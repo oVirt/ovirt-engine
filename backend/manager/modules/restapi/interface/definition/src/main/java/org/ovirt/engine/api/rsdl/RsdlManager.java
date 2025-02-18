@@ -20,9 +20,11 @@ import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.api.model.ObjectFactory;
 import org.ovirt.engine.api.model.Rsdl;
 import org.ovirt.engine.api.utils.ApiRootLinksCreator;
+import org.yaml.snakeyaml.LoaderOptions;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.Constructor;
 import org.yaml.snakeyaml.constructor.CustomClassLoaderConstructor;
+import org.yaml.snakeyaml.inspector.TagInspector;
 
 public class RsdlManager {
 
@@ -112,7 +114,10 @@ public class RsdlManager {
     }
 
     private static MetaData loadMetaData(InputStream in) throws IOException {
-        Constructor constructor = new CustomClassLoaderConstructor(Thread.currentThread().getContextClassLoader());
+        LoaderOptions loaderOptions = new LoaderOptions();
+        TagInspector tagInspector = tag -> tag.getClassName().equals(MetaData.class.getName());
+        loaderOptions.setTagInspector(tagInspector);
+        Constructor constructor = new CustomClassLoaderConstructor(Thread.currentThread().getContextClassLoader(), loaderOptions);
         MetaData metaData = (MetaData) new Yaml(constructor).load(in);
         if (metaData == null) {
             throw new IOException("Can't load metadata from input stream");
