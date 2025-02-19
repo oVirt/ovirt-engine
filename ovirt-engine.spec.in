@@ -826,7 +826,6 @@ done << __EOF__
 %{engine_data}/logutils/logutils.jar
 %{engine_ear}/bll.jar
 %{engine_ear}/lib/vdsbroker.jar
-%{engine_ear}/lib/scheduler.jar
 %{engine_jboss_modules}/common/org/ovirt/engine/api/interface-common-jaxrs/main/interface-common-jaxrs.jar
 %{engine_jboss_modules}/common/org/ovirt/engine/api/restapi-definition/main/restapi-definition.jar
 %{engine_jboss_modules}/common/org/ovirt/engine/api/restapi-jaxrs/main/restapi-jaxrs.jar
@@ -1128,14 +1127,12 @@ fi
 %{_mavenpomdir}/ovirt-engine/bll.pom
 %{_mavenpomdir}/ovirt-engine/builtin.pom
 %{_mavenpomdir}/ovirt-engine/dal.pom
-%{_mavenpomdir}/ovirt-engine/scheduler.pom
 %{_mavenpomdir}/ovirt-engine/searchbackend.pom
 %{_mavenpomdir}/ovirt-engine/vdsbroker.pom
 %{_javadir}/ovirt-engine/aaa.jar
 %{_javadir}/ovirt-engine/bll.jar
 %{_javadir}/ovirt-engine/builtin.jar
 %{_javadir}/ovirt-engine/dal.jar
-%{_javadir}/ovirt-engine/scheduler.jar
 %{_javadir}/ovirt-engine/searchbackend.jar
 %{_javadir}/ovirt-engine/vdsbroker.jar
 
