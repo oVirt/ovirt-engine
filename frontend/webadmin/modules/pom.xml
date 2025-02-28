@@ -187,7 +187,7 @@
               <artifactId>gwt-maven-plugin</artifactId>
               <dependencies>
                 <dependency>
-                  <groupId>com.google.gwt</groupId>
+                  <groupId>org.gwtproject</groupId>
                   <artifactId>gwt-codeserver</artifactId>
                   <version>${gwt.version}</version>
                 </dependency>
