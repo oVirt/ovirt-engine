@@ -24,7 +24,6 @@
     <module>dal</module>
     <module>vdsbroker</module>
     <module>builtin-extensions</module>
-    <module>scheduler</module>
     <module>searchbackend</module>
     <module>aaa</module>
     <module>auth-plugin</module>

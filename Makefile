@@ -452,7 +452,6 @@ install_poms: \
 	install -m 644 backend/manager/modules/bll/pom.xml "$(DESTDIR)$(MAVENPOM_DIR)/$(PACKAGE_NAME)/bll.pom"
 	install -m 644 backend/manager/modules/builtin-extensions/pom.xml "$(DESTDIR)$(MAVENPOM_DIR)/$(PACKAGE_NAME)/builtin.pom"
 	install -m 644 backend/manager/modules/dal/pom.xml "$(DESTDIR)$(MAVENPOM_DIR)/$(PACKAGE_NAME)/dal.pom"
-	install -m 644 backend/manager/modules/scheduler/pom.xml "$(DESTDIR)$(MAVENPOM_DIR)/$(PACKAGE_NAME)/scheduler.pom"
 	install -m 644 backend/manager/modules/searchbackend/pom.xml "$(DESTDIR)$(MAVENPOM_DIR)/$(PACKAGE_NAME)/searchbackend.pom"
 	install -m 644 backend/manager/modules/vdsbroker/pom.xml "$(DESTDIR)$(MAVENPOM_DIR)/$(PACKAGE_NAME)/vdsbroker.pom"
 	# restapi

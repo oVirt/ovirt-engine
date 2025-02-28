@@ -22,12 +22,6 @@
     <!-- ** JARs -->
     <dependency>
       <groupId>org.ovirt.engine.core</groupId>
-      <artifactId>scheduler</artifactId>
-      <version>${engine.version}</version>
-      <type>jar</type>
-    </dependency>
-    <dependency>
-      <groupId>org.ovirt.engine.core</groupId>
       <artifactId>vdsbroker</artifactId>
       <version>${engine.version}</version>
       <type>jar</type>
@@ -72,13 +66,6 @@
     </dependency>
 
     <!-- ** EJB-JARs -->
-    <dependency>
-      <groupId>org.ovirt.engine.core</groupId>
-      <artifactId>scheduler</artifactId>
-      <version>${engine.version}</version>
-      <type>ejb</type>
-    </dependency>
-
     <dependency>
       <groupId>org.ovirt.engine.core</groupId>
       <artifactId>bll</artifactId>
@@ -199,7 +186,6 @@
             *.war/**,
             META-INF/**,
             lib/vdsbroker.jar/**,
-            lib/scheduler.jar/**,
           </packagingIncludes>
 
         </configuration>

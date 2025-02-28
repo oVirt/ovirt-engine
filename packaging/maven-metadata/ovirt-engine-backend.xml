@@ -121,27 +121,6 @@
     </artifact>
     <artifact>
       <groupId>org.ovirt.engine.core</groupId>
-      <artifactId>scheduler</artifactId>
-      <extension>pom</extension>
-      <version>4.5.7-SNAPSHOT</version>
-      <path>/usr/share/maven-poms/ovirt-engine/scheduler.pom</path>
-      <uuid>e335a998-4048-429a-94fa-9021e47b2bd6</uuid>
-      <properties>
-        <xmvn.resolver.disableEffectivePom>true</xmvn.resolver.disableEffectivePom>
-      </properties>
-    </artifact>
-    <artifact>
-      <groupId>org.ovirt.engine.core</groupId>
-      <artifactId>scheduler</artifactId>
-      <version>4.5.7-SNAPSHOT</version>
-      <path>/usr/share/java/ovirt-engine/scheduler.jar</path>
-      <uuid>b1edfa78-a9ff-4786-bf64-0650a2320ef6</uuid>
-      <properties>
-        <xmvn.resolver.disableEffectivePom>true</xmvn.resolver.disableEffectivePom>
-      </properties>
-    </artifact>
-    <artifact>
-      <groupId>org.ovirt.engine.core</groupId>
       <artifactId>searchbackend</artifactId>
       <extension>pom</extension>
       <version>4.5.7-SNAPSHOT</version>
