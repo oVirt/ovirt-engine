@@ -55,6 +55,16 @@
             font-weight: bold;
         }
 
+        .radioButton {
+            float: left;
+            display: inline;
+            padding-left: 20px;
+        }
+
+        .radioButton input {
+            margin-right: 5px;
+        }
+
     </ui:style>
     <d:SimpleDialogPanel width="800px" height="550px">
         <d:content>
@@ -139,6 +149,21 @@
                                                                       addStyleNames="{style.overrideClearBoth}"/>
                                         <d:InfoIcon ui:field="localStoragePersistedOnServerInfoIcon"
                                                     addStyleNames="{style.inlineBlock} {style.infoIcon}"/>
+                                    </b:Column>
+                                </b:Row>
+                                <b:Row>
+                                    <b:Column size="SM_12">
+                                        <g:Label text="{constants.preferredVncOption}" addStyleNames="{style.headerLabel}"/>
+                                    </b:Column>
+                                </b:Row>
+                                <b:Row>
+                                    <b:Column size="SM_12">
+                                        <ge:EntityModelRadioButtonEditor ui:field="consoleNativeRadioButton" 
+                                                        addStyleNames="{style.radioButton}"/>
+                                        <ge:EntityModelRadioButtonEditor ui:field="consoleNoVncRadioButton" 
+                                                        addStyleNames="{style.radioButton}"/>
+                                        <ge:EntityModelRadioButtonEditor ui:field="consoleDefaultRadioButton"
+                                                        addStyleNames="{style.radioButton}"/>
                                     </b:Column>
                                 </b:Row>
                             </b:Container>

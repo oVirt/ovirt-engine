@@ -126,6 +126,7 @@ public class OptionsModel extends EntityModel<EditOptionsModel> {
                         (remote, target) -> REPORT_ERROR,
                         model,
                         true));
+        setWindow(null);
     }
 
     private void resetSettings() {

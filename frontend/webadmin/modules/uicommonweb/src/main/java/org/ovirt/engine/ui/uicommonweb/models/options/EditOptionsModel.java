@@ -57,7 +57,7 @@ public class EditOptionsModel extends Model {
         this.okCommand = okCommand;
         this.resetCommand = resetCommand;
         // enable if values are edited
-        okCommand.setIsExecutionAllowed(false);
+        getOkCommand().setIsExecutionAllowed(false);
         getCommands().addAll(Arrays.asList(okCommand, cancelCommand, resetCommand));
 
     }
@@ -70,8 +70,8 @@ public class EditOptionsModel extends Model {
 
     void updateAvailability() {
         // Cancel is always enabled
-        okCommand.setIsExecutionAllowed(hasChangedValues());
-        resetCommand.setIsExecutionAllowed(!hasChangedValues() && hasCustomValues());
+        getOkCommand().setIsExecutionAllowed(hasChangedValues());
+        getResetCommand().setIsExecutionAllowed(!hasChangedValues() && hasCustomValues());
     }
 
     private boolean hasCustomValues() {
@@ -141,5 +141,13 @@ public class EditOptionsModel extends Model {
 
     public EntityModel<String> getCustomHomePage() {
         return customHomePage;
+    }
+
+    public UICommand getOkCommand() {
+        return okCommand;
+    }
+
+    public UICommand getResetCommand() {
+        return resetCommand;
     }
 }
