@@ -20,7 +20,9 @@ import org.ovirt.engine.ui.common.widget.dialog.tab.DialogTabPanel;
 import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelCheckBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelRadioButtonEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextArea;
+import org.ovirt.engine.ui.uicommonweb.ConsoleOptionsFrontendPersister;
 import org.ovirt.engine.ui.uicommonweb.models.options.EditOptionsModel;
+import org.ovirt.engine.ui.uicommonweb.models.vms.VncConsoleModel;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
@@ -108,6 +110,18 @@ public class OptionsPopupView extends AbstractModelBoundPopupView<EditOptionsMod
     @Path(value = "customHomePage.entity")
     StringEntityModelTextArea customHomePage;
 
+    @UiField (provided = true)
+    @Ignore
+    public EntityModelRadioButtonEditor consoleNativeRadioButton;
+
+    @UiField (provided = true)
+    @Ignore
+    public EntityModelRadioButtonEditor consoleNoVncRadioButton;
+
+    @UiField (provided = true)
+    @Ignore
+    public EntityModelRadioButtonEditor consoleDefaultRadioButton;
+
     @Inject
     public OptionsPopupView(EventBus eventBus, PlaceManager manager) {
         super(eventBus);
@@ -117,6 +131,12 @@ public class OptionsPopupView extends AbstractModelBoundPopupView<EditOptionsMod
         isHomePageCustom = new EntityModelRadioButtonEditor("homePage", Align.RIGHT); // $NON-NLS-1$
         isHomePageDefault = new EntityModelRadioButtonEditor("homePage", Align.RIGHT); // $NON-NLS-1$
 
+        consoleNativeRadioButton = new EntityModelRadioButtonEditor("Vnc", Align.RIGHT); // $NON-NLS-1$
+        consoleNativeRadioButton.setLabel(constants.nativeClient());
+        consoleNoVncRadioButton = new EntityModelRadioButtonEditor("Vnc", Align.RIGHT); // $NON-NLS-1$
+        consoleNoVncRadioButton.setLabel(constants.noVnc());
+        consoleDefaultRadioButton = new EntityModelRadioButtonEditor("Vnc", Align.RIGHT); // $NON-NLS-1$
+        consoleDefaultRadioButton.setLabel(constants.defaultClient());
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         ViewIdHandler.idHandler.generateAndSetIds(this);
 
@@ -226,6 +246,51 @@ public class OptionsPopupView extends AbstractModelBoundPopupView<EditOptionsMod
     @Override
     public HasValueChangeHandlers<Boolean> getHomePageDefaultSwitch() {
         return isHomePageDefault.asRadioButton();
+    }
+
+    @Override
+    public HasValueChangeHandlers<Boolean> getConsoleVncNativeRadioButton() {
+        return consoleNativeRadioButton.asRadioButton();
+    }
+
+    @Override
+    public HasValueChangeHandlers<Boolean> getConsoleNoVncRadioButton() {
+        return consoleNoVncRadioButton.asRadioButton();
+    }
+
+    @Override
+    public HasValueChangeHandlers<Boolean> getConsoleDefaultRadioButton() {
+        return consoleDefaultRadioButton.asRadioButton();
+    }
+
+    @Override
+    public void setConsoleNoVncSelected(boolean selected, ConsoleOptionsFrontendPersister consoleOptionsPersister, EditOptionsModel model) {
+        consoleNoVncRadioButton.asRadioButton().setValue(selected);
+        if (selected) {
+            storeSelectedConsole(VncConsoleModel.ClientConsoleMode.NoVnc.toString(), consoleOptionsPersister, model);
+        }
+    }
+
+    @Override
+    public void setConsoleVncNativeSelected(boolean selected, ConsoleOptionsFrontendPersister consoleOptionsPersister, EditOptionsModel model) {
+        consoleNativeRadioButton.asRadioButton().setValue(selected);
+        if (selected) {
+            storeSelectedConsole(VncConsoleModel.ClientConsoleMode.Native.toString(), consoleOptionsPersister, model);
+        }
+    }
+
+    @Override
+    public void setConsoleDefaultSelected(boolean selected, ConsoleOptionsFrontendPersister consoleOptionsPersister, EditOptionsModel model) {
+        consoleDefaultRadioButton.asRadioButton().setValue(selected);
+        if (selected) {
+            consoleOptionsPersister.removeGeneralVncType();
+            model.getOkCommand().setIsExecutionAllowed(true);
+        }
+    }
+
+    private void storeSelectedConsole(String consoleType, ConsoleOptionsFrontendPersister persister, EditOptionsModel model) {
+        persister.storeGeneralVncType(consoleType);
+        model.getOkCommand().setIsExecutionAllowed(true);
     }
 
 }

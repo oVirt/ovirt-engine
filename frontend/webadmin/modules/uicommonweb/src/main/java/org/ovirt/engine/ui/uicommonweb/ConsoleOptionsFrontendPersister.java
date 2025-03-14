@@ -8,6 +8,12 @@ public interface ConsoleOptionsFrontendPersister {
 
     void loadFromLocalStorage(VmConsoles vmConsoles);
 
+    void storeGeneralVncType(String type);
+
+    String loadGeneralVncType();
+
+    void removeGeneralVncType();
+
     /**
      * The stored/loaded entities can not interfere from one app/view to other even it is all in one browser.
      */

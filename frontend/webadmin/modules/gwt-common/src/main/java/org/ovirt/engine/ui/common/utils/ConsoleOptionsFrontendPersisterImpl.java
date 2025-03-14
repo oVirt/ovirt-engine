@@ -102,6 +102,11 @@ public class ConsoleOptionsFrontendPersisterImpl implements ConsoleOptionsFronte
     private void loadConsolesWithKeymaker(VmConsoles consoles, KeyMaker keyMaker) {
         String selectedProtocolString = clientStorage.getLocalItem(keyMaker.make(SELECTED_PROTOCOL));
         if (selectedProtocolString == null || "".equals(selectedProtocolString)) {
+            String vncType = loadGeneralVncType();
+            if (vncType != null && consoles.canSelectProtocol(ConsoleProtocol.VNC)) {
+                consoles.selectProtocol(ConsoleProtocol.VNC);
+                consoles.getConsoleModel(VncConsoleModel.class).setVncImplementation(VncConsoleModel.ClientConsoleMode.valueOf(vncType));
+            }
             setOptionsDefaults(consoles);
             return;
         }
@@ -246,6 +251,18 @@ public class ConsoleOptionsFrontendPersisterImpl implements ConsoleOptionsFronte
             return false;
         }
         return defaultValue;
+    }
+
+    public void storeGeneralVncType(String type) {
+        clientStorage.setLocalItem("general" + VNC_CLIENT_MODE, type); //$NON-NLS-1$
+    }
+
+    public String loadGeneralVncType() {
+        return clientStorage.getLocalItem("general" + VNC_CLIENT_MODE); //$NON-NLS-1$
+    }
+
+    public void removeGeneralVncType() {
+        clientStorage.removeLocalItem("general" + VNC_CLIENT_MODE); //$NON-NLS-1$
     }
 
     private void storeBool(String key, boolean value) {
