@@ -603,6 +603,11 @@ public class PluginManager implements HasHandlers {
                     uiFunctions.@org.ovirt.engine.ui.webadmin.plugin.api.PluginUiFunctions::setSearchString(Ljava/lang/String;)(searchString);
                 }
             },
+            setHiddenSearchString: function(hiddenSearchString) {
+                if (validatePluginAction(this.pluginName)) {
+                    uiFunctions.@org.ovirt.engine.ui.webadmin.plugin.api.PluginUiFunctions::setHiddenSearchString(Ljava/lang/String;)(hiddenSearchString);
+                }
+            },
             loginUserName: function() {
                 if (validateSafePluginAction(this.pluginName)) {
                     return user.@org.ovirt.engine.ui.common.auth.CurrentUser::getFullUserName()();
