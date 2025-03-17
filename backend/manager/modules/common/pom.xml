@@ -59,19 +59,6 @@
 
   <build>
     <plugins>
-
-      <plugin>
-        <artifactId>maven-compiler-plugin</artifactId>
-        <configuration>
-          <release>8</release>
-          <target>1.8</target>
-          <source>1.8</source>
-          <excludes>
-            <exclude>**/uioverrides/**/*</exclude>
-          </excludes>
-        </configuration>
-      </plugin>
-
       <plugin>
         <artifactId>maven-source-plugin</artifactId>
         <executions>
