@@ -21,7 +21,6 @@ import org.ovirt.engine.api.model.CpuPinningPolicy;
 import org.ovirt.engine.api.model.CpuTopology;
 import org.ovirt.engine.api.model.CustomProperties;
 import org.ovirt.engine.api.model.CustomProperty;
-import org.ovirt.engine.api.model.Display;
 import org.ovirt.engine.api.model.Domain;
 import org.ovirt.engine.api.model.DynamicCpu;
 import org.ovirt.engine.api.model.ExternalHostProvider;
@@ -295,8 +294,6 @@ public class VmMapper extends VmBaseMapper {
             model.setVmPool(pool);
         }
 
-        model.setDisplay(new Display());
-
         // some fields (like boot-order,display..) have static value (= the permanent config)
         // and dynamic value (current/last run value, that can be different in case of run-once or edit while running)
         if (showDynamicInfo && entity.getDynamicData() != null && entity.getStatus().isRunningOrPaused()) {
@@ -398,15 +395,7 @@ public class VmMapper extends VmBaseMapper {
         if (entity.getLastStopTime() != null) {
             model.setStopTime(DateMapper.map(entity.getLastStopTime(), null));
         }
-        model.getDisplay().setMonitors(entity.getNumOfMonitors());
-        model.getDisplay().setAllowOverride(entity.getAllowConsoleReconnect());
-        model.getDisplay().setSmartcardEnabled(entity.isSmartcardEnabled());
-        model.getDisplay().setKeyboardLayout(entity.getDefaultVncKeyboardLayout());
-        model.getDisplay().setFileTransferEnabled(entity.isSpiceFileTransferEnabled());
-        model.getDisplay().setCopyPasteEnabled(entity.isSpiceCopyPasteEnabled());
         model.getDisplay().setProxy(getEffectiveSpiceProxy(entity));
-        model.getDisplay().setDisconnectAction(map(entity.getConsoleDisconnectAction(), null).toString());
-        model.getDisplay().setDisconnectActionDelay(entity.getConsoleDisconnectActionDelay());
 
         model.setStateless(entity.isStateless());
         model.setDeleteProtected(entity.isDeleteProtected());

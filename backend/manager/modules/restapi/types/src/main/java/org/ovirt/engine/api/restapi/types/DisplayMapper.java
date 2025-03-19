@@ -5,11 +5,11 @@ import java.util.Set;
 
 import org.ovirt.engine.api.model.Display;
 import org.ovirt.engine.api.model.DisplayType;
+import org.ovirt.engine.api.model.VideoType;
 import org.ovirt.engine.api.model.Vm;
 import org.ovirt.engine.core.common.action.RunVmOnceParams;
 import org.ovirt.engine.core.common.businessentities.GraphicsType;
-import org.ovirt.engine.core.common.businessentities.InstanceType;
-import org.ovirt.engine.core.common.businessentities.VmTemplate;
+import org.ovirt.engine.core.common.businessentities.VmBase;
 
 public class DisplayMapper {
 
@@ -20,7 +20,37 @@ public class DisplayMapper {
         } else if (graphicsType == GraphicsType.VNC) {
             return DisplayType.VNC;
         }
-        return null;
+        return displayType;
+    }
+
+    @Mapping(from = org.ovirt.engine.core.common.businessentities.DisplayType.class, to = VideoType.class)
+    public static VideoType map(org.ovirt.engine.core.common.businessentities.DisplayType displayType, VideoType videoType) {
+        switch (displayType) {
+            case vga:
+                return VideoType.VGA;
+            case bochs:
+                return VideoType.BOCHS;
+            case cirrus:
+                return VideoType.CIRRUS;
+            case qxl:
+                return VideoType.QXL;
+            default:
+                return videoType;
+        }
+    }
+
+    @Mapping(from = VideoType.class, to = GraphicsType.class)
+    public static GraphicsType map(VideoType videoType, GraphicsType graphicsType) {
+        switch (videoType) {
+            case VGA:
+            case CIRRUS:
+            case BOCHS:
+                return GraphicsType.VNC;
+            case QXL:
+                return GraphicsType.SPICE;
+            default:
+                return graphicsType;
+        }
     }
 
     @Mapping(from = DisplayType.class, to = GraphicsType.class)
@@ -31,35 +61,43 @@ public class DisplayMapper {
             case VNC:
                 return GraphicsType.VNC;
             default:
-                return null;
+                return graphicsType;
         }
     }
 
-    @Mapping(from = VmTemplate.class, to = Display.class)
-    public static Display map(VmTemplate vmTemplate, Display display) {
-        Display result = (display == null)
-                ? new Display()
-                : display;
-
-        result.setMonitors(vmTemplate.getNumOfMonitors());
-        result.setAllowOverride(vmTemplate.isAllowConsoleReconnect());
-        result.setSmartcardEnabled(vmTemplate.isSmartcardEnabled());
-        result.setKeyboardLayout(vmTemplate.getVncKeyboardLayout());
-        result.setFileTransferEnabled(vmTemplate.isSpiceFileTransferEnabled());
-        result.setCopyPasteEnabled(vmTemplate.isSpiceCopyPasteEnabled());
-
-        return result;
+    @Mapping(from = VideoType.class, to = org.ovirt.engine.core.common.businessentities.DisplayType.class)
+    public static org.ovirt.engine.core.common.businessentities.DisplayType map(VideoType videoType, org.ovirt.engine.core.common.businessentities.DisplayType displayType) {
+        switch (videoType) {
+            case VGA:
+                return org.ovirt.engine.core.common.businessentities.DisplayType.vga;
+            case BOCHS:
+                return org.ovirt.engine.core.common.businessentities.DisplayType.bochs;
+            case CIRRUS:
+                return org.ovirt.engine.core.common.businessentities.DisplayType.cirrus;
+            case QXL:
+                return org.ovirt.engine.core.common.businessentities.DisplayType.qxl;
+            default:
+                return displayType;
+        }
     }
 
-    @Mapping(from = InstanceType.class, to = Display.class)
-    public static Display map(InstanceType instanceType, Display display) {
+    @Mapping(from = VmBase.class, to = Display.class)
+    public static Display map(VmBase vmBase, Display display) {
         Display result = (display == null)
                 ? new Display()
                 : display;
 
-        result.setMonitors(instanceType.getNumOfMonitors());
-        result.setSmartcardEnabled(instanceType.isSmartcardEnabled());
-
+        result.setMonitors(vmBase.getNumOfMonitors());
+        result.setAllowOverride(vmBase.isAllowConsoleReconnect());
+        result.setSmartcardEnabled(vmBase.isSmartcardEnabled());
+        result.setKeyboardLayout(vmBase.getVncKeyboardLayout());
+        result.setFileTransferEnabled(vmBase.isSpiceFileTransferEnabled());
+        result.setCopyPasteEnabled(vmBase.isSpiceCopyPasteEnabled());
+        result.setDisconnectAction(VmBaseMapper.map(vmBase.getConsoleDisconnectAction(), null).toString());
+        result.setDisconnectActionDelay(vmBase.getConsoleDisconnectActionDelay());
+        if (vmBase.getDefaultDisplayType() != null) {
+            result.setVideoType(DisplayMapper.map(vmBase.getDefaultDisplayType(), null));
+        }
         return result;
     }
 
@@ -101,7 +139,7 @@ public class DisplayMapper {
             case SPICE:
                 return org.ovirt.engine.core.common.businessentities.DisplayType.qxl;
             default:
-                return null;
+                return incoming;
         }
     }
 }
