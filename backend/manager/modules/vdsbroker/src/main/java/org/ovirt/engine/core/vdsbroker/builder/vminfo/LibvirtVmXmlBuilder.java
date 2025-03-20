@@ -1100,14 +1100,15 @@ public class LibvirtVmXmlBuilder {
         boolean videoExists = false;
         boolean forceRefreshDevices = false;
         boolean pciERootExists = false;
-        int pciEPorts = 0;
+        int pciEPortsInUse = 0;
+        int pciEPortsAvailable = 0;
         for (VmDevice device : devices) {
             if (!device.isPlugged()) {
                 continue;
             }
-
             switch (device.getType()) {
                 case BALLOON:
+                    pciEPortsInUse++;
                     balloonExists = true;
                     if (legacyVirtio) {
                         device.getSpecParams().put("model", "virtio-transitional");
@@ -1115,26 +1116,31 @@ public class LibvirtVmXmlBuilder {
                     writeBalloon(device);
                     break;
                 case SMARTCARD:
+                    pciEPortsInUse++;
                     writeSmartcard(device);
                     break;
                 case WATCHDOG:
+                    pciEPortsInUse++;
                     writeWatchdog(device);
                     break;
                 case MEMORY:
                     // memory devices are only used for hot-plug
                     break;
                 case VIDEO:
+                    pciEPortsInUse++;
                     videoExists = true;
                     writeVideo(device);
                     break;
                 case CONTROLLER:
                     switch (device.getDevice()) {
                         case "usb":
+                            pciEPortsInUse++;
                             if ("qemu-xhci".equals(device.getSpecParams().get("model"))) {
                                 device.getSpecParams().put("ports", 8);
                             }
                             break;
                         case "virtio-serial":
+                            pciEPortsInUse++;
                             device.getSpecParams().put("index", 0);
                             device.getSpecParams().put("ports", 16);
                             if (legacyVirtio) {
@@ -1142,6 +1148,7 @@ public class LibvirtVmXmlBuilder {
                             }
                             break;
                         case "virtio-scsi":
+                            pciEPortsInUse++;
                             device.setDevice(VdsProperties.Scsi);
                             device.getSpecParams().put("index", virtioScsiIndex++);
                             if (legacyVirtio) {
@@ -1155,7 +1162,7 @@ public class LibvirtVmXmlBuilder {
                             if ("pcie-root".equals(model)) {
                                 pciERootExists = true;
                             } else if ("pcie-root-port".equals(model)) {
-                                pciEPorts++;
+                                pciEPortsAvailable++;
                             }
                             break;
                     }
@@ -1166,9 +1173,11 @@ public class LibvirtVmXmlBuilder {
                     spiceExists = spiceExists || device.getDevice().equals("spice");
                     break;
                 case SOUND:
+                    pciEPortsInUse++;
                     writeSound(device);
                     break;
                 case RNG:
+                    pciEPortsInUse++;
                     writeRng(device);
                     break;
                 case TPM:
@@ -1197,6 +1206,7 @@ public class LibvirtVmXmlBuilder {
                     }
                     break;
                 case INTERFACE:
+                    pciEPortsInUse++;
                     interfaceDevices.add(device);
                     break;
                 case REDIR:
@@ -1245,7 +1255,7 @@ public class LibvirtVmXmlBuilder {
 
         if (vm.getClusterArch().getFamily() == ArchitectureType.x86
                 && vm.getBiosType().getChipsetType() == ChipsetType.Q35) {
-            writePciEControllers(pciERootExists, pciEPorts);
+            writePciEControllers(pciERootExists, pciEPortsInUse, pciEPortsAvailable);
         }
 
         updateBootOrder(diskDevices, cdromDevices, interfaceDevices);
@@ -2117,16 +2127,15 @@ public class LibvirtVmXmlBuilder {
                 .filter(Objects::nonNull);
     }
 
-    private void writePciEControllers(boolean rootExists, int ports) {
+    private void writePciEControllers(boolean rootExists, int pciEPortsInUse, int pciEPortsAvailable) {
         if (!rootExists) {
             writer.writeStartElement("controller");
             writer.writeAttributeString("type", "pci");
             writer.writeAttributeString("model", "pcie-root");
             writer.writeEndElement();
         }
-
-        int numOfPorts = Config.<Integer> getValue(ConfigValues.NumOfPciExpressPorts);
-        for (int i = ports; i < numOfPorts; i++) {
+        int requiredFreePorts = Config.<Integer> getValue(ConfigValues.NumOfPciExpressPorts);
+        for (int i = pciEPortsAvailable; i < requiredFreePorts + pciEPortsInUse; i++) {
             writer.writeStartElement("controller");
             writer.writeAttributeString("type", "pci");
             writer.writeAttributeString("model", "pcie-root-port");
