@@ -103,22 +103,19 @@ public class CertificationValidityChecker implements BackendService {
     }
 
     private boolean checkCertificate(X509Certificate cert,
-            AuditLogType warnEventType,
             AuditLogType alertEventType,
+            AuditLogType warnEventType,
             VDS host) {
-        Calendar certWarnTime = Calendar.getInstance();
-        certWarnTime.add(Calendar.DAY_OF_MONTH, Config.<Integer>getValue(ConfigValues.CertExpirationWarnPeriodInDays));
-
-        Calendar certAlertTime = Calendar.getInstance();
-        certAlertTime.add(Calendar.DAY_OF_MONTH,
-                Config.<Integer> getValue(ConfigValues.CertExpirationAlertPeriodInDays));
-
         Date expirationDate = cert.getNotAfter();
+        Date certWarnTime = getExpirationDate(expirationDate, ConfigValues.CertExpirationWarnPeriodInDays);
+        Date certAlertTime = getExpirationDate(expirationDate, ConfigValues.CertExpirationAlertPeriodInDays);
+        Date now = new Date();
+
         AuditLogType eventType = null;
 
-        if (expirationDate.compareTo(certAlertTime.getTime()) < 0) {
+        if (now.compareTo(certAlertTime) > 0) {
             eventType = alertEventType;
-        } else if (expirationDate.compareTo(certWarnTime.getTime()) < 0) {
+        } else if (now.compareTo(certWarnTime) > 0) {
             eventType = warnEventType;
         }
 
@@ -131,5 +128,12 @@ public class CertificationValidityChecker implements BackendService {
         }
 
         return true;
+    }
+
+    private Date getExpirationDate(Date expirationDate, ConfigValues daysBeforeExpiration) {
+        Calendar expirationTime = Calendar.getInstance();
+        expirationTime.setTime(expirationDate);
+        expirationTime.add(Calendar.DAY_OF_MONTH, -1 * Config.<Integer> getValue(daysBeforeExpiration));
+        return expirationTime.getTime();
     }
 }
