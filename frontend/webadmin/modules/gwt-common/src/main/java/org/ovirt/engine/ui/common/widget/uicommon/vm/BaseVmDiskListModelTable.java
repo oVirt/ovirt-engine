@@ -29,6 +29,7 @@ public class BaseVmDiskListModelTable<E, T extends VmDiskListModelBase<?>> exten
     private DisksViewRadioGroup disksViewRadioGroup;
 
     private static AbstractTextColumn<Disk> aliasColumn;
+    private static AbstractTextColumn<Disk> idColumn;
     private static AbstractDiskSizeColumn<Disk> sizeColumn;
     private static AbstractDiskSizeColumn<Disk> actualSizeColumn;
     private static AbstractTextColumn<Disk> allocationColumn;
@@ -89,6 +90,11 @@ public class BaseVmDiskListModelTable<E, T extends VmDiskListModelBase<?>> exten
 
         getTable().ensureColumnVisible(
                 aliasColumn, constants.aliasDisk(), all || images || luns || managedBlock, "120px"); //$NON-NLS-1$
+
+        getTable().ensureColumnVisible(
+                idColumn, constants.idVmDiskTable(), all, "120px"); //$NON-NLS-1$
+
+        getTable().hideColumnByDefault(idColumn);
 
         getTable().ensureColumnVisible(
                 DisksViewColumns.bootableDiskColumn,
@@ -162,6 +168,7 @@ public class BaseVmDiskListModelTable<E, T extends VmDiskListModelBase<?>> exten
         getTable().enableColumnResizing();
 
         aliasColumn = DisksViewColumns.getAliasColumn(null);
+        idColumn = DisksViewColumns.getIdColumn(null);
         sizeColumn = DisksViewColumns.getSizeColumn(null);
         actualSizeColumn = DisksViewColumns.getActualSizeColumn(null);
         allocationColumn = DisksViewColumns.getAllocationColumn(null);
