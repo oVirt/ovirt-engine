@@ -241,8 +241,7 @@ public class MainVirtualMachineView extends AbstractMainWithDetailsTableView<VM,
             }
         };
         getTable().addColumn(vCpusColumn, constants.vcpus(), "80px"); //$NON-NLS-1$
-        // client-side sorting since this is calculated value
-        vCpusColumn.makeSortable();
+        vCpusColumn.makeSortable(VmConditionFieldAutoCompleter.VCPUS);
         getTable().hideColumnByDefault(vCpusColumn);
 
         AbstractTextColumn<VM> definedMemoryColumn = new AbstractTextColumn<VM>() {

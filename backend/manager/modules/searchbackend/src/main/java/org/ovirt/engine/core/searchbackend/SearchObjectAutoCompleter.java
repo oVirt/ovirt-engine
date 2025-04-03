@@ -100,6 +100,7 @@ public class SearchObjectAutoCompleter extends SearchObjectsBaseAutoCompleter {
         requiresFullTable.put(SearchObjects.VM_OBJ_NAME + "-" + VmConditionFieldAutoCompleter.TAG, true);
         requiresFullTable.put(SearchObjects.VM_OBJ_NAME + "-" + VmConditionFieldAutoCompleter.TYPE, true);
         requiresFullTable.put(SearchObjects.VM_OBJ_NAME + "-" + VmConditionFieldAutoCompleter.UPTIME, true);
+        requiresFullTable.put(SearchObjects.VM_OBJ_NAME + "-" + VmConditionFieldAutoCompleter.VCPUS, true);
         // Hosts
         requiresFullTable.put(SearchObjects.VDS_OBJ_NAME + "-" + VdsConditionFieldAutoCompleter.ADDRESS, true);
         requiresFullTable.put(SearchObjects.VDS_OBJ_NAME + "-" + VdsConditionFieldAutoCompleter.ADDRESS, true);
