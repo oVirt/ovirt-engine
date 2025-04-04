@@ -232,6 +232,19 @@ public class LunModel extends EntityModel<LUNs> {
         this.status = status;
     }
 
+    private boolean isUsed;
+
+    public boolean getIsUsed() {
+        return isUsed;
+    }
+
+    public void setIsUsed(boolean value) {
+        if (isUsed != value) {
+            isUsed = value;
+            onPropertyChanged(new PropertyChangedEventArgs("isUsed")); //$NON-NLS-1$
+        }
+    }
+
     @Override
     public void setIsSelected(boolean value) {
         if (getIsGrayedOut()) {

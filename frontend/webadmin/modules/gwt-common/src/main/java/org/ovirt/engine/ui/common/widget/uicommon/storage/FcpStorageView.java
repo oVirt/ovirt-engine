@@ -2,7 +2,10 @@ package org.ovirt.engine.ui.common.widget.uicommon.storage;
 
 import java.util.List;
 
+import org.gwtbootstrap3.client.ui.CheckBox;
+import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.editor.UiCommonEditorDriver;
+import org.ovirt.engine.ui.common.gin.AssetProvider;
 import org.ovirt.engine.ui.common.widget.HasValidation;
 import org.ovirt.engine.ui.common.widget.PaginationControl;
 import org.ovirt.engine.ui.common.widget.ValidatedPanelWidget;
@@ -11,6 +14,7 @@ import org.ovirt.engine.ui.uicommonweb.models.storage.SanStorageModelBase;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
+import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Label;
@@ -32,14 +36,23 @@ public class FcpStorageView extends AbstractStorageView<SanStorageModelBase> imp
     @UiField
     PaginationControl paginationControl;
 
+    @UiField
+    @Ignore
+    CheckBox hideUsedLunsCheckBox;
+
+    LunFilter lunFilter;
+
     private final Driver driver = GWT.create(Driver.class);
 
     private double panelHeight = 292;
 
     private double listHeight = 278;
 
+    private static final CommonApplicationConstants constants = AssetProvider.getConstants();
+
     public FcpStorageView(boolean multiSelection) {
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
+        localize();
         driver.initialize(this);
         this.multiSelection = multiSelection;
     }
@@ -49,6 +62,10 @@ public class FcpStorageView extends AbstractStorageView<SanStorageModelBase> imp
 
         this.panelHeight = panelHeight;
         this.listHeight = listHeight;
+    }
+
+    void localize() {
+        hideUsedLunsCheckBox.setHTML(SafeHtmlUtils.fromString(constants.hideUsedLunsForFCPLabel()));
     }
 
     @Override
@@ -64,6 +81,8 @@ public class FcpStorageView extends AbstractStorageView<SanStorageModelBase> imp
                 onIsValidPropertyChange(object);
             }
         });
+
+        initHideUsedLunsCheckBox();
     }
 
     void onIsValidPropertyChange(Model model) {
@@ -105,8 +124,10 @@ public class FcpStorageView extends AbstractStorageView<SanStorageModelBase> imp
 
     protected void initLists(SanStorageModelBase model) {
         PageFilter pageFilter = new PageFilter(50);
+        lunFilter = new LunFilter(hideUsedLunsCheckBox.getValue());
         SanStorageLunToTargetList sanStorageLunToTargetList =
-                new SanStorageLunToTargetList(PagingProxyModel.create(pageFilter, model), true, multiSelection);
+                new SanStorageLunToTargetList(PagingFilteredProxyModel.create(pageFilter, lunFilter, model),
+                        true, multiSelection);
         sanStorageLunToTargetList.activateItemsUpdate();
         paginationControl.setDataProvider(StoragePagingDataProvider.create(pageFilter, sanStorageLunToTargetList));
         model.getItemsChangedEvent().addListener((ev, sender, args) -> paginationControl.updateTableControls());
@@ -117,6 +138,15 @@ public class FcpStorageView extends AbstractStorageView<SanStorageModelBase> imp
 
         // Add view widget to panel
         contentPanel.setWidget(sanStorageLunToTargetList);
+    }
+
+    private void initHideUsedLunsCheckBox() {
+        hideUsedLunsCheckBox.addValueChangeHandler(event -> {
+            if (lunFilter != null) {
+                lunFilter.setIsHideUsedLuns(event.getValue());
+            }
+            paginationControl.reload();
+        });
     }
 
     interface Driver extends UiCommonEditorDriver<SanStorageModelBase, FcpStorageView> {
