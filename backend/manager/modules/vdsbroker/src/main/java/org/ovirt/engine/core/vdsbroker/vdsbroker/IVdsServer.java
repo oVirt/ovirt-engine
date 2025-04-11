@@ -610,4 +610,5 @@ public interface IVdsServer {
 
     ScreenshotInfoReturn createScreenshot(String vmId);
 
+    StatusOnlyReturn deleteImageUnusedLinks(String sdUUID, String spUUID, String imgUUID);
 }
