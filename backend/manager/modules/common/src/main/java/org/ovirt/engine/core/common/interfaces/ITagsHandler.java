@@ -12,4 +12,6 @@ public interface ITagsHandler {
     String getTagNameAndChildrenNames(Guid tagId);
 
     String getTagNamesAndChildrenNamesByRegExp(String tagNameRegExp);
+
+    String getTagsNamesByRegExp(String tagNameRegExp);
 }

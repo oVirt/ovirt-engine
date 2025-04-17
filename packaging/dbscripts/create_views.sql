@@ -1618,8 +1618,8 @@ SELECT DISTINCT vms.vm_name,
     vms.cluster_cpu_name,
     vms.cluster_cpu_flags,
     vms.cluster_cpu_verb,
-    tags_vm_map_view.tag_name,
-    tags_vm_map_view.tag_id,
+    (select array_agg(tag_name::text) from tags_vm_map_view where tags_vm_map_view.vm_id = vms.vm_guid) as tag_names,
+    (select array_agg(tag_id) from tags_vm_map_view where tags_vm_map_view.vm_id = vms.vm_guid) as tag_ids,
     vms.default_display_type,
     vms.iso_path,
     vms.origin,
@@ -1725,8 +1725,6 @@ SELECT DISTINCT vms.vm_name,
     vms.current_numa_pinning,
     vms.parallel_migrations
 FROM vms
-LEFT JOIN tags_vm_map_view
-    ON vms.vm_guid = tags_vm_map_view.vm_id
 LEFT JOIN vm_device
     ON vm_device.vm_id = vms.vm_guid
 LEFT JOIN images
@@ -1993,8 +1991,8 @@ SELECT cluster.cluster_id,
     cluster.count_threads_as_cores,
     storage_pool.id AS storage_pool_id,
     storage_pool.name AS storage_pool_name,
-    tags_vds_map_view.tag_name,
-    tags_vds_map_view.tag_id,
+    (select array_agg(tag_name::text) from tags_vds_map_view where vds_static.vds_id = tags_vds_map_view.vds_id) as tag_names,
+    (select array_agg(tag_id) from tags_vds_map_view where vds_static.vds_id = tags_vds_map_view.vds_id) as tag_ids,
     vds_dynamic.reserved_mem,
     vds_dynamic.guest_overhead,
     vds_dynamic.rpm_version,
@@ -2112,8 +2110,6 @@ INNER JOIN vds_statistics
     ON vds_static.vds_id = vds_statistics.vds_id
 LEFT JOIN storage_pool
     ON cluster.storage_pool_id = storage_pool.id
-LEFT JOIN tags_vds_map_view
-    ON vds_static.vds_id = tags_vds_map_view.vds_id
 LEFT JOIN vds_spm_id_map
     ON vds_static.vds_id = vds_spm_id_map.vds_id
 LEFT JOIN storage_pool_iso_map
@@ -2180,8 +2176,8 @@ SELECT users_1.user_group AS user_group,
     users_1.email AS email,
     users_1.note AS note,
     users_1.vm_admin AS vm_admin,
-    tags_user_map_view_1.tag_name AS tag_name,
-    tags_user_map_view_1.tag_id AS tag_id,
+    (select array_agg(tag_name::text) from tags_user_map_view where tags_user_map_view.user_id = users_1.user_id) as tag_names,
+    (select array_agg(tag_id) from tags_user_map_view where tags_user_map_view.user_id = users_1.user_id) as tag_ids,
     users_1.last_admin_check_status AS last_admin_check_status,
     users_1.external_id AS external_id,
     users_1.namespace AS namespace,
@@ -2193,8 +2189,6 @@ LEFT JOIN permissions
     ON users_1.user_id = permissions.ad_element_id
 LEFT JOIN tags
     ON tags.type = 1
-LEFT JOIN tags_user_map_view AS tags_user_map_view_1
-    ON users_1.user_id = tags_user_map_view_1.user_id
 LEFT JOIN roles AS roles1
     ON roles1.id = permissions.role_id
 WHERE (users_1.user_group = 'user')
@@ -2214,8 +2208,8 @@ SELECT users_2.user_group AS user_group,
     users_2.email AS email,
     users_2.note AS note,
     users_2.vm_admin AS vm_admin,
-    tags_user_group_map_view.tag_name AS tag_name,
-    tags_user_group_map_view.tag_id AS tag_id,
+    (select array_agg(tag_name::text) from tags_user_group_map_view where users_2.user_id = tags_user_group_map_view.group_id) as tag_names,
+    (select array_agg(tag_id) from tags_user_group_map_view where users_2.user_id = tags_user_group_map_view.group_id) as tag_ids,
     users_2.last_admin_check_status AS last_admin_check_status,
     users_2.external_id AS external_id,
     users_2.namespace AS namespace,
@@ -2227,8 +2221,6 @@ LEFT JOIN permissions AS permissions_1
     ON users_2.user_id = permissions_1.ad_element_id
 LEFT JOIN tags AS tags_1
     ON tags_1.type = 1
-LEFT JOIN tags_user_group_map_view
-    ON users_2.user_id = tags_user_group_map_view.group_id
 LEFT JOIN roles AS roles2
     ON roles2.id = permissions_1.role_id
 WHERE (users_2.user_group = 'group');

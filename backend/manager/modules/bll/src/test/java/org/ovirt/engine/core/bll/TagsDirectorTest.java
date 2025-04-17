@@ -247,10 +247,10 @@ public class TagsDirectorTest {
         tag2.setParentId(tag.getParentId());
         tagsDirector.addTag(tag);
         String idsStr = tagsDirector.getTagIdAndChildrenIds(tag.getTagId());
-        String[] ids = idsStr.split("[,]");
+        String[] ids = idsStr.split(",");
         assertEquals(2, ids.length);
-        assertEquals(ids[0], "'" + tag.getTagId().toString() + "'");
-        assertEquals(ids[1], "'" + tag2.getTagId().toString() + "'");
+        assertEquals('"' + tag.getTagId().toString() + '"', ids[0]);
+        assertEquals('"' + tag2.getTagId().toString() + '"', ids[1]);
     }
 
     /**

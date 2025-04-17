@@ -27,7 +27,7 @@ public class RemoveTagCommand<T extends TagsActionParametersBase> extends TagsCo
             tagsDirector.removeTag(getTag().getTagId());
             String[] IDsArray = tagIdAndChildrenIds.split("[,]", -1);
             for (String id : IDsArray) {
-                id = id.replace("'", "");
+                id = id.replace("\"", "");
                 tagDao.remove(new Guid(id));
             }
             setSucceeded(true);

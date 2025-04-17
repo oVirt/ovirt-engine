@@ -43,7 +43,7 @@ public class VdcUserConditionFieldAutoCompleter extends BaseConditionFieldAutoCo
         getTypeDictionary().put(LOGIN, String.class);
         getTypeDictionary().put(DIRECTORY, String.class);
         getTypeDictionary().put(DEPARTMENT, String.class);
-        getTypeDictionary().put(TAG, String.class);
+        getTypeDictionary().put(TAG, String[].class);
         getTypeDictionary().put(POOL, String.class);
         getTypeDictionary().put(TYPE, UserOrGroup.class);
 
@@ -55,7 +55,7 @@ public class VdcUserConditionFieldAutoCompleter extends BaseConditionFieldAutoCo
         columnNameDict.put(LOGIN, "username");
         columnNameDict.put(DIRECTORY, "domain");
         columnNameDict.put(DEPARTMENT, "department");
-        columnNameDict.put(TAG, "tag_name");
+        columnNameDict.put(TAG, "tag_names");
         columnNameDict.put(POOL, "vm_pool_name");
         columnNameDict.put(TYPE, "user_group");
         // Building the validation dict
