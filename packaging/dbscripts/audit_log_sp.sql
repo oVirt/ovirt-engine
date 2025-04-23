@@ -35,6 +35,7 @@ CREATE OR REPLACE FUNCTION InsertAuditLog (
     v_brick_id UUID,
     v_brick_path TEXT,
     v_origin VARCHAR(25),
+    v_custom_id VARCHAR(255),
     v_custom_event_id INT,
     v_event_flood_in_sec INT,
     v_custom_data TEXT
@@ -76,6 +77,7 @@ BEGIN
             brick_id,
             brick_path,
             origin,
+            custom_id,
             custom_event_id,
             event_flood_in_sec,
             custom_data
@@ -110,6 +112,7 @@ BEGIN
             v_brick_id,
             v_brick_path,
             v_origin,
+            v_custom_id,
             v_custom_event_id,
             v_event_flood_in_sec,
             v_custom_data
@@ -157,6 +160,7 @@ BEGIN
             brick_id,
             brick_path,
             origin,
+            custom_id,
             custom_event_id,
             event_flood_in_sec,
             custom_data
@@ -191,6 +195,7 @@ BEGIN
             v_brick_id,
             v_brick_path,
             v_origin,
+            v_custom_id,
             v_custom_event_id,
             v_event_flood_in_sec,
             v_custom_data
