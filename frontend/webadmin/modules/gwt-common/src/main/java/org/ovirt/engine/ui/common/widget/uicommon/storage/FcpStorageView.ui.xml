@@ -14,6 +14,12 @@
         justify-content: flex-end;
         border-bottom: none;
         }
+
+        .hideUsedLunsCheckBox {
+            font-size: 12px;
+            padding-left: 23px;
+            height: 10px;
+        }
     </ui:style>
 
     <b:Container fluid="true">
@@ -26,6 +32,9 @@
             <b:Column size="SM_12">
                 <g:Label ui:field="warning" addStyleNames="{style.errorMessageLabel}"/>
             </b:Column>
+        </b:Row>
+        <b:Row>
+            <b:CheckBox ui:field="hideUsedLunsCheckBox" value="true" addStyleNames="{style.hideUsedLunsCheckBox}" />
         </b:Row>
         <b:Row>
             <b:Column size="SM_12">
