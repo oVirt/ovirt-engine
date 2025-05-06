@@ -87,7 +87,7 @@ public class VdsConditionFieldAutoCompleter extends BaseConditionFieldAutoComple
         getTypeDictionary().put(ACTIVE_VMS, Integer.class);
         getTypeDictionary().put(MIGRATING_VMS, Integer.class);
         getTypeDictionary().put(COMMITTED_MEM, Integer.class);
-        getTypeDictionary().put(TAG, String.class);
+        getTypeDictionary().put(TAG, String[].class);
         getTypeDictionary().put(TYPE, VDSNiceType.class);
         getTypeDictionary().put(DATACENTER, String.class);
         getTypeDictionary().put("ID", UUID.class);
@@ -115,7 +115,7 @@ public class VdsConditionFieldAutoCompleter extends BaseConditionFieldAutoComple
         columnNameDict.put(ACTIVE_VMS, "vm_active");
         columnNameDict.put(MIGRATING_VMS, "vm_migrating");
         columnNameDict.put(COMMITTED_MEM, "mem_commited");
-        columnNameDict.put(TAG, "tag_name");
+        columnNameDict.put(TAG, "tag_names");
         columnNameDict.put(TYPE, "vds_type");
         columnNameDict.put(DATACENTER, "storage_pool_name");
         columnNameDict.put("ID", "vds_id");

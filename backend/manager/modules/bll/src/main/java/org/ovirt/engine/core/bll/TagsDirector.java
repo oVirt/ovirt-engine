@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
@@ -248,11 +249,21 @@ public class TagsDirector implements BackendService, ITagsHandler {
         return sb.toString();
     }
 
+    @Override
+    public String getTagsNamesByRegExp(String tagNameRegExp) {
+        tagNameRegExp = tagNameRegExp.replace("*", ".*");
+        final Pattern tagNamePattern = Pattern.compile(String.format("^%1$s$", tagNameRegExp));
+
+        return tagsMapByName.keySet().stream()
+                .filter(name -> tagNamePattern.matcher(name).matches())
+                .collect(Collectors.joining(", "));
+    }
+
     private static void recursiveGetTagsAndChildrenByRegExp(String tagNameRegExp, StringBuilder sb, Tags tag, TagReturnValueIndicator indicator) {
         if (tag.getChildren() != null && !tag.getChildren().isEmpty()) {
             tagNameRegExp = BACKSLASH_REMOVER.matcher(tagNameRegExp).replaceAll("");
+            Pattern tagNamePattern = Pattern.compile(tagNameRegExp);
             for (Tags child : tag.getChildren()) {
-                Pattern tagNamePattern = Pattern.compile(tagNameRegExp);
                 if (tagNamePattern.matcher(child.getTagName()).find()) {
                 // the tag matches the regular expression -> add it and all its
                 // children
@@ -280,7 +291,7 @@ public class TagsDirector implements BackendService, ITagsHandler {
 
     private static StringBuilder getTagIdAndChildrenIds(Tags tag) {
         StringBuilder builder = new StringBuilder();
-        builder.append("'").append(tag.getTagId()).append("'");
+        builder.append('"').append(tag.getTagId()).append('"');
 
         for (Tags child : tag.getChildren()) {
             builder.append(",").append(getTagIdAndChildrenIds(child));
@@ -290,10 +301,10 @@ public class TagsDirector implements BackendService, ITagsHandler {
 
     private static StringBuilder getTagNameAndChildrenNames(Tags tag) {
         StringBuilder builder = new StringBuilder();
-        builder.append("'").append(tag.getTagName()).append("'");
+        builder.append('"').append(tag.getTagName()).append('"');
 
         for (Tags child : tag.getChildren()) {
-            builder.append("," + getTagNameAndChildrenNames(child));
+            builder.append(",").append(getTagNameAndChildrenNames(child));
         }
         return builder;
     }

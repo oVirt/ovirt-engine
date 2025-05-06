@@ -639,7 +639,7 @@ public class SearchQuery<P extends SearchParameters> extends QueriesCommandBase<
                 // statically, therefore , in order to reflect changes in the parent tree
                 // we should not rely on the cached query in such case and have to build the
                 // query from scratch.
-                if (!containsStaticInValues(data.getQuery())) {
+                if (!containsStaticValues(data.getQuery())) {
                     queriesCache.put(searchKey, data);
                 }
             }
@@ -671,8 +671,8 @@ public class SearchQuery<P extends SearchParameters> extends QueriesCommandBase<
         return AuthenticationProfileRepository.getInstance().getProfiles().get(0).getName();
     }
 
-    private static boolean containsStaticInValues(String query) {
-        final String MATCH_IN_TAG_ID_CLAUSE = "with_tags.tag_id in";
-        return query.toLowerCase().contains(MATCH_IN_TAG_ID_CLAUSE);
+    private static boolean containsStaticValues(String query) {
+        final String MATCH_TAG_NAMES_CONDITION = "with_tags.tag_names &&";
+        return query.toLowerCase().contains(MATCH_TAG_NAMES_CONDITION);
     }
 }

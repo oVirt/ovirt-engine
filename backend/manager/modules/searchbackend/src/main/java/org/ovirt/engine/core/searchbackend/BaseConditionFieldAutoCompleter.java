@@ -13,14 +13,12 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.ovirt.engine.core.common.businessentities.DateEnumForSearch;
-import org.ovirt.engine.core.common.businessentities.Tags;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.interfaces.ITagsHandler;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.DateTime;
 import org.ovirt.engine.core.compat.DayOfWeek;
-import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.IntegerCompat;
 import org.ovirt.engine.core.compat.Regex;
 import org.ovirt.engine.core.compat.StringFormat;
@@ -32,6 +30,13 @@ import org.ovirt.engine.core.compat.TimeSpan;
  */
 public class BaseConditionFieldAutoCompleter extends BaseAutoCompleter implements IConditionFieldAutoCompleter {
 
+    /**
+     * Stores sql expression mappers for free text search.
+     * key: column type
+     * value: sql expression mapper
+     */
+    private static final Map<Class<?>, FreeSearchMapper> freeTextSearchMappers;
+
     protected final Map<String, List<ValueValidationFunction>> validationDict = new HashMap<>();
     private final Map<String, Class<?>> typeDict = new HashMap<>();
     protected final Map<String, String> columnNameDict = new HashMap<>();
@@ -42,6 +47,16 @@ public class BaseConditionFieldAutoCompleter extends BaseAutoCompleter implement
     protected final Map<String, List<SyntaxChecker.SortByElement>> sortableFieldDict = new HashMap<>();
     protected final List<String> notFreeTextSearchableFieldsList = new ArrayList<>();
     protected Set<String> verbsWithMultipleValues = new HashSet<>();
+
+    static {
+        freeTextSearchMappers = new HashMap<>();
+        freeTextSearchMappers.put(String.class, (table, column, relation, value) ->
+                StringFormat.format(" %1$s.%2$s %3$s %4$s", table, column, relation, value));
+        freeTextSearchMappers.put(String[].class, (table, column, relation, value) ->
+                StringFormat.format(
+                        " (select bool_or(is_match_rows) from (select unnest(%1$s.%2$s) %3$s %4$s as is_match_rows))",
+                        table, column, relation, value));
+    }
 
     /**
      * Gets the LIKE clause syntax for non case-sensitive search
@@ -169,8 +184,11 @@ public class BaseConditionFieldAutoCompleter extends BaseAutoCompleter implement
         }
 
         return columnNameDict.entrySet().stream().sorted(Map.Entry.comparingByValue())
-                .filter(e -> typeDict.get(e.getKey()) == String.class && !notFreeTextSearchableFieldsList.contains(e.getKey()))
-                .map(e -> StringFormat.format(" %1$s.%2$s %3$s %4$s", tableName, e.getValue(), rel, val))
+                .filter(e ->
+                        freeTextSearchMappers.containsKey(typeDict.get(e.getKey())) &&
+                                !notFreeTextSearchableFieldsList.contains(e.getKey()))
+                .map(e ->
+                        freeTextSearchMappers.get(typeDict.get(e.getKey())).map(tableName, e.getValue(), rel, val))
                 .distinct()
                 .collect(Collectors.joining(" OR ", " ( ", " ) "));
     }
@@ -282,27 +300,36 @@ public class BaseConditionFieldAutoCompleter extends BaseAutoCompleter implement
 
         } else if ("TAG".equals(fieldName)) {
             pair.setSecond(pair.getSecond().startsWith("N'") ? pair.getSecond().substring(2) : pair.getSecond());
-            if (pair.getFirst() != null && pair.getFirst().equals("=")) {
-                pair.setFirst("IN");
-                pair.setSecond(StringHelper.trim(pair.getSecond(), '\''));
-                Tags tag = tagsHandler.getTagByTagName(pair.getSecond());
-                if (tag != null) {
-                    pair.setSecond(
-                            StringFormat.format("(%1$s)", tagsHandler.getTagNameAndChildrenNames(tag.getTagId())));
-                } else {
-                    pair.setSecond(StringFormat.format("('%1$s')", Guid.Empty));
-                }
-            } else if (pair.getFirst() != null && (pair.getFirst().equals("LIKE") || pair.getFirst().equals("ILIKE"))) {
-                pair.setFirst("IN");
-                pair.setSecond(StringHelper.trim(pair.getSecond(), '\'').replace("%", "*"));
 
-                String IDs = tagsHandler.getTagNamesAndChildrenNamesByRegExp(pair.getSecond());
-                if (StringHelper.isNullOrEmpty(IDs)) {
-                    pair.setSecond(StringFormat.format("('%1$s')", Guid.Empty));
-                } else {
-                    pair.setSecond(StringFormat.format("(%1$s)", IDs));
-                }
+            pair.setSecond(StringHelper.trim(pair.getSecond(), '\'').replace("%", "*"));
+
+            String tags = getMatchingTagsForRelation(pair.getSecond(), pair.getFirst());
+            if (StringHelper.isNullOrEmpty(tags)) {
+                pair.setSecond("'{}'");
+            } else {
+                pair.setSecond(StringFormat.format("'{%1$s}'", tags));
             }
+        }
+    }
+
+    /**
+     * Retrieves tags that match the specified regular expression based on the given relation.
+     * The method utilises operations according to {@link StringConditionRelationAutoCompleter},
+     * which is used in the operation defining methods of other classes,
+     * such as {@link VmConditionFieldAutoCompleter#getFieldRelationshipAutoCompleter(String)}, for tags.
+     *
+     * @param tagSearchString A regular expression string used to search for tags.
+     * @param relation Relation for tag matching.
+     *                 Supported values: "=" for matches and "!=" for excludes.
+     * @return A comma-separated string of matching tag names. If no tags match, an empty string is returned.
+     *
+     * @see StringConditionRelationAutoCompleter
+     */
+    private String getMatchingTagsForRelation(String tagSearchString, String relation) {
+        if ("=".equals(relation)) {
+            return tagsHandler.getTagNamesAndChildrenNamesByRegExp(tagSearchString);
+        } else {
+            return tagsHandler.getTagsNamesByRegExp(tagSearchString);
         }
     }
 
@@ -362,8 +389,16 @@ public class BaseConditionFieldAutoCompleter extends BaseAutoCompleter implement
                         tableName,
                         getDbFieldName(fieldName));
             }
+
             String formatString;
-            if (isOperatorNegative(pair.getFirst())) {
+            if (String[].class == getTypeDictionary().get(fieldName)) {
+                if ("=".equals(pair.getFirst())) {
+                    formatString = " (%1$s.%2$s IS NOT NULL AND (%1$s.%2$s %3$s %4$s)) ";
+                } else {
+                    formatString = " (%1$s.%2$s IS NULL OR NOT (%1$s.%2$s %3$s %4$s)) ";
+                }
+                pair.setFirst("&&");
+            } else if (isOperatorNegative(pair.getFirst())) {
                 formatString = " (%1$s.%2$s IS NULL OR %1$s.%2$s %3$s %4$s) ";
             } else {
                 formatString = " %1$s.%2$s %3$s %4$s ";
@@ -389,4 +424,14 @@ public class BaseConditionFieldAutoCompleter extends BaseAutoCompleter implement
     public String getWildcard(String fieldName) {
         return verbsWithMultipleValues.contains(fieldName) ? ".*" : "%";
     }
+
+    /**
+     * Declares free text search mapping function.
+     */
+    private interface FreeSearchMapper {
+
+        String map(String table, String column, String relation, String value);
+
+    }
+
 }

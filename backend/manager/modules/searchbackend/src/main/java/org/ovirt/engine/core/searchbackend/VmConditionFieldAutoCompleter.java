@@ -119,7 +119,7 @@ public class VmConditionFieldAutoCompleter extends BaseConditionFieldAutoComplet
         getTypeDictionary().put(CLUSTER, String.class);
         getTypeDictionary().put(POOL, String.class);
         getTypeDictionary().put(LOGGEDINUSER, String.class);
-        getTypeDictionary().put(TAG, String.class);
+        getTypeDictionary().put(TAG, String[].class);
         getTypeDictionary().put(DATACENTER, String.class);
         getTypeDictionary().put(TYPE, VmType.class);
         getTypeDictionary().put(QUOTA, String.class);
@@ -158,7 +158,7 @@ public class VmConditionFieldAutoCompleter extends BaseConditionFieldAutoComplet
         columnNameDict.put(CLUSTER, "cluster_name");
         columnNameDict.put(POOL, "vm_pool_name");
         columnNameDict.put(LOGGEDINUSER, "guest_cur_user_name");
-        columnNameDict.put(TAG, "tag_name");
+        columnNameDict.put(TAG, "tag_names");
         columnNameDict.put(DATACENTER, "storage_pool_name");
         columnNameDict.put(TYPE, "vm_type");
         columnNameDict.put(QUOTA, "quota_name");
