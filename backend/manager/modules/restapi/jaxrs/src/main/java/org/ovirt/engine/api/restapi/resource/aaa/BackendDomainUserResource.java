@@ -41,6 +41,8 @@ public class BackendDomainUserResource
 
     @Override
     public User get() {
+        checkAdminPermission();
+
         String directoryId;
         try {
             directoryId = DirectoryEntryIdUtils.decode(id);
