@@ -14,6 +14,7 @@ import java.util.stream.Collectors;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.ovirt.engine.api.common.util.DetailHelper;
 import org.ovirt.engine.api.model.Action;
 import org.ovirt.engine.api.model.Fault;
@@ -21,6 +22,7 @@ import org.ovirt.engine.api.model.Statistic;
 import org.ovirt.engine.api.model.Statistics;
 import org.ovirt.engine.api.model.Template;
 import org.ovirt.engine.api.model.Vm;
+import org.ovirt.engine.api.model.Watchdog;
 import org.ovirt.engine.api.resource.ActionResource;
 import org.ovirt.engine.api.resource.AssignedAffinityLabelsResource;
 import org.ovirt.engine.api.resource.AssignedPermissionsResource;
@@ -49,10 +51,12 @@ import org.ovirt.engine.api.restapi.resource.externalhostproviders.BackendVmKate
 import org.ovirt.engine.api.restapi.types.InitializationMapper;
 import org.ovirt.engine.api.restapi.types.RngDeviceMapper;
 import org.ovirt.engine.api.restapi.types.VmMapper;
+import org.ovirt.engine.api.restapi.types.WatchdogMapper;
 import org.ovirt.engine.api.restapi.util.DisplayHelper;
 import org.ovirt.engine.api.restapi.util.IconHelper;
 import org.ovirt.engine.api.restapi.util.LinkHelper;
 import org.ovirt.engine.api.restapi.util.ParametersHelper;
+import org.ovirt.engine.api.restapi.util.WatchdogHelper;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
@@ -711,6 +715,18 @@ public class BackendVmResource
             }
             if (incoming.isSetTpmEnabled()) {
                 params.setTpmEnabled(incoming.isTpmEnabled());
+            }
+            if (incoming.isSetWatchdogs()) {
+
+                List<Watchdog> incomingWatchdogs = incoming.getWatchdogs().getWatchdogs();
+                if (!CollectionUtils.isEmpty(incomingWatchdogs)) {
+                    params.setUpdateWatchdog(true);
+
+                    Watchdog icomingWatchdog = incomingWatchdogs.get(0);
+                    if (!WatchdogHelper.isWatchdogEmpty(icomingWatchdog)) {
+                        params.setWatchdog(WatchdogMapper.map(icomingWatchdog, null));
+                    }
+                }
             }
 
             DisplayHelper.setGraphicsToParams(incoming.getDisplay(), params);
