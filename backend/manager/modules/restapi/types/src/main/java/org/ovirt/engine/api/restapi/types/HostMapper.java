@@ -378,6 +378,7 @@ public class HostMapper {
             model.setVersion(version);
             model.setType(hostOs.getName());
         }
+        model.setDescription(Objects.toString(entity.getPrettyName(), ""));
         model.setCustomKernelCmdline(Objects.toString(entity.getCurrentKernelCmdline(), ""));
         model.setReportedKernelCmdline(entity.getKernelArgs());
         return model;
