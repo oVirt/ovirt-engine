@@ -54,6 +54,10 @@ public class PaginationControl extends Composite {
         @Override
         public void refresh() {
         }
+
+        @Override
+        public void reload() {
+        }
     };
 
     interface WidgetUiBinder extends UiBinder<FlowPanel, PaginationControl> {
@@ -111,6 +115,11 @@ public class PaginationControl extends Composite {
 
     public void setDataProvider(PagingDataProvider dataProvider) {
         this.dataProvider = dataProvider;
+        updateTableControls();
+    }
+
+    public void reload() {
+        getDataProvider().reload();
         updateTableControls();
     }
 
