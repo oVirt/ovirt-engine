@@ -46,6 +46,7 @@ import org.ovirt.engine.api.resource.VmWatchdogsResource;
 import org.ovirt.engine.api.resource.externalhostproviders.KatelloErrataResource;
 import org.ovirt.engine.api.restapi.logging.Messages;
 import org.ovirt.engine.api.restapi.resource.externalhostproviders.BackendVmKatelloErrataResource;
+import org.ovirt.engine.api.restapi.types.DisplayMapper;
 import org.ovirt.engine.api.restapi.types.InitializationMapper;
 import org.ovirt.engine.api.restapi.types.RngDeviceMapper;
 import org.ovirt.engine.api.restapi.types.VmMapper;
@@ -78,6 +79,7 @@ import org.ovirt.engine.core.common.action.VmManagementParametersBase;
 import org.ovirt.engine.core.common.action.VmOperationParameterBase;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.CpuPinningPolicy;
+import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.GraphicsType;
 import org.ovirt.engine.core.common.businessentities.HaMaintenanceMode;
 import org.ovirt.engine.core.common.businessentities.InitializationType;
@@ -683,6 +685,9 @@ public class BackendVmResource
 
             updated.setUsbPolicy(VmMapper.getUsbPolicyOnUpdate(incoming.getUsb(), entity.getUsbPolicy()));
 
+            if (incoming.getDisplay() != null && incoming.getDisplay().getVideoType() != null) {
+                updated.setDefaultDisplayType(DisplayMapper.map((org.ovirt.engine.api.model.VideoType) incoming.getDisplay().getVideoType(), (DisplayType) null));
+            }
             VmManagementParametersBase params = new VmManagementParametersBase(updated);
 
             params.setUpdateNuma(incoming.isSetNumaTuneMode());
