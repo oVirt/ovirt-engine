@@ -89,7 +89,6 @@ import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 import org.ovirt.engine.core.vdsbroker.ResourceManager;
 import org.ovirt.engine.core.vdsbroker.TransportFactory;
 import org.ovirt.engine.core.vdsbroker.storage.StoragePoolDomainHelper;
-import org.ovirt.engine.core.vdsbroker.vdsbroker.VDSNetworkException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -299,6 +298,7 @@ public class IrsProxyImpl implements IrsProxy {
                     new SpmStatusVDSCommandParameters(curVdsId, storagePoolId));
         }
 
+        // if spm status didn't work or not spm then cause failover with attempts
         if (result == null
                 || !result.getSucceeded()
                 || result.getSucceeded() && ((SpmStatusResult) result.getReturnValue()).getSpmStatus() != SpmStatus.SPM) {
@@ -316,34 +316,30 @@ public class IrsProxyImpl implements IrsProxy {
                 }
             }
 
-            // if spm status didn't work or not spm and NOT NETWORK
-            // PROBLEM
-            // then cause failover with attempts
-            if (result != null && !(result.getExceptionObject() instanceof VDSNetworkException)) {
-                Map<Guid, AsyncTaskStatus> tasksList =
-                        (Map<Guid, AsyncTaskStatus>) resourceManager
-                                .runVdsCommand(VDSCommandType.HSMGetAllTasksStatuses,
-                                        new VdsIdVDSCommandParametersBase(curVdsId)).getReturnValue();
-                boolean allTasksFinished = true;
-                if (tasksList != null) {
-                    for (AsyncTaskStatus taskStatus : tasksList.values()) {
-                        if (AsyncTaskStatusEnum.finished != taskStatus.getStatus()) {
-                            allTasksFinished = false;
-                            break;
-                        }
+            // failover process
+            Map<Guid, AsyncTaskStatus> tasksList =
+                    (Map<Guid, AsyncTaskStatus>) resourceManager
+                            .runVdsCommand(VDSCommandType.HSMGetAllTasksStatuses,
+                                    new VdsIdVDSCommandParametersBase(curVdsId)).getReturnValue();
+            boolean allTasksFinished = true;
+            if (tasksList != null) {
+                for (AsyncTaskStatus taskStatus : tasksList.values()) {
+                    if (AsyncTaskStatusEnum.finished != taskStatus.getStatus()) {
+                        allTasksFinished = false;
+                        break;
                     }
                 }
-                if (tasksList == null || allTasksFinished) {
-                    nullifyInternalProxies();
+            }
+            if (tasksList == null || allTasksFinished) {
+                nullifyInternalProxies();
+            } else {
+                if (_errorAttempts < Config.<Integer> getValue(ConfigValues.SPMFailOverAttempts)) {
+                    _errorAttempts++;
+                    log.warn("failed getting spm status for pool '{}' ({}), attempt number: {}",
+                            storagePoolId, storagePool.getName(), _errorAttempts);
                 } else {
-                    if (_errorAttempts < Config.<Integer> getValue(ConfigValues.SPMFailOverAttempts)) {
-                        _errorAttempts++;
-                        log.warn("failed getting spm status for pool '{}' ({}), attempt number: {}",
-                                storagePoolId, storagePool.getName(), _errorAttempts);
-                    } else {
-                        nullifyInternalProxies();
-                        _errorAttempts = 0;
-                    }
+                    nullifyInternalProxies();
+                    _errorAttempts = 0;
                 }
             }
         } else if (result.getSucceeded()
