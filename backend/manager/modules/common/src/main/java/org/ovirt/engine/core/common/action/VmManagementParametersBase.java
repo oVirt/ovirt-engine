@@ -72,6 +72,7 @@ public class VmManagementParametersBase extends VmOperationParameterBase
     private boolean makeCreatorExplicitOwner;
     private Guid storageDomainId = Guid.Empty;
     private Map<Guid, DiskImage> diskInfoDestinationMap;
+    @Valid
     private VmPayload payload;
     private boolean clearPayload;
     private VM vm;

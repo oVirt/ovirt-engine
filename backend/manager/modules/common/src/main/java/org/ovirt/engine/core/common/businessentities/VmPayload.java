@@ -5,9 +5,12 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
+import javax.validation.constraints.Size;
+
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
+import org.ovirt.engine.core.common.validation.annotation.ValidI18NName;
 import org.ovirt.engine.core.compat.Guid;
 
 
@@ -17,7 +20,10 @@ public class VmPayload extends VmDevice implements Serializable {
     private static final String SpecParamsVolumeIdType = "volId";
     private static final String SpecParamsFileType = "file";
 
+    @ValidI18NName(message = "ACTION_TYPE_FAILED_VOLUME_ID_MAY_NOT_CONTAIN_SPECIAL_CHARS")
+    @Size(max = BusinessEntitiesDefinitions.VM_PAYLOAD_VOLUME_ID_SIZE)
     private String volumeId;
+
     private Map<String, String> files; // file data is base64-encoded
 
     // Use the constructor with the vmid if you have it!
