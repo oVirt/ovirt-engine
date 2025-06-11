@@ -15,6 +15,7 @@ public final class BusinessEntitiesDefinitions {
     public static final int VM_EMULATED_MACHINE_SIZE = 30;
     public static final int VM_CPU_NAME_SIZE = 255;
     public static final int VM_SERIAL_NUMBER_SIZE = 255;
+    public static final int VM_PAYLOAD_VOLUME_ID_SIZE = 32;
 
     // VM Pools (vm_pools)
     public static final int VM_POOL_NAME_SIZE = 255;
