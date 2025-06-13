@@ -6,4 +6,4 @@ on:
 
 jobs:
   trigger-ost:
-    uses: oVirt/ovirt-system-tests/.github/workflows/ost.yaml@master
+    uses: oVirt/ovirt-system-tests/.github/workflows/ost.yaml@ost_on_gh
