@@ -735,6 +735,9 @@ public abstract class SanStorageModelBase extends SearchableListModel implements
         boolean nonEmpty = lun.getStorageDomainId() != null || lun.getDiskId() != null ||
                 lun.getStatus() == LunStatus.Unusable;
 
+        // Setting isUsed for LUN
+        lunModel.setIsUsed(nonEmpty);
+
         // Graying out LUNs
         lunModel.setIsGrayedOut(isIgnoreGrayedOut() ? lun.getDiskId() != null : nonEmpty);
 

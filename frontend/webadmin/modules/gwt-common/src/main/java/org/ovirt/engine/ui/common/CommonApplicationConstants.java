@@ -1964,4 +1964,8 @@ public interface CommonApplicationConstants extends Constants {
     String permissionFilter();
 
     String propertyId();
+
+    String hideUsedLunsForISCSILabel();
+
+    String hideUsedLunsForFCPLabel();
 }
