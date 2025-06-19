@@ -26,6 +26,7 @@ import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.api.common.util.DetailHelper;
 import org.ovirt.engine.api.model.ActionableResource;
 import org.ovirt.engine.api.model.AutoPinningPolicy;
+import org.ovirt.engine.api.model.Certificate;
 import org.ovirt.engine.api.model.Configuration;
 import org.ovirt.engine.api.model.ConfigurationType;
 import org.ovirt.engine.api.model.Disk;
@@ -731,6 +732,9 @@ public class BackendVmsResource extends
             // optimization of DB access: retrieve GraphicsDevices for all VMs at once
             Map<Guid, List<GraphicsDevice>> vmsGraphicsDevices =
                     DisplayHelper.getGraphicsDevicesForMultipleEntities(this, vmIds);
+            // optimization of DB access: retrieve Certificates for all VMs at once
+            Map<Guid, Certificate> vmsCertificate =
+                    DisplayHelper.getDisplayCertificatesForMultipleEntities(this, vmIds);
 
             for (org.ovirt.engine.core.common.businessentities.VM entity : entities) {
                 Vm vm = map(entity);
@@ -742,7 +746,7 @@ public class BackendVmsResource extends
                     vm.setGraphicsConsoles(consoles);
                 }
                 DisplayHelper.adjustDisplayData(this, vm, vmsGraphicsDevices, false);
-                DisplayHelper.addDisplayCertificate(this, vm);
+                DisplayHelper.addDisplayCertificate(vm, vmsCertificate.get(entity.getId()));
                 removeRestrictedInfo(vm);
                 collection.getVms().add(addLinks(populate(vm, entity)));
             }
