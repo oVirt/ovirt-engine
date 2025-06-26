@@ -26,6 +26,7 @@ public class VmTemplateConditionFieldAutoCompleter extends BaseConditionFieldAut
     public static final String ARCHITECTURE = "ARCHITECTURE";
     public static final String VMT_ID = "_VMT_ID";
     public static final String VERSION_NAME = "VERSION_NAME";
+    public static final String TAG = "TAG";
 
     public VmTemplateConditionFieldAutoCompleter() {
         verbs.add(NAME);
@@ -42,6 +43,7 @@ public class VmTemplateConditionFieldAutoCompleter extends BaseConditionFieldAut
         verbs.add(QUOTA);
         verbs.add(ARCHITECTURE);
         verbs.add(VERSION_NAME);
+        verbs.add(TAG);
 
         buildCompletions();
         verbs.add(VMT_ID);
@@ -62,6 +64,7 @@ public class VmTemplateConditionFieldAutoCompleter extends BaseConditionFieldAut
         getTypeDictionary().put(DESCRIPTION, String.class);
         getTypeDictionary().put(ARCHITECTURE, ArchitectureType.class);
         getTypeDictionary().put(VERSION_NAME, String.class);
+        getTypeDictionary().put(TAG, String.class);
 
         // building the ColumnName Dict
         columnNameDict.put(NAME, "name");
@@ -80,6 +83,7 @@ public class VmTemplateConditionFieldAutoCompleter extends BaseConditionFieldAut
         columnNameDict.put(DESCRIPTION, "description");
         columnNameDict.put(ARCHITECTURE, "architecture");
         columnNameDict.put(VERSION_NAME, "template_version_name");
+        columnNameDict.put(TAG, "tag_name");
 
         sortableFieldDict.put(NAME, Arrays.asList(
                 new SyntaxChecker.SortByElement("name"),

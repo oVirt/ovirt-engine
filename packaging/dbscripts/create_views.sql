@@ -4120,3 +4120,9 @@ CREATE OR REPLACE VIEW vm_interfaces_plugged_on_vm_not_down_view AS
         ON vm_interface.id = vm_device.device_id
     WHERE vm_dynamic.status <> 0
         AND vm_device.is_plugged = true;
+
+CREATE OR REPLACE VIEW vm_templates_storage_domain_with_tags AS
+    SELECT *
+    FROM vm_templates_storage_domain
+    LEFT JOIN tags_vm_map_view
+        ON vm_templates_storage_domain.base_template_id = tags_vm_map_view.vm_id;

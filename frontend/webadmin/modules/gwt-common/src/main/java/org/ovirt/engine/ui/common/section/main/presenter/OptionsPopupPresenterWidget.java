@@ -1,7 +1,9 @@
 package org.ovirt.engine.ui.common.section.main.presenter;
 
 import org.ovirt.engine.ui.common.presenter.AbstractModelBoundPopupPresenterWidget;
+import org.ovirt.engine.ui.uicommonweb.ConsoleOptionsFrontendPersister;
 import org.ovirt.engine.ui.uicommonweb.models.options.EditOptionsModel;
+import org.ovirt.engine.ui.uicommonweb.models.vms.VncConsoleModel;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
@@ -24,14 +26,30 @@ public class OptionsPopupPresenterWidget extends AbstractModelBoundPopupPresente
         }
         DelegateProvider getPublicKeyEditor();
 
+        HasValueChangeHandlers<Boolean> getConsoleVncNativeRadioButton();
+
+        HasValueChangeHandlers<Boolean> getConsoleNoVncRadioButton();
+
+        HasValueChangeHandlers<Boolean> getConsoleDefaultRadioButton();
+
         IEventListener<? super PropertyChangedEventArgs> createHomePageListener(EditOptionsModel model);
 
         HasValueChangeHandlers<Boolean> getHomePageDefaultSwitch();
+
+        void setConsoleVncNativeSelected(boolean selected, ConsoleOptionsFrontendPersister consoleOptionsPersister, EditOptionsModel model);
+
+        void setConsoleNoVncSelected(boolean selected, ConsoleOptionsFrontendPersister consoleOptionsPersister, EditOptionsModel model);
+
+        void setConsoleDefaultSelected(boolean selected, ConsoleOptionsFrontendPersister consoleOptionsPersister, EditOptionsModel model);
     }
 
+    private final ConsoleOptionsFrontendPersister consoleOptionsPersister;
+
     @Inject
-    public OptionsPopupPresenterWidget(EventBus eventBus, ViewDef view) {
+    public OptionsPopupPresenterWidget(EventBus eventBus, ViewDef view,
+            ConsoleOptionsFrontendPersister consoleOptionsFrontendPersister) {
         super(eventBus, view);
+        this.consoleOptionsPersister = consoleOptionsFrontendPersister;
     }
 
     @Override
@@ -60,6 +78,35 @@ public class OptionsPopupPresenterWidget extends AbstractModelBoundPopupPresente
                 }
             }
         }));
+
+        registerHandler(getView().getConsoleVncNativeRadioButton().addValueChangeHandler(event -> {
+            getView().setConsoleVncNativeSelected(event.getValue(), consoleOptionsPersister, model);
+        }));
+
+        registerHandler(getView().getConsoleNoVncRadioButton().addValueChangeHandler(event -> {
+            getView().setConsoleNoVncSelected(event.getValue(), consoleOptionsPersister, model);
+        }));
+
+        registerHandler(getView().getConsoleDefaultRadioButton().addValueChangeHandler(event -> {
+            getView().setConsoleDefaultSelected(event.getValue(), consoleOptionsPersister, model);
+        }));
+
+        String vncType = consoleOptionsPersister.loadGeneralVncType();
+        if (vncType == null) {
+            getView().setConsoleDefaultSelected(true, consoleOptionsPersister, model);
+        } else {
+            switch (VncConsoleModel.ClientConsoleMode.valueOf(vncType)) {
+                case Native:
+                    getView().setConsoleVncNativeSelected(true, consoleOptionsPersister, model);
+                    break;
+                case NoVnc:
+                    getView().setConsoleNoVncSelected(true, consoleOptionsPersister, model);
+                    break;
+                default:
+                    getView().setConsoleDefaultSelected(true, consoleOptionsPersister, model);
+                    break;
+            }
+        }
 
         IEventListener<? super PropertyChangedEventArgs> homePageListener = getView().createHomePageListener(model);
         model.getIsHomePageCustom().getPropertyChangedEvent().addListener(homePageListener);

@@ -13,12 +13,14 @@ import org.ovirt.engine.core.common.ActionUtils;
 import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
+import org.ovirt.engine.core.common.action.AttachEntityToTagParameters;
 import org.ovirt.engine.core.common.action.ExportOvaParameters;
 import org.ovirt.engine.core.common.action.MoveOrCopyParameters;
 import org.ovirt.engine.core.common.action.UpdateVmTemplateParameters;
 import org.ovirt.engine.core.common.action.VmTemplateManagementParameters;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
+import org.ovirt.engine.core.common.businessentities.Tags;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmEntityType;
@@ -37,6 +39,7 @@ import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.BaseCommandTarget;
 import org.ovirt.engine.ui.uicommonweb.Cloner;
 import org.ovirt.engine.ui.uicommonweb.IconUtils;
+import org.ovirt.engine.ui.uicommonweb.TagAssigningModel;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.builders.BuilderExecutor;
 import org.ovirt.engine.ui.uicommonweb.builders.template.VersionNameUnitToVmBaseBuilder;
@@ -52,6 +55,8 @@ import org.ovirt.engine.ui.uicommonweb.models.SearchStringMapping;
 import org.ovirt.engine.ui.uicommonweb.models.TabName;
 import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.ImportCloneModel;
+import org.ovirt.engine.ui.uicommonweb.models.tags.TagListModel;
+import org.ovirt.engine.ui.uicommonweb.models.tags.TagModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ExportOvaModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ExportVmModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.IconCache;
@@ -75,7 +80,7 @@ import org.ovirt.engine.ui.uicompat.UIMessages;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 
-public class TemplateListModel extends VmBaseListModel<Void, VmTemplate> {
+public class TemplateListModel extends VmBaseListModel<Void, VmTemplate> implements TagAssigningModel<VmTemplate> {
 
     public static final String CMD_CONFIGURE_TEMPLATES_TO_IMPORT = "ConfigureTemplatesToImport"; //$NON-NLS-1$
     public static final String CMD_CANCEL = "Cancel"; //$NON-NLS-1$
@@ -193,6 +198,17 @@ public class TemplateListModel extends VmBaseListModel<Void, VmTemplate> {
         return eventListModel;
     }
 
+    private UICommand assignTagsCommand;
+
+    @Override
+    public UICommand getAssignTagsCommand() {
+        return assignTagsCommand;
+    }
+
+    private void setAssignTagsCommand(UICommand value) {
+        assignTagsCommand = value;
+    }
+
     @Inject
     public TemplateListModel(final TemplateGeneralModel templateGeneralModel,
             final TemplateVmListModel templateVmListModel,
@@ -231,6 +247,7 @@ public class TemplateListModel extends VmBaseListModel<Void, VmTemplate> {
         setExportOvaCommand(new UICommand("ExportOva", this)); //$NON-NLS-1$
         setImportTemplateCommand(new UICommand("ImportTemplate", this)); //$NON-NLS-1$
         setCreateVmFromTemplateCommand(new UICommand("CreateVM", this)); //$NON-NLS-1$
+        setAssignTagsCommand(new UICommand("AssignTags", this)); //$NON-NLS-1$
 
         updateActionsAvailability();
 
@@ -477,6 +494,99 @@ public class TemplateListModel extends VmBaseListModel<Void, VmTemplate> {
         list.add(permissionListModel);
     }
 
+    private void assignTags() {
+        if (getWindow() != null) {
+            return;
+        }
+
+        TagListModel model = new TagListModel();
+        setWindow(model);
+        model.setTitle(ConstantsManager.getInstance().getConstants().assignTagsTitle());
+        model.setHelpTag(HelpTag.assign_tags_template);
+        model.setHashName("assign_tags_template"); //$NON-NLS-1$
+
+        getAttachedTagsToSelectedTemplates(model);
+
+        UICommand okClick = UICommand.createDefaultOkUiCommand("OnAssignTags", this); //$NON-NLS-1$
+        model.getCommands().add(okClick);
+        UICommand abortClick = UICommand.createCancelUiCommand("Cancel", this); //$NON-NLS-1$
+        model.getCommands().add(abortClick);
+    }
+
+    public Map<Guid, Boolean> attachedTagsToEntities;
+
+    @Override
+    public Map<Guid, Boolean> getAttachedTagsToEntities() {
+        return attachedTagsToEntities;
+    }
+
+    public ArrayList<Tags> allAttachedTags;
+
+    @Override
+    public List<Tags> getAllAttachedTags() {
+        return allAttachedTags;
+    }
+
+    public int selectedItemsCounter;
+
+    private void getAttachedTagsToSelectedTemplates(final TagListModel model) {
+        attachedTagsToEntities = new HashMap<>();
+        allAttachedTags = new ArrayList<>();
+        selectedItemsCounter = 0;
+        getSelectedItems()
+            .stream()
+            .forEach(template -> {
+                AsyncDataProvider.getInstance().getAttachedTagsToTemplate(new AsyncQuery<>(
+                    returnValue -> {
+                        allAttachedTags.addAll(returnValue);
+                        selectedItemsCounter++;
+                        if (selectedItemsCounter == getSelectedItems().size()) {
+                            postGetAttachedTags(model);
+                        }
+                    }
+                ), template.getId());
+            });
+    }
+
+    private void onAssignTags() {
+        TagListModel model = (TagListModel) getWindow();
+        getAttachedTagsToSelectedTemplates(model);
+    }
+
+    @Override
+    public void postOnAssignTags(Map<Guid, Boolean> attachedTags) {
+        TagListModel model = (TagListModel) getWindow();
+        ArrayList<Guid> templateIds = new ArrayList<>();
+
+        for (Object item: getSelectedItems()) {
+            VmTemplate template = (VmTemplate) item;
+            templateIds.add(template.getId());
+        }
+
+        ArrayList<Guid> tagsToAttach = new ArrayList<>();
+        ArrayList<Guid> tagsToDetach = new ArrayList<>();
+
+        if (model.getItems() != null && !model.getItems().isEmpty()) {
+            ArrayList<TagModel> tags = (ArrayList<TagModel>) model.getItems();
+            TagModel rootTag = tags.get(0);
+            TagModel.recursiveEditAttachDetachLists(rootTag, attachedTags, tagsToAttach, tagsToDetach);
+        }
+
+        ArrayList<ActionParametersBase> parameters = new ArrayList<>();
+        for (Guid g : tagsToAttach) {
+            parameters.add(new AttachEntityToTagParameters(g, templateIds));
+        }
+        Frontend.getInstance().runMultipleAction(ActionType.AttachTemplatesToTag, parameters);
+
+        ArrayList<ActionParametersBase> templateToDetach = new ArrayList<>();
+        for (Guid g : tagsToDetach) {
+            templateToDetach.add(new AttachEntityToTagParameters(g, templateIds));
+        }
+        Frontend.getInstance().runMultipleAction(ActionType.DetachTemplateFromTag, templateToDetach);
+
+        cancel();
+    }
+
     @Override
     public boolean isSearchStringMatch(String searchString) {
         return searchString.trim().toLowerCase().startsWith("template"); //$NON-NLS-1$
@@ -484,7 +594,7 @@ public class TemplateListModel extends VmBaseListModel<Void, VmTemplate> {
 
     @Override
     protected void syncSearch() {
-        SearchParameters tempVar = new SearchParameters(applySortOptions(getSearchString()), SearchType.VmTemplate, isCaseSensitiveSearch());
+        SearchParameters tempVar = new SearchParameters(applySortOptions(getModifiedSearchString()), SearchType.VmTemplate, isCaseSensitiveSearch());
         tempVar.setMaxCount(getSearchPageSize());
         super.syncSearch(QueryType.Search, tempVar);
     }
@@ -910,6 +1020,8 @@ public class TemplateListModel extends VmBaseListModel<Void, VmTemplate> {
 
         getCreateVmFromTemplateCommand().setIsExecutionAllowed(items.size() == 1 && item != null
                 && item.getStatus() != VmTemplateStatus.Locked);
+
+        getAssignTagsCommand().setIsExecutionAllowed(items.size() == 1 && item != null);
     }
 
     /**
@@ -955,6 +1067,8 @@ public class TemplateListModel extends VmBaseListModel<Void, VmTemplate> {
             importTemplates();
         } else if (command == getCreateVmFromTemplateCommand()) {
             createVMFromTemplate();
+        } else if (command == getAssignTagsCommand()) {
+            assignTags();
         } else if ("Cancel".equals(command.getName())) { //$NON-NLS-1$
             cancel();
         } else if ("OnExport".equals(command.getName())) { //$NON-NLS-1$
@@ -982,6 +1096,8 @@ public class TemplateListModel extends VmBaseListModel<Void, VmTemplate> {
             onClone();
         } else if ("closeClone".equals(command.getName())) { //$NON-NLS-1$
             closeClone();
+        } else if ("OnAssignTags".equals(command.getName())) { //$NON-NLS-1$
+            onAssignTags();
         }
     }
 

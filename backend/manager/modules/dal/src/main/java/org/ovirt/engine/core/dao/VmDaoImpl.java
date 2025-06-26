@@ -413,7 +413,7 @@ public class VmDaoImpl extends BaseDao implements VmDao {
 
     private Pair<SecretValue<String>, String> getExternalData(Guid vmId, String functionName) {
         List<Pair<SecretValue<String>, String>> resultRows = getCallsHandler().executeReadList(functionName,
-                (rs, i) -> new Pair<>(new SecretValue<String>(new String(rs.getString("data"))), rs.getString("hash")),
+                (rs, i) -> new Pair<>(new SecretValue<String>(rs.getString("data")), rs.getString("hash")),
                 getCustomMapSqlParameterSource().addValue("vm_id", vmId));
         if (resultRows.isEmpty()) {
             return new Pair<SecretValue<String>, String>();

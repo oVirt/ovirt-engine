@@ -100,6 +100,7 @@ public class SearchObjectAutoCompleter extends SearchObjectsBaseAutoCompleter {
         requiresFullTable.put(SearchObjects.VM_OBJ_NAME + "-" + VmConditionFieldAutoCompleter.TAG, true);
         requiresFullTable.put(SearchObjects.VM_OBJ_NAME + "-" + VmConditionFieldAutoCompleter.TYPE, true);
         requiresFullTable.put(SearchObjects.VM_OBJ_NAME + "-" + VmConditionFieldAutoCompleter.UPTIME, true);
+        requiresFullTable.put(SearchObjects.VM_OBJ_NAME + "-" + VmConditionFieldAutoCompleter.VCPUS, true);
         // Hosts
         requiresFullTable.put(SearchObjects.VDS_OBJ_NAME + "-" + VdsConditionFieldAutoCompleter.ADDRESS, true);
         requiresFullTable.put(SearchObjects.VDS_OBJ_NAME + "-" + VdsConditionFieldAutoCompleter.ADDRESS, true);
@@ -394,7 +395,7 @@ public class SearchObjectAutoCompleter extends SearchObjectsBaseAutoCompleter {
                     put(SearchObjects.TEMPLATE_OBJ_NAME, new EntitySearchInfo(new TemplateCrossRefAutoCompleter(),
                             new VmTemplateConditionFieldAutoCompleter(),
                             "vm_templates_view",
-                            "vm_templates_storage_domain",
+                            "vm_templates_storage_domain_with_tags",
                             "vmt_guid",
                             "name ASC ",
                             true));

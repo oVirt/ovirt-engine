@@ -12,11 +12,11 @@
   <dependencies>
     <!-- Google Web Toolkit dependencies -->
     <dependency>
-      <groupId>com.google.gwt</groupId>
+      <groupId>org.gwtproject</groupId>
       <artifactId>gwt-user</artifactId>
     </dependency>
     <dependency>
-      <groupId>com.google.gwt</groupId>
+      <groupId>org.gwtproject</groupId>
       <artifactId>gwt-dev</artifactId>
     </dependency>
     <!-- GWT wrapper for Bootstrap framework -->
@@ -105,20 +105,6 @@
       </testResource>
     </testResources>
     <plugins>
-      <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>properties-maven-plugin</artifactId>
-        <executions>
-          <execution>
-            <goals>
-              <goal>set-system-properties</goal>
-            </goals>
-            <configuration>
-              <properties><property><name>javaAAA.home</name><value>/lib/jvm/java-1.8</value></property></properties>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>gwt-maven-plugin</artifactId>

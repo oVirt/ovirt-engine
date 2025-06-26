@@ -1965,6 +1965,10 @@ public interface CommonApplicationConstants extends Constants {
 
     String propertyId();
 
+    String preferredVncOption();
+
+    String defaultClient();
+
     String hideUsedLunsForISCSILabel();
 
     String hideUsedLunsForFCPLabel();
