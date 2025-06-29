@@ -14,6 +14,7 @@ import org.ovirt.engine.core.common.businessentities.Queryable;
 import org.ovirt.engine.core.common.queries.QueryParametersBase;
 import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.core.common.queries.QueryType;
+import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.searchbackend.ISyntaxChecker;
 import org.ovirt.engine.core.searchbackend.SyntaxChecker;
 import org.ovirt.engine.core.searchbackend.SyntaxContainer;
@@ -35,6 +36,8 @@ import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.event.shared.HandlerRegistration;
+import com.google.gwt.regexp.shared.RegExp;
+import com.google.gwt.regexp.shared.SplitResult;
 
 /**
  * Represents a list model with ability to fetch items both sync and async.
@@ -150,6 +153,12 @@ public abstract class SearchableListModel<E, T> extends SortedListModel<T> imple
         privateSearchPageSize = value;
     }
 
+    private String hiddenSearchString;
+
+    public String getHiddenSearchString() {
+        return hiddenSearchString;
+    }
+
     private String searchString;
 
     public String getSearchString() {
@@ -157,14 +166,47 @@ public abstract class SearchableListModel<E, T> extends SortedListModel<T> imple
     }
 
     public String getModifiedSearchString() {
-        if (tags.isEmpty()) {
-            return getSearchString();
-        } else {
-            return getTaggedSearchString();
+        String result = searchString;
+
+        if (!tags.isEmpty()) {
+            result = getTaggedSearchString(result);
         }
+
+        if (StringHelper.isNotNullOrEmpty(hiddenSearchString)) {
+            result = getSearchStringWithHiddenPart(result);
+        }
+
+        return result;
     }
 
-    private String getTaggedSearchString() {
+    private String getSearchStringWithHiddenPart(String currentSearchString) {
+        if (getDefaultSearchString().equalsIgnoreCase(currentSearchString)) {
+            currentSearchString = currentSearchString + hiddenSearchString;
+        } else {
+            boolean containsOrExpressions = currentSearchString.toLowerCase().contains(" or "); //$NON-NLS-1$
+            if (containsOrExpressions) {
+                // We need to add hidden string to each part of "or" expression to correctly take it onto account.
+                // Replace for all possible variants of "or" expression (it is case-insensitive).
+                RegExp regExp = RegExp.compile(" OR ", "gi"); //$NON-NLS-1$ //$NON-NLS-2$
+                SplitResult expressions = regExp.split(currentSearchString);
+                StringBuilder resultBuilder = new StringBuilder();
+                for (int i = 0; i < expressions.length(); i++) {
+                    String expression = expressions.get(i);
+                    resultBuilder.append(expression);
+                    resultBuilder.append(" AND ").append(hiddenSearchString); //$NON-NLS-1$
+                    if (i < expressions.length() - 1) { // while not last expression.
+                        resultBuilder.append(" OR "); //$NON-NLS-1$
+                    }
+                }
+                currentSearchString = resultBuilder.toString();
+            } else {
+                currentSearchString = currentSearchString + " AND " + hiddenSearchString; //$NON-NLS-1$
+            }
+        }
+        return currentSearchString;
+    }
+
+    private String getTaggedSearchString(String currentSearchString) {
         StringBuilder tags = new StringBuilder();
         for (String tag: this.tags) {
             tags.append("tag=" + tag); // $NON-NLS-1$
@@ -172,12 +214,27 @@ public abstract class SearchableListModel<E, T> extends SortedListModel<T> imple
                 tags.append(" OR "); // $NON-NLS-1$
             }
         }
-        if (getDefaultSearchString().equalsIgnoreCase(getSearchString())) {
+        if (getDefaultSearchString().equalsIgnoreCase(currentSearchString)) {
             //Nothing added, we can append the tags.
-            return getSearchString() + tags.toString();
+            return currentSearchString + tags.toString();
         } else {
             //Have a search string with something already, append with OR.
-            return getSearchString() + " OR " + tags.toString(); // $NON-NLS-1$
+            return currentSearchString + " OR " + tags.toString(); // $NON-NLS-1$
+        }
+    }
+
+    public void setHiddenSearchString(String value) {
+        if (StringHelper.isNotNullOrEmpty(value) &&
+                value.startsWith(getDefaultSearchString())) {
+            value = value.substring(getDefaultSearchString().length());
+        }
+
+        if (!Objects.equals(hiddenSearchString, value)) {
+            hiddenSearchString = value;
+            pagingSearchString = null;
+            currentPageNumber = 1;
+            searchStringChanged();
+            onPropertyChanged(new PropertyChangedEventArgs("SearchString")); //$NON-NLS-1$
         }
     }
 

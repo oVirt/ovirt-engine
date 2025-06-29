@@ -44,4 +44,77 @@ public class SearchableListModelTest {
         assertEquals(null, listModel.getSelectedItem());
         assertThat(listModel.getSelectedItems()).isEmpty();
     }
+
+    @Test
+    void whenNullHiddenSearchStringThenCorrectModifiedSearchString() {
+        SearchableListModel<Void, Integer> listModel =
+                mock(SearchableListModel.class,
+                        withSettings().useConstructor().defaultAnswer(Answers.CALLS_REAL_METHODS));
+        listModel.setDefaultSearchString("VM:"); //$NON-NLS-1$
+        listModel.setHiddenSearchString(null);
+        listModel.setSearchString(listModel.getDefaultSearchString());
+
+        assertEquals(listModel.getSearchString(), listModel.getModifiedSearchString());
+    }
+
+    @Test
+    void whenEmptyHiddenSearchStringThenCorrectModifiedSearchString() {
+        SearchableListModel<Void, Integer> listModel =
+                mock(SearchableListModel.class,
+                        withSettings().useConstructor().defaultAnswer(Answers.CALLS_REAL_METHODS));
+        listModel.setDefaultSearchString("VM:"); //$NON-NLS-1$
+        listModel.setHiddenSearchString(""); //$NON-NLS-1$
+        listModel.setSearchString(listModel.getDefaultSearchString());
+
+        assertEquals(listModel.getSearchString(), listModel.getModifiedSearchString());
+    }
+
+    @Test
+    void whenNotEmptyHiddenSearchStringThenCorrectModifiedSearchString() {
+        SearchableListModel<Void, Integer> listModel =
+                mock(SearchableListModel.class,
+                        withSettings().useConstructor().defaultAnswer(Answers.CALLS_REAL_METHODS));
+        listModel.setDefaultSearchString("VM:"); //$NON-NLS-1$
+        listModel.setHiddenSearchString("name=vm-1"); //$NON-NLS-1$
+        listModel.setSearchString(listModel.getDefaultSearchString());
+
+        assertEquals("VM:name=vm-1", listModel.getModifiedSearchString()); //$NON-NLS-1$
+    }
+
+    @Test
+    void whenNotEmptyHiddenSearchStringAndUserSearchStringThenCorrectModifiedSearchString() {
+        SearchableListModel<Void, Integer> listModel =
+                mock(SearchableListModel.class,
+                        withSettings().useConstructor().defaultAnswer(Answers.CALLS_REAL_METHODS));
+        listModel.setDefaultSearchString("VM:"); //$NON-NLS-1$
+        listModel.setHiddenSearchString("name=vm-1"); //$NON-NLS-1$
+        listModel.setSearchString("VM:name=vm-2"); //$NON-NLS-1$
+
+        assertEquals("VM:name=vm-2 AND name=vm-1", listModel.getModifiedSearchString()); //$NON-NLS-1$
+    }
+
+    @Test
+    void whenNotEmptyHiddenSearchStringAndUserSearchStringWithTagsThenCorrectModifiedSearchString() {
+        SearchableListModel<Void, Integer> listModel =
+                mock(SearchableListModel.class,
+                        withSettings().useConstructor().defaultAnswer(Answers.CALLS_REAL_METHODS));
+        listModel.setDefaultSearchString("VM:"); //$NON-NLS-1$
+        listModel.setHiddenSearchString("name=vm-1"); //$NON-NLS-1$
+        listModel.setSearchString("VM:name=vm-2 or cluster=Default"); //$NON-NLS-1$
+        listModel.setTagStrings(Arrays.asList("tag-1", "tag-2")); //$NON-NLS-1$ //$NON-NLS-2$
+
+        assertEquals("VM:name=vm-2 AND name=vm-1 OR cluster=Default AND name=vm-1 OR tag=tag-1 AND name=vm-1 OR tag=tag-2 AND name=vm-1", listModel.getModifiedSearchString()); //$NON-NLS-1$
+    }
+
+    @Test
+    void whenNotEmptyHiddenSearchStringAndUserSearchStringWithDifferentOrExpressionsThenCorrectModifiedSearchString() {
+        SearchableListModel<Void, Integer> listModel =
+                mock(SearchableListModel.class,
+                        withSettings().useConstructor().defaultAnswer(Answers.CALLS_REAL_METHODS));
+        listModel.setDefaultSearchString("VM:"); //$NON-NLS-1$
+        listModel.setHiddenSearchString("name=vm-1"); //$NON-NLS-1$
+        listModel.setSearchString("VM:name=vm-2 OR cluster=Default oR name=vm-3 Or name=vm-4"); //$NON-NLS-1$
+
+        assertEquals("VM:name=vm-2 AND name=vm-1 OR cluster=Default AND name=vm-1 OR name=vm-3 AND name=vm-1 OR name=vm-4 AND name=vm-1", listModel.getModifiedSearchString()); //$NON-NLS-1$
+    }
 }
