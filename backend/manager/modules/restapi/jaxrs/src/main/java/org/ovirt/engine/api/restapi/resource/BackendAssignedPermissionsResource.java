@@ -111,7 +111,7 @@ public class BackendAssignedPermissionsResource
         for (org.ovirt.engine.core.common.businessentities.Permission entity : entities) {
             castEveryonePermissionsToUser(entity);
             Permission permission = map(entity, getUserById(entity.getAdElementId()));
-            collection.getPermissions().add(addLinks(permission, permission.getUser() != null ? suggestedParentType : Group.class));
+            collection.getPermissions().add(addLinks(permission, permission.getUser() != null ? User.class : Group.class));
         }
         return collection;
     }
