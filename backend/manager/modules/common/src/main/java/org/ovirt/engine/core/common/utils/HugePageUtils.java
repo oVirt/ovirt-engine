@@ -86,7 +86,7 @@ public class HugePageUtils {
 
     public static int totalHugePageMemMb(Map<Integer, Integer> hugepages) {
         long hugePageMemKb = hugepages.entrySet().stream()
-                .mapToLong(entry -> entry.getKey() * entry.getValue())
+                .mapToLong(entry -> (long) entry.getKey() * (long) entry.getValue())
                 .sum();
 
         return (int) ((hugePageMemKb + KIB_IN_MIB - 1) / KIB_IN_MIB);
@@ -98,7 +98,7 @@ public class HugePageUtils {
         }
 
         long hugePageMemKb = vds.getHugePages().stream()
-                .mapToLong(hugePage -> hugePage.getTotal() * hugePage.getSizeKB())
+                .mapToLong(hugePage -> (long) hugePage.getTotal() * (long) hugePage.getSizeKB())
                 .sum();
 
         return (int) ((hugePageMemKb + KIB_IN_MIB - 1) / KIB_IN_MIB);
@@ -110,7 +110,7 @@ public class HugePageUtils {
         }
 
         long hugePageMemKb = vds.getHugePages().stream()
-                .mapToLong(hugePage -> hugePage.getFree() * hugePage.getSizeKB())
+                .mapToLong(hugePage -> (long) hugePage.getFree() * (long) hugePage.getSizeKB())
                 .sum();
 
         return (int) ((hugePageMemKb + KIB_IN_MIB - 1) / KIB_IN_MIB);
