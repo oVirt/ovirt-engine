@@ -37,4 +37,4 @@
     - el_ver|int == 8
     - ovirt_openvswitch_pre.version is version('2.11', '==')
     - ovirt_openvswitch_post.version is version('2.15', '>=')
-    - ovn_central is defined
+    - ovn_central is defined and ovn_central != None and ovn_central | length != 0

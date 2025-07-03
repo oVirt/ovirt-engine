@@ -7,7 +7,7 @@
 
     - name: Ensure Open vSwitch is started
       ansible.builtin.service:
-        name: openvswitch
+        name: openvswitch2.15
         state: started
         enabled: true
 
