@@ -1,0 +1,67 @@
+= Commits / PR's
+
+== General rules
+
+- Keep commits small, if you have multiple changes, create multiple commits
+- Split up commits if possible
+- Pull-Requests may contain multiple commits if they target the same goal (like to implement a new feature)
+
+== Commit message
+
+To have a bit of structure in the commits, we have setup some rules about commit (messages).
+
+=== Title
+
+First of all, the commit title should be prepended with a defined prefix:
+
+`<core | restapi | webadmin | setup | db | packaging | build | ci | docs>:` short summary under 50 chars
+
+* `core`: main functionality changes (backend/manager/modules/*/src/main/java/org/ovirt/engine/core)
+* `restapi`: changes to the restapi code (backend/manager/modules/restapi)
+* `webadmin`: web/ui changes (frontend/webadmin)
+* `setup`: changes to the setup scripts (packaging/setup)
+* `db`: changes to the db structure (packaging/dbscripts)
+* `packaging`: changes in packaging/ but does not fit the above ones
+* `build`: changes to the build system/new release/etc
+* `ci`: changes for ci/copr/etc
+* `docs`: changes to the documentation
+
+If you think some prefix needs to be added to the list, feel free to recommend!
+
+=== Description
+
+Longer description using lines' length under 72 chars.
+
+With multiple paragraphs if necessary.
+
+Feel free to be verbose. This history/information is very useful for other developers if they are looking for why some things were changed.
+If you for example hit a bug/error, use the error message, add the reasoning why some things are changed etc.
+
+=== Required tag
+
+A `Signed-off-by` tag is required for each commit. You can add it automatically by doing a `git commit -s`.
+
+You might need to configure your git user name and email first, if you haven't done so already:
+[source,bash]
+----
+git config [--global] user.name "FIRST_NAME LAST_NAME"
+git config [--global] user.email "MY_NAME@example.com"
+----
+
+=== Additional tags
+
+If your commit fixes a specific issue on the issue tracker, you can add the following line:
+
+`Bug-Url: https://github.com/oVirt/ovirt-engine/issues/?`
+
+
+The following (standard) tags can also be added:
+
+* `Reported-by`: is used to credit someone who found the bug that the patch attempts to fix.
+* `Acked-by`: says that the person who is more familiar with the area the patch attempts to modify liked the patch.
+* `Reviewed-by`: unlike the other trailers, can only be offered by the reviewers themselves when they are completely satisfied with the patch after a detailed analysis.
+* `Tested-by`: is used to indicate that the person applied the patch and found it to have the desired effect.
+* `Co-authored-by`: is used to indicate that people exchanged drafts of a patch before submitting it.
+* `Helped-by`: is used to credit someone who suggested ideas for changes without providing the precise changes in patch form.
+* `Mentored-by`: is used to credit someone with helping develop a patch as part of a mentorship program (e.g., GSoC or Outreachy).
+* `Suggested-by`: is used to credit someone with suggesting the idea for a patch.
