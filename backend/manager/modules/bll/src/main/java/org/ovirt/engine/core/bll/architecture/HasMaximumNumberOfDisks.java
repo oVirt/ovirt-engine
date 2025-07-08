@@ -38,6 +38,11 @@ public class HasMaximumNumberOfDisks implements ArchCommand {
         hasMaximum = VmCommand.MAX_VIRTIO_CCW_DISKS == countDisks(DiskInterface.VirtIO);
     }
 
+    @Override
+    public void runForAARCH64() {
+        hasMaximum = VmCommand.MAX_VIRTIO_CCW_DISKS == countDisks(DiskInterface.VirtIO);
+    }
+
     public boolean returnValue() {
         return hasMaximum;
     }

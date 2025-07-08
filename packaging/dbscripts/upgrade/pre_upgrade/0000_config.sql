@@ -81,13 +81,13 @@ select fn_db_add_config_value('BlockMigrationOnSwapUsagePercentage','0','general
 select fn_db_add_config_value('CipherSuite','DEFAULT','general');
 --Handling Configuration directory for ENGINE
 select fn_db_add_config_value('ConnectToServerTimeoutInSeconds','20','general');
-select fn_db_add_config_value_for_versions_up_to('ClusterEmulatedMachines','pc-i440fx-rhel7.3.0,pc-i440fx-2.6,pseries-rhel7.5.0,s390-ccw-virtio-2.8','4.2');
-select fn_db_add_config_value('ClusterEmulatedMachines','pc-i440fx-rhel7.6.0,pc-i440fx-2.12,pseries-rhel7.6.0-sxxm,s390-ccw-virtio-2.12','4.3');
-select fn_db_add_config_value('ClusterEmulatedMachines','pc-q35-rhel8.1.0,pc-q35-4.1,pc-i440fx-rhel7.6.0,pc-i440fx-2.12,pseries-rhel8.1.0,s390-ccw-virtio-2.12','4.4');
-select fn_db_add_config_value('ClusterEmulatedMachines','pc-q35-rhel8.3.0,pc-q35-4.1,pc-i440fx-rhel7.6.0,pc-i440fx-2.12,pseries-rhel8.3.0,s390-ccw-virtio-2.12','4.5');
-select fn_db_add_config_value('ClusterEmulatedMachines','pc-q35-rhel8.4.0,pc-q35-4.1,pc-i440fx-rhel7.6.0,pc-i440fx-2.12,pseries-rhel8.4.0,s390-ccw-virtio-2.12','4.6');
-select fn_db_add_config_value('ClusterEmulatedMachines','pc-q35-rhel8.6.0,pc-q35-4.1,pc-i440fx-rhel7.6.0,pc-i440fx-2.12,pseries-rhel8.4.0,s390-ccw-virtio-2.12','4.7');
-select fn_db_add_config_value('ClusterEmulatedMachines','pc-q35-rhel9.6.0,pc-i440fx-rhel7.6.0,pseries-rhel8.5.0,s390-ccw-virtio-rhel9.4.0','4.8');
+select fn_db_add_config_value_for_versions_up_to('ClusterEmulatedMachines','pc-i440fx-rhel7.3.0,pc-i440fx-2.6,pseries-rhel7.5.0,s390-ccw-virtio-2.8,virt','4.2');
+select fn_db_add_config_value('ClusterEmulatedMachines','pc-i440fx-rhel7.6.0,pc-i440fx-2.12,pseries-rhel7.6.0-sxxm,s390-ccw-virtio-2.12,virt','4.3');
+select fn_db_add_config_value('ClusterEmulatedMachines','pc-q35-rhel8.1.0,pc-q35-4.1,pc-i440fx-rhel7.6.0,pc-i440fx-2.12,pseries-rhel8.1.0,s390-ccw-virtio-2.12,virt','4.4');
+select fn_db_add_config_value('ClusterEmulatedMachines','pc-q35-rhel8.3.0,pc-q35-4.1,pc-i440fx-rhel7.6.0,pc-i440fx-2.12,pseries-rhel8.3.0,s390-ccw-virtio-2.12,virt','4.5');
+select fn_db_add_config_value('ClusterEmulatedMachines','pc-q35-rhel8.4.0,pc-q35-4.1,pc-i440fx-rhel7.6.0,pc-i440fx-2.12,pseries-rhel8.4.0,s390-ccw-virtio-2.12,virt','4.6');
+select fn_db_add_config_value('ClusterEmulatedMachines','pc-q35-rhel8.6.0,pc-q35-4.1,pc-i440fx-rhel7.6.0,pc-i440fx-2.12,pseries-rhel8.4.0,s390-ccw-virtio-2.12,virt','4.7');
+select fn_db_add_config_value('ClusterEmulatedMachines','pc-q35-rhel9.6.0,pc-i440fx-rhel7.6.0,pseries-rhel8.5.0,s390-ccw-virtio-rhel9.4.0,virt','4.8');
 select fn_db_add_config_value('CpuOverCommitDurationMinutes','2','general');
 --Handling Data directory for ENGINE
 select fn_db_add_config_value('DataDir','/usr/share/engine','general');
@@ -176,23 +176,23 @@ select fn_db_add_config_value('HighUtilizationForEvenlyDistribute','75','general
 select fn_db_add_config_value('HighUtilizationForPowerSave','75','general');
 select fn_db_add_config_value('HostPreparingForMaintenanceIdleTime', '300', 'general');
 select fn_db_add_config_value('HostTimeDriftInSec','300','general');
-select fn_db_add_config_value_for_versions_up_to('HotPlugCpuSupported','{"x86":"true","ppc":"true","s390x":"true"}', '4.8');
-select fn_db_add_config_value_for_versions_up_to('HotUnplugCpuSupported', '{"x86":"true","ppc":"true","s390x":"false"}', '4.8');
-select fn_db_add_config_value_for_versions_up_to('HotPlugMemorySupported', '{"x86":"true","ppc":"true","s390x":"false"}', '4.8');
+select fn_db_add_config_value_for_versions_up_to('HotPlugCpuSupported','{"x86":"true","ppc":"true","s390x":"true","aarch64":"true"}', '4.8');
+select fn_db_add_config_value_for_versions_up_to('HotUnplugCpuSupported', '{"x86":"true","ppc":"true","s390x":"false","aarch64":"false"}', '4.8');
+select fn_db_add_config_value_for_versions_up_to('HotPlugMemorySupported', '{"x86":"true","ppc":"true","s390x":"false","aarch64":"false"}', '4.8');
 select fn_db_add_config_value('MaxMemorySlots','16','general');
 select fn_db_add_config_value('HotPlugMemoryMultiplicationSizeMb','256','general');
-select fn_db_add_config_value_for_versions_up_to('HotUnplugMemorySupported', '{"x86":"true","ppc":"true","s390x":"false"}', '4.8');
+select fn_db_add_config_value_for_versions_up_to('HotUnplugMemorySupported', '{"x86":"true","ppc":"true","s390x":"false","aarch64":"false"}', '4.8');
 select fn_db_add_config_value_for_versions_up_to('CopyPreallocatedFileBasedDiskSupported', 'false', '4.2');
 select fn_db_add_config_value_for_versions_up_to('CopyPreallocatedFileBasedDiskSupported', 'true', '4.8');
 select fn_db_add_config_value_for_versions_up_to('ManagedBlockDomainSupported', 'false', '4.5');
 select fn_db_add_config_value_for_versions_up_to('ManagedBlockDomainSupported', 'true', '4.8');
 
 -- migration support per architecture
-select fn_db_add_config_value_for_versions_up_to('IsMigrationSupported','{"undefined": "true", "x86": "true", "ppc" : "true", "s390x" : "true"}','4.8');
+select fn_db_add_config_value_for_versions_up_to('IsMigrationSupported','{"undefined": "true", "x86": "true", "ppc" : "true", "s390x" : "true", "aarch64" : "true"}','4.8');
 -- snapshot support per architecture
-select fn_db_add_config_value_for_versions_up_to('IsMemorySnapshotSupported','{"undefined": "true", "x86": "true", "ppc" : "true", "s390x" : "true"}','4.8');
+select fn_db_add_config_value_for_versions_up_to('IsMemorySnapshotSupported','{"undefined": "true", "x86": "true", "ppc" : "true", "s390x" : "true", "aarch64" : "true"}','4.8');
 -- suspend support per architecture
-select fn_db_add_config_value_for_versions_up_to('IsSuspendSupported','{"undefined": "true", "x86": "true", "ppc" : "true", "s390x" : "true"}','4.8');
+select fn_db_add_config_value_for_versions_up_to('IsSuspendSupported','{"undefined": "true", "x86": "true", "ppc" : "true", "s390x" : "true", "aarch64" : "true"}','4.8');
 select fn_db_add_config_value('OsRepositoryConfDir','/osinfo.conf.d','general');
 select fn_db_add_config_value('IterationsWithBalloonProblem','3','general');
 select fn_db_add_config_value('DefaultSysprepLocale','en_US','general');
@@ -335,9 +335,9 @@ select fn_db_add_config_value('MaxBlockDiskSizeInGibiBytes','8192','general');
 select fn_db_add_config_value('MaxNumberOfHostsInStoragePool','250','general');
 select fn_db_add_config_value_for_versions_up_to('MaxNumOfCpuPerSocket', '254', '4.8');
 select fn_db_add_config_value_for_versions_up_to('MaxNumOfThreadsPerCpu', '8', '4.8');
-select fn_db_add_config_value_for_versions_up_to('MaxNumOfVmCpus', '{"x86":384,"ppc":384,"s390x":384}', '4.4');
-select fn_db_add_config_value('MaxNumOfVmCpus', '{"x86":512,"ppc":384,"s390x":384}', '4.5');
-select fn_db_add_config_value_for_versions_up_to('MaxNumOfVmCpus', '{"x86":710,"ppc":384,"s390x":384}', '4.8');
+select fn_db_add_config_value_for_versions_up_to('MaxNumOfVmCpus', '{"x86":384,"ppc":384,"s390x":384,"aarch64":384}', '4.4');
+select fn_db_add_config_value('MaxNumOfVmCpus', '{"x86":512,"ppc":384,"s390x":384,"aarch64":384}', '4.5');
+select fn_db_add_config_value_for_versions_up_to('MaxNumOfVmCpus', '{"x86":710,"ppc":384,"s390x":384,"aarch64":384}', '4.8');
 select fn_db_add_config_value_for_versions_up_to('MaxNumOfVmSockets', '16', '4.5');
 select fn_db_add_config_value_for_versions_up_to('MaxNumOfVmSockets', '10000', '4.8');
 select fn_db_add_config_value('MaxNumOfCpusCoefficient', '2', 'general');
@@ -971,8 +971,8 @@ select fn_db_add_config_value_for_versions_up_to('IsDeferringFileVolumePrealloca
 select fn_db_add_config_value_for_versions_up_to('IsDeferringFileVolumePreallocationSupported', 'true', '4.8');
 select fn_db_add_config_value_for_versions_up_to('IsPortIsolationSupported', 'false', '4.4');
 select fn_db_add_config_value_for_versions_up_to('IsPortIsolationSupported', 'true', '4.8');
-select fn_db_add_config_value_for_versions_up_to('TpmDeviceSupported', '{"x86":"false","ppc":"false","s390x":"false"}', '4.5');
-select fn_db_add_config_value_for_versions_up_to('TpmDeviceSupported', '{"x86":"true","ppc":"true","s390x":"false"}', '4.8');
+select fn_db_add_config_value_for_versions_up_to('TpmDeviceSupported', '{"x86":"false","ppc":"false","s390x":"false","aarch64":"false"}', '4.5');
+select fn_db_add_config_value_for_versions_up_to('TpmDeviceSupported', '{"x86":"true","ppc":"true","s390x":"false","aarch64":"false"}', '4.8');
 select fn_db_add_config_value_for_versions_up_to('NvramPersistenceSupported', 'false', '4.5');
 select fn_db_add_config_value_for_versions_up_to('NvramPersistenceSupported', 'true', '4.8');
 select fn_db_add_config_value_for_versions_up_to('EnableBochsDisplay','false','4.5');
@@ -1145,12 +1145,12 @@ select fn_db_update_config_value('OvirtNodeOS','^ovirt.*$:^rhev.*$','general');
 select fn_db_update_config_value('oVirtISOsRepositoryPath','/usr/share/ovirt-node-iso:/usr/share/rhev-hypervisor','general');
 select fn_db_update_config_value('PostgresPagingSyntax','OFFSET (%1$s -1) LIMIT %2$s','general');
 select fn_db_update_config_value('PostgresSearchTemplate','SELECT * FROM (%2$s) %1$s) as T1 %3$s','general');
-select fn_db_update_config_value('ClusterEmulatedMachines','pc-i440fx-rhel7.3.0,pc-i440fx-2.6,pseries-rhel7.5.0,s390-ccw-virtio-2.8','4.2');
-select fn_db_update_config_value('ClusterEmulatedMachines','pc-i440fx-rhel7.6.0,pc-i440fx-2.12,pseries-rhel7.6.0-sxxm,s390-ccw-virtio-2.12','4.3');
+select fn_db_update_config_value('ClusterEmulatedMachines','pc-i440fx-rhel7.3.0,pc-i440fx-2.6,pseries-rhel7.5.0,s390-ccw-virtio-2.8,virt','4.2');
+select fn_db_update_config_value('ClusterEmulatedMachines','pc-i440fx-rhel7.6.0,pc-i440fx-2.12,pseries-rhel7.6.0-sxxm,s390-ccw-virtio-2.12,virt','4.3');
 -- Since 4.4 every x86 cluster keeps two emulated machine types: for i440fx and q35 chipsets. Thus, host must support
 -- both chipsets and ClusterEmulatedMachines list also should contain values for both of them.
-select fn_db_update_config_value('ClusterEmulatedMachines','pc-q35-rhel8.1.0,pc-q35-4.1,pc-i440fx-rhel7.6.0,pc-i440fx-2.12,pseries-rhel8.1.0,s390-ccw-virtio-2.12','4.4');
-select fn_db_update_config_value('ClusterEmulatedMachines','pc-q35-rhel8.3.0,pc-q35-4.1,pc-i440fx-rhel7.6.0,pc-i440fx-2.12,pseries-rhel8.3.0,s390-ccw-virtio-2.12','4.5');
+select fn_db_update_config_value('ClusterEmulatedMachines','pc-q35-rhel8.1.0,pc-q35-4.1,pc-i440fx-rhel7.6.0,pc-i440fx-2.12,pseries-rhel8.1.0,s390-ccw-virtio-2.12,virt','4.4');
+select fn_db_update_config_value('ClusterEmulatedMachines','pc-q35-rhel8.3.0,pc-q35-4.1,pc-i440fx-rhel7.6.0,pc-i440fx-2.12,pseries-rhel8.3.0,s390-ccw-virtio-2.12,virt','4.5');
 select fn_db_update_config_value('SpiceDriverNameInGuest','{"windows": "RHEV-Spice", "linux" : "xorg-x11-drv-qxl" }','general');
 select fn_db_update_config_value('SupportedClusterLevels','4.2,4.3,4.4,4.5,4.6,4.7,4.8','general');
 select fn_db_update_config_value('SupportedVDSMVersions','4.20,4.30,4.40,4.50','general');
@@ -1168,24 +1168,24 @@ select fn_db_update_config_value('AutoStartVmsRunnerIntervalInSeconds','1','gene
 select fn_db_update_config_value('AllowEditingHostedEngine','true','general');
 
 -- enable migration, memory snapshot and suspend in the ppc64 architecture
-select fn_db_update_config_value('IsMigrationSupported','{"undefined": "true", "x86": "true", "ppc" : "true", "s390x" : "true"}','4.2');
-select fn_db_update_config_value('IsMemorySnapshotSupported','{"undefined": "true", "x86": "true", "ppc" : "true", "s390x" : "true"}','4.2');
-select fn_db_update_config_value('IsSuspendSupported','{"undefined": "true", "x86": "true", "ppc" : "true", "s390x" : "true"}','4.2');
+select fn_db_update_config_value('IsMigrationSupported','{"undefined": "true", "x86": "true", "ppc" : "true", "s390x" : "true", "aarch64" : "true"}','4.2');
+select fn_db_update_config_value('IsMemorySnapshotSupported','{"undefined": "true", "x86": "true", "ppc" : "true", "s390x" : "true", "aarch64" : "true"}','4.2');
+select fn_db_update_config_value('IsSuspendSupported','{"undefined": "true", "x86": "true", "ppc" : "true", "s390x" : "true", "aarch64" : "true"}','4.2');
 
--- s390x architecture support
-select fn_db_update_config_value('HotPlugCpuSupported', '{"x86":"true","ppc":"true","s390x":"true"}', '4.2');
-select fn_db_update_config_value('HotUnplugCpuSupported', '{"x86":"true","ppc":"true","s390x":"false"}', '4.2');
+-- s390x + aarch64 architecture support
+select fn_db_update_config_value('HotPlugCpuSupported', '{"x86":"true","ppc":"true","s390x":"true","aarch64":"true"}', '4.2');
+select fn_db_update_config_value('HotUnplugCpuSupported', '{"x86":"true","ppc":"true","s390x":"false","aarch64":"false"}', '4.2');
 
 select fn_db_update_config_value('PredefinedVMProperties', 'sap_agent=^(true|false)$;sndbuf=^[0-9]+$;vhost=^(([a-zA-Z0-9_]*):(true|false))(,(([a-zA-Z0-9_]*):(true|false)))*$;viodiskcache=^(none|writeback|writethrough)$;hugepages=^[0-9]+$', '4.2');
 select fn_db_update_config_value('PredefinedVMProperties', 'sap_agent=^(true|false)$;sndbuf=^[0-9]+$;vhost=^(([a-zA-Z0-9_]*):(true|false))(,(([a-zA-Z0-9_]*):(true|false)))*$;viodiskcache=^(none|writeback|writethrough)$;hugepages=^[0-9]+$', '4.3');
 select fn_db_update_config_value_for_versions_from_up_to('PredefinedVMProperties', 'sap_agent=^(true|false)$;sndbuf=^[0-9]+$;vhost=^(([a-zA-Z0-9_-]*):(true|false))(,(([a-zA-Z0-9_-]*):(true|false)))*$;viodiskcache=^(none|writeback|writethrough)$;hugepages=^[0-9]+$;scsi_hostdev=^(scsi_generic|scsi_block|scsi_hd|virtio_blk_pci)$;nvram_template=^.*$', '4.4','4.5');
 select fn_db_update_config_value_for_versions_from_up_to('PredefinedVMProperties', 'sap_agent=^(true|false)$;sndbuf=^[0-9]+$;vhost=^(([a-zA-Z0-9_-]*):(true|false))(,(([a-zA-Z0-9_-]*):(true|false)))*$;viodiskcache=^(none|writeback|writethrough)$;hugepages=^[0-9]+$;scsi_hostdev=^(scsi_generic|scsi_block|scsi_hd|virtio_blk_pci)$;nvram_template=^.*$;extra_cpu_flags=^([+-]?[a-zA-Z0-9_-]+)(,[+-]?[a-zA-Z0-9_-]+)*$', '4.6', '4.8');
 
-select fn_db_update_config_value('HotPlugMemorySupported','{"x86":"true","ppc":"true","s390x":"false"}', '4.2');
-select fn_db_update_config_value('HotUnplugMemorySupported','{"x86":"true","ppc":"true","s390x":"false"}','4.2');
-select fn_db_update_config_value_for_versions_from_up_to('MaxNumOfVmCpus', '{"x86":384,"ppc":384,"s390x":384}', '4.2', '4.4');
-select fn_db_update_config_value('MaxNumOfVmCpus', '{"x86":512,"ppc":384,"s390x":384}', '4.5');
-select fn_db_update_config_value('MaxNumOfVmCpus', '{"x86":710,"ppc":384,"s390x":384}', '4.6');
+select fn_db_update_config_value('HotPlugMemorySupported','{"x86":"true","ppc":"true","s390x":"false","aarch64":"false"}', '4.2');
+select fn_db_update_config_value('HotUnplugMemorySupported','{"x86":"true","ppc":"true","s390x":"false","aarch64":"false"}','4.2');
+select fn_db_update_config_value_for_versions_from_up_to('MaxNumOfVmCpus', '{"x86":384,"ppc":384,"s390x":384,"aarch64":384}', '4.2', '4.4');
+select fn_db_update_config_value('MaxNumOfVmCpus', '{"x86":512,"ppc":384,"s390x":384,"aarch64":384}', '4.5');
+select fn_db_update_config_value('MaxNumOfVmCpus', '{"x86":710,"ppc":384,"s390x":384,"aarch64":384}', '4.6');
 select fn_db_update_config_value('MaxNumOfCpuPerSocket', '254', '4.2');
 select fn_db_update_config_value_for_versions_from_up_to('VM64BitMaxMemorySizeInMB', '6291456', '4.2','4.5');
 select fn_db_update_config_value('VM64BitMaxMemorySizeInMB', '16777216', '4.6');
@@ -1271,7 +1271,9 @@ select fn_db_update_config_value('ServerCPUList',
         || '2:IBM z114, z196:sie,model_z196-base:z196-base:s390x; '
         || '3:IBM zBC12, zEC12:sie,model_zEC12-base:zEC12-base:s390x; '
         || '4:IBM z13s, z13:sie,model_z13-base:z13-base:s390x; '
-        || '5:IBM z14:sie,model_z14-base:z14-base:s390x;',
+        || '5:IBM z14:sie,model_z14-base:z14-base:s390x; '
+        || '1:ARM64 V8.0:asimd:host:aarch64; '
+        || '2:ARM64 V8.2:asimd,aes:host:aarch64;',
     '4.3');
 select fn_db_update_config_value('ServerCPUList',
     '1:Intel Nehalem Family:vmx,nx,model_Nehalem:Nehalem:x86_64; '
@@ -1301,7 +1303,9 @@ select fn_db_update_config_value('ServerCPUList',
         || '1:IBM z114, z196:sie,model_z196-base:z196-base:s390x; '
         || '2:IBM zBC12, zEC12:sie,model_zEC12-base:zEC12-base:s390x; '
         || '3:IBM z13s, z13:sie,model_z13-base:z13-base:s390x; '
-        || '4:IBM z14:sie,model_z14-base:z14-base:s390x;',
+        || '4:IBM z14:sie,model_z14-base:z14-base:s390x; '
+        || '1:ARM64 V8.0:asimd:host:aarch64; '
+        || '2:ARM64 V8.2:asimd,aes:host:aarch64;',
     '4.4');
 select fn_db_update_config_value('ServerCPUList',
     '1:Intel Nehalem Family:vmx,nx,model_Nehalem:Nehalem:x86_64; '
@@ -1333,7 +1337,9 @@ select fn_db_update_config_value('ServerCPUList',
         || '1:IBM z114, z196:sie,model_z196-base:z196-base:s390x; '
         || '2:IBM zBC12, zEC12:sie,model_zEC12-base:zEC12-base:s390x; '
         || '3:IBM z13s, z13:sie,model_z13-base:z13-base:s390x; '
-        || '4:IBM z14:sie,model_z14-base:z14-base:s390x;',
+        || '4:IBM z14:sie,model_z14-base:z14-base:s390x; '
+        || '1:ARM64 V8.0:asimd:host:aarch64; '
+        || '2:ARM64 V8.2:asimd,aes:host:aarch64;',
     '4.5');
 select fn_db_update_config_value('ServerCPUList',
     '1:Intel Nehalem Family:vmx,nx,model_Nehalem:Nehalem:x86_64; '
@@ -1365,7 +1371,9 @@ select fn_db_update_config_value('ServerCPUList',
         || '1:IBM z114, z196:sie,model_z196-base:z196-base:s390x; '
         || '2:IBM zBC12, zEC12:sie,model_zEC12-base:zEC12-base:s390x; '
         || '3:IBM z13s, z13:sie,model_z13-base:z13-base:s390x; '
-        || '4:IBM z14:sie,model_z14-base:z14-base:s390x;',
+        || '4:IBM z14:sie,model_z14-base:z14-base:s390x; '
+        || '1:ARM64 V8.0:asimd:host:aarch64; '
+        || '2:ARM64 V8.2:asimd,aes:host:aarch64;',
     '4.6');
 select fn_db_update_config_value('ServerCPUList',
     '1:Intel Nehalem Family:vmx,nx,model_Nehalem:Nehalem:x86_64; '
@@ -1397,7 +1405,9 @@ select fn_db_update_config_value('ServerCPUList',
         || '1:IBM z114, z196:sie,model_z196-base:z196-base:s390x; '
         || '2:IBM zBC12, zEC12:sie,model_zEC12-base:zEC12-base:s390x; '
         || '3:IBM z13s, z13:sie,model_z13-base:z13-base:s390x; '
-        || '4:IBM z14:sie,model_z14-base:z14-base:s390x;',
+        || '4:IBM z14:sie,model_z14-base:z14-base:s390x; '
+        || '1:ARM64 V8.0:asimd:host:aarch64; '
+        || '2:ARM64 V8.2:asimd,aes:host:aarch64;',
     '4.7');
 select fn_db_update_config_value('ServerCPUList',
         '1:Intel Nehalem Family:vmx,nx,model_Nehalem:Nehalem:x86_64; '
@@ -1437,7 +1447,9 @@ select fn_db_update_config_value('ServerCPUList',
         || '1:IBM z114, z196:sie,model_z196-base:z196-base:s390x; '
         || '2:IBM zBC12, zEC12:sie,model_zEC12-base:zEC12-base:s390x; '
         || '3:IBM z13s, z13:sie,model_z13-base:z13-base:s390x; '
-        || '4:IBM z14:sie,model_z14-base:z14-base:s390x;',
+        || '4:IBM z14:sie,model_z14-base:z14-base:s390x; '
+        || '1:ARM64 V8.0:asimd:host:aarch64; '
+        || '2:ARM64 V8.2:asimd,aes:host:aarch64;',
     '4.8');
 -- qemu-guest-agent is also a viable agent
 select fn_db_update_config_value('AgentAppName','ovirt-guest-agent-common,ovirt-guest-agent,qemu-guest-agent','general');
@@ -1537,7 +1549,7 @@ select fn_db_update_config_value_for_versions_from_up_to('UseNativeIOForGluster'
 select fn_db_update_default_config_value('VncKeyboardLayoutValidValues','ar,da,de,de-ch,en-gb,en-us,es,et,fi,fo,fr,fr-be,fr-ca,fr-ch,hr,hu,is,it,ja,lt,lv,mk,nl,nl-be,no,pl,pt,pt-br,ru,sl,sv,th,tr','ar,cz,da,de,de-ch,en-gb,en-us,es,et,fi,fo,fr,fr-be,fr-ca,fr-ch,hr,hu,is,it,ja,lt,lv,mk,nl,no,pl,pt,pt-br,ru,sl,sv,th,tr','general', false);
 
 -- Enable TPM
-select fn_db_update_default_config_value('TpmDeviceSupported', '{"x86":"false","ppc":"false","s390x":"false"}', '{"x86":"true","ppc":"true","s390x":"false"}', '4.6', false);
+select fn_db_update_default_config_value('TpmDeviceSupported', '{"x86":"false","ppc":"false","s390x":"false","aarch64":"false"}', '{"x86":"true","ppc":"true","s390x":"false","aarch64":"false"}', '4.6', false);
 
 -- Enable NVRAM persistence
 select fn_db_update_default_config_value('NvramPersistenceSupported', 'false', 'true', '4.6', false);

@@ -437,6 +437,7 @@ public class LibvirtVmXmlBuilder {
         switch (vm.getClusterArch().getFamily()) {
             case x86:
             case s390x:
+            case aarch64:
                 writer.writeAttributeString("match", "exact");
 
                 // is this a list of strings??..
@@ -704,6 +705,21 @@ public class LibvirtVmXmlBuilder {
                         secureBoot ? "OVMF_VARS.secboot.fd" : "OVMF_VARS.fd");
             }
             writer.writeAttributeString("template", nvramTemplate);
+            writer.writeRaw(String.format("/var/lib/libvirt/qemu/nvram/%s.fd", vm.getId()));
+            writer.writeEndElement();
+        }
+
+        if (vm.getClusterArch().getFamily() == ArchitectureType.aarch64) {
+            writer.writeStartElement("loader");
+            writer.writeAttributeString("readonly", "yes");
+            writer.writeAttributeString("type", "pflash");
+            writer.writeAttributeString("format", "qcow2");
+            writer.writeRaw("/usr/share/edk2/aarch64/QEMU_EFI-silent-pflash.qcow2");
+            writer.writeEndElement();
+            writer.writeStartElement("nvram");
+            // TODO, use String nvramTemplate = vmCustomProperties.get("nvram_template");
+            writer.writeAttributeString("template", "/usr/share/edk2/aarch64/vars-template-pflash.qcow2");
+            writer.writeAttributeString("templateFormat", "qcow2");
             writer.writeRaw(String.format("/var/lib/libvirt/qemu/nvram/%s.fd", vm.getId()));
             writer.writeEndElement();
         }
@@ -1077,11 +1093,21 @@ public class LibvirtVmXmlBuilder {
                     writeInput();
                     break;
                 }
+            case aarch64:
+                writeInput();
+                // TODO, is there a better way to define the keyboard?
+                writer.writeStartElement("input");
+                writer.writeAttributeString("type", "keyboard");
+                writer.writeAttributeString("bus", "usb");
+                writer.writeEndElement();
+                break;
         }
 
         writeGuestAgentChannels();
 
-        if (vm.getClusterArch() == ArchitectureType.ppc64 || vm.getClusterArch() == ArchitectureType.ppc64le) {
+        if (vm.getClusterArch() == ArchitectureType.ppc64 ||
+            vm.getClusterArch() == ArchitectureType.ppc64le ||
+            vm.getClusterArch() == ArchitectureType.aarch64) {
             writeEmulator();
         }
 

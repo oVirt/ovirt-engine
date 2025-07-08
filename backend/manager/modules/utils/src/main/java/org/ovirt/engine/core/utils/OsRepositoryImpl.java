@@ -58,6 +58,7 @@ public enum OsRepositoryImpl implements OsRepository {
         defaultOsMap.put(ArchitectureType.x86_64, DEFAULT_X86_OS);
         defaultOsMap.put(ArchitectureType.ppc64, DEFAULT_PPC_OS);
         defaultOsMap.put(ArchitectureType.s390x, DEFAULT_S390_OS);
+        defaultOsMap.put(ArchitectureType.aarch64, DEFAULT_AARCH64_OS);
     }
 
     public void init(MapBackedPreferences preferences) {
