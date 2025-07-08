@@ -84,6 +84,10 @@ public class HugePageUtils {
         return hugePageMap;
     }
 
+    private static long longMultiply(int a, int b) {
+            return Long.valueOf(a) * Long.valueOf(b);
+        }
+
     public static int totalHugePageMemMb(Map<Integer, Integer> hugepages) {
         long hugePageMemKb = hugepages.entrySet().stream()
                 .mapToLong(entry -> longMultiply(entry.getKey(), entry.getValue()))
