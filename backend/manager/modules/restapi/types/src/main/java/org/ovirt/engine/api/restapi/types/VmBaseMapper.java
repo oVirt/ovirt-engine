@@ -400,6 +400,8 @@ public class VmBaseMapper {
             }
             model.getPlacementPolicy().setHosts(hostsList);
         }
+
+        model.setDisplay(DisplayMapper.map(entity, null));
     }
 
     /**
