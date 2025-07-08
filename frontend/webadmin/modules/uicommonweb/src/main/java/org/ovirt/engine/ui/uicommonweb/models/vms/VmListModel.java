@@ -1326,11 +1326,9 @@ public class VmListModel<E> extends VmBaseListModel<E, VM>
             return;
         }
 
-        if (!model.validateNaming()) {
-            return;
-        }
-
-        if (model.getIsSubTemplate().getEntity()) {
+        if (!model.validate(false)) {
+            model.setIsValid(false);
+        } else if (model.getIsSubTemplate().getEntity()) {
             postNameUniqueCheck();
         } else {
             String name = model.getName().getEntity();
@@ -2193,7 +2191,7 @@ public class VmListModel<E> extends VmBaseListModel<E, VM>
     }
 
     protected void exportOva() {
-        VM selectedEntity = (VM) getSelectedItem();
+        VM selectedEntity = getSelectedItem();
         if (selectedEntity == null) {
             return;
         }
