@@ -10,6 +10,7 @@ import org.ovirt.engine.ui.common.widget.action.AbstractButtonDefinition;
 import org.ovirt.engine.ui.common.widget.action.ActionButtonDefinition;
 import org.ovirt.engine.ui.common.widget.panel.AlertPanel;
 import org.ovirt.engine.ui.common.widget.uicommon.tasks.ToastNotification.NotificationStatus;
+import org.ovirt.engine.ui.uicommonweb.models.ApplyHiddenSearchStringEvent;
 import org.ovirt.engine.ui.uicommonweb.models.ApplySearchStringEvent;
 import org.ovirt.engine.ui.webadmin.place.WebAdminPlaceManager;
 import org.ovirt.engine.ui.webadmin.plugin.entity.EntityObject;
@@ -312,6 +313,13 @@ public class PluginUiFunctions implements HasHandlers {
      */
     public void setSearchString(final String searchString) {
         Scheduler.get().scheduleDeferred(() -> ApplySearchStringEvent.fire(PluginUiFunctions.this, searchString));
+    }
+
+    /**
+     * Applies the given search string as hidden filter part, which triggers transition to the corresponding application place.
+     */
+    public void setHiddenSearchString(final String hiddenSearchString) {
+        Scheduler.get().scheduleDeferred(() -> ApplyHiddenSearchStringEvent.fire(PluginUiFunctions.this, hiddenSearchString));
     }
 
     /**
