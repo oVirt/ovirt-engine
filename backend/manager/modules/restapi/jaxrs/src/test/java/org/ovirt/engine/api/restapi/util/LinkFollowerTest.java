@@ -1,10 +1,5 @@
 package org.ovirt.engine.api.restapi.util;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -23,6 +18,12 @@ import org.ovirt.engine.api.restapi.resource.ResourceLocator;
 import org.ovirt.engine.api.restapi.resource.utils.LinkFollower;
 import org.ovirt.engine.api.restapi.resource.utils.LinksTreeNode;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 @ExtendWith(MockitoExtension.class)
 public class LinkFollowerTest {
 
@@ -38,7 +39,9 @@ public class LinkFollowerTest {
         linkFollower = new LinkFollower(resourceLocator) {
             //override fetch() since it requires a real environment and would crash tests.
             protected ActionableResource fetch(String href) {
-                if (href.equals("/ovirt-engine/api/vms/63978315-2d17-4e67-b393-2ea60a8aeacb/nics")) {
+                if (href == null) {
+                    return null;
+                } else if (href.equals("/ovirt-engine/api/vms/63978315-2d17-4e67-b393-2ea60a8aeacb/nics")) {
                     return createNics();
                 } else if (href.equals("/ovirt-engine/api/vms/63978315-2d17-4e67-b393-2ea60a8aeacb/diskattachments")) {
                     return createDiskAttachments();
@@ -73,6 +76,25 @@ public class LinkFollowerTest {
         assertNotNull(vm.getDiskAttachments().getDiskAttachments().get(0).getDisk());
         assertNotNull(vm.getDiskAttachments().getDiskAttachments().get(1).getDisk());
         assertNotNull(vm.getDiskAttachments().getDiskAttachments().get(2).getDisk());
+    }
+
+    @Test
+    public void testFollowLinksIfFollowIsIncorrect() throws SecurityException, IllegalArgumentException {
+        LinksTreeNode linksTree = linkFollower.createLinksTree(Vm.class, "incorrect_nics");
+        Vm vm = createVm();
+        linkFollower.followLinks(vm, linksTree);
+        assertNull(vm.getNics());
+        assertNull(vm.getDiskAttachments());
+    }
+
+    @Test
+    public void testFollowLinksIfFollowedEntityIsNull() throws SecurityException, IllegalArgumentException {
+        LinksTreeNode linksTree = linkFollower.createLinksTree(Vm.class, "template");
+        Vm vm = createVm();
+        linkFollower.followLinks(vm, linksTree);
+        assertNull(vm.getTemplate());
+        assertNull(vm.getNics());
+        assertNull(vm.getDiskAttachments());
     }
 
     private Vm createVm() {
