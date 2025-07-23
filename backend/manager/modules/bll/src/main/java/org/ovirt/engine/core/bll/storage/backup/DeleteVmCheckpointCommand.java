@@ -29,7 +29,6 @@ import org.ovirt.engine.core.common.action.VmCheckpointParameters;
 import org.ovirt.engine.core.common.action.VolumeBitmapCommandParameters;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.VDS;
-import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VdsmImageLocationInfo;
 import org.ovirt.engine.core.common.businessentities.VmBackup;
 import org.ovirt.engine.core.common.businessentities.VmCheckpoint;
@@ -240,7 +239,7 @@ public class DeleteVmCheckpointCommand<T extends VmCheckpointParameters> extends
     }
 
     private boolean isLiveDeleteCheckpoint() {
-        return getVm().getStatus() == VMStatus.Up;
+        return getVm().getStatus().isRunningOrPaused();
     }
 
     @Override
