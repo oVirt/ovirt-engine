@@ -14,13 +14,14 @@ To have a bit of structure in the commits, we have setup some rules about commit
 
 First of all, the commit title should be prepended with a defined prefix:
 
-`<core | restapi | webadmin | setup | db | packaging | build | ci | docs>:` short summary under 50 chars
+`<core | restapi | webadmin | setup | db | ansible | packaging | build | ci | docs>:` short summary under 50 chars
 
 * `core`: main functionality changes (backend/manager/modules/*/src/main/java/org/ovirt/engine/core)
 * `restapi`: changes to the restapi code (backend/manager/modules/restapi)
 * `webadmin`: web/ui changes (frontend/webadmin)
 * `setup`: changes to the setup scripts (packaging/setup)
 * `db`: changes to the db structure (packaging/dbscripts)
+* `ansible`: changes to the ansible code (packaging/ansible-runner-service-project)
 * `packaging`: changes in packaging/ but does not fit the above ones
 * `build`: changes to the build system/new release/etc
 * `ci`: changes for ci/copr/etc
