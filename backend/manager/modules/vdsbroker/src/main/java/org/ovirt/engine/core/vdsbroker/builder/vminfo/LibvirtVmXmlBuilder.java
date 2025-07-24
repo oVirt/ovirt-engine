@@ -432,6 +432,12 @@ public class LibvirtVmXmlBuilder {
             cpuType += "," + cpuFlagsProperty;
         }
 
+        // Add topoext on AMD EPYC, if it is not already set
+        if (cpuModelSupplier.get() != null && cpuModelSupplier.get().contains("AMD EPYC") &&
+                !cpuType.contains("topoext")) {
+            cpuType += ",+topoext";
+        }
+
         String[] typeAndFlags = cpuType.split(",");
 
         switch (vm.getClusterArch().getFamily()) {
