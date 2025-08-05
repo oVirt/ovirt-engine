@@ -139,6 +139,10 @@ public class LinkFollower {
      * follow all links in the provided links-tree, recursively.
      */
     private void followLink(ActionableResource entity, LinksTreeNode node) {
+        if (entity == null || node == null) {
+            return;
+        }
+
         List<ActionableResource> nextStepEntities = new LinkedList<>();
         if (EntityHelper.isCollection(entity)) {
             nextStepEntities.addAll(fetchData((BaseResources) entity, node));
@@ -204,12 +208,15 @@ public class LinkFollower {
             String element = underscoreToCamelCase(link.getElement());
             if (link.isFollowed()) {
                 Method getter = ReflectionHelper.getGetter(entity, element);
-                return (ActionableResource) getter.invoke(entity);
+                return getter != null ? (ActionableResource) getter.invoke(entity) : null;
             } else {
                 String href = getHref((BaseResource) entity, link.getElement());
                 ActionableResource result = fetch(href);
-                Method setter = ReflectionHelper.getSetter(entity, element);
-                setter.invoke(entity, result);
+
+                if (result != null) {
+                    Method setter = ReflectionHelper.getSetter(entity, element);
+                    setter.invoke(entity, result);
+                }
                 return result;
             }
         } catch (Exception e) {
@@ -243,8 +250,8 @@ public class LinkFollower {
             return optional.get().getHref();
         } else { //assume this is not a sub-collection, since it wasn't found among links.
             Method getter = ReflectionHelper.getGetter(entity, underscoreToCamelCase(link));
-            BaseResource member = (BaseResource) getter.invoke(entity);
-            return member.getHref();
+            BaseResource member = getter != null ? (BaseResource) getter.invoke(entity) : null;
+            return member != null ? member.getHref() : null;
         }
     }
 
@@ -252,6 +259,10 @@ public class LinkFollower {
      * This scope of this method is 'protected' for testing purposes.
      */
     protected ActionableResource fetch(String href) {
+        if (href == null) {
+            return null;
+        }
+
         try {
             BaseBackendResource resource = resourceLocator.locateResource(href);
             //need to invoke the method in the resource annotated with @GET
