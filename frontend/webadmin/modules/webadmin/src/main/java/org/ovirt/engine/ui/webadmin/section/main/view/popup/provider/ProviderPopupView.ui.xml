@@ -87,7 +87,7 @@
                                     <ge:StringEntityModelPasswordBoxEditor ui:field="passwordEditor" label="{constants.passwordProvider}" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" autocomplete="new-password" />
                                 </b:Row>
                                 <b:Row>
-                                    <e:ListModelListBoxEditor ui:field="authProtocolEditor" label="Protocol" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
+                                    <e:ListModelListBoxEditor ui:field="authProtocolEditor" label="{constants.authProtocol}" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
                                 </b:Row>
                                 <b:Row>
                                     <ge:StringEntityModelTextBoxEditor ui:field="authHostnameEditor" label="{constants.authHostName}"  usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
