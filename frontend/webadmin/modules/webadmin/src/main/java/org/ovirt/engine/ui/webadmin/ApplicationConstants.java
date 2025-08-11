@@ -2642,6 +2642,8 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     String tenantName();
 
+    String authProtocol();
+
     String authHostName();
 
     String authPort();
