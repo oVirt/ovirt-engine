@@ -369,6 +369,7 @@ Requires:	ovirt-dependencies >= 4.5.2
 # https://bugzilla.redhat.com/1955375
 Requires:	ceph-common
 Requires:	python3-cinderlib
+Requires:	python3-urllib3
 
 %{?extra_main_requires}
 
@@ -636,7 +637,6 @@ Requires:	java-11-openjdk-headless >= %{openjdk_version}
 Requires:	logrotate
 Requires:	python3-dateutil
 Requires:	python3-psycopg2
-Requires:	python3-six
 Requires(pre):		shadow-utils
 Requires(post):		systemd
 Requires(preun):	systemd
@@ -707,7 +707,6 @@ Requires(postun):	systemd
 %package setup-plugin-websocket-proxy
 Summary:	Setup and upgrade specific plugins for websocket-proxy
 Requires:	%{name}-setup-plugin-ovirt-engine-common = %{version}-%{release}
-Requires:	python3-six
 
 %description setup-plugin-websocket-proxy
 Setup and upgrade specific plugins for websocket-proxy

@@ -13,18 +13,15 @@ from subprocess import call
 from subprocess import check_call
 from subprocess import check_output
 
-import six
 import yaml
 
 NUL = b"\0"
 TAR_BLOCK_SIZE = 512
 
-python2 = sys.version_info < (3, 0)
-
 
 def from_bytes(string):
     return (string.decode('utf-8')
-            if isinstance(string, six.binary_type) else string)
+            if isinstance(string, bytes) else string)
 
 
 def extract_disk(ova_path, offset, image_path, image_format):
@@ -65,7 +62,7 @@ def nts(s, encoding, errors):
     p = s.find(NUL)
     if p != -1:
         s = s[:p]
-    return (s if python2 else s.decode(encoding, errors))
+    return s.decode(encoding, errors)
 
 
 def nti(s):
@@ -76,7 +73,7 @@ def nti(s):
     and the prefix 0o377 is ignored because we use this
     function to parse only non-negative values.
     """
-    if s[0] != (chr(0o200) if python2 else 0o200):
+    if s[0] != 0o200:
         try:
             s = nts(s, "ascii", "strict")
             n = int(s.strip() or "0", 8)
@@ -85,10 +82,10 @@ def nti(s):
             raise
     else:
         n = 0
-        r = six.moves.xrange(len(s) - 1)
+        r = range(len(s) - 1)
         for i in r:
             n <<= 8
-            n += ord(s[i + 1]) if python2 else s[i + 1]
+            n += s[i + 1]
     return n
 
 
@@ -124,7 +121,7 @@ def extract_disks(ova_path, image_paths_and_formats, image_mappings):
             else:
                 image_guid = image_mappings[name] if image_mappings else name
                 for image_path_and_format in \
-                        six.iteritems(image_paths_and_formats):
+                        image_paths_and_formats.items():
                     image_path = image_path_and_format[0]
                     image_format = image_path_and_format[1]
                     if image_guid in image_path:
