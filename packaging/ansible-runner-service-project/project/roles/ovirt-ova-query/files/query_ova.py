@@ -2,8 +2,6 @@ import os
 import sys
 import tarfile
 
-import six
-
 if len(sys.argv) < 4:
     print("Usage: query_ova.py <vm/template> ova_path list_directory")
     sys.exit(2)
@@ -24,7 +22,7 @@ def match_entity(filename, templates):
 
 def from_bytes(ovf):
     return (ovf.decode('utf-8')
-            if isinstance(ovf, six.binary_type) else ovf)
+            if isinstance(ovf, bytes) else ovf)
 
 
 def get_ovf_from_ova_file(ova_path, templates=None):
@@ -67,7 +65,7 @@ def get_ovf_from_dir(ova_path, list_directory, templates):
 
         if ova_to_ovf:
             pairs = '::'.join("%s=%s" % (key, val) for
-                              (key, val) in six.iteritems(ova_to_ovf))
+                              (key, val) in ova_to_ovf.items())
             return '{%s}' % (pairs)
         else:
             raise Exception('Failed to find OVF in dir %s' % ova_path)

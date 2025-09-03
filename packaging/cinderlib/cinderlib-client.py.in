@@ -24,10 +24,9 @@ import traceback
 # uses monkey patched objects
 eventlet.monkey_patch()
 
-import requests
+import urllib3
 
-
-from requests.packages.urllib3.exceptions import InsecureRequestWarning
+from urllib3.exceptions import InsecureRequestWarning
 
 import config
 
@@ -40,7 +39,7 @@ except ImportError:
     cl = None
 
 # Silence SSL warnings for older versions
-requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
+urllib3.disable_warnings(InsecureRequestWarning)
 
 logger = None
 

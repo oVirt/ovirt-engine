@@ -7,4 +7,4 @@
 
 - name: Set facts
   ansible.builtin.set_fact:
-    ansible_python_interpreter: "{{ '/usr/bin/python3' if result.rc == 0 else '/usr/bin/python2' }}"
+    ansible_python_interpreter: /usr/bin/python3
