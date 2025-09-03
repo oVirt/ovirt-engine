@@ -15,7 +15,7 @@ import gettext
 import os
 import time
 
-from six.moves.urllib.request import urlopen
+from urllib.request import urlopen
 
 from otopi import constants as otopicons
 from otopi import filetransaction

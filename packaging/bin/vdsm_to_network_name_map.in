@@ -14,7 +14,6 @@ import sys
 
 import psycopg2
 import psycopg2.extras
-import six
 
 
 class PwdArgsParser(argparse.ArgumentParser):
@@ -99,7 +98,7 @@ def main():
     network_name_map = _create_network_name_map(conn.cursor())
     conn.close()
 
-    for (dc_name, vdsm_name), network_name in six.iteritems(network_name_map):
+    for (dc_name, vdsm_name), network_name in network_name_map.items():
         print(vdsm_name, '\t', network_name, '\t', dc_name)
 
 

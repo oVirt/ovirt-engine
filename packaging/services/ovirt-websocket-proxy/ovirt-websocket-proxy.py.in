@@ -13,7 +13,7 @@ import socket
 import ssl
 import struct
 import sys
-from six.moves.urllib import parse
+from urllib import parse
 
 import websocket
 import websockify

@@ -13,6 +13,4 @@
 
 - name: Setup Ansible Python interpreter
   ansible.builtin.set_fact:
-    ansible_python_interpreter: "{{ '/usr/bin/python3'
-        if (fc_ver | int > 0 or el_ver | int >= 8)
-        else '/usr/bin/python2' }}"
+    ansible_python_interpreter: /usr/bin/python3
