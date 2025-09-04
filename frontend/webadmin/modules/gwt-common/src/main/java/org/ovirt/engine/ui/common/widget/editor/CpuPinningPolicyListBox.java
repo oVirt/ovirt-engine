@@ -6,6 +6,12 @@ import org.ovirt.engine.ui.common.gin.AssetProvider;
 import org.ovirt.engine.ui.common.widget.renderer.EnumRenderer;
 import org.ovirt.engine.ui.uicommonweb.models.vms.CpuPinningListModel.CpuPinningListModelItem;
 
+import com.google.gwt.dom.client.Style.Overflow;
+import com.google.gwt.dom.client.Style.TextOverflow;
+import com.google.gwt.dom.client.Style.Unit;
+import com.google.gwt.dom.client.Style.WhiteSpace;
+import com.google.gwt.safecss.shared.SafeStylesBuilder;
+
 public class CpuPinningPolicyListBox extends ListModelTypeAheadListBox<CpuPinningListModelItem> {
 
     public CpuPinningPolicyListBox() {
@@ -55,10 +61,17 @@ public class CpuPinningPolicyListBox extends ListModelTypeAheadListBox<CpuPinnin
         }
 
         private String typeAheadNameDescriptionTemplateNullSafeWithColor(String name, String description, String color) {
+            SafeStylesBuilder builder = new SafeStylesBuilder();
+            builder.whiteSpace(WhiteSpace.NOWRAP);
+            builder.overflow(Overflow.HIDDEN);
+            builder.textOverflow(TextOverflow.ELLIPSIS);
+            builder.trustedNameAndValue("max-width", 49, Unit.PCT); //$NON-NLS-1$
+            builder.trustedNameAndValue("float", "left"); //$NON-NLS-1$ //$NON-NLS-2$
+            builder.trustedColor(color != null ? color : ""); //$NON-NLS-1$
             return templates.typeAheadNameDescriptionWithColor(
                     name != null ? name : "",
                     description != null ? description : "",
-                    color != null ? color : "")
+                    builder.toSafeStyles())
                     .asString();
         }
     }
