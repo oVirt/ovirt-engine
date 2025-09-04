@@ -4,6 +4,10 @@ import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.ui.common.gin.AssetProvider;
 import org.ovirt.engine.ui.common.widget.table.cell.SafeHtmlCell;
 
+import com.google.gwt.dom.client.Style.Display;
+import com.google.gwt.dom.client.Style.Unit;
+import com.google.gwt.dom.client.Style.VerticalAlign;
+import com.google.gwt.safecss.shared.SafeStylesBuilder;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 
@@ -44,8 +48,13 @@ public class DiskProgressColumn extends AbstractProgressBarColumn<Disk> {
             @Override
             public void render(Context context, SafeHtml value, SafeHtmlBuilder sb, String id) {
                 if (value != null) {
-                    String divStyle = "display:table-cell;width:100%;padding:0px 4px;vertical-align:middle;"; //$NON-NLS-1$
-                    sb.append(AssetProvider.getTemplates().divWithStringStyle(divStyle, id, value));
+                    SafeStylesBuilder builder = new SafeStylesBuilder();
+                    builder.display(Display.TABLE_CELL);
+                    builder.width(100.0, Unit.PCT);
+                    builder.verticalAlign(VerticalAlign.MIDDLE);
+                    builder.paddingTop(0.0, Unit.PX);
+                    builder.paddingRight(4.0, Unit.PX);
+                    sb.append(AssetProvider.getTemplates().divWithStringStyle(builder.toSafeStyles(), id, value));
                 }
             }
         };
