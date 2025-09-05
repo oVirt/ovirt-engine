@@ -9,6 +9,7 @@ import org.ovirt.engine.api.model.Certificate;
 import org.ovirt.engine.api.model.Display;
 import org.ovirt.engine.api.model.DisplayType;
 import org.ovirt.engine.api.model.Template;
+import org.ovirt.engine.api.model.VideoType;
 import org.ovirt.engine.api.model.Vm;
 import org.ovirt.engine.api.restapi.resource.BackendResource;
 import org.ovirt.engine.api.restapi.types.DisplayMapper;
@@ -80,15 +81,17 @@ public class DisplayHelper {
      * @param params  - parameters to be updated with graphics data
      */
     public static void setGraphicsToParams(Display display, HasGraphicsDevices params) {
-        if (display != null && display.isSetType()) {
-            DisplayType newDisplayType = display.getType();
-
-            if (newDisplayType != null) {
+        if (display != null) {
+            GraphicsType newGraphicsType = null;
+            if (display.isSetVideoType()) {
+                newGraphicsType = DisplayMapper.map((VideoType) display.getVideoType(), (GraphicsType) null);
+            } else if (display.isSetType()) {
+                newGraphicsType = DisplayMapper.map((DisplayType) display.getType(), null);
+            }
+            if (newGraphicsType != null) {
                 for (GraphicsType graphicsType : GraphicsType.values()) {
                     params.getGraphicsDevices().put(graphicsType, null); // reset graphics devices
                 }
-
-                GraphicsType newGraphicsType = DisplayMapper.map(newDisplayType, null);
                 params.getGraphicsDevices().put(newGraphicsType,
                         new GraphicsDevice(newGraphicsType.getCorrespondingDeviceType()));
             }
