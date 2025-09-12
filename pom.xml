@@ -51,7 +51,7 @@
     <!-- External dependencies versions -->
     <aopalliance.version>1.0</aopalliance.version>
     <aspectj.version>1.9.3.RC1</aspectj.version>
-    <assertj-core.version>3.13.2</assertj-core.version>
+    <assertj-core.version>3.27.3</assertj-core.version>
     <cdi.api.version>1.2</cdi.api.version>
     <checkstyle.version>10.20.0</checkstyle.version>
     <commons-beanutils.version>1.9.4</commons-beanutils.version>
@@ -102,7 +102,8 @@
     <jboss-servlet-api_3.1_spec.version>1.0.0.Final</jboss-servlet-api_3.1_spec.version>
     <jbosssx-bare.version>2.0.4</jbosssx-bare.version>
     <jsass.version>5.11.1</jsass.version>
-    <junit.version>5.7.1</junit.version>
+    <junit.version>5.13.4</junit.version>
+    <junit.platform.version>1.13.4</junit.platform.version>
     <mockito.version>3.8.0</mockito.version>
     <openstack-client.version>3.2.9</openstack-client.version>
     <postgres.jdbc.version>42.7.5</postgres.jdbc.version>
@@ -116,6 +117,7 @@
     <ws-commons-util.version>1.0.2</ws-commons-util.version>
     <xmlrpc-client.version>3.1.3</xmlrpc-client.version>
     <snmp4j.version>3.6.4</snmp4j.version>
+    <argLine></argLine> <!-- Prevents tests from failing for some modules -->
 
     <!-- oVirt plugins version -->
     <ovirt-jboss-modules-maven-plugin.version>2.0.1</ovirt-jboss-modules-maven-plugin.version>
@@ -131,7 +133,7 @@
     <maven-checkstyle-plugin.version>3.2.0</maven-checkstyle-plugin.version>
     <maven-clean-plugin.version>3.2.0</maven-clean-plugin.version>
     <maven-compiler-plugin.version>3.10.1</maven-compiler-plugin.version>
-    <maven-dependency-plugin.version>3.3.0</maven-dependency-plugin.version>
+    <maven-dependency-plugin.version>3.8.1</maven-dependency-plugin.version>
     <maven-deploy-plugin.version>3.0.0</maven-deploy-plugin.version>
     <maven-ear-plugin.version>3.2.0</maven-ear-plugin.version>
     <maven-ejb-plugin.version>3.2.1</maven-ejb-plugin.version>
@@ -141,8 +143,8 @@
     <maven-processor-plugin.version>4.5</maven-processor-plugin.version>
     <maven-resources-plugin.version>3.3.0</maven-resources-plugin.version>
     <maven-source-plugin.version>3.2.1</maven-source-plugin.version>
-    <maven-surefire-plugin.version>3.0.0-M7</maven-surefire-plugin.version>
-    <maven-war-plugin.version>3.3.2</maven-war-plugin.version>
+    <maven-surefire-plugin.version>3.5.3</maven-surefire-plugin.version>
+    <maven-war-plugin.version>3.4.0</maven-war-plugin.version>
     <spotbugs-maven-plugin.version>4.7.2.0</spotbugs-maven-plugin.version>
     <taglist-maven-plugin.version>3.0.0</taglist-maven-plugin.version>
 
@@ -747,6 +749,24 @@
         <scope>test</scope>
       </dependency>
       <dependency>
+        <groupId>org.junit.platform</groupId>
+        <artifactId>junit-platform-commons</artifactId>
+        <version>${junit.platform.version}</version>
+        <scope>test</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.junit.platform</groupId>
+        <artifactId>junit-platform-engine</artifactId>
+        <version>${junit.platform.version}</version>
+        <scope>test</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.junit.platform</groupId>
+        <artifactId>junit-platform-launcher</artifactId>
+        <version>${junit.platform.version}</version>
+        <scope>test</scope>
+      </dependency>
+      <dependency>
         <groupId>org.reflections</groupId>
         <artifactId>reflections</artifactId>
         <version>${reflections.version}</version>
@@ -869,14 +889,18 @@
           <artifactId>maven-compiler-plugin</artifactId>
           <version>${maven-compiler-plugin.version}</version>
           <configuration>
-            <source>11</source>
-            <target>11</target>
             <release>11</release>
             <includes>
               <include>**/*.txt</include>
               <include>**/*.java</include>
               <include>**/*.properties</include>
             </includes>
+            <compilerArgs>
+              <arg>--add-opens</arg> 
+              <arg>java.base/java.lang=ALL-UNNAMED</arg>
+              <arg>--add-opens</arg>
+              <arg>java.base/java.util=ALL-UNNAMED</arg>
+            </compilerArgs>
           </configuration>
         </plugin>
         <plugin>
@@ -947,10 +971,27 @@
               <artifactId>junit-jupiter-engine</artifactId>
               <version>${junit.version}</version>
             </dependency>
+            <dependency>
+              <groupId>org.junit.platform</groupId>
+              <artifactId>junit-platform-engine</artifactId>
+              <version>${junit.platform.version}</version>
+            </dependency>
+            <dependency>
+              <groupId>org.junit.platform</groupId>
+              <artifactId>junit-platform-launcher</artifactId>
+              <version>${junit.platform.version}</version>
+            </dependency>
           </dependencies>
           <configuration>
             <reportsDirectory>${ovirt.surefire.reportsDirectory}</reportsDirectory>
-            <argLine>--illegal-access=permit -Duser.country=US -Duser.language=en</argLine>
+            <argLine>
+              @{argLine}
+              -Duser.country=US 
+              -Duser.language=en 
+              --add-opens=java.base/java.lang=ALL-UNNAMED 
+              --add-opens=java.base/java.util=ALL-UNNAMED 
+              --add-opens=java.base/java.lang.reflect=ALL-UNNAMED
+            </argLine>
           </configuration>
         </plugin>
         <plugin>
