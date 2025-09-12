@@ -38,7 +38,7 @@ public class LocalizedMessageHelperTest {
         assertEquals("alertMessage (localhost), [message]", subject);
 
         String plainBody = LocalizedMessageHelper.prepareMessageBody(message, locale);
-        assertEquals("Time: Dec 31, 2022, 11:59:59 PM\n" +
+        assertEquals("Time: Dec 31, 2022, 11:59:59\u202fPM\n" +
                 "Message: message\n" +
                 "Severity: WARNING\n" +
                 "User Name: user@user.com\n" +
@@ -49,7 +49,7 @@ public class LocalizedMessageHelperTest {
                 "Storage Domain Name: storage\n", plainBody);
 
         String htmlBody = LocalizedMessageHelper.prepareHTMLMessageBody(message, locale);
-        assertEquals("<b>Time:</b> Dec 31, 2022, 11:59:59 PM<br>" +
+        assertEquals("<b>Time:</b> Dec 31, 2022, 11:59:59\u202fPM<br>" +
                 "<b>Message:</b> message<br>" +
                 "<b>Severity:</b> WARNING<br>" +
                 "<b>User Name:</b> user@user.com<br>" +
@@ -67,7 +67,7 @@ public class LocalizedMessageHelperTest {
         assertEquals("alertMessage (localhost), [message]", subject);
 
         String plainBody = LocalizedMessageHelper.prepareMessageBody(message, locale);
-        assertEquals("Time: 31 déc. 2022 à 23:59:59\n" +
+        assertEquals("Time: 31 déc. 2022, 23:59:59\n" +
                 "Message: message\n" +
                 "Severity: WARNING\n" +
                 "User Name: user@user.com\n" +
@@ -78,7 +78,7 @@ public class LocalizedMessageHelperTest {
                 "Storage Domain Name: storage\n", plainBody);
 
         String htmlBody = LocalizedMessageHelper.prepareHTMLMessageBody(message, locale);
-        assertEquals("<b>Time:</b> 31 déc. 2022 à 23:59:59<br>" +
+        assertEquals("<b>Time:</b> 31 déc. 2022, 23:59:59<br>" +
                 "<b>Message:</b> message<br>" +
                 "<b>Severity:</b> WARNING<br>" +
                 "<b>User Name:</b> user@user.com<br>" +
@@ -96,7 +96,7 @@ public class LocalizedMessageHelperTest {
         assertEquals("Оповещение (localhost), [message]", subject);
 
         String plainBody = LocalizedMessageHelper.prepareMessageBody(message, locale);
-        assertEquals("Время: 31 дек. 2022 г., 23:59:59\n" +
+        assertEquals("Время: 31 дек. 2022\u202fг., 23:59:59\n" +
                 "Сообщение: message\n" +
                 "Уровень оповещения: ПРЕДУПРЕЖДЕНИЕ\n" +
                 "Пользователь: user@user.com\n" +
@@ -107,7 +107,7 @@ public class LocalizedMessageHelperTest {
                 "Устройство хранения: storage\n", plainBody);
 
         String htmlBody = LocalizedMessageHelper.prepareHTMLMessageBody(message, locale);
-        assertEquals("<b>Время:</b> 31 дек. 2022 г., 23:59:59<br>" +
+        assertEquals("<b>Время:</b> 31 дек. 2022\u202fг., 23:59:59<br>" +
                 "<b>Сообщение:</b> message<br>" +
                 "<b>Уровень оповещения:</b> ПРЕДУПРЕЖДЕНИЕ<br>" +
                 "<b>Пользователь:</b> user@user.com<br>" +
