@@ -46,14 +46,6 @@
 # Limit GWT resources to pass the build in CBS
 %global ovirt_build_extra_flags_rpm -Dgwt.compiler.localWorkers=2
 
-# Set "rhv_build 1" to perform RHV Manager build
-%global rhv_build 0
-
-# Workaround for build issues on CBS due to https://bugzilla.redhat.com/2128991
-%if 0%{!?block_maven_38:1}
-%global block_maven_38 0
-%endif
-
 #
 # CUSTOMIZATION-END
 #
@@ -63,13 +55,6 @@
 # real benefit:
 %global __jar_repack 0
 
-%if %{rhv_build}
-#
-# unsign all provided jars
-# see rhbz#1019637
-#
-%global _jarsign_opts --unsign=/usr/share/ovirt-engine
-%endif
 
 #
 # rpm does not support override
@@ -121,9 +106,6 @@
 %global vdsm_uid 36
 %global vdsm_user vdsm
 
-# Minimal required OpenJDK version
-%global openjdk_version 11.0.11
-
 %if 0%{?rhel} || 0%{?fedora} >= 31
 %global openstack_java_version 3.2.9
 %else
@@ -150,13 +132,7 @@ getent passwd %1 >/dev/null || useradd -r -u %2 -g %3 -c %5 -s /sbin/nologin -d 
 %global ovirt_create_user_vdsm \
 %_ovirt_create_user %{vdsm_user} %{vdsm_uid} %{vdsm_group} %{vdsm_gid} "%%{vdsm_description}" /var/lib/vdsm
 
-%if %{rhv_build}
-%global wildfly_overlay_modules ""
-%define extra_common_opts \\\
-	JBOSS_HOME=/opt/rh/eap7/root/usr/share/wildfly
-%else
 %global wildfly_overlay_modules "/usr/share/ovirt-engine-wildfly-overlay/modules"
-%endif
 
 %global make_common_opts \\\
 	-j1 \\\
@@ -202,11 +178,6 @@ getent passwd %1 >/dev/null || useradd -r -u %2 -g %3 -c %5 -s /sbin/nologin -d 
 	%{?EXTRA_BUILD_FLAGS:EXTRA_BUILD_FLAGS="%{EXTRA_BUILD_FLAGS}"} \\\
 	%{?extra_common_opts}
 
-%if %{rhv_build}
-%global extra_backend_requires Requires: rhvm-branding-rhv >= 4.3.0
-%global extra_setup_requires Requires: rhvm-setup-plugins >= 4.5.0-0.1
-%global spice_version 8.0
-%endif
 
 Name:		@PACKAGE_NAME@
 Version:	@RPM_VERSION@
@@ -214,22 +185,15 @@ Release:	@RPM_RELEASE@%{?release_suffix}%{?dist}
 Summary:	Management server for Open Virtualization
 Group:		%{ovirt_product_group}
 License:	ASL 2.0
-%if !%{rhv_build}
 URL:		http://www.ovirt.org
-%else
-URL:		http://www.redhat.com/products/virtualization
-%endif
 
 Source0:	http://resources.ovirt.org/pub/ovirt-master-snapshot/src/@PACKAGE_NAME@/@PACKAGE_NAME@-@PACKAGE_VERSION@.tar.gz
 
 BuildArch:	noarch
 ExcludeArch:	s390x ppc64le
 
-%if %{rhv_build}
-BuildRequires:  perl
-%endif
 
-BuildRequires:	java-11-openjdk-devel >= %{openjdk_version}
+BuildRequires:  maven-openjdk21
 BuildRequires:	javapackages-tools
 BuildRequires:	make
 BuildRequires:	maven >= 3.6.0
@@ -240,42 +204,15 @@ BuildRequires:	unzip
 BuildRequires:	javapackages-local
 
 
-%if %{block_maven_38}
-# Block packages from maven:3.8 to pass CBS build due to https://bugzilla.redhat.com/2128991
-BuildRequires: maven < 1:3.8.0
-BuildRequires: maven-lib < 1:3.8.0
-BuildRequires: maven-resolver < 1:1.7.0
-BuildRequires: maven-shared-utils < 3.3.4-3
-BuildRequires: maven-wagon < 3.5.0
-BuildRequires: plexus-cipher < 1.8
-BuildRequires: plexus-classworlds < 2.6.0-11
-BuildRequires: plexus-containers-component-annotations < 2.1.1
-BuildRequires: plexus-interpolation < 1.26-11
-BuildRequires: plexus-sec-dispatcher < 1.5
-BuildRequires: plexus-utils < 3.3.0-10
-BuildRequires: sisu < 1:0.3.5
-%endif
-
-
 BuildRequires:	ovirt-engine-build-dependencies >= 4.5.3
 
 Requires(pre):	shadow-utils
 
-%if %{rhv_build}
-Requires:	eap7-wildfly >= 7.4.2
-Requires:	rhvm = %{version}-%{release}
-
-# RHV 4.4 SP1 requires RHEL 8.6 EUS and it's not supported on RHEL 8.7+
-Requires:	redhat-release >= 8.6, redhat-release < 8.7
-Conflicts:	redhat-release >= 8.7
-
-%else
 # There is no way how to prevent WildFly not being upgraded, so we need to
 # fix engine to work with current and new WildFly version and only afterwards
 # bump the requirement (otherwise we would need to pass wildfly,
 # wildfly-overlay and ovirt-engine through the change queue at once)
 Requires:	ovirt-engine-wildfly-overlay >= 24
-%endif
 
 Requires:	%{name}-backend = %{version}-%{release}
 Requires:	%{name}-dbscripts = %{version}-%{release}
@@ -290,13 +227,8 @@ Requires:	%{name}-ui-extensions >= 1.0.4
 # ansible-runner-service is obsoleted
 Requires:	ansible-core >= 2.13.0
 Requires:	ansible-runner >= 2.1.3
-%if 0%{?rhel} < 9
-Obsoletes:	ansible-runner-service < 1.1.0
-Obsoletes:	python3-ansible-runner < 2.0.0
-%endif
-
 Requires:	apache-commons-compress
-Requires:	java-11-openjdk-headless >= %{openjdk_version}
+Requires:	(java-11-openjdk-headless or java-21-openjdk-headless)
 Requires:	javapackages-tools
 Requires:	ovirt-imageio-daemon >= 2.0.10-1
 Requires:	slf4j >= 1.7.0
@@ -305,20 +237,8 @@ Requires:	xmlrpc-client
 Requires:	ovirt-ansible-collection >= 3.0.0
 Requires:	ovirt-web-ui
 Requires:	ovirt-cockpit-sso
-%if 0%{?rhel} < 9
-# ovirt-engine-api-explorer has never been built for el9
-Obsoletes:	ovirt-engine-api-explorer
-%endif
 
-%if 0%{?rhel} < 9
-# fapolicyd should be installed but does not have to be running
-# needed for OpenScap DISA STIG compliance
-#
-# TODO: remove condition when fapolicyd-1.1 is available on CS9
-Requires:	fapolicyd >= 1.1
-%else
 Requires:	fapolicyd
-%endif
 
 Requires:	scap-security-guide >= 0.1.60-4
 
@@ -385,12 +305,6 @@ Conflicts:	ipa-server
 Conflicts:	python2-ipaserver
 Conflicts:	python3-ipaserver
 
-# Userportal is retired
-%if 0%{?rhel} < 9
-# ovirt-engine-userportal has never been built for el9
-Obsoletes:	%{name}-userportal
-%endif
-
 # OVS/OVN stuff
 Requires:	python3-pyOpenSSL
 Requires:	ovirt-provider-ovn >= 1.2.1
@@ -405,33 +319,10 @@ Provides:	bundled(js-bootstrap) = 3.4.1
 Provides:	bundled(js-patternfly) = 3.59.3
 Provides:	bundled(js-patternfly-next) = 2.26.1
 
-# logger-log4j is replaced by internal ovirt-engine implementation
-%if 0%{?rhel} < 9
-# logger-log4j has never been built for el9
-Obsoletes:	ovirt-engine-extension-logger-log4j
-%endif
-
 %description
 %{ovirt_product_name} is a feature-rich server virtualization management
 system that provides advanced capabilities for managing the Open
 virtualization infrastructure for Servers and Desktops.
-
-%if %{rhv_build}
-%package -n rhvm
-Summary:    Red Hat Virtualization Manager
-Group:      %{ovirt_product_group}
-Requires:   ovirt-engine = %{version}-%{release}
-Requires:   ovirt-log-collector >= 4.3.0
-Requires:   rhv-log-collector-analyzer
-# misc packages
-Requires:   spice-client-win-x64 >= %{spice_version}
-Requires:   spice-client-win-x86 >= %{spice_version}
-
-%description -n rhvm
-Red Hat Virtualization is a feature-rich server virtualization management
-system that provides advanced capabilities for managing Red Hat
-virtualization infrastructure for Servers and Desktops.
-%endif
 
 %package -n python%{python3_pkgversion}-%{name}-lib
 Summary:	%{ovirt_product_name_short} library
@@ -455,7 +346,7 @@ Requires:	aopalliance >= 1.0
 Requires:	curl
 Requires:	ebay-cors-filter
 Requires:	httpd
-Requires:	java-11-openjdk-headless >= %{openjdk_version}
+Requires:	(java-11-openjdk-headless or java-21-openjdk-headless)
 Requires:	logrotate
 Requires:	mailcap
 Requires:	mod_ssl
@@ -525,12 +416,6 @@ Group:		%{ovirt_product_group}
 Requires:	%{name}-setup-plugin-ovirt-engine = %{version}-%{release}
 %{?extra_setup_requires}
 
-%if %{rhv_build}
-# RHV 4.4 SP1 requires RHEL 8.6 EUS and it's not supported on RHEL 8.7+
-Requires:       redhat-release >= 8.6, redhat-release < 8.7
-Conflicts:      redhat-release >= 8.7
-%endif
-
 %description setup
 Setup and upgrade scripts for %{ovirt_product_name_short}
 
@@ -556,9 +441,7 @@ Requires:	%{name}-setup-plugin-vmconsole-proxy-helper = %{version}-%{release}
 Requires:	%{name}-setup-plugin-cinderlib = %{version}-%{release}
 Requires:	%{name}-setup-plugin-imageio = %{version}-%{release}
 Requires:	%{name}-dwh-setup >= 4.4.1.2
-%if !%{rhv_build}
 Requires:	ovirt-engine-keycloak-setup
-%endif
 Requires:	ovirt-engine-extension-aaa-jdbc >= 1.2.0
 Requires:	openssh
 Requires:	glibc-langpack-en
@@ -569,12 +452,8 @@ Conflicts:	%{name} < 4.4.0
 Requires:	ovirt-vmconsole >= 1.0.7
 
 # OVS/OVN stuff, for firewalld service files
-%if 0%{?rhel} >= 9
 # OVS 2.17 and OVN 2022 are the lowest supported versions on EL9
 Requires:	ovirt-openvswitch-ovn-central >= 2.17
-%else
-Requires:	ovirt-openvswitch-ovn-central >= 2.15
-%endif
 Requires:	ovirt-provider-ovn >= 1.2.35
 
 %description setup-plugin-ovirt-engine
@@ -591,7 +470,7 @@ Requires:	python3-libselinux
 Requires:	policycoreutils-python-utils
 Requires:	python3-psycopg2
 Requires(pre):	shadow-utils
-Requires:	java-11-openjdk-headless >= %{openjdk_version}
+Requires:	(java-11-openjdk-headless or java-21-openjdk-headless)
 Requires:	python3-pwquality
 Requires:	python3-cryptography
 Requires:	python3-dnf
@@ -633,7 +512,7 @@ Requires:	%{name} = %{version}-%{release}
 Requires:	python3-%{name}-lib >= %{version}-%{release}
 Requires:	%{name}-tools-backup = %{version}-%{release}
 Requires:	ovirt-engine-metrics >= 1.3.4.1
-Requires:	java-11-openjdk-headless >= %{openjdk_version}
+Requires:	(java-11-openjdk-headless or java-21-openjdk-headless)
 Requires:	logrotate
 Requires:	python3-dateutil
 Requires:	python3-psycopg2
@@ -763,9 +642,6 @@ Setup imageio service.
 %setup -c -q
 
 %build
-
-# Set the location of the JDK that will be used for compilation:
-export JAVA_HOME="${JAVA_HOME:=/usr/lib/jvm/java-11-openjdk}"
 
 make %{make_common_opts}
 
@@ -935,47 +811,14 @@ cat > "%{buildroot}%{_sysconfdir}/ovirt-engine-setup.conf.d/10-packaging.conf" <
 OVESETUP_APACHE/configureRootRedirectionDefault=bool:True
 OVESETUP_CONFIG/validFirewallManagers=str:firewalld
 __EOF__
-%if %{rhv_build}
-# just add to the list
-cat >> "%{buildroot}%{_sysconfdir}/ovirt-engine-setup.conf.d/10-packaging.conf" << __EOF__
-OVESETUP_CONFIG/jbossHome=str:/opt/rh/eap7/root/usr/share/wildfly
-OVESETUP_CONFIG/pkiRenewalDocUrl=str:https://access.redhat.com/solutions/1572983
-__EOF__
-
-# Disable automatic keycloak integration in RHV.
-# Manual integration of RHV with Red Hat Single Sign On, aka RHSSO, is documented at
-# "Installing and Configuring Red Hat Single Sign-On" in:
-# https://access.redhat.com/documentation/en-us/red_hat_virtualization/4.4/html/administration_guide
-cat >> "%{buildroot}%{_sysconfdir}/ovirt-engine-setup.conf.d/10-packaging.conf" << __EOF__
-OVESETUP_CONFIG/keycloakSupported=bool:False
-__EOF__
-
-cat > "%{buildroot}%{_sysconfdir}/ovirt-engine-setup.conf.d/10-packaging-wsp.conf" << __EOF__
-[environment:default]
-__EOF__
-%else
 cat > "%{buildroot}%{_sysconfdir}/ovirt-engine-setup.conf.d/10-packaging-jboss.conf" << __EOF__
 [environment:default]
 OVESETUP_CONFIG/jbossHome=str:/usr/share/ovirt-engine-wildfly
 OVESETUP_RPMDISTRO/jbossPackages=str:ovirt-engine-wildfly,ovirt-engine-wildfly-overlay
 __EOF__
-%endif
 
 
 mkdir -p %{buildroot}/%{engine_rpm_state_dir}
-%if %{rhv_build}
-ln -s /usr/share/spice "%{buildroot}%{engine_data}/files/spice"
-
-#
-# unsign ear
-# see rhbz#1019637
-# copied from redhat-rpm-config::brp-jboss-sign-jars::unsign_jarfile
-#
-rm -f "%{buildroot}%{engine_ear}/META-INF"/*.{DSA,RSA,SF}
-perl -i -pe 'BEGIN{undef $/;} s/Name: [^\n]+\n( [^\n]+\n)*([^\s]+-Digest: [^\n]+\n(\s)?)+(Magic: [^\n]+\n)?\n//mgs' "%{buildroot}%{engine_ear}/META-INF/MANIFEST.MF"
-perl -i -pe 's/^SHA1-Digest: [^\n]+\n//g' "%{buildroot}%{engine_ear}/META-INF/MANIFEST.MF"
-
-%endif
 
 echo "Install complete"
 
@@ -1068,11 +911,6 @@ fi
 %{_javadir}/ovirt-engine/utils.jar
 %{_javadir}/ovirt-engine/uutils.jar
 
-
-%if %{rhv_build}
-%files -n rhvm
-%license LICENSE
-%endif
 
 %files -n python%{python3_pkgversion}-%{name}-lib
 %license LICENSE
@@ -1224,16 +1062,11 @@ fi
 %config %{_sysconfdir}/httpd/conf.d/ovirt-disable-http-trace.conf
 
 
-%if !%{rhv_build}
 %config %{_sysconfdir}/ovirt-engine-setup.conf.d/10-packaging-jboss.conf
 %config %{engine_etc}/engine.conf.d/20-setup-jboss-overlay.conf
-%endif
 
 %files setup-plugin-websocket-proxy
 %license LICENSE
-%if %{rhv_build}
-%config %{_sysconfdir}/ovirt-engine-setup.conf.d/10-packaging-wsp.conf
-%endif
 %{engine_data}/firewalld/websocket-proxy/
 %{engine_data}/setup/ovirt_engine_setup/websocket_proxy/
 %{engine_data}/setup/plugins/*/websocket_proxy/

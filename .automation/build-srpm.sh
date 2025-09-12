@@ -20,9 +20,6 @@ EXTRA_BUILD_FLAGS="${EXTRA_BUILD_FLAGS} -Dgwt.jvmArgs='-Xms1G -Xmx3G'"
 
 export MAVEN_OPTS="-Xms1G -Xmx2G"
 
-# Set the location of the JDK that will be used for compilation:
-export JAVA_HOME="${JAVA_HOME:=/usr/lib/jvm/java-11}"
-
 [ -d ${ARTIFACTS_DIR} ] || mkdir -p ${ARTIFACTS_DIR}
 [ -d rpmbuild/SOURCES ] || mkdir -p rpmbuild/SOURCES
 
