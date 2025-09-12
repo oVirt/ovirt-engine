@@ -194,7 +194,7 @@ ExcludeArch:	s390x ppc64le
 
 
 BuildRequires:  maven-openjdk21
-BuildRequires:	javapackages-tools
+BuildRequires:	maven-local-openjdk21
 BuildRequires:	make
 BuildRequires:	maven >= 3.6.0
 BuildRequires:	python3-devel
