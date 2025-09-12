@@ -13,7 +13,7 @@ import org.ovirt.engine.core.common.errors.EngineMessage;
 import com.google.gwt.i18n.client.ConstantsWithLookup;
 
 public class ConstantsWithLookupTest {
-    public static Stream<Arguments> nameInEnum
+    private static Stream<Arguments> nameInEnumForClass
     (Class<? extends Enum> enumClass, Class<? extends ConstantsWithLookup> constantsClass) {
         return Arrays.stream(constantsClass.getMethods())
                 .filter(m -> m.getParameterTypes().length == 0 && m.getReturnType().equals(String.class))
@@ -23,8 +23,8 @@ public class ConstantsWithLookupTest {
 
     public static Stream<Arguments> nameInEnum() {
         return Stream.concat(
-                nameInEnum(EngineMessage.class, AppErrors.class),
-                nameInEnum(EngineError.class, VdsmErrors.class)
+                nameInEnumForClass(EngineMessage.class, AppErrors.class),
+                nameInEnumForClass(EngineError.class, VdsmErrors.class)
         );
     }
 
