@@ -5,10 +5,12 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
 
+@Disabled("TODO replace reflection with slf4j-mock or similar")
 @MockitoSettings(strictness = Strictness.LENIENT)
 public class BackendResourceDebugDetailTest extends AbstractBackendResourceLoggingTest {
 
