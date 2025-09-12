@@ -16,6 +16,9 @@ jobs:
           - name: centos-stream-9
             container-name: el9stream
             pip-command: pip3
+          - name: centos-stream-10
+            container-name: el10stream
+            pip-command: pip3
 
     name: ${{ matrix.name }}
 
