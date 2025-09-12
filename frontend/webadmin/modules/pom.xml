@@ -106,7 +106,7 @@
             <noServer>true</noServer>
             <bindAddress>0.0.0.0</bindAddress>
             <gen>${gwtGenDirectory}</gen>
-            <extraJvmArgs>${aspectj.agent} ${gwt-plugin.extraJvmArgs} ${gwt.dontPrune}</extraJvmArgs>
+            <extraJvmArgs>${aspectj.agent} ${gwt-plugin.extraJvmArgs} ${gwt.dontPrune} --add-opens java.base/java.lang=ALL-UNNAMED --add-opens java.base/java.util=ALL-UNNAMED</extraJvmArgs>
             <copyWebapp>true</copyWebapp>
             <failOnError>true</failOnError>
             <!-- Use Classic Dev Mode (debug as remote Java application) by default -->

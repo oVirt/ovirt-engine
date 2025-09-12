@@ -189,6 +189,10 @@
               <executable>${java.home}/bin/java</executable>
               <classpathScope>runtime</classpathScope>
               <arguments>
+                <argument>--add-opens</argument>
+                <argument>java.base/java.lang=ALL-UNNAMED</argument>
+                <argument>--add-opens</argument>
+                <argument>java.base/java.util=ALL-UNNAMED</argument>
                 <argument>-classpath</argument>
                 <classpath/>
                 <argument>org.ovirt.api.metamodel.tool.Main</argument>
@@ -214,6 +218,10 @@
               <executable>${java.home}/bin/java</executable>
               <classpathScope>runtime</classpathScope>
               <arguments>
+                <argument>--add-opens</argument>
+                <argument>java.base/java.lang=ALL-UNNAMED</argument>
+                <argument>--add-opens</argument>
+                <argument>java.base/java.util=ALL-UNNAMED</argument>
                 <argument>-classpath</argument>
                 <classpath/>
                 <argument>org.ovirt.api.metamodel.tool.Main</argument>
