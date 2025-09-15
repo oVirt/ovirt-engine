@@ -243,6 +243,8 @@ Requires:	fapolicyd
 Requires:	scap-security-guide >= 0.1.60-4
 
 # Metrics stuff
+%if 0%{?rhel} < 10
+# collectd is not available anymore on EL10
 Requires:	collectd >= 5.12.0-7
 Requires:	collectd-postgresql >= 5.12.0-7
 Requires:	collectd-disk >= 5.12.0-7
@@ -250,6 +252,7 @@ Requires:	collectd-write_http >= 5.12.0-7
 %if 0%{?rhel}
 # collectd-write_syslog is available only on EL
 Requires:	collectd-write_syslog >= 5.12.0-7
+%endif
 %endif
 
 
@@ -287,9 +290,12 @@ Requires:	ovirt-dependencies >= 4.5.2
 
 # cinderlib integration
 # https://bugzilla.redhat.com/1955375
+# Not available (yet) on CentOS 10
+%if 0%{?rhel} < 10
 Requires:	ceph-common
 Requires:	python3-cinderlib
 Requires:	python3-urllib3
+%endif
 
 %{?extra_main_requires}
 
