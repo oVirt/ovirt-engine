@@ -76,6 +76,7 @@ public class VmMapperTest extends
         VmDynamic dynamic = new VmDynamic();
         dynamic.setStatus(VMStatus.Up);
         dynamic.setBootSequence(to.getDefaultBootSequence());
+        to.setDefaultDisplayType(org.ovirt.engine.core.common.businessentities.DisplayType.vga);
         dynamic.getGraphicsInfos().put(GraphicsType.SPICE, new GraphicsInfo());
         org.ovirt.engine.core.common.businessentities.VM ret =
                 new org.ovirt.engine.core.common.businessentities.VM(to,

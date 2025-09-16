@@ -30,7 +30,6 @@ public class InstanceTypeMapper extends VmBaseMapper {
     public static InstanceType map(org.ovirt.engine.core.common.businessentities.InstanceType entity, InstanceType incoming) {
         InstanceType model = incoming != null ? incoming : new InstanceType();
         mapCommonEntityToModel(model, (VmTemplate) entity);
-        model.setDisplay(DisplayMapper.map(entity, null));
 
         if (entity.getDefaultBootSequence() != null) {
             OperatingSystem os = model.getOs();
