@@ -8,62 +8,20 @@ if [ -x "$0.local" ]; then
 	exit 1
 fi
 
-die() {
-	local m="$1"
-	echo "FATAL: ${m}" >&2
-	exit 1
-}
-
-# Allow different java home per component
-COMPONENT=engine
-while [ -n "$1" ]; do
-	x="$1"
-	v="${x#*=}"
-	shift
-	case "${x}" in
-		--component=*)
-			COMPONENT="${v}"
-		;;
-		*)
-			die "Invalid option '${x}'"
-		;;
-	esac
-done
-case "${COMPONENT}" in
-	engine|reports)
-		:
-	;;
-	*)
-		die "Invalid component '${COMPONENT}'"
-	;;
-esac
-
+#
+# Check if we have a valid JRE: OpenJDK 11 or newer
+#
 validjre() {
-	local dir="$1"
+	local java_bin="$1"
 	local ret=1
 
-	if [ -x "${dir}/bin/java" ]; then
-		local version
-
-		case "${COMPONENT}" in
-			engine)
-				version="$("${dir}/bin/java" -version 2>&1 | sed \
-					-e 's/^openjdk version "11.*/VERSION_OK/' \
-					-e 's/^OpenJDK .*(.*).*/VENDOR_OK/' \
-				)"
-			;;
-			reports)
-				version="$("${dir}/bin/java" -version 2>&1 | sed \
-					-e 's/^java version "1\.7\.0.*/VERSION_OK/' \
-					-e 's/^OpenJDK .*(.*).*/VENDOR_OK/' \
-				)"
-			;;
-		esac
-		if echo "${version}" | grep -q "VERSION_OK" && echo "${version}" | grep -q "VENDOR_OK"; then
+	if [ -x "${java_bin}" ]; then
+		local java_version=$("${java_bin}" -version 2>&1)
+		local java_major_version=$(echo "$java_version" | head -n 1 | awk '{print $3}' | tr -d '"' | cut -d. -f1)
+		if [ "$java_major_version" -ge 11 ] && echo "$java_version" | grep -q "OpenJDK"; then
 			ret=0
 		fi
 	fi
-
 	return ${ret}
 }
 
@@ -72,41 +30,25 @@ validjre() {
 # our specific java look only this one
 #
 if [ -n "${OVIRT_ENGINE_JAVA_HOME}" ]; then
-	if [ -n "${OVIRT_ENGINE_JAVA_HOME_FORCE}" ] || validjre "${OVIRT_ENGINE_JAVA_HOME}"; then
-		echo "${OVIRT_ENGINE_JAVA_HOME}"
-		exit 0
+	if [ -n "${OVIRT_ENGINE_JAVA_HOME_FORCE}" ] || validjre "${OVIRT_ENGINE_JAVA_HOME}/bin/java"; then
+		JAVA_HOME="${OVIRT_ENGINE_JAVA_HOME}"
 	else
+		echo "OVIRT_ENGINE_JAVA_HOME (${OVIRT_ENGINE_JAVA_HOME}) is not a valid JRE" >&2
 		exit 1
 	fi
 fi
 
 #
-# select alternates folder
-# if we find, first wins
+# Try to use the java that is already in the environment
 #
-DIRS=
-case "${COMPONENT}" in
-	engine)
-		DIRS="/usr/lib/jvm/java-11"
-	;;
-	reports)
-		DIRS="/usr/lib/jvm/jre-1.7.0 /usr/lib/jvm/jre-1.7.0_openjdk /usr/lib/jvm/jre"
-	;;
-esac
-for dir in ${DIRS};  do
-	if validjre "${dir}"; then
-		echo "${dir}"
-		exit 0
+SYSTEM_JAVA="$(readlink -f $(which java))"
+if [ -z "$JAVA_HOME" ] && [ -n "$SYSTEM_JAVA" ]; then
+	JAVA_HOME=$(dirname $(dirname $SYSTEM_JAVA))
+	if ! validjre "$SYSTEM_JAVA"; then
+		echo "JRE ($JAVA_HOME) is not valid" >&2
+		exit 1
 	fi
-done
-
-# Java 11 has no jre/jdk, just one folder.
-JAVA_HOME=""
-for dir in /usr/lib/jvm/*; do
-	if validjre "${dir}"; then
-		JAVA_HOME="${dir}"
-	fi
-done
+fi
 
 [ -z "${JAVA_HOME}" ] && exit 1
 

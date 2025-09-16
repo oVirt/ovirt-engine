@@ -22,7 +22,6 @@ class Java(base.Base):
 
     def __init__(self, component=None):
         super(Java, self).__init__()
-        self._component = component if component else 'engine'
 
     def getJavaHome(self):
         p = subprocess.Popen(
@@ -32,7 +31,6 @@ class Java(base.Base):
                     'bin',
                     'java-home',
                 ),
-                '--component=%s' % self._component,
             ),
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
