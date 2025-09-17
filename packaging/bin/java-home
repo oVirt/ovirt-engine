@@ -17,7 +17,7 @@ validjre() {
 
 	if [ -x "${java_bin}" ]; then
 		local java_version=$("${java_bin}" -version 2>&1)
-		local java_major_version=$(echo "$java_version" | head -n 1 | awk '{print $3}' | tr -d '"' | cut -d. -f1)
+		local java_major_version=$(echo "$java_version" | grep "openjdk version" | awk '{print $3}' | tr -d '"' | cut -d. -f1)
 		if [ "$java_major_version" -ge 11 ] && echo "$java_version" | grep -q "OpenJDK"; then
 			ret=0
 		fi
