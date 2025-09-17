@@ -9,6 +9,7 @@
   <dependencies>
     <module name="javax.api"/>
     <module name="javax.transaction.api"/>
+    <module name="com.ongres.scram.client" export="true"/>
   </dependencies>
 
 </module>
