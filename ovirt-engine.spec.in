@@ -780,7 +780,6 @@ tools/org/slf4j/main/slf4j-api.jar slf4j/slf4j-api.jar
 tools/org/slf4j/main/slf4j-jdk14.jar slf4j/slf4j-jdk14.jar
 tools/org/slf4j/jcl-over-slf4j/main/jcl-over-slf4j.jar slf4j/jcl-over-slf4j.jar
 common/org/springframework/main/spring-aop.jar ovirt-dependencies/spring-aop.jar
-common/org/springframework/main/spring-asm.jar ovirt-dependencies/spring-asm.jar
 common/org/springframework/main/spring-beans.jar ovirt-dependencies/spring-beans.jar
 common/org/springframework/main/spring-context.jar ovirt-dependencies/spring-context.jar
 common/org/springframework/main/spring-core.jar ovirt-dependencies/spring-core.jar
