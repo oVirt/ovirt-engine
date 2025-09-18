@@ -3466,6 +3466,7 @@ public class UnitVmModel extends Model implements HasValidatedTabs, ModelWithMig
         Cluster cluster = dataCenterWithCluster.getCluster();
         ArchitectureType architectureFamily = cluster.getArchitecture().getFamily();
 
+        // TODO, aarch64
         if (architectureFamily == ArchitectureType.ppc && memSize % 256 != 0) {
             model.getInvalidityReasons().add(ConstantsManager.getInstance()
                     .getMessages()
