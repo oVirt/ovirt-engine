@@ -461,6 +461,8 @@ public class VmValidator {
     public static ValidationResult isBiosTypeSupported(VmBase vmBase, Cluster cluster, OsRepository osRepository) {
         if (FeatureSupported.isBiosTypeSupported(cluster.getCompatibilityVersion())
                 && vmBase.getBiosType() != BiosType.I440FX_SEA_BIOS
+                && vmBase.getBiosType() != BiosType.AMPERE
+                && vmBase.getBiosType() != BiosType.AMPERE_OVMF
                 && cluster.getArchitecture() != ArchitectureType.undefined
                 && cluster.getArchitecture().getFamily() != ArchitectureType.x86) {
             return new ValidationResult(EngineMessage.NON_DEFAULT_BIOS_TYPE_FOR_X86_ONLY);

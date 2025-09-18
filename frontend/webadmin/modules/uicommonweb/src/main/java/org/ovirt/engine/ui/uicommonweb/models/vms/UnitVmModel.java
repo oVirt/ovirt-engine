@@ -2229,6 +2229,7 @@ public class UnitVmModel extends Model implements HasValidatedTabs, ModelWithMig
                 behavior.updateCustomCpu();
                 behavior.updateBiosType();
                 updateTscFrequency();
+                updateUseHostCpuEnabled();
             } else if (sender == getTemplateWithVersion()) {
                 templateWithVersion_SelectedItemChanged();
             } else if (sender == getInstanceTypes()) {
@@ -2679,6 +2680,7 @@ public class UnitVmModel extends Model implements HasValidatedTabs, ModelWithMig
         updateSoundCard();
         updateResumeBehavior();
         updateTpmEnabled();
+        updateUseHostCpuEnabled();
 
         getBehavior().updateOSValue(selectedOsId);
 
@@ -4027,6 +4029,14 @@ public class UnitVmModel extends Model implements HasValidatedTabs, ModelWithMig
             getTpmEnabled().setEntity(false);
         } else {
             getTpmEnabled().setIsChangeable(true);
+        }
+    }
+
+    private void updateUseHostCpuEnabled() {
+        Cluster cluster = getSelectedCluster();
+        if (!(cluster == null) && cluster.getArchitecture().getFamily() == ArchitectureType.aarch64) {
+            getHostCpu().setEntity(true);
+            getHostCpu().setIsChangeable(false, constants.hosCPUUnavailable());
         }
     }
 

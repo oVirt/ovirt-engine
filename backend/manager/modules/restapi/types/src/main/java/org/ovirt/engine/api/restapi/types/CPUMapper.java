@@ -32,6 +32,8 @@ public class CPUMapper {
                     return ArchitectureType.ppc64;
                 case S390X:
                     return ArchitectureType.s390x;
+                case AARCH64:
+                    return ArchitectureType.aarch64;
                 default:
                     return null;
             }
@@ -52,6 +54,8 @@ public class CPUMapper {
                     return Architecture.PPC64;
                 case s390x:
                     return Architecture.S390X;
+                case aarch64:
+                    return Architecture.AARCH64;
                 default:
                     return null;
             }

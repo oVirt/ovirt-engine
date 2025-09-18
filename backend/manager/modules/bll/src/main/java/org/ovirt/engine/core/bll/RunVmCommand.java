@@ -952,6 +952,8 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
         if (getVm().isUsingCpuPassthrough()) {
             getVm().setCpuName(getVds().getCpuFlags());
             getVm().setUseHostCpuFlags(true);
+        } else if (getVm().getClusterArch().getFamily() == ArchitectureType.aarch64) {
+            getVm().setUseHostCpuFlags(true);
         }
 
         addNumaPinningForDedicated(getVdsId());
@@ -1146,6 +1148,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
 
         if (FeatureSupported.isBiosTypeSupported(getCluster().getCompatibilityVersion())
                 && getVm().getBiosType() != BiosType.I440FX_SEA_BIOS
+                && getCluster().getArchitecture().getFamily() != ArchitectureType.aarch64
                 && getCluster().getArchitecture().getFamily() != ArchitectureType.x86) {
             return failValidation(EngineMessage.NON_DEFAULT_BIOS_TYPE_FOR_X86_ONLY);
         }
