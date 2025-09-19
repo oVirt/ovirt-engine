@@ -58,7 +58,7 @@ class Plugin(plugin.PluginBase):
                     name='ovirt-cinderlib-enable',
                     note=_(
                         'Configure Cinderlib integration '
-                        '(Currently in tech preview) '
+                        '(Currently in tech preview - not supported on RHEL 10) '
                         '(@VALUES@) [@DEFAULT@]: '
                     ),
                     prompt=True,

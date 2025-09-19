@@ -84,7 +84,7 @@ class Plugin(plugin.PluginBase):
                 osetupcons.ConfigEnv.APPLICATION_MODE
             ] = self.dialog.queryString(
                 name='OVESETUP_CONFIG_APPLICATION_MODE',
-                note=_('Application mode (@VALUES@) [@DEFAULT@]: '),
+                note=_('Application mode (@VALUES@ - gluster unsupported on RHEL 10) [@DEFAULT@]: '),
                 prompt=True,
                 validValues=(
                     'Virt',
