@@ -3,13 +3,13 @@
 <module xmlns="urn:jboss:module:1.1" name="com.ongres.scram.common">
 
     <resources>
-        <resource-root path="ongres-scram-common.jar"/>
+        <resource-root path="common.jar"/>
     </resources>
 
     <dependencies>
         <module name="javax.api"/>
         <module name="javax.transaction.api"/>
-        <module name="com.ongres.saslprep" export="true"/>
+        <module name="com.ongres.stringprep.saslprep" export="true"/>
     </dependencies>
 
 </module>

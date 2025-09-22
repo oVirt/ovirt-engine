@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<module xmlns="urn:jboss:module:1.1" name="com.ongres.stringprep">
+<module xmlns="urn:jboss:module:1.1" name="com.ongres.stringprep.stringprep">
 
     <resources>
-        <resource-root path="ongres-stringprep.jar"/>
+        <resource-root path="stringprep.jar"/>
     </resources>
 
     <dependencies>

@@ -748,10 +748,10 @@ while read dst src; do
 	rm -f "%{buildroot}${dst}"
 	ln -s "${src}" "%{buildroot}${dst}"
 done << __EOF__
-common/com/ongres/saslprep/main/ongres-saslprep.jar ongres-stringprep/saslprep.jar
-common/com/ongres/scram/client/main/ongres-scram-client.jar ongres-scram/client.jar
-common/com/ongres/scram/common/main/ongres-scram-common.jar ongres-scram/common.jar
-common/com/ongres/stringprep/main/ongres-stringprep.jar ongres-stringprep/stringprep.jar
+common/com/ongres/stringprep/saslprep/main/saslprep.jar ongres-stringprep/saslprep.jar
+common/com/ongres/stringprep/stringprep/main/stringprep.jar ongres-stringprep/stringprep.jar
+common/com/ongres/scram/client/main/client.jar ongres-scram/client.jar
+common/com/ongres/scram/common/main/common.jar ongres-scram/common.jar
 common/com/woorea/openstack/sdk/main/cinder-client.jar openstack-java-sdk/cinder-client.jar
 common/com/woorea/openstack/sdk/main/cinder-model.jar openstack-java-sdk/cinder-model.jar
 common/com/woorea/openstack/sdk/main/glance-client.jar openstack-java-sdk/glance-client.jar

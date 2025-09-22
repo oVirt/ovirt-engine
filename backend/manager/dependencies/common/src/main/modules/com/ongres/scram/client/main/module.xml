@@ -3,7 +3,7 @@
 <module xmlns="urn:jboss:module:1.1" name="com.ongres.scram.client">
 
     <resources>
-        <resource-root path="ongres-scram-client.jar"/>
+        <resource-root path="client.jar"/>
     </resources>
 
     <dependencies>

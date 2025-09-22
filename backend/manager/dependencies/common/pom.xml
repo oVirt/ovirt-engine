@@ -135,6 +135,26 @@
     </dependency>
 
     <dependency>
+      <groupId>com.ongres.stringprep</groupId>
+      <artifactId>saslprep</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>com.ongres.stringprep</groupId>
+      <artifactId>stringprep</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>com.ongres.scram</groupId>
+      <artifactId>common</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>com.ongres.scram</groupId>
+      <artifactId>client</artifactId>
+    </dependency>
+
+    <dependency>
       <groupId>com.woorea</groupId>
       <artifactId>openstack-client</artifactId>
     </dependency>
@@ -335,6 +355,30 @@
                 <groupId>org.postgresql</groupId>
                 <artifactId>postgresql</artifactId>
                 <moduleName>org.postgresql</moduleName>
+              </module>
+
+              <module>
+                <groupId>com.ongres.stringprep</groupId>
+                <artifactId>saslprep</artifactId>
+                <moduleName>com.ongres.stringprep.saslprep</moduleName>
+              </module>
+
+              <module>
+                <groupId>com.ongres.stringprep</groupId>
+                <artifactId>stringprep</artifactId>
+                <moduleName>com.ongres.stringprep.stringprep</moduleName>
+              </module>
+
+              <module>
+                <groupId>com.ongres.scram</groupId>
+                <artifactId>common</artifactId>
+                <moduleName>com.ongres.scram.common</moduleName>
+              </module>
+
+              <module>
+                <groupId>com.ongres.scram</groupId>
+                <artifactId>client</artifactId>
+                <moduleName>com.ongres.scram.client</moduleName>
               </module>
 
               <module>
