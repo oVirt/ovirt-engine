@@ -107,6 +107,8 @@
     <mockito.version>3.8.0</mockito.version>
     <openstack-client.version>3.2.9</openstack-client.version>
     <postgres.jdbc.version>42.7.5</postgres.jdbc.version>
+    <ongres.stringprep.version>1.1</ongres.stringprep.version>
+    <ongres.scram.version>2.1</ongres.scram.version>
     <reflections.version>0.9.9</reflections.version>
     <resteasy.version>3.9.3.Final</resteasy.version>
     <slf4j.version>1.7.22</slf4j.version>
@@ -441,6 +443,26 @@
         <groupId>org.postgresql</groupId>
         <artifactId>postgresql</artifactId>
         <version>${postgres.jdbc.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.ongres.stringprep</groupId>
+        <artifactId>saslprep</artifactId>
+        <version>${ongres.stringprep.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.ongres.stringprep</groupId>
+        <artifactId>stringprep</artifactId>
+        <version>${ongres.stringprep.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.ongres.scram</groupId>
+        <artifactId>common</artifactId>
+        <version>${ongres.scram.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.ongres.scram</groupId>
+        <artifactId>client</artifactId>
+        <version>${ongres.scram.version}</version>
       </dependency>
       <dependency>
         <groupId>org.snmp4j</groupId>
