@@ -1,5 +1,5 @@
-# Use CentOS Stream 9 container image from quay.io as the base
-FROM quay.io/ovirt/buildcontainer:el9stream
+ARG BASE_VERSION=9
+FROM quay.io/ovirt/buildcontainer:el${BASE_VERSION}stream
 
 ARG USERNAME=build
 ENV USERNAME=$USERNAME

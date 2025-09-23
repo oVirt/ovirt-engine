@@ -18,9 +18,10 @@ Ports (https://www.ovirt.org/documentation/installing_ovirt_as_a_standalone_mana
 */
 
 {
-  "name": "oVirt",
+  "name": "oVirt on CentOS 10",
   "build": {
-    "dockerfile": "../Dockerfile"
+    "dockerfile": "../../Dockerfile",
+    "args": { "BASE_VERSION": "10" }
   },
   "runArgs": ["--network=ovirt", "--ulimit=nofile=2048:2048"],
   "mounts": ["source=ovirt-pki,target=/home/build/ovirt/etc/pki/ovirt-engine,type=volume"],
