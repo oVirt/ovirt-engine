@@ -199,6 +199,7 @@ BuildRequires:	make
 BuildRequires:	maven >= 3.6.0
 BuildRequires:	python3-devel
 BuildRequires:	python3-distro
+BuildRequires:	python3-setuptools
 BuildRequires:	systemd
 BuildRequires:	unzip
 BuildRequires:	javapackages-local
@@ -336,6 +337,7 @@ Group:		%{ovirt_product_group}
 Requires:	python3-cryptography
 Requires:	python3-dateutil
 Requires:	python3-daemon >= 2.1.2
+Requires:	python3-setuptools
 
 %{?python_provide:%python_provide python%{python3_pkgversion}-%{name}-lib}
 
