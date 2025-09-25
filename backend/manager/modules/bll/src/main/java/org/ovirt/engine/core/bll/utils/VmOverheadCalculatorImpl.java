@@ -175,6 +175,7 @@ public class VmOverheadCalculatorImpl implements VmOverheadCalculator {
             int powerOf2 = Integer.highestOneBit(maxRam);
             pageTable = (maxRam > powerOf2 ? powerOf2 * 2 : powerOf2) / 64;
         } else {
+            // TODO, aarch64
             pageTable = vmRam / 512;
         }
         return pageTable + fixedOverhead;
