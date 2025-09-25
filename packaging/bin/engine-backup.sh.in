@@ -1653,7 +1653,7 @@ restoreDB() {
 
 	[ -n "${failed_msg}" ] && logdie "${failed_msg}"
 
-	local IGNORED_ERRORS=$(cat << __EOF | egrep -v '^$|^#' | tr '\012' '|' | sed 's/|$//'
+	local IGNORED_ERRORS=$(cat << __EOF | grep -Ev '^$|^#' | tr '\012' '|' | sed 's/|$//'
 language "plpgsql" already exists
 must be owner of language plpgsql
 must be owner of extension plpgsql
