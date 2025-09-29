@@ -821,6 +821,8 @@ class OvirtUtils(base.Base):
         # This happens because we do some GRANTs for grafana's user on dwh db,
         # but dwh db user has no right to do them itself:
         'must be member of role "postgres"',
+        # On PostgreSQL 16+ this gives the following error:
+        'permission denied to change default privileges',
     )
 
     _RE_IGNORED_ERRORS = re.compile(
