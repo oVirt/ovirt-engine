@@ -1663,6 +1663,13 @@ must be owner of extension uuid-ossp
 schema "public" already exists
 must be owner of schema public
 must be member of role "postgres"
+# The following command:
+# ALTER DEFAULT PRIVILEGES FOR ROLE postgres IN SCHEMA public GRANT SELECT ON TABLES  TO ovirt_engine_history_grafana;
+# gives the next error
+# We add those privileges via dwh install, so safe to ignore here.
+# This is changed since PostgreSQL 16:
+# https://git.postgresql.org/gitweb/?p=postgresql.git;a=commitdiff;h=48a257d444a787941ba3da24d65e6cbe31461d0a
+permission denied to change default privileges
 #
 # engine uses uuid-ossp PG extension, which requires special privs,
 permission denied for language c
