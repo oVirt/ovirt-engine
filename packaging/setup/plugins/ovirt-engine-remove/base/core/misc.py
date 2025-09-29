@@ -10,9 +10,10 @@
 """Engine plugin."""
 
 
-import distutils.version
 import gettext
 import os
+
+from looseversion import LooseVersion
 
 from otopi import constants as otopicons
 from otopi import plugin
@@ -94,10 +95,10 @@ class Plugin(plugin.PluginBase):
                 _('Could not detect product setup')
             )
 
-        rpm_v = distutils.version.LooseVersion(
+        rpm_v = LooseVersion(
             osetupcons.Const.RPM_VERSION
         ).version[:3]
-        inst_v = distutils.version.LooseVersion(
+        inst_v = LooseVersion(
             self.environment[
                 osetupcons.CoreEnv.ORIGINAL_GENERATED_BY_VERSION
             ]

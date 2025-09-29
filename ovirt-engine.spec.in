@@ -407,6 +407,7 @@ Requires:	logrotate
 Requires:	python3-otopi >= 1.10.3
 Requires:	python3-paramiko
 Requires:	python3-distro
+Requires:	python3-looseversion
 Requires(pre):	shadow-utils
 Conflicts:	%{name}-dwh < 4.4.0
 Conflicts:	%{name}-dwh-setup < 4.5.6

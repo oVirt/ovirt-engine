@@ -9,13 +9,14 @@
 
 import atexit
 import datetime
-import distutils.version
 import gettext
 import os
 import re
 import tempfile
 
 import psycopg2
+
+from looseversion import LooseVersion
 
 from otopi import base
 from otopi import constants as otopicons
@@ -488,7 +489,7 @@ class OvirtUtils(base.Base):
         password=None,
         database=None,
     ):
-        server_v = distutils.version.LooseVersion(
+        server_v = LooseVersion(
             self.checkServerVersion(
                 host,
                 port,
@@ -498,7 +499,7 @@ class OvirtUtils(base.Base):
                 database,
             )
         ).version[:2]
-        client_v = distutils.version.LooseVersion(
+        client_v = LooseVersion(
             self.checkClientVersion()
         ).version[:2]
         return server_v < client_v
