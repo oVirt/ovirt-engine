@@ -1127,7 +1127,7 @@ getOSVersion() {
 
 looseVersion_le() {
 	# return 0 if first arg is <= second arg
-	python@PY_VERSION@ -c 'import sys; from distutils.version import LooseVersion; sys.exit(0 if LooseVersion(sys.argv[1]) <= LooseVersion(sys.argv[2]) else 1)' "$1" "$2"
+	python@PY_VERSION@ -c 'import sys; from looseversion import LooseVersion; sys.exit(0 if LooseVersion(sys.argv[1]) <= LooseVersion(sys.argv[2]) else 1)' "$1" "$2"
 }
 
 createtar() {
