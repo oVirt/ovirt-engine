@@ -120,6 +120,25 @@ engine_setup_service_enabled() {
 		--file ${INSTALL_ROOT}etc/ovirt-engine-setup.conf
 }
 
+get_engine_constant() {
+	local constant_path="$1"
+	local setup_dir="${ENGINE_USR}/setup"
+	
+	local result
+	result=$(PYTHONPATH="${setup_dir}" python3 -c "
+from ovirt_engine_setup.engine import constants as oenginecons
+print(${constant_path})
+" 2>&1)
+	local exit_code=$?
+	
+	if [ ${exit_code} -ne 0 ]; then
+		log "Warning: Failed to get engine constant ${constant_path}: ${result}"
+		return 1
+	fi
+	
+	echo "${result}"
+}
+
 engine_enabled() {
 	engine_setup_service_enabled "OVESETUP_ENGINE_CORE/enable"
 }
@@ -1872,6 +1891,102 @@ resetHAVMStatus() {
 		|| logdie "Failed resetting HA VM status"
 }
 
+reencryptLegacyP12() {
+	local file="$1"
+	local pki_password="$2"
+	local timestamp="$3"
+	
+	log "Found legacy encryption in ${file}, re-encrypting."
+	
+	mv -f "${file}" "${file}.backup.${timestamp}" || logdie "Failed to backup ${file}"
+	
+	local temp_key="${TEMP_FOLDER}/temp_key_${timestamp}_$$.pem"
+	local temp_certs="${TEMP_FOLDER}/temp_certs_${timestamp}_$$.pem"
+	local result=1
+	
+	openssl pkcs12 -in "${file}.backup.${timestamp}" -passin "pass:${pki_password}" -legacy \
+		-nocerts -out "${temp_key}" -passout "pass:${pki_password}" 2>> "${LOG}" && \
+	openssl pkcs12 -in "${file}.backup.${timestamp}" -passin "pass:${pki_password}" -legacy \
+		-nokeys -out "${temp_certs}" 2>> "${LOG}"
+	local extract_success=$?
+	
+	if [ ${extract_success} -eq 0 ]; then
+		openssl pkcs12 -export -in "${temp_certs}" -inkey "${temp_key}" \
+			-passin "pass:${pki_password}" -passout "pass:${pki_password}" \
+			-out "${file}" 2>> "${LOG}"
+		local reencrypt_success=$?
+		
+		if [ ${reencrypt_success} -eq 0 ]; then
+			output "  - Successfully re-encrypted $(basename "${file}") (backup: $(basename "${file}").backup.${timestamp})"
+			result=0
+		else
+			log "Warning: Failed to re-encrypt ${file}, restoring from backup"
+			mv -f "${file}.backup.${timestamp}" "${file}" || logdie "Failed to restore ${file}"
+		fi
+	else
+		log "Warning: Failed to extract key/cert from ${file}, restoring from backup"
+		mv -f "${file}.backup.${timestamp}" "${file}" || logdie "Failed to restore ${file}"
+	fi
+	
+	rm -f "${temp_key}" "${temp_certs}"
+	return ${result}
+}
+
+migrateLegacyCerts() {
+	output 'Checking certificates for legacy encryption:'
+	
+	# Re-encrypt old p12 files that use legacy encryption (3DES/RC2) incompatible with OpenSSL >=3.0
+	# More info on https://github.com/openssl/openssl/discussions/23089
+	
+	local pki_config_file=$(get_engine_constant "oenginecons.FileLocations.OVIRT_ENGINE_SERVICE_CONFIG_PKI")
+	local default_pki_password=$(get_engine_constant "oenginecons.Const.PKI_PASSWORD")
+	local pki_keys_dir=$(get_engine_constant "oenginecons.FileLocations.OVIRT_ENGINE_PKIKEYSDIR")
+	
+	if [ -z "${pki_keys_dir}" ] || [ -z "${default_pki_password}" ]; then
+		output "  - Warning: Could not determine PKI configuration, skipping certificate check"
+		log "PKI config file: '${pki_config_file}', password: '${default_pki_password}', keys dir: '${pki_keys_dir}'"
+		return 0
+	fi
+	
+	local pki_password="${default_pki_password}"
+	if [ -f "${pki_config_file}" ]; then
+		. "${pki_config_file}"
+		[ -n "${ENGINE_PKI_ENGINE_STORE_PASSWORD}" ] && pki_password="${ENGINE_PKI_ENGINE_STORE_PASSWORD}"
+	fi
+	
+	output "  - Scanning ${pki_keys_dir}"
+	
+	local timestamp=$(date +"%Y%m%d%H%M%S")
+	local processed_count=0
+	for file in ${pki_keys_dir}/*.p12; do
+		[ -f "${file}" ] || continue
+		
+		openssl pkcs12 -info -in "${file}" -passin "pass:${pki_password}" -noout &>/dev/null
+		local can_read=$?
+		
+		if [ ${can_read} -ne 0 ]; then
+			log "Cannot read ${file} with standard openssl, trying with -legacy"
+			openssl pkcs12 -info -in "${file}" -passin "pass:${pki_password}" -legacy -noout &>/dev/null
+			can_read=$?
+			
+			if [ ${can_read} -eq 0 ]; then
+				if reencryptLegacyP12 "${file}" "${pki_password}" "${timestamp}"; then
+					processed_count=$((processed_count + 1))
+				fi
+			else
+				log "Cannot read ${file} even with -legacy flag"
+				output "    - Warning: Cannot read $(basename "${file}") (may be corrupt or use wrong password)"
+			fi
+		fi
+	done
+	
+	if [ ${processed_count} -eq 0 ]; then
+		output "  - Check complete (no legacy certificates found)"
+	else
+		output "  - Check complete (re-encrypted ${processed_count} certificate(s))"
+	fi
+}
+
 restoreFiles() {
 	local paths="$1"
 	local archive="$2"
@@ -1928,6 +2043,8 @@ __EOF__
 		local ESC_APACHE_CONFIGURED_LINE=$(echo "${APACHE_CONFIGURED_LINE}" | sed 's;/;\\/;')
 		sed -i "${INSTALL_ROOT}/^${ESC_APACHE_CONFIGURED_LINE}\$/d" "${POSTINSTALL_RELATIVE}"
 	fi
+
+	migrateLegacyCerts
 
 	if selinuxenabled; then
 		echo "${paths}" | while read -r path; do
