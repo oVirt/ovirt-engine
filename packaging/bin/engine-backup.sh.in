@@ -1921,6 +1921,16 @@ __EOF__
 		sed -i "/^${ESC_APACHE_CONFIGURED_LINE}\$/d" "${POSTINSTALL}"
 	fi
 
+	# Delete old p12 files, as encryption of files on c8 are incomatible with c9
+	# More info on https://github.com/openssl/openssl/discussions/23089
+	if [ "${os}" != "${os_at_backup}" ]; then
+		for file in /etc/pki/ovirt-engine/keys/*.p12; do
+			local timestamp=$(date +"%Y%m%d%H%M%S")
+			mv "${file}" "${file}.${timestamp}"
+			log "Renamed ${file} to ${file}.${timestamp}"
+		done
+	fi
+
 	if selinuxenabled; then
 		echo "${paths}" | while read -r path; do
 			if [ -e "${path}" ]; then
