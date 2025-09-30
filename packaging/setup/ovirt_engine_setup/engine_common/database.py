@@ -939,8 +939,8 @@ class OvirtUtils(base.Base):
     @staticmethod
     def _pg_versions_match(key, current, expected):
         return (
-            distutils.version.LooseVersion(current).version[:2] ==
-            distutils.version.LooseVersion(expected).version[:2]
+            LooseVersion(current).version[:2] ==
+            LooseVersion(expected).version[:2]
         )
 
     @staticmethod
