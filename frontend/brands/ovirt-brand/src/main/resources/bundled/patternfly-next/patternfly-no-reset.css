@@ -9502,10 +9502,10 @@ label.pf-c-radio, .pf-c-radio__label,
   .pf-c-tabs.pf-m-start-current.pf-m-tabs-secondary .pf-c-tabs__scroll-button:nth-of-type(1),
   .pf-c-tabs.pf-m-end-current.pf-m-tabs-secondary .pf-c-tabs__scroll-button:nth-of-type(2) {
     color: var(--pf-c-tabs__scroll-button--m-secondary-right--m-start-current--Color); }
-  + .pf-c-tabs.pf-m-tabs-secondary {
+  .pf-c-tabs.pf-m-tabs-secondary {
     margin-top: calc(-1 * var(--pf-c-tabs__item--BorderWidth));
     border-top: var(--pf-c-tabs__item--BorderWidth) solid var(--pf-c-tabs__item--BorderColor); }
-    + .pf-c-tabs.pf-m-tabs-secondary .pf-c-tabs__scroll-button {
+  .pf-c-tabs.pf-m-tabs-secondary .pf-c-tabs__scroll-button {
       margin-top: calc(-1 * var(--pf-c-tabs__item--BorderWidth)); }
   .pf-c-tabs.pf-m-fill .pf-c-tabs__list {
     width: 100%; }
