@@ -1,0 +1,8 @@
+name: ovirt-centos10
+services:
+  postgres:
+    image: "postgres:16"
+  engine:
+    build:
+      args:
+        BASE_VERSION: "10"

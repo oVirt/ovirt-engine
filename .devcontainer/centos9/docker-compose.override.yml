@@ -1,0 +1,8 @@
+name: ovirt-centos9
+services:
+  postgres:
+    image: "postgres:13"
+  engine:
+    build:
+      args:
+        BASE_VERSION: "9"
