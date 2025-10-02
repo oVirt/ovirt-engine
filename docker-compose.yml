@@ -1,8 +1,5 @@
-
 services:
-  ovirt-postgres:
-    image: postgres:13
-    container_name: ovirt-postgres
+  postgres:
     ports:
       - "5432:5432"
     volumes:
@@ -14,7 +11,53 @@ services:
       - "postgres"
       - "-c"
       - "config_file=/etc/postgresql/postgresql.conf"
+
+# - The ulimit is needed because of https://pagure.io/python-daemon/issue/40
+# - The postCreateCommand is needed because the ovirt-engine because pki folder is mounted as root, but needs to be owned by the build user for the make script to work
+
+# Ports (https://www.ovirt.org/documentation/installing_ovirt_as_a_standalone_manager_with_remote_databases/):
+# - 8080:8080 - HTTP
+# - 8443:8443 - HTTPS
+# - 8787:8787 - Debug
+# - 54323:54323 - VDSM
+# - 9696:9696 - External network provider for OVN
+# - 6642:6642 - Open Virtual Network (OVN) database
+# - 35357:35357 - OVN (OpenStack Identity API)
+# - 2222:2222 - VDSM SSH
+# - 6100:6100 - noVNC
+# - 7410:7410 - Kdump
+  engine:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        BASE_VERSION: "${BASE_VERSION:-10}"
+    depends_on:
+      - postgres
+    networks:
+      - default
+    ports:
+      - "8080:8080"
+      - "8443:8443"
+      - "8787:8787"
+      - "54323:54323"
+      - "9696:9696"
+      - "6642:6642"
+      - "35357:35357"
+      - "2222:2222"
+      - "6100:6100"
+      - "7410:7410"
+    volumes:
+      - ovirt-pki:/home/build/ovirt/etc/pki/ovirt-engine
+      - .:/workspace
+    ulimits:
+      nofile:
+        soft: 2048
+        hard: 2048
+    command: ["bash", "-lc", "sudo chown -R build:build /home/build/ovirt && echo 'Started' && tail -f /dev/null"]
+
+volumes:
+  ovirt-pki:
 networks:
   default:
-    name: ovirt
     driver: bridge

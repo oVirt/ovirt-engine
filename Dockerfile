@@ -11,10 +11,10 @@ RUN dnf -y --nobest update && \
     echo $USERNAME ALL=\(root\) NOPASSWD:ALL > /etc/sudoers.d/$USERNAME
 
 # Explicitly copy the current directory and the .git directory to /src in the container
-COPY . /src
+COPY . /workspace
 
-# Set the working directory to /src
-WORKDIR /src
+# Set the working directory to /workspace
+WORKDIR /workspace
 
 # Build Spec
 RUN make ovirt-engine.spec
@@ -30,6 +30,12 @@ RUN ln -s /usr/sbin/service /usr/bin/initctl
 
 # Set default User
 USER $USERNAME
+
+# Set oVirt development environment variables
+ENV PREFIX=/home/$USERNAME/ovirt
+ENV PATH="$PREFIX/bin:$PATH"
+ENV PATH="$PREFIX/ovirt-engine/services/ovirt-engine:$PATH"
+ENV PATH="$PREFIX/share/ovirt-engine/services/ovirt-websocket-proxy:$PATH"
 
 # Expose oVirt-Engine, Java and ovirt imageio ports
 EXPOSE 8080 8443 8787 54323 9696 6642 35357 2222 6100 7410
