@@ -167,6 +167,7 @@ public enum VmDeviceGeneralType {
             case SOUND:
             case AC97:
             case ICH6:
+            case ICH9:
                 type = SOUND;
                 break;
 
