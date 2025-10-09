@@ -139,4 +139,9 @@ public class DeleteAllVmCheckpointsCommand<T extends DeleteAllVmCheckpointsParam
         return Collections.singletonMap(getParameters().getVmId().toString(),
                 LockMessagesMatchUtil.makeLockingPair(LockingGroup.VM, EngineMessage.ACTION_TYPE_FAILED_VM_IS_LOCKED));
     }
+
+    @Override
+    public boolean ignoreChildCommandFailure() {
+        return getParameters().isForce();
+    }
 }
