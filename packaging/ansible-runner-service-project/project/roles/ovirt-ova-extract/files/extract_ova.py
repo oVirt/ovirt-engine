@@ -135,4 +135,5 @@ if len(sys.argv) < 4:
     print("Usage: extract_ova.py ova_path disks_paths image_mappings")
     sys.exit(2)
 
-extract_disks(sys.argv[1], json.loads(sys.argv[2]), yaml.load(sys.argv[3]))
+extract_disks(sys.argv[1], json.loads(sys.argv[2]),
+              yaml.load(sys.argv[3], Loader=yaml.SafeLoader))
