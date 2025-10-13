@@ -4,4 +4,11 @@
   <resources>
     <resource-root path="commons-compress.jar"/>
   </resources>
+
+  <!-- Optional because these dependencies are not required on CentOS 9 -->
+  <dependencies>
+    <module name="org.apache.commons.codec" optional="true"/>
+    <module name="org.apache.commons.io" optional="true"/>
+    <module name="org.apache.commons.lang3" optional="true"/>
+  </dependencies>
 </module>

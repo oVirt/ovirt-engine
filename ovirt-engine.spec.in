@@ -768,6 +768,9 @@ common/com/woorea/openstack/sdk/main/resteasy-connector.jar openstack-java-sdk/r
 common/net/i2p/crypto/eddsa/main/eddsa.jar
 common/org/aopalliance/main/aopalliance.jar
 common/org/apache/commons/compress/main/commons-compress.jar
+common/org/apache/commons/codec/main/commons-codec.jar
+common/org/apache/commons/io/main/commons-io.jar
+common/org/apache/commons/lang3/main/commons-lang3.jar
 common/org/apache/sshd/main/sshd-core.jar apache-sshd/sshd-core.jar
 common/org/apache/sshd/main/sshd-common.jar apache-sshd/sshd-common.jar
 common/org/apache/ws/commons/main/ws-commons-util.jar
