@@ -40,6 +40,17 @@ engine-setup --offline --config=answers.config.in
 
 Omit `--config=answers.config.in` for an interactive run; be sure to keep DB host `postgres`, database `engine`, user `ovirt` (matching the running container's initialization script).
 
+For development on the setup, you can cleanup the setup config:
+```
+make clean-setup-conf [PREFIX=/prefix/path]
+```
+Remember to drop the database(s) or to recreate your postgres cluster entirely to have a real fresh start.
+
+You can re-install only the setup files with:
+```
+make install-setup-dev [PREFIX=your path]
+```
+
 ### Running the engine service
 
 After setup succeeds, start the engine service:
