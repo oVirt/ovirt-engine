@@ -208,7 +208,8 @@ class VenCryptSocket(object):
         # Do a regular TLS negotiation
         self.log.info(
             "VeNCrypt negotiation succeeded. Setting up TLS connection")
-        self.sock = ssl.wrap_socket(self.sock)
+        context = ssl.SSLContext()
+        self.sock = context.wrap_socket(self.sock)
         self.log.info("VeNCrypt negotiation done")
 
 

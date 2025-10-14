@@ -64,13 +64,12 @@ def urlopen(url, ca_certs=None, verify_host=True):
                 HTTPSConnection.__init__(self, host, **kwargs)
 
             def connect(self):
-                self.sock = ssl.wrap_socket(
-                    socket.create_connection((self.host, self.port)),
-                    cert_reqs=(
-                        ssl.CERT_REQUIRED if self._ca_certs
-                        else ssl.CERT_NONE
-                    ),
-                    ca_certs=self._ca_certs,
+                context = ssl.SSLContext()
+                if self._ca_certs:
+                    context.load_verify_locations(cafile=self._ca_certs)
+                    context.verify_mode = ssl.CERT_REQUIRED
+                self.sock = context.wrap_socket(
+                    socket.create_connection((self.host, self.port))
                 )
                 if verify_host:
                     cert = self.sock.getpeercert()
