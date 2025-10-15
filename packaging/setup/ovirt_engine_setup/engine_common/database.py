@@ -937,11 +937,14 @@ class OvirtUtils(base.Base):
         )
 
     @staticmethod
-    def _pg_versions_match(key, current, expected):
-        return (
-            LooseVersion(current).version[:2] ==
-            LooseVersion(expected).version[:2]
-        )
+    def _pg_client_version_compatible(key, current, expected):
+        server_version = LooseVersion(current).version
+        client_version = LooseVersion(expected).version
+        
+        server_major = server_version[0] if server_version else 0
+        client_major = client_version[0] if client_version else 0
+        
+        return client_major >= server_major
 
     @staticmethod
     def _lower_equal_no_dash(key, current, expected):
@@ -1095,14 +1098,15 @@ class OvirtUtils(base.Base):
                 )[
                     -1
                 ],
-                'ok': self._pg_versions_match,
+                'ok': self._pg_client_version_compatible,
                 'check_on_use': True,
                 'skip_on_dbmsupgrade': True,
                 'needed_on_create': False,
                 'error_msg': _(
-                    "Postgresql client version is '{expected}', whereas "
-                    "the version on '{pg_host}' is '{current}'. "
-                    "Please use a PostgreSQL server of version '{expected}'."
+                    "PostgreSQL client version is '{expected}', whereas "
+                    "the server version on '{pg_host}' is '{current}'. "
+                    "Please use a PostgreSQL client with a major version "
+                    "greater than or equal to the server's major version."
                 ),
             },
             {
