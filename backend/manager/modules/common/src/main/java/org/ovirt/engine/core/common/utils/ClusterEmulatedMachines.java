@@ -6,11 +6,17 @@ public class ClusterEmulatedMachines {
 
     private static final String I440FX_CHIPSET_NAME = ChipsetType.I440FX.getChipsetName();
     private static final String Q35_CHIPSET_NAME = ChipsetType.Q35.getChipsetName();
+    private static final String VIRT_CHIPSET_NAME = ChipsetType.VIRT.getChipsetName();
 
     private String i440fxType = "";
     private String q35Type = "";
+    private String virtType = "";
 
     private ClusterEmulatedMachines() {
+    }
+
+    private ClusterEmulatedMachines(String virtType) {
+        this.virtType = virtType;
     }
 
     private ClusterEmulatedMachines(String i440fxType, String q35Type) {
@@ -18,9 +24,11 @@ public class ClusterEmulatedMachines {
         this.q35Type = q35Type;
     }
 
-    public static String build(String i440fxType, String q35Type) {
-        if (i440fxType == null) {
+    public static String build(String i440fxType, String q35Type, String virtType) {
+        if (i440fxType == null && q35Type != null) {
             return q35Type;
+        } else if (q35Type == null && i440fxType == null && virtType != null) {
+            return virtType;
         } else {
             return q35Type == null ? i440fxType : i440fxType + ";" + q35Type;
         }
@@ -44,6 +52,8 @@ public class ClusterEmulatedMachines {
         ChipsetType chipsetType = ChipsetType.fromMachineType(emulatedMachine);
         if (chipsetType == ChipsetType.Q35) {
             return new ClusterEmulatedMachines(replaceChipset(emulatedMachine, ChipsetType.I440FX), emulatedMachine);
+        } else if (chipsetType == ChipsetType.VIRT) {
+            return new ClusterEmulatedMachines(replaceChipset(emulatedMachine, ChipsetType.VIRT));
         } else {
             return new ClusterEmulatedMachines(emulatedMachine, replaceChipset(emulatedMachine, ChipsetType.Q35));
         }
@@ -68,6 +78,12 @@ public class ClusterEmulatedMachines {
                     return emulatedMachine.replace(Q35_CHIPSET_NAME, I440FX_CHIPSET_NAME);
                 }
                 break;
+
+            case VIRT:
+                if (emulatedMachine.contains(VIRT_CHIPSET_NAME)) {
+                    return emulatedMachine.replace(Q35_CHIPSET_NAME, VIRT_CHIPSET_NAME);
+                }
+                break;
         }
         return emulatedMachine;
     }
@@ -80,8 +96,16 @@ public class ClusterEmulatedMachines {
         return q35Type;
     }
 
+    public String getVirtType() {
+        return virtType;
+    }
+
     public String getTypeByChipset(ChipsetType chipsetType) {
-        return chipsetType == ChipsetType.Q35 ? q35Type : i440fxType;
+        if (chipsetType == ChipsetType.VIRT) {
+            return virtType;
+        } else {
+            return chipsetType == ChipsetType.Q35 ? q35Type : i440fxType;
+        }
     }
 
     public static String forChipset(String emulatedMachine, ChipsetType chipsetType) {
