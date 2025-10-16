@@ -208,6 +208,21 @@ public class ImportVmCommandTest extends BaseCommandTest {
         doReturn(true).when(cmd).validateImages(any());
     }
 
+    // TODO, aarch64 tests
+    private void setupCanImportAarchTest() {
+        setupDiskSpaceTest();
+
+        cmd.getParameters().getVm().setBiosType(BiosType.I440FX_SEA_BIOS);
+        cmd.getParameters().getVm().setClusterArch(ArchitectureType.aarch64);
+        Cluster cluster = new Cluster();
+        cluster.setStoragePoolId(cmd.getParameters().getStoragePoolId());
+        cluster.setArchitecture(ArchitectureType.aarch64);
+        cluster.setCompatibilityVersion(Version.getLast());
+        cluster.setBiosType(BiosType.I440FX_SEA_BIOS);
+        doReturn(cluster).when(cmd).getCluster();
+        doReturn(true).when(cmd).validateImages(any());
+    }
+
     @Test
     @MockedConfig("mockConfiguration")
     public void refuseSoundDeviceOnPPC() {
