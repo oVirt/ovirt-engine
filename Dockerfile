@@ -34,7 +34,7 @@ USER $USERNAME
 # Set oVirt development environment variables
 ENV PREFIX=/home/$USERNAME/ovirt
 ENV PATH="$PREFIX/bin:$PATH"
-ENV PATH="$PREFIX/ovirt-engine/services/ovirt-engine:$PATH"
+ENV PATH="$PREFIX/share/ovirt-engine/services/ovirt-engine:$PATH"
 ENV PATH="$PREFIX/share/ovirt-engine/services/ovirt-websocket-proxy:$PATH"
 
 # Expose oVirt-Engine, Java and ovirt imageio ports
