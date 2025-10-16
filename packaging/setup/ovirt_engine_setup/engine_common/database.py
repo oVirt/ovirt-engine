@@ -81,7 +81,7 @@ def _ind_env(inst, keykey):
 
 
 def getInvalidConfigItemsMessage(invalid_config_items):
-    return '\n'.join(
+    base_message = '\n'.join(
         [
             e['format_str'].format(**e)
             for e in invalid_config_items
@@ -105,6 +105,25 @@ def getInvalidConfigItemsMessage(invalid_config_items):
         ),
         pg_host=invalid_config_items[0]['pg_host'],
     )
+
+    password_encryption_issues = [
+        e for e in invalid_config_items
+        if e.get('key') == 'password_encryption' and e['needed_on_create']
+    ]
+
+    if password_encryption_issues:
+        base_message += '\n\n' + _(
+            "IMPORTANT: After changing password_encryption, you must also:\n"
+            "1. Update pg_hba.conf to use the new authentication method "
+            "(e.g., change 'md5' to 'scram-sha-256')\n"
+            "2. Regenerate password verifiers for existing users:\n"
+            "   postgres=# ALTER USER <username> PASSWORD '<password>';\n"
+            "3. Restart or reload PostgreSQL service\n"
+            "\nFor more details, see PostgreSQL documentation on "
+            "password authentication methods."
+        )
+
+    return base_message
 
 
 @util.export
