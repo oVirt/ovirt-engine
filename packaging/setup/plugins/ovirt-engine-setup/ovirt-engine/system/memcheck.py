@@ -45,7 +45,7 @@ class Plugin(plugin.PluginBase):
         ] * self.environment[
             oenginecons.SystemEnv.MEMCHECK_THRESHOLD
         ] / 100:
-            self.logger.warn(
+            self.logger.warning(
                 _(
                     'Warning: Not enough memory is available on the host. '
                     'Minimum requirement is {minimum}MB, and {recommended}MB '
@@ -68,7 +68,7 @@ class Plugin(plugin.PluginBase):
             ] * self.environment[
                 oenginecons.SystemEnv.MEMCHECK_THRESHOLD
             ] / 100:
-                self.logger.warn(
+                self.logger.warning(
                     _(
                         'Less than {recommended}MB of memory is available'
                     ).format(

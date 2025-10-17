@@ -343,7 +343,7 @@ class Daemon(service.Daemon):
             # Do not allow more than available memory
             if mem.javaX_mb(heap_min_conf) > total:
                 new_min = total * 9 // 10
-                self.logger.warn(
+                self.logger.warning(
                     "ENGINE_HEAP_MIN is [%s], total available memory is %s "
                     "MB. Setting to %s MB.",
                     heap_min_conf,
@@ -353,7 +353,7 @@ class Daemon(service.Daemon):
                 heap_min_conf = '%sM' % new_min
             if mem.javaX_mb(heap_max_conf) > total:
                 new_max = total * 9 // 10
-                self.logger.warn(
+                self.logger.warning(
                     "ENGINE_HEAP_MAX is [%s], total available memory is %s "
                     "MB. Setting to %s MB.",
                     heap_max_conf,
