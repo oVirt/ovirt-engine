@@ -70,7 +70,7 @@ class Plugin(plugin.PluginBase):
                         if value is not None and env not in shown:
                             shown.add(env)
                             self.dialog.note(
-                                text=_(u'{key:40}: {value}').format(
+                                text=_('{key:40}: {value}').format(
                                     key=(
                                         attrs['description']
                                         if attrs['description'] is not None
