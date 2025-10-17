@@ -51,7 +51,7 @@ class Plugin(plugin.PluginBase):
                 name=osetupcons.FileLocations.OVIRT_SETUP_POST_INSTALL_CONFIG,
             )
         )
-        content = [u'[environment:default]']
+        content = ['[environment:default]']
         consts = []
         for constobj in self.environment[
             osetupcons.CoreEnv.SETUP_ATTRS_MODULES
@@ -65,11 +65,11 @@ class Plugin(plugin.PluginBase):
                         if key in self.environment:
                             value = self.environment[key]
                             content.append(
-                                u'{key}={type}:{value}'.format(
+                                '{key}={type}:{value}'.format(
                                     key=key,
                                     type=common.typeName(value),
                                     value=(
-                                        u'\n '.join(value)
+                                        '\n '.join(value)
                                         # We want the next lines to be
                                         # indented, so that
                                         # configparser will treat them

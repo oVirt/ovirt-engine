@@ -223,7 +223,7 @@ class EnrollCert(base.Base):
         request = x509.CertificateSigningRequestBuilder(
         ).subject_name(
             x509.Name([
-                x509.NameAttribute(x509.oid.NameOID.COMMON_NAME, u'/'),
+                x509.NameAttribute(x509.oid.NameOID.COMMON_NAME, '/'),
             ])
         ).sign(
             private_key=private_key,
