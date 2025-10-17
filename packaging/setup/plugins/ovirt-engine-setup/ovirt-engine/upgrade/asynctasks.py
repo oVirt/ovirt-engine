@@ -85,7 +85,7 @@ class Plugin(plugin.PluginBase):
                         mode=mode,
                         error=e,
                     )
-                )
+                ) from e
 
         def __enter__(self):
             self._setEngineMode(
@@ -505,7 +505,7 @@ class Plugin(plugin.PluginBase):
                     )
                     raise RuntimeError(
                         _('Upgrade cannot be completed due to running tasks.')
-                    )
+                    ) from KeyboardInterrupt
             self.logger.info(
                 _('Unlocking existing entities')
             )
