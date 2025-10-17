@@ -374,7 +374,7 @@ class Daemon(base.Base):
                         _('Had to kill process {pid}').format(
                             pid=p.pid
                         )
-                    )
+                    ) from self.TerminateException
             except OSError as e:
                 self.logger.warning(
                     _('Cannot kill pid {pid}: {error}').format(

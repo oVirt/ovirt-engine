@@ -90,7 +90,7 @@ class Plugin(plugin.PluginBase):
                     if interactive:
                         self.logger.error(msg)
                     else:
-                        raise RuntimeError(msg)
+                        raise RuntimeError(msg) from e
                 except (paramiko.SSHException, socket.gaierror) as e:
                     self.logger.debug('exception', exc_info=True)
                     msg = _(
@@ -103,7 +103,7 @@ class Plugin(plugin.PluginBase):
                     if interactive:
                         self.logger.error(msg)
                     else:
-                        raise RuntimeError(msg)
+                        raise RuntimeError(msg) from e
 
         def _ssh_connect(self):
             import paramiko
@@ -172,7 +172,7 @@ class Plugin(plugin.PluginBase):
                     if interactive:
                         self.logger.error(msg)
                     else:
-                        raise RuntimeError(msg)
+                        raise RuntimeError(msg) from e
                     bad_password = True
             self.environment[
                 osetupcons.ConfigEnv.REMOTE_ENGINE_HOST_ROOT_PASSWORD

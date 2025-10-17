@@ -119,7 +119,7 @@ class DomainChecker(base.Base):
                 _('Error: mount point {path} is not writable').format(
                     path=path
                 )
-            )
+            ) from EnvironmentError
 
     def check_available_space(self, path, minimum):
         """

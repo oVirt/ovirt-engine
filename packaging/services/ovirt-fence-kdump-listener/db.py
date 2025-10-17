@@ -165,7 +165,7 @@ class DbManager(base.Base):
                     "Error calling procedure '%s'" % name
                 ),
                 cause=e,
-            )
+            ) from e
 
         self.logger.debug("Result: '%s'", ret)
         return ret
