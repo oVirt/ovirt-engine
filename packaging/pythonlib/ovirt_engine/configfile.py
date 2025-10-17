@@ -81,7 +81,7 @@ class ConfigFile(base.Base):
                         line=index,
                         error=e
                     )
-                )
+                ) from e
 
     def expandString(self, value):
         ret = ""

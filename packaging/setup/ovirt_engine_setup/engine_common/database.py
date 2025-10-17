@@ -398,7 +398,7 @@ class OvirtUtils(base.Base):
                 _('Cannot connect to database: {error}').format(
                     error=e,
                 )
-            )
+            ) from e
 
     def isNewDatabase(
         self,
