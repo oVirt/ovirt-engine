@@ -1198,7 +1198,7 @@ class OvirtUtils(base.Base):
                     formatted_msg = ''
                     if item['error_msg']:
                         formatted_msg = item['error_msg'].format(**item_data)
-                    self.logger.warn(
+                    self.logger.warning(
                         formatted_msg
                         if formatted_msg and not item['needed_on_create']
                         else _(

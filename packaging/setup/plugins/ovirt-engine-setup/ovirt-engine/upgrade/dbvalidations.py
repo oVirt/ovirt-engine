@@ -142,7 +142,7 @@ class Plugin(plugin.PluginBase):
             if self.environment[
                 oenginecons.EngineDBEnv.FIX_DB_VIOLATIONS
             ] is None:
-                self.logger.warn(
+                self.logger.warning(
                     _(
                         'The following inconsistencies were found '
                         'in Engine database: {violations}. '

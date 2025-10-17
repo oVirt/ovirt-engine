@@ -147,7 +147,7 @@ class Plugin(plugin.PluginBase):
         if rc == 0 and stdout:
             res = '\n'.join(stdout)
         else:
-            self.logger.warn(
+            self.logger.warning(
                 _(
                     "Failed to read or parse '{pkcs12}'"
                 ).format(
@@ -694,7 +694,7 @@ class Plugin(plugin.PluginBase):
                     'This does not fix existing certificates.'
                 ))
             else:
-                self.logger.warn(
+                self.logger.warning(
                     _(
                         '{template} has wrong data, but was manually changed '
                         'after previous engine-setup'

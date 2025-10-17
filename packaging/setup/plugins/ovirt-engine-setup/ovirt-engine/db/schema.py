@@ -272,7 +272,7 @@ class Plugin(plugin.PluginBase):
         )
 
         if invalidImagesForVms:
-            self.logger.warn(
+            self.logger.warning(
                 _(
                     'Engine DB is inconsistent due to the existence of invalid'
                     ' {num} image(s) for virtual machine(s) as follows:\n'

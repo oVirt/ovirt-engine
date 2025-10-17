@@ -85,7 +85,7 @@ class Plugin(plugin.PluginBase):
             externally_modified_files and
             not self.environment[osetupcons.RenameEnv.FORCE_OVERWRITE]
         ):
-            self.logger.warn(_("Files modified externally"))
+            self.logger.warning(_("Files modified externally"))
             self.dialog.note(
                 text=_(
                     'The following files were externally modified - outside\n'

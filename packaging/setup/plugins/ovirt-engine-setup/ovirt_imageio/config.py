@@ -170,7 +170,7 @@ class Plugin(plugin.PluginBase):
 
         # Did it change since we installed it?
         if uninstall_info.get("changed"):
-            self.logger.warn(
+            self.logger.warning(
                 _(
                     "Cannot remove {}, file was changed"
                 ).format(installed_file)
@@ -189,7 +189,7 @@ class Plugin(plugin.PluginBase):
             raiseOnError=False,
         )
         if rc != 0:
-            self.logger.warn(
+            self.logger.warning(
                 _(
                     "Cannot read ovirt-imageio configuration: {}"
                 ).format("\n".join(stderr))
