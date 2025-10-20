@@ -49,23 +49,24 @@ class FenceKdumpListener(base.Base):
         super(FenceKdumpListener, self).__init__()
         self._bind = bind
 
+        self._socket = None
         self._db_manager = db_manager
         self._dao = db.EngineDao(db_manager)
         self._db_connection_valid = True
-        self._afterFirstDbSync = False
+        self._after_first_db_sync = False
 
-        self._heartbeatInterval = heartbeat_interval
-        self._sessionSyncInterval = session_sync_interval
-        self._wakeupInterval = min(
-            self._heartbeatInterval,
-            self._sessionSyncInterval
+        self._heartbeat_interval = heartbeat_interval
+        self._session_sync_interval = session_sync_interval
+        self._wakeup_interval = min(
+            self._heartbeat_interval,
+            self._session_sync_interval
         )
-        self._reopenDbConnInterval = reopen_db_connection_interval
-        self._sessionExpirationTime = session_expiration_time
-        self._lastHeartbeat = None
-        self._lastSessionSync = None
-        self._lastWakeup = None
-        self._lastDbConnectionAttempt = None
+        self._reopen_db_conn_interval = reopen_db_connection_interval
+        self._session_expiration_time = session_expiration_time
+        self._last_heartbeat = None
+        self._last_session_sync = None
+        self._last_wakeup = None
+        self._last_db_connection_attempt = None
         self._sessions = {}
 
     def __enter__(self):
@@ -94,16 +95,16 @@ class FenceKdumpListener(base.Base):
 
         try:
             if self._interval_finished(
-                    interval=self._wakeupInterval,
-                    last=self._lastWakeup,
+                    interval=self._wakeup_interval,
+                    last=self._last_wakeup,
             ):
                 raise socket.timeout()
 
             self._socket.settimeout(
                 max(
-                    self._wakeupInterval - self._total_seconds(
+                    self._wakeup_interval - self._total_seconds(
                         datetime.datetime.utcnow(),
-                        self._lastWakeup
+                        self._last_wakeup
                     ),
                     1,
                 )
@@ -111,7 +112,7 @@ class FenceKdumpListener(base.Base):
 
             ret = self._socket.recvfrom(self._BUF_SIZE)
         except socket.timeout:
-            self._lastWakeup = datetime.datetime.utcnow()
+            self._last_wakeup = datetime.datetime.utcnow()
 
         return ret
 
@@ -167,7 +168,7 @@ class FenceKdumpListener(base.Base):
             if (
                 session['status'] == self.SESSION_STATE_DUMPING and
                 self._interval_finished(
-                    interval=self._sessionExpirationTime,
+                    interval=self._session_expiration_time,
                     last=session['updated']
                 )
             ):
@@ -191,16 +192,16 @@ class FenceKdumpListener(base.Base):
 
     def _heartbeat(self):
         if self._interval_finished(
-                interval=self._heartbeatInterval,
-                last=self._lastHeartbeat
+                interval=self._heartbeat_interval,
+                last=self._last_heartbeat
         ):
             self._dao.update_heartbeat()
-            self._lastHeartbeat = datetime.datetime.utcnow()
+            self._last_heartbeat = datetime.datetime.utcnow()
 
     def _save_sessions(self):
         if self._interval_finished(
-                interval=self._sessionSyncInterval,
-                last=self._lastSessionSync
+                interval=self._session_sync_interval,
+                last=self._last_session_sync
         ):
             # update db state for all updated sessions
             for session in list(self._sessions.values()):
@@ -229,7 +230,7 @@ class FenceKdumpListener(base.Base):
                         # can be removed from sessions on next house keeping
                         session['status'] = self.SESSION_STATE_CLOSED
 
-            self._lastSessionSync = datetime.datetime.utcnow()
+            self._last_session_sync = datetime.datetime.utcnow()
 
     def _create_session(
             self,
@@ -245,7 +246,7 @@ class FenceKdumpListener(base.Base):
         }
 
     def _load_sessions(self):
-        if not self._afterFirstDbSync:
+        if not self._after_first_db_sync:
             # load sessions from db on 1st successful db connection
             for address in self._dao.get_unfinished_session_addresses():
                 # if session is not in _sessions, add it, otherwise
@@ -258,7 +259,7 @@ class FenceKdumpListener(base.Base):
                     )
                     self._sessions[session['address']] = session
 
-            self._afterFirstDbSync = True
+            self._after_first_db_sync = True
 
     def _db_sync(self):
         # check if connection is valid and if not postpone reopen db
@@ -266,8 +267,8 @@ class FenceKdumpListener(base.Base):
         if (
             self._db_connection_valid or
             self._interval_finished(
-                interval=self._reopenDbConnInterval,
-                last=self._lastDbConnectionAttempt
+                interval=self._reopen_db_conn_interval,
+                last=self._last_db_connection_attempt
             )
         ):
             if self._db_manager.validate_connection():
@@ -297,7 +298,7 @@ class FenceKdumpListener(base.Base):
                             "synchronization will be postponed."
                         )
                     )
-                self._lastDbConnectionAttempt = datetime.datetime.utcnow()
+                self._last_db_connection_attempt = datetime.datetime.utcnow()
 
     def run(self):
         while True:

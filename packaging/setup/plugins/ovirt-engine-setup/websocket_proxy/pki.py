@@ -141,8 +141,8 @@ class Plugin(plugin.PluginBase):
                         engine_fqdn=remote_engine_host
                     )
                 )
-            ) as urlObj:
-                engine_ca_cert = urlObj.read()
+            ) as url_obj:
+                engine_ca_cert = url_obj.read()
                 if engine_ca_cert:
                     self._engine_cert = engine_ca_cert
                 else:

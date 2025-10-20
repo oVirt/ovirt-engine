@@ -78,33 +78,33 @@ class Plugin(plugin.PluginBase):
 
         rc, stdout, stderr = self._dbUtil()
         if rc != 0:
-            exceptTextBase = _(
+            except_text_base = _(
                 'Failed checking Engine database: '
                 'an exception occurred while validating the Engine'
                 ' database, please check the logs for getting more info'
             )
-            stderrLines = stderr
-            for stderrLine in stderrLines:
-                if re.match('^ERROR: ', stderrLine):
+            stderr_lines = stderr
+            for stderr_line in stderr_lines:
+                if re.match('^ERROR: ', stderr_line):
                     break
             else:
-                stderrLine = stderrLines[0]
+                stderr_line = stderr_lines[0]
 
-            if stderrLine != '':
-                exceptText = _(
+            if stderr_line != '':
+                except_text = _(
                     '{base}:\n{output}\n'.format(
-                        base=exceptTextBase,
-                        output=stderrLine,
+                        base=except_text_base,
+                        output=stderr_line,
                     )
                 )
             else:
-                exceptText = _(
+                except_text = _(
                     '{base}.\n'.format(
-                        base=exceptTextBase,
+                        base=except_text_base,
                     )
                 )
 
-            raise RuntimeError(exceptText)
+            raise RuntimeError(except_text)
 
         return (stdout, rc)
 

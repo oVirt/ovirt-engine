@@ -152,6 +152,7 @@ class TicketDecoder():
             hasher.update(decoded[field].encode('utf8'))
         digest = hasher.finalize()
         try:
+            res = None
             if 'v2_signature' in decoded:
                 res = pkey.verify(
                     base64.b64decode(decoded['v2_signature']),
