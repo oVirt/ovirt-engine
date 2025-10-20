@@ -86,7 +86,7 @@ class Provisioning(base.Base):
 
     @property
     def databaseRenamed(self):
-        return self._renamedDBResources
+        return self._renamed_db_resources
 
     def _setDatabaseResources(self, environment):
         dbstatement = database.Statement(
@@ -141,7 +141,7 @@ class Provisioning(base.Base):
             suffix = '_%s' % datetime.datetime.now().strftime('%Y%m%d%H%M%S')
             self.environment[self._dbenvkeys[DEK.DATABASE]] += suffix
             self.environment[self._dbenvkeys[DEK.USER]] += suffix
-            self._renamedDBResources = True
+            self._renamed_db_resources = True
 
         return existing
 
@@ -444,7 +444,7 @@ class Provisioning(base.Base):
         self._plugin = plugin
         self._dbenvkeys = dbenvkeys
         self._defaults = defaults
-        self._renamedDBResources = False
+        self._renamed_db_resources = False
 
     def detectCommands(self):
         self.command.detect('postgresql-setup')
