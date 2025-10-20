@@ -32,7 +32,9 @@ class Daemon(service.Daemon):
                 'ovirt-fence-kdump-listener.conf',
             )
         )
-        self._engineDefaults = os.path.abspath(
+        self._config = None
+        self._engine_config = None
+        self._engine_defaults = os.path.abspath(
             os.path.join(
                 os.path.dirname(sys.argv[0]),
                 'ovirt-engine.conf',
@@ -69,9 +71,9 @@ class Daemon(service.Daemon):
             ),
         )
 
-        self._engineConfig = configfile.ConfigFile(
+        self._engine_config = configfile.ConfigFile(
             (
-                self._engineDefaults,
+                self._engine_defaults,
                 config.ENGINE_VARS,
             ),
         )
@@ -82,13 +84,13 @@ class Daemon(service.Daemon):
 
     def daemonContext(self):
         with db.DbManager(
-                host=self._engineConfig.get('ENGINE_DB_HOST'),
-                port=self._engineConfig.get('ENGINE_DB_PORT'),
-                database=self._engineConfig.get('ENGINE_DB_DATABASE'),
-                username=self._engineConfig.get('ENGINE_DB_USER'),
-                password=self._engineConfig.get('ENGINE_DB_PASSWORD'),
-                secured=self._engineConfig.getboolean('ENGINE_DB_SECURED'),
-                secure_validation=self._engineConfig.getboolean(
+                host=self._engine_config.get('ENGINE_DB_HOST'),
+                port=self._engine_config.get('ENGINE_DB_PORT'),
+                database=self._engine_config.get('ENGINE_DB_DATABASE'),
+                username=self._engine_config.get('ENGINE_DB_USER'),
+                password=self._engine_config.get('ENGINE_DB_PASSWORD'),
+                secured=self._engine_config.getboolean('ENGINE_DB_SECURED'),
+                secure_validation=self._engine_config.getboolean(
                     'ENGINE_DB_SECURED_VALIDATION'
                 ),
         ) as db_manager:

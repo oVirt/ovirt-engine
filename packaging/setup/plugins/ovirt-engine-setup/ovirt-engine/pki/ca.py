@@ -663,10 +663,10 @@ class Plugin(plugin.PluginBase):
             aia = None
             if os.path.exists(template):
                 with open(template, encoding='utf-8') as f:
-                    PREFIX = 'caIssuers;URI:'
+                    prefix = 'caIssuers;URI:'
                     for line in f.read().splitlines():
                         if line.startswith('authorityInfoAccess'):
-                            aia = line[line.find(PREFIX)+len(PREFIX):]
+                            aia = line[line.find(prefix)+len(prefix):]
                             break
             return aia
 
@@ -835,7 +835,7 @@ class Plugin(plugin.PluginBase):
         # please DON'T increase this size, any value over 55 will fail the
         # setup. the truncated host-fqdn is concatenated with a random string
         # to create a unique CN value.
-        MAX_HOST_FQDN_LEN = 55
+        max_host_fqdn_len = 55
 
         self.logger.info(_('Creating CA: {}').format(ca_file))
 
@@ -859,7 +859,7 @@ class Plugin(plugin.PluginBase):
                     self._subjectComponentEscape(
                         self.environment[
                             osetupcons.ConfigEnv.FQDN
-                        ][:MAX_HOST_FQDN_LEN],
+                        ][:max_host_fqdn_len],
                     ),
                     random.randint(10000, 99999),
                 ),

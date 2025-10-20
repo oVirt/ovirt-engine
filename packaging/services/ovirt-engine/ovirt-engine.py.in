@@ -46,10 +46,14 @@ class Daemon(service.Daemon):
 
     def __init__(self):
         super(Daemon, self).__init__()
-        self._tempDir = None
-        self._jbossRuntime = None
-        self._jbossVersion = None
-        self._jbossConfigFile = None
+        self._config = None
+        self._engine_args = None
+        self._engine_env = None
+        self._executable = None
+        self._temp_dir = None
+        self._jboss_runtime = None
+        self._jboss_version = None
+        self._jboss_config_file = None
         self._defaults = os.path.abspath(
             os.path.join(
                 os.path.dirname(sys.argv[0]),
@@ -70,8 +74,8 @@ class Daemon(service.Daemon):
             f.write(
                 t.render(
                     config=self._config,
-                    jboss_version=self._jbossVersion,
-                    jboss_runtime=self._jbossRuntime.directory,
+                    jboss_version=self._jboss_version,
+                    jboss_runtime=self._jboss_runtime.directory,
                 )
             )
         return out
@@ -145,41 +149,41 @@ class Daemon(service.Daemon):
 
     def _setupEngineApps(self):
 
-        deploymentsDir = os.path.join(
-            self._jbossRuntime.directory,
+        deployments_dir = os.path.join(
+            self._jboss_runtime.directory,
             'deployments',
         )
-        os.mkdir(deploymentsDir)
+        os.mkdir(deployments_dir)
 
         # The list of applications to be deployed:
-        for engineAppDir in shlex.split(self._config.get('ENGINE_APPS')):
-            self.logger.debug('Deploying: %s', engineAppDir)
-            if not os.path.isabs(engineAppDir):
-                engineAppDir = os.path.join(
+        for engine_app_dir in shlex.split(self._config.get('ENGINE_APPS')):
+            self.logger.debug('Deploying: %s', engine_app_dir)
+            if not os.path.isabs(engine_app_dir):
+                engine_app_dir = os.path.join(
                     self._config.get('ENGINE_USR'),
-                    engineAppDir,
+                    engine_app_dir,
                 )
-            if not os.path.exists(engineAppDir):
+            if not os.path.exists(engine_app_dir):
                 self.logger.warning(
                     _(
                         "Application directory '{directory}' "
                         "does not exist, it will be ignored"
                     ).format(
-                        directory=engineAppDir,
+                        directory=engine_app_dir,
                     ),
                 )
                 continue
 
-            engineAppLink = os.path.join(
-                deploymentsDir,
-                os.path.basename(engineAppDir),
+            engine_app_link = os.path.join(
+                deployments_dir,
+                os.path.basename(engine_app_dir),
             )
-            os.symlink(engineAppDir, engineAppLink)
-            with open('%s.dodeploy' % engineAppLink, 'w', encoding='utf-8'):
+            os.symlink(engine_app_dir, engine_app_link)
+            with open('%s.dodeploy' % engine_app_link, 'w', encoding='utf-8'):
                 pass
 
     def _detectJBossVersion(self):
-        args = ['ovirt-engine-version'] + self._engineArgs + ['-v']
+        args = ['ovirt-engine-version'] + self._engine_args + ['-v']
         self.logger.info(
             "Detecting JBoss version. Running: {exe} {args}".format(
                 exe=self._executable,
@@ -189,7 +193,7 @@ class Daemon(service.Daemon):
         proc = subprocess.Popen(
             executable=self._executable,
             args=args,
-            env=self._engineEnv,
+            env=self._engine_env,
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
             close_fds=True,
@@ -209,7 +213,7 @@ class Daemon(service.Daemon):
         for line in stdout:
             match = self._JBOSS_VERSION_REGEX.match(line)
             if match is not None:
-                self._jbossVersion = {
+                self._jboss_version = {
                     'JBOSS_MAJOR': int(match.group('major')),
                     'JBOSS_MINOR': int(match.group('minor')),
                     'JBOSS_REVISION': int(match.group('revision')),
@@ -220,7 +224,7 @@ class Daemon(service.Daemon):
 
         self.logger.debug(
             "Detected JBoss version: %s",
-            self._jbossVersion,
+            self._jboss_version,
         )
 
     def daemonSetup(self):
@@ -256,35 +260,35 @@ class Daemon(service.Daemon):
             'java',
         )
 
-        jbossModulesJar = os.path.join(
+        jboss_modules_jar = os.path.join(
             self._config.get('JBOSS_HOME'),
             'jboss-modules.jar',
         )
 
         self._checkInstallation(
             pidfile=self.pidfile,
-            jbossModulesJar=jbossModulesJar,
+            jbossModulesJar=jboss_modules_jar,
         )
 
-        self._tempDir = service.TempDir(self._config.get('ENGINE_TMP'))
-        self._tempDir.create()
+        self._temp_dir = service.TempDir(self._config.get('ENGINE_TMP'))
+        self._temp_dir.create()
 
-        self._jbossRuntime = service.TempDir(self._config.get('JBOSS_RUNTIME'))
-        self._jbossRuntime.create()
+        self._jboss_runtime = service.TempDir(self._config.get('JBOSS_RUNTIME'))
+        self._jboss_runtime.create()
 
         self._setupEngineApps()
 
-        jbossTempDir = os.path.join(
-            self._jbossRuntime.directory,
+        jboss_temp_dir = os.path.join(
+            self._jboss_runtime.directory,
             'tmp',
         )
 
-        jbossConfigDir = os.path.join(
-            self._jbossRuntime.directory,
+        jboss_config_dir = os.path.join(
+            self._jboss_runtime.directory,
             'config',
         )
 
-        javaModulePath = '%s:%s' % (
+        java_module_path = '%s:%s' % (
             self._config.get('ENGINE_JAVA_MODULEPATH'),
             os.path.join(
                 self._config.get('JBOSS_HOME'),
@@ -292,16 +296,16 @@ class Daemon(service.Daemon):
             ),
         )
 
-        os.mkdir(jbossTempDir)
-        os.mkdir(jbossConfigDir)
-        os.chmod(jbossConfigDir, 0o700)
+        os.mkdir(jboss_temp_dir)
+        os.mkdir(jboss_config_dir)
+        os.chmod(jboss_config_dir, 0o700)
 
-        jbossBootLoggingFile = self._processTemplate(
+        jboss_boot_logging_file = self._processTemplate(
             template=os.path.join(
                 os.path.dirname(sys.argv[0]),
                 'ovirt-engine-logging.properties.in'
             ),
-            dir=jbossConfigDir,
+            dir=jboss_config_dir,
         )
 
 
@@ -312,23 +316,23 @@ class Daemon(service.Daemon):
         if os.path.exists(keycloak_add_user_file):
             keycloakInitialAdminUserConfigFile = self._processTemplate(
                 template=keycloak_add_user_file,
-                dir=jbossConfigDir,
+                dir=jboss_config_dir,
                 mode=0o600,
             )
 
         # We start with an empty list of arguments:
-        self._engineArgs = []
+        self._engine_args = []
 
         # since java-11, add se module
-        self._engineArgs.extend(['--add-modules', 'java.se'])
-        self._engineArgs.extend(['--add-modules', 'java.naming'])
-        self._engineArgs.extend(['--add-modules', 'jdk.naming.dns'])
+        self._engine_args.extend(['--add-modules', 'java.se'])
+        self._engine_args.extend(['--add-modules', 'java.naming'])
+        self._engine_args.extend(['--add-modules', 'jdk.naming.dns'])
 
         # since java-17, add exports and opens
-        self._engineArgs.extend(['--add-exports', 'java.naming/com.sun.jndi.ldap=ALL-UNNAMED'])
-        self._engineArgs.extend(['--add-exports', 'jdk.naming.dns/com.sun.jndi.dns=ALL-UNNAMED'])
-        self._engineArgs.extend(['--add-opens', 'java.base/java.util=ALL-UNNAMED'])
-        self._engineArgs.extend(['--add-opens', 'java.base/java.lang=ALL-UNNAMED'])
+        self._engine_args.extend(['--add-exports', 'java.naming/com.sun.jndi.ldap=ALL-UNNAMED'])
+        self._engine_args.extend(['--add-exports', 'jdk.naming.dns/com.sun.jndi.dns=ALL-UNNAMED'])
+        self._engine_args.extend(['--add-opens', 'java.base/java.util=ALL-UNNAMED'])
+        self._engine_args.extend(['--add-opens', 'java.base/java.lang=ALL-UNNAMED'])
 
         # HEAP size
         heap_min_conf = self._config.get('ENGINE_HEAP_MIN')
@@ -363,7 +367,7 @@ class Daemon(service.Daemon):
                 heap_max_conf = '%sM' % new_max
 
         # Add arguments for the java virtual machine:
-        self._engineArgs.extend([
+        self._engine_args.extend([
             # Virtual machine options:
             '-server',
             '-XX:+TieredCompilation',
@@ -378,15 +382,15 @@ class Daemon(service.Daemon):
         ):
             if not engineProperty.startswith('-D'):
                 engineProperty = '-D' + engineProperty
-            self._engineArgs.append(engineProperty)
+            self._engine_args.append(engineProperty)
 
         # Add extra jvm arguments provided in the configuration:
         for arg in shlex.split(self._config.get('ENGINE_JVM_ARGS')):
-            self._engineArgs.append(arg)
+            self._engine_args.append(arg)
 
         # Enable verbose garbage collection if required:
         if self._config.getboolean('ENGINE_VERBOSE_GC'):
-            self._engineArgs.extend([
+            self._engine_args.extend([
                 '-Xlog:gc*=%s:file=%s/gc.log:time,uptime,level,tags:filesize=%s,filecount=%s' % (
                     self._config.get('ENGINE_VERBOSE_GC_LOG_LEVEL'),
                     self._config.get('ENGINE_LOG'),
@@ -397,16 +401,16 @@ class Daemon(service.Daemon):
 
         # Specify special krb5.conf file if required
         if self._config.get('AAA_KRB5_CONF_FILE'):
-            self._engineArgs.append(
+            self._engine_args.append(
                 '-Djava.security.krb5.conf=%s' % self._config.get(
                     'AAA_KRB5_CONF_FILE'
                 )
             )
 
         # Add arguments for JBoss:
-        self._engineArgs.extend([
+        self._engine_args.extend([
             '-Djava.util.logging.manager=org.jboss.logmanager',
-            '-Dlogging.configuration=file://%s' % jbossBootLoggingFile,
+            '-Dlogging.configuration=file://%s' % jboss_boot_logging_file,
             '-Dorg.jboss.resolver.warning=true',
             '-Djboss.modules.system.pkgs=org.jboss.byteman',
             '-Djboss.server.default.config=ovirt-engine',
@@ -422,17 +426,17 @@ class Daemon(service.Daemon):
             '-Djboss.server.log.dir=%s' % self._config.get(
                 'ENGINE_LOG'
             ),
-            '-Djboss.server.config.dir=%s' % jbossConfigDir,
-            '-Djboss.server.temp.dir=%s' % jbossTempDir,
-            '-Djboss.controller.temp.dir=%s' % jbossTempDir,
-            '-jar', jbossModulesJar,
-            '-mp', javaModulePath,
+            '-Djboss.server.config.dir=%s' % jboss_config_dir,
+            '-Djboss.server.temp.dir=%s' % jboss_temp_dir,
+            '-Djboss.controller.temp.dir=%s' % jboss_temp_dir,
+            '-jar', jboss_modules_jar,
+            '-mp', java_module_path,
             '-jaxpmodule', 'javax.xml.jaxp-provider',
             'org.jboss.as.standalone',
         ])
 
-        self._engineEnv = os.environ.copy()
-        self._engineEnv.update({
+        self._engine_env = os.environ.copy()
+        self._engine_env.update({
             'PATH': (
                 '/usr/local/sbin:/usr/local/bin:'
                 '/usr/sbin:/usr/bin:/sbin:/bin'
@@ -443,7 +447,7 @@ class Daemon(service.Daemon):
             'ENGINE_VARS': config.ENGINE_VARS,
             'ENGINE_ETC': self._config.get('ENGINE_ETC'),
             'ENGINE_LOG': self._config.get('ENGINE_LOG'),
-            'ENGINE_TMP': self._tempDir.directory,
+            'ENGINE_TMP': self._temp_dir.directory,
             'ENGINE_USR': self._config.get('ENGINE_USR'),
             'ENGINE_VAR': self._config.get('ENGINE_VAR'),
             'ENGINE_CACHE': self._config.get('ENGINE_CACHE'),
@@ -452,12 +456,12 @@ class Daemon(service.Daemon):
 
         self._detectJBossVersion()
 
-        self._jbossConfigFile = self._processTemplate(
+        self._jboss_config_file = self._processTemplate(
             template=os.path.join(
                 os.path.dirname(sys.argv[0]),
                 'ovirt-engine.xml.in',
             ),
-            dir=jbossConfigDir,
+            dir=jboss_config_dir,
             mode=0o600,
         )
 
@@ -496,10 +500,10 @@ class Daemon(service.Daemon):
                     ) % (
                         self._config.get('ENGINE_DEBUG_ADDRESS')
                     )] if self._config.get('ENGINE_DEBUG_ADDRESS') else []) +
-                    self._engineArgs +
-                    ['-c', os.path.basename(self._jbossConfigFile)]
+                    self._engine_args +
+                    ['-c', os.path.basename(self._jboss_config_file)]
                 ),
-                env=self._engineEnv,
+                env=self._engine_env,
                 stopTime=self._config.getinteger(
                     'ENGINE_STOP_TIME'
                 ),
@@ -515,10 +519,10 @@ class Daemon(service.Daemon):
                 os.remove(self._config.get('ENGINE_UP_MARK'))
 
     def daemonCleanup(self):
-        if self._tempDir:
-            self._tempDir.destroy()
-        if self._jbossRuntime:
-            self._jbossRuntime.destroy()
+        if self._temp_dir:
+            self._temp_dir.destroy()
+        if self._jboss_runtime:
+            self._jboss_runtime.destroy()
 
 
 if __name__ == '__main__':

@@ -248,7 +248,7 @@ class Plugin(plugin.PluginBase):
             environment=self.environment,
         )
 
-        invalidImagesForVms = statement.execute(
+        invalid_images_for_vms = statement.execute(
             statement="""
                 SELECT
                     disk_alias,
@@ -271,7 +271,7 @@ class Plugin(plugin.PluginBase):
             transaction=False,
         )
 
-        if invalidImagesForVms:
+        if invalid_images_for_vms:
             self.logger.warning(
                 _(
                     'Engine DB is inconsistent due to the existence of invalid'
@@ -290,8 +290,8 @@ class Plugin(plugin.PluginBase):
                     'Warning: If there are snapshots for the cloned virtual '
                     'machine(s), they will be collapsed.\n\n'
                 ).format(
-                    num=len(invalidImagesForVms),
-                    imagesList=invalidImagesForVms
+                    num=len(invalid_images_for_vms),
+                    imagesList=invalid_images_for_vms
                 )
             )
 
@@ -348,14 +348,14 @@ class Plugin(plugin.PluginBase):
             dbenvkeys=oenginecons.Const.ENGINE_DB_ENV_KEYS,
             environment=self.environment,
         )
-        dcVersions = statement.execute(
+        dc_versions = statement.execute(
             statement="""
                 SELECT name, compatibility_version FROM storage_pool;
             """,
             ownConnection=True,
             transaction=False,
         )
-        clusterTable = statement.execute(
+        cluster_table = statement.execute(
             statement="""
                 SELECT table_name FROM information_schema.tables
                 WHERE table_name IN ('vds_groups', 'cluster');
@@ -366,9 +366,9 @@ class Plugin(plugin.PluginBase):
         sql = _(
             'SELECT name, compatibility_version FROM {table};'
         ).format(
-            table=clusterTable[0]['table_name']
+            table=cluster_table[0]['table_name']
         )
-        clusterVersions = statement.execute(
+        cluster_versions = statement.execute(
             statement=sql,
             ownConnection=True,
             transaction=False,
@@ -376,7 +376,7 @@ class Plugin(plugin.PluginBase):
 
         versions = set([
             x['compatibility_version']
-            for x in dcVersions + clusterVersions
+            for x in dc_versions + cluster_versions
         ])
         supported = set([
             x.strip()
@@ -389,14 +389,14 @@ class Plugin(plugin.PluginBase):
         if versions - supported:
             for (queryres, errmsg) in (
                 (
-                    dcVersions,
+                    dc_versions,
                     _(
                         'The following Data Centers have a too old '
                         'compatibility level, please upgrade them:'
                     )
                 ),
                 (
-                    clusterVersions,
+                    cluster_versions,
                     _(
                         'The following Clusters have a too old '
                         'compatibility level, please upgrade them:'
@@ -448,7 +448,7 @@ class Plugin(plugin.PluginBase):
         condition=lambda self: self.environment[oenginecons.CoreEnv.ENABLE],
     )
     def _misc(self):
-        backupFile = None
+        backup_file = None
 
         # If we are upgrading to a newer postgresql, do not backup or rollback.
         # If we upgrade by copying, we can rollback by using the old
@@ -464,7 +464,7 @@ class Plugin(plugin.PluginBase):
                     plugin=self,
                     dbenvkeys=oenginecons.Const.ENGINE_DB_ENV_KEYS,
                 )
-                backupFile = dbovirtutils.backup(
+                backup_file = dbovirtutils.backup(
                     dir=self.environment[
                         oenginecons.ConfigEnv.OVIRT_ENGINE_DB_BACKUP_DIR
                     ],
@@ -473,7 +473,7 @@ class Plugin(plugin.PluginBase):
             self.environment[otopicons.CoreEnv.MAIN_TRANSACTION].append(
                 self.SchemaTransaction(
                     parent=self,
-                    backup=backupFile,
+                    backup=backup_file,
                 )
             )
 

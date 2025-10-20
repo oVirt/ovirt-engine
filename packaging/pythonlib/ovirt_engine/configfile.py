@@ -32,13 +32,13 @@ class ConfigFile(base.Base):
         return self._values
 
     def _loadLine(self, line):
-        emptyMatch = self._EMPTY_LINE.search(line)
-        if emptyMatch is None:
-            keyValueMatch = self._KEY_VALUE_EXPRESSION.search(line)
-            if keyValueMatch is None:
+        empty_match = self._EMPTY_LINE.search(line)
+        if empty_match is None:
+            key_value_match = self._KEY_VALUE_EXPRESSION.search(line)
+            if key_value_match is None:
                 raise RuntimeError(_('Invalid sytax'))
-            self._values[keyValueMatch.group('key')] = self.expandString(
-                keyValueMatch.group('value')
+            self._values[key_value_match.group('key')] = self.expandString(
+                key_value_match.group('value')
             )
 
     def __init__(self, files=[]):
@@ -87,7 +87,7 @@ class ConfigFile(base.Base):
         ret = ""
 
         escape = False
-        inQuotes = False
+        in_quotes = False
         index = 0
         while (index < len(value)):
             c = value[index]
@@ -109,9 +109,9 @@ class ConfigFile(base.Base):
                     index = i + 1
                     ret += self._values.get(name, "")
                 elif c == '"':
-                    inQuotes = not inQuotes
+                    in_quotes = not in_quotes
                 elif c in (' ', '#'):
-                    if inQuotes:
+                    if in_quotes:
                         ret += c
                     else:
                         index = len(value)

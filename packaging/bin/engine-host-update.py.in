@@ -386,7 +386,7 @@ def upgradeoVirtNodeLegacy(
                 )
 
         secs = 0
-        nonResponsiveCounter = 0
+        non_responsive_counter = 0
         while True:
             print('.', end='')
             state = getHostState(api, name)
@@ -395,8 +395,8 @@ def upgradeoVirtNodeLegacy(
                 break
             elif state in HOST_INSTALL_FAILED_STATES:
                 print('*', end='')
-                nonResponsiveCounter += 1
-                if nonResponsiveCounter >= MAX_NON_RESPONSIVE_COUNT:
+                non_responsive_counter += 1
+                if non_responsive_counter >= MAX_NON_RESPONSIVE_COUNT:
                     raise RuntimeError(
                         'Unable to complete the reinstall operational, '
                         'host is in mode: {0}'.format(state)
@@ -489,7 +489,7 @@ def upgradeoVirtNode(
                 )
 
         secs = 0
-        nonResponsiveCounter = 0
+        non_responsive_counter = 0
         while True:
             print('.', end='')
             state = getHostState(api, name)
@@ -498,8 +498,8 @@ def upgradeoVirtNode(
                 break
             elif state in HOST_INSTALL_FAILED_STATES:
                 print('*', end='')
-                nonResponsiveCounter += 1
-                if nonResponsiveCounter >= MAX_NON_RESPONSIVE_COUNT:
+                non_responsive_counter += 1
+                if non_responsive_counter >= MAX_NON_RESPONSIVE_COUNT:
                     raise RuntimeError(
                         'Unable to complete the reinstall operational, '
                         'host is in mode: {0}'.format(state)
@@ -602,15 +602,15 @@ def processHost(api, name, skipInvalidHostNames):
                 'Invalid host name %s.' % name
             )
 
-    vdsType = host.get_type()
-    print('Type: %s' % vdsType)
+    vds_type = host.get_type()
+    print('Type: %s' % vds_type)
     try:
         state = getHostState(api, name)
         if state == HOST_STATE_UP:
-            if vdsType in OVIRT_NODE_LEGACY_HOST_TYPES:
+            if vds_type in OVIRT_NODE_LEGACY_HOST_TYPES:
                 print('\tPerforming oVirt Node/RHEVH (Legacy) upgrade...')
                 upgradeoVirtNodeLegacy(api, name)
-            elif vdsType in OVIRT_NODE_HOST_TYPES:
+            elif vds_type in OVIRT_NODE_HOST_TYPES:
                 print('\tPerforming oVirt Node NGN upgrade...')
                 upgradeoVirtNode(api, name)
             else:
@@ -639,9 +639,9 @@ def hostsByClusterName(api, name):
     """
     hosts = set()
     query = 'cluster = %s' % name
-    hostObjs = api.hosts.list(query=query)
+    host_objs = api.hosts.list(query=query)
 
-    for host in hostObjs:
+    for host in host_objs:
         hosts.add(host.get_name())
 
     logging.debug(

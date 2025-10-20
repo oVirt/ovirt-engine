@@ -183,9 +183,9 @@ class Plugin(plugin.PluginBase):
         ),
     )
     def _validation_late(self):
-        adminPassword = None
+        admin_password = None
         try:
-            adminPassword = vdcoption.VdcOption(
+            admin_password = vdcoption.VdcOption(
                 statement=database.Statement(
                     dbenvkeys=oenginecons.Const.ENGINE_DB_ENV_KEYS,
                     environment=self.environment,
@@ -199,7 +199,7 @@ class Plugin(plugin.PluginBase):
 
         # we have legacy user. Shouldn't happen anymore, after
         # 3.6 https://gerrit.ovirt.org/q/Ica85b6a
-        if adminPassword is not None:
+        if admin_password is not None:
             self.dialog.note(
                 text=_(
                     'Old AdminPassword found in vdc_options. This should not '

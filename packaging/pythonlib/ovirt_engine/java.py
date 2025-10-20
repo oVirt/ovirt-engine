@@ -49,9 +49,9 @@ class Java(base.Base):
                 )
             )
 
-        javaHome = stdout[0]
-        self.logger.debug('JAVA_HOME: %s', javaHome)
-        return javaHome
+        java_home = stdout[0]
+        self.logger.debug('JAVA_HOME: %s', java_home)
+        return java_home
 
 
 # vim: expandtab tabstop=4 shiftwidth=4
