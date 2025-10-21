@@ -164,6 +164,14 @@ public class VmDynamicDaoImpl extends MassOperationsGenericDao<VmDynamic, Guid>
     }
 
     @Override
+    public List<VmDynamic> getByIds(List<Guid> vmIds) {
+        return getCallsHandler().executeReadList("GetVmDynamicByVmGuids",
+                createEntityRowMapper(),
+                getCustomMapSqlParameterSource()
+                        .addValue("vm_guids", createArrayOfUUIDs(vmIds)));
+    }
+
+    @Override
     protected MapSqlParameterSource createIdParameterMapper(Guid id) {
         return getCustomMapSqlParameterSource().addValue("vm_guid", id);
     }
