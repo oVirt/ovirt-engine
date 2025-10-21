@@ -294,6 +294,24 @@ generated-files:	$(GENERATED)
 	chmod a+x packaging/setup/bin/ovirt-engine-upgrade-check
 	chmod a+x packaging/cinderlib/cinderlib-client.py
 
+# ----------------------------------------------------------------------
+# install-setup-dev: regenerate templated files and copy ONLY the setup
+# (otopi/python) tree to the target share directory for rapid iteration.
+# Skips Maven/Java build & all other packaging artifacts.
+#
+# Destination: $(PREFIX)/share/ovirt-engine/setup (no DESTDIR; dev only).
+# Usage examples:
+#   make install-setup-dev PREFIX=/usr     # install to /usr/share/ovirt-engine/setup
+#   make install-setup-dev                 # /usr/local/share/ovirt-engine/setup (default PREFIX)
+#
+# ----------------------------------------------------------------------
+.PHONY: install-setup-dev
+install-setup-dev: generated-files
+	$(MAKE) copy-recursive SOURCEDIR=packaging/setup TARGETDIR="$(PREFIX)/share/ovirt-engine/setup" \
+		EXCLUDE_GEN="$(GENERATED)" \
+		EXCLUDE="packaging/setup/tests packaging/setup/plugins/README"
+	@echo 'Done. Updated setup code is in $(PREFIX)/share/ovirt-engine/setup'
+
 # support force run of maven
 maven:
 	MAVEN_OPTS="${MAVEN_OPTS} "'$(BUILD_JAVA_OPTS_MAVEN)' \
