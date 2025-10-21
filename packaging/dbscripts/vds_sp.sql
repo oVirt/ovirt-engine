@@ -223,7 +223,7 @@ CREATE OR REPLACE FUNCTION InsertVdsDynamic (
     v_version_name VARCHAR(40),
     v_build_name VARCHAR(40),
     v_previous_status INT,
-    v_cpu_flags VARCHAR(4000),
+    v_cpu_flags TEXT,
     v_pending_vcpus_count INT,
     v_pending_vmem_size INT,
     v_cpu_sockets INT,
@@ -488,7 +488,7 @@ CREATE OR REPLACE FUNCTION UpdateVdsDynamic (
     v_version_name VARCHAR(40),
     v_build_name VARCHAR(40),
     v_previous_status INT,
-    v_cpu_flags VARCHAR(4000),
+    v_cpu_flags TEXT,
     v_pending_vcpus_count INT,
     v_pending_vmem_size INT,
     v_cpu_sockets INT,
@@ -1530,7 +1530,7 @@ LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION UpdateCpuFlags (
     v_vds_id UUID,
-    v_cpu_flags VARCHAR(4000)
+    v_cpu_flags TEXT
     )
 RETURNS VOID AS $FUNCTION$
 BEGIN
