@@ -19,6 +19,7 @@ PACKAGE_NAME="@PACKAGE_NAME@"
 PACKAGE_VERSION="@PACKAGE_VERSION@"
 DISPLAY_VERSION="@DISPLAY_VERSION@"
 ENGINE_USR="@ENGINE_USR@"
+INSTALL_ROOT=$([ "@DEVMODE@" = "1" ] && echo "@PREFIX@/" || echo "/")
 
 die() {
 	local m="$1"
@@ -39,7 +40,7 @@ load_config() {
 
 source_d() {
 	local stage="$1"
-	local my_cfg_dir="/etc/ovirt-engine-backup/engine-backup-${stage}.d"
+	local my_cfg_dir="${INSTALL_ROOT}etc/ovirt-engine-backup/engine-backup-${stage}.d"
 	for f in \
 		$([ -d "${my_cfg_dir}" ] && find "${my_cfg_dir}" -name '*.sh' | sort) \
 		; do
@@ -52,7 +53,7 @@ source_d init
 my_load_config() {
 	load_config
 
-	DWH_CONFIG=/etc/ovirt-engine-dwh/ovirt-engine-dwhd.conf
+	DWH_CONFIG=${INSTALL_ROOT}etc/ovirt-engine-dwh/ovirt-engine-dwhd.conf
 	for f in "${DWH_CONFIG}" "${DWH_CONFIG}".d/*.conf; do
 		[ -e "${f}" ] && . "${f}"
 	done
@@ -116,7 +117,7 @@ engine_setup_service_enabled() {
 	otopi-config-query match \
 		--key "$1" \
 		--value bool:True \
-		--file /etc/ovirt-engine-setup.conf
+		--file ${INSTALL_ROOT}etc/ovirt-engine-setup.conf
 }
 
 engine_enabled() {
@@ -140,7 +141,7 @@ grafana_enabled() {
 }
 
 load_branding() {
-	for f in /etc/ovirt-engine/branding/*/branding-external-resources.properties; do
+	for f in ${INSTALL_ROOT}etc/ovirt-engine/branding/*/branding-external-resources.properties; do
 		if [ -e "${f}" ]; then
 			eval $(get_java_props \
 				"${f}" \
@@ -151,14 +152,14 @@ load_branding() {
 }
 
 # Globals
-BACKUP_PATHS="/etc/ovirt-engine
-/etc/ovirt-engine-dwh
-/etc/ovirt-provider-ovn/conf.d
-/etc/ovirt-provider-ovn/logger.conf
-/etc/ovirt-vmconsole
-/etc/pki/ovirt-engine
-/etc/pki/ovirt-vmconsole
-/etc/ovirt-engine-setup.conf.d
+BACKUP_PATHS="${INSTALL_ROOT}etc/ovirt-engine
+${INSTALL_ROOT}etc/ovirt-engine-dwh
+${INSTALL_ROOT}etc/ovirt-provider-ovn/conf.d
+${INSTALL_ROOT}etc/ovirt-provider-ovn/logger.conf
+${INSTALL_ROOT}etc/ovirt-vmconsole
+${INSTALL_ROOT}etc/pki/ovirt-engine
+${INSTALL_ROOT}etc/pki/ovirt-vmconsole
+${INSTALL_ROOT}etc/ovirt-engine-setup.conf.d
 /etc/httpd/conf.d/internalsso-openidc.conf
 /etc/httpd/conf.d/ovirt-engine-grafana-proxy.conf
 /etc/httpd/conf.d/ovirt-engine-root-redirect.conf
@@ -178,19 +179,19 @@ BACKUP_PATHS="/etc/ovirt-engine
 /etc/grafana"
 
 # Add /var/lib/ovirt-engine except a few
-VAR_LIB_OVIRT_ENGINE_EXCLUSIONS="/var/lib/ovirt-engine/backups
-/var/lib/ovirt-engine/jboss_runtime
-/var/lib/ovirt-engine/ansible-runner-service.log
-/var/lib/ovirt-engine/ansible-runner
-/var/lib/ovirt-engine/.ansible"
-for p in /var/lib/ovirt-engine/*; do
+VAR_LIB_OVIRT_ENGINE_EXCLUSIONS="${INSTALL_ROOT}var/lib/ovirt-engine/backups
+${INSTALL_ROOT}var/lib/ovirt-engine/jboss_runtime
+${INSTALL_ROOT}var/lib/ovirt-engine/ansible-runner-service.log
+${INSTALL_ROOT}var/lib/ovirt-engine/ansible-runner
+${INSTALL_ROOT}var/lib/ovirt-engine/.ansible"
+for p in ${INSTALL_ROOT}var/lib/ovirt-engine/*; do
 	echo "${VAR_LIB_OVIRT_ENGINE_EXCLUSIONS}" | grep -q "^${p}\$" || BACKUP_PATHS="${BACKUP_PATHS}
 ${p}"
 done
 
 # Add /var/lib/grafana except its db, which is backed up separately
-VAR_LIB_GRAFANA_EXCLUSIONS="/var/lib/grafana/grafana.db"
-for p in /var/lib/grafana/*; do
+VAR_LIB_GRAFANA_EXCLUSIONS="${INSTALL_ROOT}var/lib/grafana/grafana.db"
+for p in ${INSTALL_ROOT}var/lib/grafana/*; do
 	echo "${VAR_LIB_GRAFANA_EXCLUSIONS}" | grep -q "^${p}\$" || BACKUP_PATHS="${BACKUP_PATHS}
 ${p}"
 done
@@ -1174,8 +1175,8 @@ backupFiles() {
 			while read -r path; do
 				[ -e "${path}" ] && echo "${path}"
 			done | \
-			sed 's;^/;;' | \
-			tar -C / --files-from - -cpS"${FILES_COMPRESS_OPTION}"f "${target}"
+			sed "s;^${INSTALL_ROOT};;" | \
+			tar -C "${INSTALL_ROOT}" --files-from - -cpS"${FILES_COMPRESS_OPTION}"f "${target}"
 	) 2>> "${LOG}" \
 		|| logdie "Failed backing up ${paths}"
 }
@@ -1529,7 +1530,7 @@ OVESETUP_PROVISION_DB/restoreJobs=int:2
 OVESETUP_CORE/engineStop=bool:False
 __EOF__
 
-	/usr/share/ovirt-engine/setup/bin/ovirt-engine-provisiondb --config-append="${answerfile}" < /dev/null > "${pgprovisionlog}" 2>&1
+	${ENGINE_USR}/setup/bin/ovirt-engine-provisiondb --config-append="${answerfile}" < /dev/null > "${pgprovisionlog}" 2>&1
 	provrc=$?
 	cat "${pgprovisionlog}" >> "${LOG}"  2>&1 \
 		|| logdie "Failed to append pg provisioning log to restore log"
@@ -1595,7 +1596,7 @@ __EOF__
 			else
 				output "- extra user '${extrau}' having grants on database ${database}, created with a random password"
 			fi
-			/usr/share/ovirt-engine/setup/bin/ovirt-engine-provisiondb --config-append="${answerfile}" < /dev/null > "${pgprovisionlog}" 2>&1
+			${ENGINE_USR}/setup/bin/ovirt-engine-provisiondb --config-append="${answerfile}" < /dev/null > "${pgprovisionlog}" 2>&1
 			provrc=$?
 			cat "${pgprovisionlog}" >> "${LOG}"  2>&1 \
 				|| logdie "Failed to append pg provisioning log to restore log"
@@ -1883,7 +1884,7 @@ restoreFiles() {
 		# In previous versions we didn't keep this inside the backup
 		os_at_backup="Unknown"
 	fi
-	local POSTINSTALL="/etc/ovirt-engine-setup.conf.d/20-setup-ovirt-post.conf"
+	local POSTINSTALL_RELATIVE="etc/ovirt-engine-setup.conf.d/20-setup-ovirt-post.conf"
 	local APACHE_CONFIGURED_LINE="OVESETUP_APACHE/configured=bool:True"
 
 	# Extract files to temp dir
@@ -1898,7 +1899,7 @@ restoreFiles() {
 ${EXCLUDED_FILES_ON_RESTORE}
 __EOF__
 	local exclude_apache=
-	if [ "${os}" != "${os_at_backup}" ] && grep -q "^${APACHE_CONFIGURED_LINE}\$" "${temp_files}/${POSTINSTALL}"; then
+	if [ "${os}" != "${os_at_backup}" ] && grep -q "^${APACHE_CONFIGURED_LINE}\$" "${temp_files}/${POSTINSTALL_RELATIVE}"; then
 		exclude_apache=1
 		cat << __EOF__
 ------------------------------------------------------------------------------
@@ -1919,13 +1920,13 @@ __EOF__
 	fi
 
 	# Restore!
-	tar -C / -pSsx --exclude-from "${excluded_files}" -f "${archive}" 2>> "${LOG}" || \
+	tar -C "${INSTALL_ROOT}"  -pSsx --exclude-from "${excluded_files}" -f "${archive}" 2>> "${LOG}" || \
 		logdie "Failed restoring ${paths}"
 
 	# Make next engine-setup ask about apache
 	if [ -n "${exclude_apache}" ]; then
 		local ESC_APACHE_CONFIGURED_LINE=$(echo "${APACHE_CONFIGURED_LINE}" | sed 's;/;\\/;')
-		sed -i "/^${ESC_APACHE_CONFIGURED_LINE}\$/d" "${POSTINSTALL}"
+		sed -i "${INSTALL_ROOT}/^${ESC_APACHE_CONFIGURED_LINE}\$/d" "${POSTINSTALL_RELATIVE}"
 	fi
 
 	if selinuxenabled; then
