@@ -1414,9 +1414,9 @@ __EOF__
 		restoreSQLiteDB "${TEMP_FOLDER}/db/${GRAFANA_BACKUP_FILE_NAME}" "${GRAFANA_DB_FILENAME}" "grafana:grafana"
 	fi
 	[ -n "${CHANGE_DB_CREDENTIALS}" ] && changeEngineDBConf
-	[ -n "${CHANGE_DWH_DB_CREDENTIALS}" -o -n "${CHANGE_DB_CREDENTIALS}" -a "${DWH_DB_USER}" ] && changeDwhDBConf
-	[ -n "${CHANGE_CINDERLIB_DB_CREDENTIALS}" -o -n "${CHANGE_DB_CREDENTIALS}" -a "${CINDERLIB_DB_USER}" ] && changeCinderlibDBConf
-	[ -n "${CHANGE_KEYCLOAK_DB_CREDENTIALS}" -o -n "${CHANGE_DB_CREDENTIALS}" -a "${KEYCLOAK_DB_USER}" ] && changeKeycloakDBConf
+	[ -n "${DWH_DB_USER}" ] && [ -n "${CHANGE_DWH_DB_CREDENTIALS}" -o -n "${CHANGE_DB_CREDENTIALS}" ] && changeDwhDBConf
+	[ -n "${CINDERLIB_DB_USER}" ] && [ -n "${CHANGE_CINDERLIB_DB_CREDENTIALS}" -o -n "${CHANGE_DB_CREDENTIALS}" ] && changeCinderlibDBConf
+	[ -n "${KEYCLOAK_DB_USER}" ] && [ -n "${CHANGE_KEYCLOAK_DB_CREDENTIALS}" -o -n "${CHANGE_DB_CREDENTIALS}" ] && changeKeycloakDBConf
 	source_d dorestore
 	output "You should now run engine-setup."
 }
