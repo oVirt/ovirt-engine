@@ -68,7 +68,6 @@ enroll() {
 		-out "${pkcs12}" \
 		-passin "pass:${pass}" \
 		-passout "pass:${pass}" \
-		-aes256 \
 		|| die "Cannot create PKCS#12"
 
 	return 0
