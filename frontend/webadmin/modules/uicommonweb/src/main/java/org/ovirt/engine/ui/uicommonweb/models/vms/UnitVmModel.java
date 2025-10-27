@@ -2869,6 +2869,11 @@ public class UnitVmModel extends Model implements HasValidatedTabs, ModelWithMig
             }
         }
 
+        // For Bochs, only VNC is ALWAYS supplied
+        if (getDisplayType().getSelectedItem() == DisplayType.bochs) {
+            graphicsTypes.retainAll(Collections.singleton(GraphicsTypes.VNC));
+        }
+
         if (graphicsTypes.contains(GraphicsTypes.SPICE) && graphicsTypes.contains(GraphicsTypes.VNC)) {
             graphicsTypes.add(GraphicsTypes.SPICE_AND_VNC);
         }
@@ -2889,6 +2894,32 @@ public class UnitVmModel extends Model implements HasValidatedTabs, ModelWithMig
         GraphicsTypes graphics = getGraphicsType().getSelectedItem();
 
         if (display == null || graphics == null) {
+            return;
+        }
+
+        // For the Bochs display leave only VNC
+        if (display == DisplayType.bochs) {
+            Set<GraphicsTypes> allowedGraphics = new LinkedHashSet<>();
+            allowedGraphics.add(GraphicsTypes.VNC);
+
+            GraphicsTypes currentSelected = getGraphicsType().getSelectedItem();
+            if (allowedGraphics.contains(currentSelected)) {
+                getGraphicsType().setItems(allowedGraphics, currentSelected);
+            } else {
+                getGraphicsType().setItems(allowedGraphics);
+                getGraphicsType().setSelectedItem(GraphicsTypes.VNC);
+            }
+
+            // Disabling SPICE-specific settings
+            getIsUsbEnabled().setEntity(false);
+            getIsSmartcardEnabled().setEntity(false);
+            getIsUsbEnabled().setIsChangeable(false);
+            getIsSmartcardEnabled().setIsChangeable(false);
+
+            // Updating VNC layout availability
+            getVncKeyboardLayout().setIsAvailable(true);
+
+            updateNumOfMonitors();
             return;
         }
 
