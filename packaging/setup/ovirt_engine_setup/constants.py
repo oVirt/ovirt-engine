@@ -235,18 +235,16 @@ class Const(object):
     RPM_VERSION = config.RPM_VERSION
     RPM_RELEASE = config.RPM_RELEASE
 
-    @classproperty
-    def RPM_LOCK_LIST_SUFFIXES(self):
-        return (
-            '',
-            '-backend',
-            '-dbscripts',
-            '-restapi',
-            '-tools',
-            '-tools-backup',
-            '-webadmin-portal',
-            '-ui-extensions',
-        )
+    RPM_LOCK_LIST_SUFFIXES: tuple[str, ...] = (
+        '',
+        '-backend',
+        '-dbscripts',
+        '-restapi',
+        '-tools',
+        '-tools-backup',
+        '-webadmin-portal',
+        '-ui-extensions',
+    )
 
     FILE_GROUP_SECTION_PREFIX = 'file_group_'
 
