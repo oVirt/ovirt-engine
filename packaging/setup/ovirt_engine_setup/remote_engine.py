@@ -60,7 +60,7 @@ class RemoteEngine(base.Base):
 
     def style(self):
         if self._style is None:
-            self.configure()
+            self.configure(self.environment[osetupcons.ConfigEnv.FQDN])
         return self._style
 
     def execute_on_engine(self, cmd, timeout=60, text=None):
