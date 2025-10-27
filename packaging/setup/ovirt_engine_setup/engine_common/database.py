@@ -16,6 +16,7 @@ import tempfile
 
 import psycopg2
 
+
 from looseversion import LooseVersion
 
 from otopi import base
