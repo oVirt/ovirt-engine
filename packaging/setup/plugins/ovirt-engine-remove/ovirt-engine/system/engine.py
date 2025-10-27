@@ -40,7 +40,7 @@ class Plugin(plugin.PluginBase):
             osetupcons.FileLocations.OVIRT_SETUP_POST_INSTALL_CONFIG
         ):
             if os.path.exists(
-                osetupcons.FileLocations.OVIRT_ENGINE_PKI_ENGINE_CA_CERT
+                oenginecons.FileLocations.OVIRT_ENGINE_PKI_ENGINE_CA_CERT
             ):
                 self.dialog.note(
                     text=_(
