@@ -18,7 +18,7 @@ from urllib import parse
 import websocket
 import websockify
 
-import config
+import websocket_config
 
 
 from ovirt_engine import configfile
@@ -446,7 +446,7 @@ class Daemon(service.Daemon):
         self._config = configfile.ConfigFile(
             (
                 self._defaults,
-                config.ENGINE_WSPROXY_VARS,
+                websocket_config.ENGINE_WSPROXY_VARS,
             ),
         )
 
