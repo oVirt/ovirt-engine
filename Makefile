@@ -235,12 +235,12 @@ GENERATED = \
 	packaging/services/ovirt-engine/ovirt-engine.py \
 	packaging/services/ovirt-engine/ovirt-engine.systemd \
 	packaging/services/ovirt-engine/ovirt-engine.sysv \
-	packaging/services/ovirt-fence-kdump-listener/config.py \
+	packaging/services/ovirt-fence-kdump-listener/fence_kdump_config.py \
 	packaging/services/ovirt-fence-kdump-listener/ovirt-fence-kdump-listener.conf \
 	packaging/services/ovirt-fence-kdump-listener/ovirt-fence-kdump-listener.py \
 	packaging/services/ovirt-fence-kdump-listener/ovirt-fence-kdump-listener.systemd \
 	packaging/services/ovirt-fence-kdump-listener/ovirt-fence-kdump-listener.sysv \
-	packaging/services/ovirt-websocket-proxy/config.py \
+	packaging/services/ovirt-websocket-proxy/websocket_config.py \
 	packaging/services/ovirt-websocket-proxy/ovirt-websocket-proxy.conf \
 	packaging/services/ovirt-websocket-proxy/ovirt-websocket-proxy.py \
 	packaging/services/ovirt-websocket-proxy/ovirt-websocket-proxy.systemd \
