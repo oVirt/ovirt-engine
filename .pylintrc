@@ -1,0 +1,13 @@
+[MASTER]
+init-hook=
+  import sys, pathlib;
+  root = pathlib.Path().resolve();
+  paths = [
+    root / "packaging" / "pythonlib",
+    root / "packaging" / "services" / "ovirt-engine",
+    root / "packaging" / "services" / "ovirt-fence-kdump-listener",
+    root / "packaging" / "services" / "ovirt-websocket-proxy",
+    root / "packaging" / "services" / "ovirt-engine-notifier",
+    root / "packaging" / "libexec" / "ovirt-vmconsole-proxy-helper"
+  ];
+  [sys.path.insert(0, str(p)) for p in paths if str(p) not in sys.path]
