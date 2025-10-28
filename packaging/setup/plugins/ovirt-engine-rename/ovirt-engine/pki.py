@@ -315,8 +315,8 @@ class Plugin(plugin.PluginBase):
             (
                 access_description.access_method ==
                 x509.oid.AuthorityInformationAccessOID.CA_ISSUERS
-            ) and (
-                type(access_description.access_location) ==
+            ) and isinstance(
+                access_description.access_location,
                 x509.UniformResourceIdentifier
             )
         ):

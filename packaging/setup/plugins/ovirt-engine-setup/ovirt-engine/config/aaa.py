@@ -144,7 +144,7 @@ class Plugin(plugin.PluginBase):
                 self.logger.warning(_('Passwords do not match'))
             else:
                 try:
-                    if(_use_pwquality):
+                    if (_use_pwquality):
                         pwq = pwquality.PWQSettings()
                         pwq.read_config()
                         pwq.check(password, None, None)

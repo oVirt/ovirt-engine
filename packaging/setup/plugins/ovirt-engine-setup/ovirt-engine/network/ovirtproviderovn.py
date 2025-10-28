@@ -1111,7 +1111,8 @@ class Plugin(plugin.PluginBase):
                 oengcommcons.KeycloakEnv.ENABLE
             )
             if keycloak_enabled:
-                if self.environment.get(OvnEnv.OVIRT_PROVIDER_OVN_SECRET) is None:
+                provider_secret_key = OvnEnv.OVIRT_PROVIDER_OVN_SECRET
+                if self.environment.get(provider_secret_key) is None:
                     self._generate_client_secret()
                 self._configure_ovirt_provider_ovn()
 
