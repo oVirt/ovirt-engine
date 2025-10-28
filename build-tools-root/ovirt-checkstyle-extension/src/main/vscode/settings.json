@@ -1,0 +1,9 @@
+{
+    "java.checkstyle.properties": {
+        "checkstyle.cache.file": "${workspaceFolder}/build-tools-root/checkstyles/target/checkstyle-cache"
+    },
+    "java.checkstyle.configuration": "${workspaceFolder}/build-tools-root/checkstyles/src/main/resources/checkstyle.xml",
+    "java.checkstyle.modules": [
+        "${workspaceFolder}/build-tools-root/ovirt-checkstyle-extension/target/ovirt-checkstyle-extension-${project.version}.jar"
+    ]
+}
