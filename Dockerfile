@@ -23,7 +23,10 @@ RUN make ovirt-engine.spec
 RUN dnf -y builddep ovirt-engine.spec
 
 # Install run deps
-RUN dnf -y install python3-daemon python3-otopi python3-psycopg2 python3-ovirt-setup-lib otopi-common initscripts-service bind-utils postgresql ovirt-engine-wildfly-overlay mailcap ansible-runner ansible-collection-ansible-posix ovirt-imageio-daemon novnc ovirt-engine-websocket-proxy
+RUN dnf -y install python3-daemon python3-otopi python3-psycopg2 python3-ovirt-setup-lib otopi-common initscripts-service bind-utils postgresql ovirt-engine-wildfly-overlay mailcap ansible-runner ansible-collection-ansible-posix ovirt-imageio-daemon novnc ovirt-engine-websocket-proxy python3-pip
+
+# Install linting tools
+RUN pip install pylint pyflakes isort pycodestyle mock
 
 # engine-setup needs the link to initctl
 RUN ln -s /usr/sbin/service /usr/bin/initctl
