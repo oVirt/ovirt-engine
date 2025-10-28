@@ -1,8 +1,9 @@
-#!/bin/sh -x
+#!/bin/sh
 
 PEP8="@PEP8@"
 PYFLAKES="@PYFLAKES@"
 ISORT="@ISORT@"
+PYLINT="@PYLINT@"
 SRCDIR="$(dirname "$0")/.."
 
 cd "${SRCDIR}"
@@ -19,7 +20,7 @@ for exe in "${PYFLAKES}" "${PEP8}"; do
 		echo "WARNING: tool '${exe}' is missing" >&2
 	else
 		if "${exe}" ${FILES}; then
-			echo Passed check: "${exe}" ${FILES}
+			echo Passed check: "${exe}"
 		else
 			echo ERROR: The following check failed:
 			echo "${exe}" ${FILES}
@@ -28,11 +29,23 @@ for exe in "${PYFLAKES}" "${PEP8}"; do
 	fi
 done
 
+if ! which "${PYLINT}" > /dev/null 2>&1; then
+	echo "WARNING: Pylint is missing" >&2
+else
+	if "${PYLINT}" --errors-only ${FILES}; then
+		echo Passed check: "${PYLINT}" --errors-only
+	else
+		echo ERROR: The following check failed:
+		echo python3 -m "${PYLINT}" --errors-only ${FILES}
+		ret=1
+	fi
+fi
+
 if ! which "${ISORT}" > /dev/null 2>&1; then
 	echo "WARNING: tool '${ISORT}' is missing" >&2
 else
 	if "${ISORT}" --check ${FILES}; then
-		echo Passed check: "${ISORT}" --check ${FILES}
+		echo Passed check: "${ISORT}" --check
 	else
 		echo ERROR: The following check failed:
 		echo "${ISORT}" --check ${FILES}
