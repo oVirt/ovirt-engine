@@ -207,8 +207,12 @@ public class CreateOvaCommand<T extends CreateOvaParameters> extends CommandBase
         vars.put("ova_name", getParameters().getName());
         vars.put("ovirt_ova_pack_ovf", encodedOvf);
         vars.put("ovirt_ova_pack_disks", genDiskParameters(disks, diskIdToPath));
-        vars.put("ovirt_ova_pack_tpm", tpmData.getValue());
-        vars.put("ovirt_ova_pack_nvram", nvramData.getValue());
+        if (!SecretValue.isNull(tpmData) && !tpmData.getValue().isEmpty()) {
+            vars.put("ovirt_ova_pack_tpm", tpmData.getValue());
+        }
+        if (!SecretValue.isNull(nvramData) && !nvramData.getValue().isEmpty()) {
+            vars.put("ovirt_ova_pack_nvram", nvramData.getValue());
+        }
         vars.put("ovirt_ova_pack_padding", Boolean.toString(compatibilityVersion.greater(Version.v4_6)));
         params.setVariables(vars);
         return params;
