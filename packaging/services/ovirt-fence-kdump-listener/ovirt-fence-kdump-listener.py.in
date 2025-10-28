@@ -10,7 +10,7 @@ import os
 import sys
 
 import fence_kdump_config
-import db
+import ovirt_fence_db as db
 import listener
 
 
