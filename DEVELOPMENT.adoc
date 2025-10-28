@@ -2,15 +2,13 @@
 
 Before starting, ensure that https://www.docker.com/[Docker] is installed on the machine that the Dev Container will be running on. This could be your local device or on a https://code.visualstudio.com/docs/devcontainers/containers#_open-a-folder-on-a-remote-ssh-host-in-a-container[remote machine].
 
-### Dev Container & Database
+## Dev Container & Database
 
 Opening the repository in VS Code with the Dev Containers extension will automatically start both the `engine` and `postgres` services defined in `docker-compose.yml` (plus the selected CentOS variant override).
 
 PostgreSQL is reachable internally from the engine container at host `postgres` port `5432`. 
 
-### Connect to your Dev Container and build the application
-
-#### Open folder in a Dev Container
+### Opening the Dev Container
 
 When you are running the container on your own device, open the project directory in Visual Studio Code, and use `Dev Containers: Reopen in Container` command from the Command Palette (ctrl-shift-p). Next you will be asked which OS variant you want to run.
 
@@ -80,3 +78,23 @@ ovirt-websocket-proxy.py start
 Afterward, head to your newly created VM and select the 'v' arrow adjacent to the 'Console' button. Proceed to 'Console Options' and set 'Console Invocation' to 'noVNC'. Save these settings and click on the 'Console' button.
 
 Upon encountering the error message "Something went wrong, connection is closed," please note that this is expected behavior. To proceed, you must accept the SSL certificate in your browser. Access your browser's development console, copy the `wss://XXXXX` URL, and paste it into your browser's URL bar. Replace `wss` with `https` and navigate to the URL. Here, you can accept the certificate. You can reopen the console via the oVirt administrator panel.
+
+## Development Tools Setup
+
+### Checkstyle Integration in VS Code
+
+The project uses a custom checkstyle configuration with additional checks defined in the `ovirt-checkstyle-extension` module. To configure VS Code's checkstyle extension to use the same rules as the Maven build:
+
+1. Install the https://marketplace.visualstudio.com/items?itemName=shengchen.vscode-checkstyle[Checkstyle for Java] extension
+2. Generate the VS Code settings file:
++
+```
+mvn install -Pvscode-settings -pl build-tools-root
+```
++
+This will:
++
+* Build the required checkstyle modules
+* Generate `.vscode/settings.json` with the correct configuration and version
+
+NOTE: If settings don't take effect, try restarting VS Code or reloading the window (Ctrl-Shift-P -> Reload Window). 
