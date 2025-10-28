@@ -226,7 +226,10 @@ class Plugin(plugin.PluginBase):
         ),
     )
     def _miscConfigVMConsoleProxy(self):
-        with open(ovmpcons.FileLocations.OVIRT_VMCONSOLE_PROXY_CONFIG, encoding='utf-8') as f:
+        with open(
+            ovmpcons.FileLocations.OVIRT_VMCONSOLE_PROXY_CONFIG,
+            encoding='utf-8'
+        ) as f:
             self.environment[otopicons.CoreEnv.MAIN_TRANSACTION].append(
                 filetransaction.FileTransaction(
                     name=ovmpcons.FileLocations.VMCONSOLE_CONFIG,

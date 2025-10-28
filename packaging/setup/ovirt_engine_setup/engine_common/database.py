@@ -941,10 +941,8 @@ class OvirtUtils(base.Base):
     def _pg_client_version_compatible(key, current, expected):
         server_version = LooseVersion(current).version
         client_version = LooseVersion(expected).version
-        
         server_major = server_version[0] if server_version else 0
         client_major = client_version[0] if client_version else 0
-        
         return client_major >= server_major
 
     @staticmethod
@@ -1243,7 +1241,7 @@ class OvirtUtils(base.Base):
                         current=m.group('value'),
                         expected=item['expected']
                     ):
-                        del(edit_params[item['key']])
+                        del edit_params[item['key']]
 
         needUpdate = len(edit_params) > 0
         if needUpdate:
