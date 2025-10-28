@@ -9,8 +9,7 @@ import gettext
 import socket
 import time
 
-import db
-
+import ovirt_fence_db as db
 
 from ovirt_engine import base
 
