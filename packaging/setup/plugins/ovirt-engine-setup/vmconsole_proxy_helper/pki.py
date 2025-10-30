@@ -98,7 +98,7 @@ class Plugin(plugin.PluginBase):
         )
         uninstall_files.append(cert)
 
-        with open(cert) as f:
+        with open(cert, encoding='utf-8') as f:
             self.environment[otopicons.CoreEnv.MAIN_TRANSACTION].append(
                 filetransaction.FileTransaction(
                     name=os.path.join(

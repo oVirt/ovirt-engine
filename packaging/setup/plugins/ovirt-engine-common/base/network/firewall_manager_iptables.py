@@ -126,13 +126,15 @@ class Plugin(plugin.PluginBase):
             if os.path.isfile(osetupcons.FileLocations.SYSCONFIG_IPTABLES):
                 with open(
                         osetupcons.FileLocations.SYSCONFIG_IPTABLES,
-                        'r'
+                        'r',
+                        encoding='utf-8'
                 ) as current:
                     current_rules = current.read().splitlines()
             if os.path.isfile(osetupcons.FileLocations.OVIRT_IPTABLES_EXAMPLE):
                 with open(
                         osetupcons.FileLocations.OVIRT_IPTABLES_EXAMPLE,
-                        'r'
+                        'r',
+                        encoding='utf-8'
                 ) as prev_setup_example:
                     prev_setup_rules = prev_setup_example.read().splitlines()
                     diff_prev_cur = difflib.unified_diff(

@@ -95,7 +95,7 @@ class Plugin(plugin.PluginBase):
             group='ovirt-provider-ovn',
             fileList=uninstall_files,
         )
-        with open(self._config, 'r') as f:
+        with open(self._config, 'r', encoding='utf-8') as f:
             content = []
             for line in f:
                 line = line.rstrip('\n')

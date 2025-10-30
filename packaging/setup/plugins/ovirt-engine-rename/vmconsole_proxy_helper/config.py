@@ -57,7 +57,7 @@ class Plugin(plugin.PluginBase):
         ],
     )
     def _misc(self):
-        with open(self._config, 'r') as f:
+        with open(self._config, 'r', encoding='utf-8') as f:
             content = []
             key = 'ENGINE_BASE_URL'
             for line in f:

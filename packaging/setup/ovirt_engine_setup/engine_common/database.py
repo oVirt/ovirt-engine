@@ -774,7 +774,7 @@ class OvirtUtils(base.Base):
                     'args': f_infos[filt]['dump']
                 }
             )
-            stdout = open(backupFile, 'w')
+            stdout = open(backupFile, 'w', encoding='utf-8')
 
         res = None
         try:
@@ -863,7 +863,7 @@ class OvirtUtils(base.Base):
                     'args': f_infos[filt]['restore'],
                 }
             )
-            stdin = open(backupFile, 'r')
+            stdin = open(backupFile, 'r', encoding='utf-8')
 
         dumper = _ind_env(self, DEK.DUMPER)
         d_infos = self._backup_restore_dumpers_info(

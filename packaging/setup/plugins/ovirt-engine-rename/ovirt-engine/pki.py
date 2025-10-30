@@ -393,7 +393,7 @@ class Plugin(plugin.PluginBase):
                 oenginecons.FileLocations.OVIRT_ENGINE_PKI_QEMU_CERT_TEMPLATE,
                 oenginecons.FileLocations.OVIRT_ENGINE_PKI_CERT_CONF
             ):
-                with open(config, 'r') as f:
+                with open(config, 'r', encoding='utf-8') as f:
                     content = []
                     for line in f:
                         line = line.rstrip('\n')

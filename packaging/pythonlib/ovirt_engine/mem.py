@@ -30,7 +30,7 @@ def get_total_mb():
             (?P<unit>\w+)
         """
     )
-    with open('/proc/meminfo', 'r') as f:
+    with open('/proc/meminfo', 'r', encoding='utf-8') as f:
         content = f.read()
 
     match = _RE_MEMINFO_MEMTOTAL.match(content)

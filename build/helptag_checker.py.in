@@ -59,7 +59,7 @@ def walkSource(sourcedir):
             if fname not in SKIP_FILES:
                 filename = os.path.join(parent, fname)
                 if filename.endswith('.java') and os.path.isfile(filename):
-                    with open(filename, 'r') as f:
+                    with open(filename, 'r', encoding='utf-8') as f:
                         lines = f.readlines()
                     yield (lines, fname)
 

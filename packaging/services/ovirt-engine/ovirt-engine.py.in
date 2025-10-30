@@ -62,9 +62,9 @@ class Daemon(service.Daemon):
             dir,
             re.sub('\.in$', '', os.path.basename(template)),
         )
-        with open(template, 'r') as f:
+        with open(template, 'r', encoding='utf-8') as f:
             t = Template(f.read())
-        with open(out, 'w') as f:
+        with open(out, 'w', encoding='utf-8') as f:
             if mode is not None:
                 os.chmod(out, mode)
             f.write(
@@ -175,7 +175,7 @@ class Daemon(service.Daemon):
                 os.path.basename(engineAppDir),
             )
             os.symlink(engineAppDir, engineAppLink)
-            with open('%s.dodeploy' % engineAppLink, 'w'):
+            with open('%s.dodeploy' % engineAppLink, 'w', encoding='utf-8'):
                 pass
 
     def _detectJBossVersion(self):
@@ -468,6 +468,7 @@ class Daemon(service.Daemon):
                 'console.log'
             ),
             'w+',
+            encoding='utf-8'
         )
         return (consoleLog, consoleLog)
 
@@ -476,7 +477,7 @@ class Daemon(service.Daemon):
             #
             # create mark file to be used by notifier service
             #
-            with open(self._config.get('ENGINE_UP_MARK'), 'w') as f:
+            with open(self._config.get('ENGINE_UP_MARK'), 'w', encoding='utf-8') as f:
                 f.write('%s\n' % os.getpid())
 
             #
