@@ -125,7 +125,8 @@ class Plugin(plugin.PluginBase):
     def _misc(self):
         with open(
             oengcommcons.FileLocations.HTTPD_CONF_OVIRT_ROOT_TEMPLATE,
-            'r'
+            'r',
+            encoding='utf-8'
         ) as f:
             content = f.read()
 

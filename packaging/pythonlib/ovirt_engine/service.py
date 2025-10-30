@@ -168,7 +168,7 @@ class PidFile(base.Base):
                 self._file,
                 os.getpid()
             )
-            with open(self._file, 'w') as f:
+            with open(self._file, 'w', encoding='utf-8') as f:
                 f.write('%s\n' % os.getpid())
 
     def __exit__(self, exc_type, exc_value, traceback):
@@ -180,7 +180,7 @@ class PidFile(base.Base):
                 # we may not have permissions to delete pid
                 # so just try to empty it
                 try:
-                    with open(self._file, 'w'):
+                    with open(self._file, 'w', encoding='utf-8'):
                         pass
                 except IOError as e:
                     self.logger.error(
@@ -556,7 +556,7 @@ class Daemon(base.Base):
 
     def daemonStdHandles(self):
         """Return handles for daemon context"""
-        null = open(os.devnull, 'w')
+        null = open(os.devnull, 'w', encoding='utf-8')
         return (null, null)
 
     def daemonContext(self):

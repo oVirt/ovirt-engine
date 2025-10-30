@@ -320,7 +320,7 @@ class EnrollCert(base.Base):
         cert = None
         csr_fname = self.environment[self._csr_fname_envkey]
         with (
-            open(csr_fname, 'w') if csr_fname
+            open(csr_fname, 'w', encoding='utf-8') if csr_fname
             else tempfile.NamedTemporaryFile(mode='w', delete=False)
         ) as self._csr_file:
             self._csr_file.write(self._csr.decode())

@@ -391,7 +391,7 @@ class Plugin(plugin.PluginBase):
             os.makedirs(os.path.dirname(output))
         if config.sections():
             # avoid to create empty uninstall files
-            with open(output, 'w') as f:
+            with open(output, 'w', encoding='utf-8') as f:
                 config.write(f)
 
 

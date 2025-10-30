@@ -58,7 +58,7 @@ class Plugin(plugin.PluginBase):
             OVIRT_ENGINE_SERVICE_CONFIG_PROTOCOLS
         )
 
-        with open(config, 'r') as f:
+        with open(config, 'r', encoding='utf-8') as f:
             content = []
             for line in f:
                 line = line.rstrip('\n')

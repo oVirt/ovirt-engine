@@ -92,7 +92,8 @@ class Plugin(plugin.PluginBase):
             self.environment[
                 oengcommcons.ApacheEnv.HTTPD_CONF_SSL
             ],
-            'r'
+            'r',
+            encoding='utf-8'
         ) as f:
             self._current_content = f.read().splitlines()
 
