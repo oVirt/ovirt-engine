@@ -4,6 +4,7 @@
 # mvn folders
 ###########################
 target
+repository/
 
 # build-time files
 ###########################
