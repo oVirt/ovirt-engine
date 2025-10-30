@@ -458,7 +458,8 @@ class Daemon(service.Daemon):
         with open(
             self._config.get(
                 'CERT_FOR_DATA_VERIFICATION'
-            )
+            ),
+            encoding='utf-8'
         ) as f:
             peer = f.read()
 

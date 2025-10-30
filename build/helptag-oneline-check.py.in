@@ -48,7 +48,7 @@ def findTags(filename):
     1 per line.
     """
     if filename.endswith('.java') and os.path.isfile(filename):
-        with open(filename, 'r') as f:
+        with open(filename, 'r', encoding='utf-8') as f:
             for line in f:
                 m = __RE_HELPTAG.match(line)
                 if "HelpTagType." in line and not m:

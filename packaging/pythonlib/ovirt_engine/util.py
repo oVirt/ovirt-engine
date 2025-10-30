@@ -43,7 +43,7 @@ def escape(s, chars):
 @export
 def processTemplate(template, subst={}):
     content = ''
-    with open(template, 'r') as f:
+    with open(template, 'r', encoding='utf-8') as f:
         content = f.read()
     for k, v in subst.items():
         content = content.replace(str(k), str(v))

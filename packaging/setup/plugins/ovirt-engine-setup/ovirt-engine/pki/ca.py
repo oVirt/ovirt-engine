@@ -662,7 +662,7 @@ class Plugin(plugin.PluginBase):
         def _template_aia(template):
             aia = None
             if os.path.exists(template):
-                with open(template) as f:
+                with open(template, encoding='utf-8') as f:
                     PREFIX = 'caIssuers;URI:'
                     for line in f.read().splitlines():
                         if line.startswith('authorityInfoAccess'):

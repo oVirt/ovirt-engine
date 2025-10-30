@@ -63,7 +63,7 @@ class ConfigFile(base.Base):
             self.logger.debug("loading config '%s'", file)
             index = 0
             try:
-                with open(file, 'r') as f:
+                with open(file, 'r', encoding='utf-8') as f:
                     for line in f:
                         index += 1
                         self._loadLine(line)

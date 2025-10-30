@@ -44,7 +44,7 @@ class Plugin(plugin.PluginBase):
     )
     def _misc(self):
         changed_lines = []
-        with open(YUM_VERSIONLOCK_CONF, 'r') as f:
+        with open(YUM_VERSIONLOCK_CONF, 'r', encoding='utf-8') as f:
             content = f.read().splitlines()
         self.environment[otopicons.CoreEnv.MAIN_TRANSACTION].append(
             filetransaction.FileTransaction(

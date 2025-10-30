@@ -90,7 +90,7 @@ def loadTagsFromMappingFile(file):
     state = "HEADER"
     comment = ''
 
-    with open(file, 'r') as f:
+    with open(file, 'r', encoding='utf-8') as f:
         for line in f.readlines():
 
             if state == "HEADER":
@@ -128,7 +128,7 @@ def loadTagsFromCodebase(filename):
     tags = {}
 
     if filename.endswith('.java') and os.path.isfile(filename):
-        with open(filename, 'r') as f:
+        with open(filename, 'r', encoding='utf-8') as f:
             for line in f:
                 comment = ""
                 m = __RE_HELPTAG.match(line)

@@ -60,7 +60,7 @@ class Plugin(plugin.PluginBase):
                 modified[versionlock_list_file] = False
                 content[versionlock_list_file] = []
                 if os.path.exists(versionlock_list_file):
-                    with open(versionlock_list_file, 'r') as f:
+                    with open(versionlock_list_file, 'r', encoding='utf-8') as f:
                         for line in f.read().splitlines():
                             found = False
                             for pattern in self.environment[
@@ -103,7 +103,8 @@ class Plugin(plugin.PluginBase):
                     )
                     with open(
                         versionlock_list_file,
-                        'w'
+                        'w',
+                        encoding='utf-8'
                     ) as f:
                         f.write(
                             '\n'.join(content[versionlock_list_file]) + '\n'
@@ -173,6 +174,7 @@ class Plugin(plugin.PluginBase):
                         with open(
                             versionlock_list_file,
                             'w',
+                            encoding='utf-8'
                         ) as f:
                             f.write(
                                 '\n'.join(

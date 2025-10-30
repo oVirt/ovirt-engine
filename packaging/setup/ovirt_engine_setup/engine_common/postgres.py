@@ -265,7 +265,8 @@ class Provisioning(base.Base):
         with open(
             self.environment[
                 oengcommcons.ProvisioningEnv.POSTGRES_CONF
-            ]
+            ],
+            encoding='utf-8'
         ) as f:
             content = f.read().splitlines()
 
@@ -303,7 +304,8 @@ class Provisioning(base.Base):
         with open(
             self.environment[
                 oengcommcons.ProvisioningEnv.POSTGRES_PG_HBA
-            ]
+            ],
+            encoding='utf-8'
         ) as f:
             for line in f.read().splitlines():
                 matcher = self._RE_POSTGRES_PGHBA_LOCAL.match(line)
@@ -350,7 +352,8 @@ class Provisioning(base.Base):
         with open(
             self.environment[
                 oengcommcons.ProvisioningEnv.POSTGRES_PG_HBA
-            ]
+            ],
+            encoding='utf-8'
         ) as f:
             for line in f.read().splitlines():
                 if line not in lines:

@@ -52,7 +52,7 @@ class Plugin(plugin.PluginBase):
             for entry in entries:
                 if entry.is_file() and entry.name.endswith('.properties'):
                     content = ''
-                    with open(entry.path, 'r') as f:
+                    with open(entry.path, 'r', encoding='utf-8') as f:
                         content = f.read()
                     if self.OLD_CONTENT.search(content):
                         self.logger.info(

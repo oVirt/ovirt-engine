@@ -852,7 +852,7 @@ if __name__ == '__main__':
                         os.path.expanduser(PASSWORD_FILE)
                     )
                 )
-                with open(os.path.expanduser(PASSWORD_FILE)) as f:
+                with open(os.path.expanduser(PASSWORD_FILE), encoding='utf-8') as f:
                     user, passw = f.readlines()[0].strip().split(':')
                     if user and not username:
                         username = user
