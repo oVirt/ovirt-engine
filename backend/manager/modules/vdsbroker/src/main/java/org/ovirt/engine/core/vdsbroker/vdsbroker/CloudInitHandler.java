@@ -191,7 +191,7 @@ public class CloudInitHandler {
     private void storeRegenerateKeys() {
         if (vmInit.getRegenerateKeys() != null) {
             // Create new system ssh keys
-            userData.put("ssh_deletekeys", String.valueOf(vmInit.getRegenerateKeys()));
+            userData.put("ssh_deletekeys", vmInit.getRegenerateKeys());
         }
     }
 
@@ -300,7 +300,7 @@ public class CloudInitHandler {
         metaData.put("launch_index", "0");
         metaData.put("availability_zone", "nova");
 
-        userData.put("disable_root", 0);
+        userData.put("disable_root", false);
 
         // Redirect log output from cloud-init execution from terminal
         Map<String, String> output = new HashMap<>();
