@@ -52,64 +52,64 @@ class Plugin(plugin.PluginBase):
         ),
     )
     def _validate(self):
-        ShowHEError = True
+        show_he_error = True
         statement = database.Statement(
             dbenvkeys=oenginecons.Const.ENGINE_DB_ENV_KEYS,
             environment=self.environment,
         )
 
         try:
-            HostedEngineVmName = vdcoption.VdcOption(
+            hosted_engine_vm_name = vdcoption.VdcOption(
                 statement=statement,
             ).getVdcOption(
                 'HostedEngineVmName',
                 ownConnection=True,
             )
         except RuntimeError:
-            HostedEngineVmName = 'HostedEngine'
+            hosted_engine_vm_name = 'HostedEngine'
 
-        VdsId = statement.execute(
+        vds_id = statement.execute(
             statement="""
                 SELECT vm_guid, run_on_vds
                 FROM vms
                 WHERE vm_name = %(HostedEngineVmName)s;
             """,
             args=dict(
-                HostedEngineVmName=HostedEngineVmName,
+                HostedEngineVmName=hosted_engine_vm_name,
             ),
             ownConnection=True,
             transaction=False,
         )
 
         try:
-            if not VdsId[0]['vm_guid']:
-                ShowHEError = False
-            elif VdsId[0]['run_on_vds']:
-                HAGlobalMaintenance = statement.execute(
+            if not vds_id[0]['vm_guid']:
+                show_he_error = False
+            elif vds_id[0]['run_on_vds']:
+                ha_global_maintenance = statement.execute(
                     statement="""
                         SELECT vds_id, ha_global_maintenance
                         FROM vds_statistics
                         WHERE vds_id = %(VdsId)s;
                     """,
                     args=dict(
-                        VdsId=VdsId[0]['run_on_vds'],
+                        VdsId=vds_id[0]['run_on_vds'],
                     ),
                     ownConnection=True,
                     transaction=False,
                 )
 
                 try:
-                    if HAGlobalMaintenance[0]['ha_global_maintenance']:
+                    if ha_global_maintenance[0]['ha_global_maintenance']:
                         self.logger.info(_(
                             'Hosted Engine HA is in Global Maintenance mode.'
                         ))
-                        ShowHEError = False
+                        show_he_error = False
                 except IndexError:
                     pass
         except IndexError:
-            ShowHEError = False
+            show_he_error = False
 
-        if ShowHEError:
+        if show_he_error:
             self.logger.error(_(
                 'It seems that you are running your engine inside of '
                 'the hosted-engine VM and are not in "Global '

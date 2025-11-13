@@ -147,7 +147,7 @@ class Plugin(plugin.PluginBase):
         if rc == 0 and stdout:
             res = '\n'.join(stdout)
         else:
-            self.logger.warn(
+            self.logger.warning(
                 _(
                     "Failed to read or parse '{pkcs12}'"
                 ).format(
@@ -662,11 +662,11 @@ class Plugin(plugin.PluginBase):
         def _template_aia(template):
             aia = None
             if os.path.exists(template):
-                with open(template) as f:
-                    PREFIX = 'caIssuers;URI:'
+                with open(template, encoding='utf-8') as f:
+                    prefix = 'caIssuers;URI:'
                     for line in f.read().splitlines():
                         if line.startswith('authorityInfoAccess'):
-                            aia = line[line.find(PREFIX)+len(PREFIX):]
+                            aia = line[line.find(prefix)+len(prefix):]
                             break
             return aia
 
@@ -694,7 +694,7 @@ class Plugin(plugin.PluginBase):
                     'This does not fix existing certificates.'
                 ))
             else:
-                self.logger.warn(
+                self.logger.warning(
                     _(
                         '{template} has wrong data, but was manually changed '
                         'after previous engine-setup'
@@ -835,7 +835,7 @@ class Plugin(plugin.PluginBase):
         # please DON'T increase this size, any value over 55 will fail the
         # setup. the truncated host-fqdn is concatenated with a random string
         # to create a unique CN value.
-        MAX_HOST_FQDN_LEN = 55
+        max_host_fqdn_len = 55
 
         self.logger.info(_('Creating CA: {}').format(ca_file))
 
@@ -859,7 +859,7 @@ class Plugin(plugin.PluginBase):
                     self._subjectComponentEscape(
                         self.environment[
                             osetupcons.ConfigEnv.FQDN
-                        ][:MAX_HOST_FQDN_LEN],
+                        ][:max_host_fqdn_len],
                     ),
                     random.randint(10000, 99999),
                 ),

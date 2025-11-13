@@ -153,7 +153,7 @@ class Plugin(plugin.PluginBase):
                 ] == osetupcons.Const.ACTION_REMOVE:
                     self.logger.warning(msg)
                 else:
-                    raise RuntimeError(msg)
+                    raise RuntimeError(msg) from RuntimeError
             if not self.environment[
                 oenginecons.EngineDBEnv.NEW_DATABASE
             ]:
@@ -162,7 +162,7 @@ class Plugin(plugin.PluginBase):
                     environment=self.environment,
                 )
                 try:
-                    justRestored = vdcoption.VdcOption(
+                    just_restored = vdcoption.VdcOption(
                         statement=statement,
                     ).getVdcOption(
                         'DbJustRestored',
@@ -170,7 +170,7 @@ class Plugin(plugin.PluginBase):
                     )
                     self.environment[
                         oenginecons.EngineDBEnv.JUST_RESTORED
-                    ] = (justRestored == '1')
+                    ] = (just_restored == '1')
                 except RuntimeError:
                     pass
                 if self.environment[

@@ -60,7 +60,7 @@ class RemoteEngine(base.Base):
 
     def style(self):
         if self._style is None:
-            self.configure()
+            self.configure(self.environment[osetupcons.ConfigEnv.FQDN])
         return self._style
 
     def execute_on_engine(self, cmd, timeout=60, text=None):
@@ -223,7 +223,7 @@ class EnrollCert(base.Base):
         request = x509.CertificateSigningRequestBuilder(
         ).subject_name(
             x509.Name([
-                x509.NameAttribute(x509.oid.NameOID.COMMON_NAME, u'/'),
+                x509.NameAttribute(x509.oid.NameOID.COMMON_NAME, '/'),
             ])
         ).sign(
             private_key=private_key,
@@ -320,7 +320,7 @@ class EnrollCert(base.Base):
         cert = None
         csr_fname = self.environment[self._csr_fname_envkey]
         with (
-            open(csr_fname, 'w') if csr_fname
+            open(csr_fname, 'w', encoding='utf-8') if csr_fname
             else tempfile.NamedTemporaryFile(mode='w', delete=False)
         ) as self._csr_file:
             self._csr_file.write(self._csr.decode())

@@ -16,6 +16,7 @@ import tempfile
 
 import psycopg2
 
+
 from looseversion import LooseVersion
 
 from otopi import base
@@ -398,7 +399,7 @@ class OvirtUtils(base.Base):
                 _('Cannot connect to database: {error}').format(
                     error=e,
                 )
-            )
+            ) from e
 
     def isNewDatabase(
         self,
@@ -774,7 +775,7 @@ class OvirtUtils(base.Base):
                     'args': f_infos[filt]['dump']
                 }
             )
-            stdout = open(backupFile, 'w')
+            stdout = open(backupFile, 'w', encoding='utf-8')
 
         res = None
         try:
@@ -863,7 +864,7 @@ class OvirtUtils(base.Base):
                     'args': f_infos[filt]['restore'],
                 }
             )
-            stdin = open(backupFile, 'r')
+            stdin = open(backupFile, 'r', encoding='utf-8')
 
         dumper = _ind_env(self, DEK.DUMPER)
         d_infos = self._backup_restore_dumpers_info(
@@ -940,10 +941,8 @@ class OvirtUtils(base.Base):
     def _pg_client_version_compatible(key, current, expected):
         server_version = LooseVersion(current).version
         client_version = LooseVersion(expected).version
-        
         server_major = server_version[0] if server_version else 0
         client_major = client_version[0] if client_version else 0
-        
         return client_major >= server_major
 
     @staticmethod
@@ -1198,7 +1197,7 @@ class OvirtUtils(base.Base):
                     formatted_msg = ''
                     if item['error_msg']:
                         formatted_msg = item['error_msg'].format(**item_data)
-                    self.logger.warn(
+                    self.logger.warning(
                         formatted_msg
                         if formatted_msg and not item['needed_on_create']
                         else _(
@@ -1242,7 +1241,7 @@ class OvirtUtils(base.Base):
                         current=m.group('value'),
                         expected=item['expected']
                     ):
-                        del(edit_params[item['key']])
+                        del edit_params[item['key']]
 
         needUpdate = len(edit_params) > 0
         if needUpdate:

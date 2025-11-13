@@ -163,7 +163,7 @@ class Plugin(plugin.PluginBase):
                 ] == osetupcons.Const.ACTION_REMOVE:
                     self.logger.warning(msg)
                 else:
-                    raise RuntimeError(msg)
+                    raise RuntimeError(msg) from RuntimeError
 
 
 # vim: expandtab tabstop=4 shiftwidth=4

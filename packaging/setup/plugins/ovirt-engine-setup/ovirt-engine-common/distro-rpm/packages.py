@@ -60,7 +60,11 @@ class Plugin(plugin.PluginBase):
                 modified[versionlock_list_file] = False
                 content[versionlock_list_file] = []
                 if os.path.exists(versionlock_list_file):
-                    with open(versionlock_list_file, 'r') as f:
+                    with open(
+                        versionlock_list_file,
+                        'r',
+                        encoding='utf-8'
+                    ) as f:
                         for line in f.read().splitlines():
                             found = False
                             for pattern in self.environment[
@@ -103,7 +107,8 @@ class Plugin(plugin.PluginBase):
                     )
                     with open(
                         versionlock_list_file,
-                        'w'
+                        'w',
+                        encoding='utf-8'
                     ) as f:
                         f.write(
                             '\n'.join(content[versionlock_list_file]) + '\n'
@@ -173,6 +178,7 @@ class Plugin(plugin.PluginBase):
                         with open(
                             versionlock_list_file,
                             'w',
+                            encoding='utf-8'
                         ) as f:
                             f.write(
                                 '\n'.join(
@@ -231,13 +237,13 @@ class Plugin(plugin.PluginBase):
         ]
         res = mpm.checkForSafeUpdate(packages)
         plist = res['packageOperations']
-        upgradeAvailable = res['upgradeAvailable']
-        missingRollback = res['missingRollback']
-        return (upgradeAvailable, missingRollback, plist)
+        upgrade_available = res['upgradeAvailable']
+        missing_rollback = res['missingRollback']
+        return (upgrade_available, missing_rollback, plist)
 
     def __init__(self, context):
         super(Plugin, self).__init__(context=context)
-        self._shouldResultVersionLock = False
+        self._should_result_version_lock = False
         self._enabled = False
 
     @plugin.event(
@@ -309,18 +315,18 @@ class Plugin(plugin.PluginBase):
         # assume we have nothing to do
         self._enabled = False
 
-        upgradeAvailable = None
-        missingRollback = None
+        upgrade_available = None
+        missing_rollback = None
 
         if self.environment[osetupcons.RPMDistroEnv.ENABLE_UPGRADE] is None:
             self.logger.info(_('Checking for product updates...'))
             (
-                upgradeAvailable,
-                missingRollback,
+                upgrade_available,
+                missing_rollback,
                 self._plist,
             ) = self._checkForProductUpdate()
 
-            if not upgradeAvailable:
+            if not upgrade_available:
                 self.logger.info(_('No product updates found'))
             else:
                 self.environment[
@@ -369,16 +375,16 @@ class Plugin(plugin.PluginBase):
                 )
                 raise RuntimeError(_('Please update the Setup packages'))
 
-            if upgradeAvailable is None:
+            if upgrade_available is None:
                 self.logger.info(_('Checking for product updates...'))
                 (
-                    upgradeAvailable,
-                    missingRollback,
+                    upgrade_available,
+                    missing_rollback,
                     self._plist,
                 ) = self._checkForProductUpdate()
 
-            if upgradeAvailable:
-                if missingRollback:
+            if upgrade_available:
+                if missing_rollback:
                     if self.environment[
                         osetupcons.RPMDistroEnv.REQUIRE_ROLLBACK
                     ] is None:
@@ -397,7 +403,7 @@ class Plugin(plugin.PluginBase):
                                 '(@VALUES@) [@DEFAULT@]: '
                             ).format(
                                 missingRollback='\n'.join(
-                                    list(missingRollback)
+                                    list(missing_rollback)
                                 ),
                             ),
                             prompt=True,
@@ -426,7 +432,7 @@ class Plugin(plugin.PluginBase):
                     osetupcons.RPMDistroEnv.ENABLE_UPGRADE
                 ]
 
-        if not self._enabled and upgradeAvailable:
+        if not self._enabled and upgrade_available:
             raise RuntimeError(
                 _(
                     'Aborted, packages must be updated. You can pass '
@@ -444,15 +450,15 @@ class Plugin(plugin.PluginBase):
         ),
     )
     def _validation(self):
-        engineVersion = None
+        engine_version = None
         if self._plist is not None:
             for p in self._plist:
                 if (
                     p['name'] == oenginecons.Const.ENGINE_PACKAGE_NAME and
                     p['operation'] == 'install'
                 ):
-                    engineVersion = f'{p["version"]}-{p["release"]}'
-        if engineVersion is None:
+                    engine_version = f'{p["version"]}-{p["release"]}'
+        if engine_version is None:
             # Engine is not updated, or we run offline. I still want to make
             # sure we use a matching engine-setup. Check installed engine.
             rc, stdout, stderr = self.execute(
@@ -465,14 +471,14 @@ class Plugin(plugin.PluginBase):
                 raiseOnError=False,
             )
             if rc == 0:
-                engineVersion = stdout[0]
+                engine_version = stdout[0]
         if (
-            engineVersion is not None and
-            osetupcons.Const.DISPLAY_VERSION != engineVersion
+            engine_version is not None and
+            osetupcons.Const.DISPLAY_VERSION != engine_version
         ):
             self.dialog.note(
                 f'Setup version: {osetupcons.Const.DISPLAY_VERSION}\n'
-                f'Engine version: {engineVersion}'
+                f'Engine version: {engine_version}'
             )
             raise RuntimeError(_(
                 'Setup and (updated) Engine versions must match'

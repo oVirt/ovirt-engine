@@ -52,7 +52,7 @@ class Plugin(plugin.PluginBase):
         )
 
     def _content_with_renamed_fqdn(self, config):
-        with open(config, 'r') as f:
+        with open(config, 'r', encoding='utf-8') as f:
             content = []
             for line in f:
                 line = line.rstrip('\n')

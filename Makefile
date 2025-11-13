@@ -30,10 +30,11 @@ PACKAGE_NAME=ovirt-engine
 ENGINE_NAME=$(PACKAGE_NAME)
 MVN=mvn
 PYTHON=$(shell which python3 2> /dev/null)
-PYFLAKES=$(shell which pyflakes 2> /dev/null)
+PYFLAKES=pyflakes
 PY_VERSION=3
-PEP8=$(shell which pycodestyle-3 2> /dev/null)
+PEP8=pycodestyle
 ISORT=isort
+PYLINT=pylint
 PREFIX?=/usr/local
 LOCALSTATE_DIR=$(PREFIX)/var
 BIN_DIR=$(PREFIX)/bin
@@ -184,6 +185,7 @@ BUILD_TARGET=install
 	-e "s|@PEP8@|$(PEP8)|g" \
 	-e "s|@PYFLAKES@|$(PYFLAKES)|g" \
 	-e "s|@ISORT@|$(ISORT)|g" \
+	-e "s|@PYLINT@|$(PYLINT)|g" \
 	-e "s|@DEVMODE@|$(BUILD_DEV)|g" \
 	-e "s|@VMCONSOLE_SYSCONF_DIR@|$(VMCONSOLE_SYSCONF_DIR)|g" \
 	-e "s|@VMCONSOLE_PKI_DIR@|$(VMCONSOLE_PKI_DIR)|g" \
@@ -235,12 +237,12 @@ GENERATED = \
 	packaging/services/ovirt-engine/ovirt-engine.py \
 	packaging/services/ovirt-engine/ovirt-engine.systemd \
 	packaging/services/ovirt-engine/ovirt-engine.sysv \
-	packaging/services/ovirt-fence-kdump-listener/config.py \
+	packaging/services/ovirt-fence-kdump-listener/fence_kdump_config.py \
 	packaging/services/ovirt-fence-kdump-listener/ovirt-fence-kdump-listener.conf \
 	packaging/services/ovirt-fence-kdump-listener/ovirt-fence-kdump-listener.py \
 	packaging/services/ovirt-fence-kdump-listener/ovirt-fence-kdump-listener.systemd \
 	packaging/services/ovirt-fence-kdump-listener/ovirt-fence-kdump-listener.sysv \
-	packaging/services/ovirt-websocket-proxy/config.py \
+	packaging/services/ovirt-websocket-proxy/websocket_config.py \
 	packaging/services/ovirt-websocket-proxy/ovirt-websocket-proxy.conf \
 	packaging/services/ovirt-websocket-proxy/ovirt-websocket-proxy.py \
 	packaging/services/ovirt-websocket-proxy/ovirt-websocket-proxy.systemd \

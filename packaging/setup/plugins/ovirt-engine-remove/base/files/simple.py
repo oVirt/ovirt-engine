@@ -49,7 +49,7 @@ class Plugin(plugin.PluginBase):
 
     def _revertChanges(self, filename, changes):
         new_content = []
-        with open(filename, 'r') as f:
+        with open(filename, 'r', encoding='utf-8') as f:
             old_content = f.read().splitlines()
         just_remove = []
         just_add = []

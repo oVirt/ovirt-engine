@@ -258,7 +258,7 @@ def parsePort(port):
             _('Invalid port {number}').format(
                 number=port,
             )
-        )
+        ) from ValueError
     if port < 0 or port > 0xffff:
         raise ValueError(
             _('Invalid number {number}').format(
@@ -321,7 +321,7 @@ def getPackageManager(logger=None):
                 _(
                     'No supported package manager found in your system'
                 )
-            )
+            ) from ImportError
 
 
 @util.export

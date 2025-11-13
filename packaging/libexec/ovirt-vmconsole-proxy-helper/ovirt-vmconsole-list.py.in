@@ -41,11 +41,7 @@ def urlopen(url, ca_certs=None, verify_host=True):
 
     if getattr(ssl, 'create_default_context', None):
         context = ssl.create_default_context()
-
-        if verify_host:
-            context.check_hostname = ssl.match_hostname
-        else:
-            context.check_hostname = None
+        context.check_hostname = verify_host
 
         if ca_certs:
             context.load_verify_locations(cafile=ca_certs)

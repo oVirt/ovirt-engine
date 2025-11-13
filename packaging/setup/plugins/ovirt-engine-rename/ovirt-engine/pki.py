@@ -315,8 +315,8 @@ class Plugin(plugin.PluginBase):
             (
                 access_description.access_method ==
                 x509.oid.AuthorityInformationAccessOID.CA_ISSUERS
-            ) and (
-                type(access_description.access_location) ==
+            ) and isinstance(
+                access_description.access_location,
                 x509.UniformResourceIdentifier
             )
         ):
@@ -393,7 +393,7 @@ class Plugin(plugin.PluginBase):
                 oenginecons.FileLocations.OVIRT_ENGINE_PKI_QEMU_CERT_TEMPLATE,
                 oenginecons.FileLocations.OVIRT_ENGINE_PKI_CERT_CONF
             ):
-                with open(config, 'r') as f:
+                with open(config, 'r', encoding='utf-8') as f:
                     content = []
                     for line in f:
                         line = line.rstrip('\n')

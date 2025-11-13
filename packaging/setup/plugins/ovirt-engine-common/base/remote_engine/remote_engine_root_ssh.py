@@ -11,6 +11,8 @@ import gettext
 import socket
 import time
 
+import paramiko
+
 from otopi import plugin
 from otopi import util
 
@@ -57,7 +59,6 @@ class Plugin(plugin.PluginBase):
             return _('Access remote engine server using ssh as root')
 
         def _ssh_get_port(self):
-            import paramiko
             port_valid = False
             key = osetupcons.ConfigEnv.REMOTE_ENGINE_HOST_SSH_PORT
             port = self.environment[key]
@@ -90,7 +91,7 @@ class Plugin(plugin.PluginBase):
                     if interactive:
                         self.logger.error(msg)
                     else:
-                        raise RuntimeError(msg)
+                        raise RuntimeError(msg) from e
                 except (paramiko.SSHException, socket.gaierror) as e:
                     self.logger.debug('exception', exc_info=True)
                     msg = _(
@@ -103,10 +104,9 @@ class Plugin(plugin.PluginBase):
                     if interactive:
                         self.logger.error(msg)
                     else:
-                        raise RuntimeError(msg)
+                        raise RuntimeError(msg) from e
 
         def _ssh_connect(self):
-            import paramiko
 
             logger = self.logger
 
@@ -172,7 +172,7 @@ class Plugin(plugin.PluginBase):
                     if interactive:
                         self.logger.error(msg)
                     else:
-                        raise RuntimeError(msg)
+                        raise RuntimeError(msg) from e
                     bad_password = True
             self.environment[
                 osetupcons.ConfigEnv.REMOTE_ENGINE_HOST_ROOT_PASSWORD

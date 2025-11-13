@@ -82,7 +82,7 @@ class Plugin(plugin.PluginBase):
             for cls in constobj.__dict__['__osetup_attrs__']:
                 self.dialog.note(f'  From class {cls.__name__}:')
                 for keyname, key in cls.__dict__.items():
-                    if not keyname.startswith('_') and type(key) == str:
+                    if not keyname.startswith('_') and isinstance(key, str):
                         self.dialog.note(f'    * {key}')
                     elif hasattr(key, '__osetup_attrs__'):
                         self.dialog.note(f'    * {key.fget(None)}')

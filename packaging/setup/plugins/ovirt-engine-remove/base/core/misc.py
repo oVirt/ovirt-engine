@@ -133,7 +133,7 @@ class Plugin(plugin.PluginBase):
         if self.environment[
             osetupcons.RemoveEnv.REMOVE_ALL
         ] is None:
-            self.logger.warn(_('Partial cleanup is not supported'))
+            self.logger.warning(_('Partial cleanup is not supported'))
             self.dialog.note(_(
                 'Removing only some components is not supported. If you reply '
                 'No, you will be prompted for components to be removed, '
@@ -157,7 +157,7 @@ class Plugin(plugin.PluginBase):
                 default=True,
             )
         if not self.environment[osetupcons.RemoveEnv.REMOVE_ALL]:
-            self.logger.warn(_('Partial cleanup is not supported'))
+            self.logger.warning(_('Partial cleanup is not supported'))
             self.dialog.note(_(
                 'You will now be prompted for components to be removed, '
                 'but regardless of which ones you choose, the engine will '
