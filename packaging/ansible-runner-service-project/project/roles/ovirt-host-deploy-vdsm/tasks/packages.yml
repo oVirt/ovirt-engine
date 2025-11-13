@@ -9,6 +9,13 @@
     state: present
   when: ansible_architecture == 'x86_64'
 
+- name: Install centos-release-ovirt45 package on aarch64
+  ansible.builtin.yum:
+    name: centos-release-ovirt45
+    state: present
+  when:
+    - (ansible_facts.architecture == 'aarch64')
+
 - name: Install ovirt-host package
   ansible.builtin.yum:
     name: ovirt-host
