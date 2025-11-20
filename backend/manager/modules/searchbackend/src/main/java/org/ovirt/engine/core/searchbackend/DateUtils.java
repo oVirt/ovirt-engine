@@ -34,12 +34,16 @@ class DateUtils {
         formats.add(getFormat(style, style));
     }
 
-    public static DateFormat getFormat(int dateStyle) {
+    private static DateFormat getFormat(int dateStyle) {
         return DateFormat.getDateInstance(dateStyle);
     }
 
-    public static DateFormat getFormat(int dateStyle, int timeStyle) {
+    private static DateFormat getFormat(int dateStyle, int timeStyle) {
         return DateFormat.getDateTimeInstance(dateStyle, timeStyle);
+    }
+
+    public static String toIsoFormat(DateTime date) {
+        return date.toInstant().toString();
     }
 
     public static String getDayOfWeek(int addDays) {

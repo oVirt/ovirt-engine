@@ -6,9 +6,11 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
+import java.util.TimeZone;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -45,7 +47,8 @@ public class AuditLogConditionFieldAutoCompleterTest {
         String dateString = DateFormat.getDateInstance(DateFormat.SHORT).format(date);
         pair.setSecond(dateString);
         comp.formatValue("TIME", pair, false);
-        DateFormat fmt = DateFormat.getDateTimeInstance(DateFormat.DEFAULT, DateFormat.SHORT);
+        SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+        fmt.setTimeZone(TimeZone.getDefault());
         assertEquals(quote(fmt.format(date)), pair.getSecond());
         pair.setSecond("1");
         comp.formatValue("TIME", pair, false);
