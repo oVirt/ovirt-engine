@@ -19,7 +19,7 @@ class DateUtils {
         return null;
     }
 
-    public static DateTimeFormat getFormat(int dateStyle) {
+    private static DateTimeFormat getFormat(int dateStyle) {
         switch (dateStyle) {
             case DateFormat.FULL:
                 return DateTimeFormat.getFormat(PredefinedFormat.DATE_FULL);
@@ -32,7 +32,7 @@ class DateUtils {
         }
     }
 
-    public static DateTimeFormat getFormat(int dateStyle, int timeStyle) {
+    private static DateTimeFormat getFormat(int dateStyle, int timeStyle) {
         switch (timeStyle) {
             case DateFormat.FULL:
                 return DateTimeFormat.getFormat(PredefinedFormat.DATE_TIME_FULL);
@@ -43,6 +43,11 @@ class DateUtils {
             default:
                 return DateTimeFormat.getFormat(PredefinedFormat.DATE_TIME_MEDIUM);
         }
+    }
+
+    //No need to transform to ISO format on frontend
+    public static String toIsoFormat(DateTime date) {
+        return null;
     }
 
     public static String getDayOfWeek(int addDays) {

@@ -1,7 +1,6 @@
 package org.ovirt.engine.core.searchbackend;
 
 import java.math.BigDecimal;
-import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -272,12 +271,12 @@ public class BaseConditionFieldAutoCompleter extends BaseAutoCompleter implement
                 pair.setFirst("between");
                 DateTime nextDay = result.addDays(1);
                 pair.setSecond(StringFormat.format("'%1$s' and '%2$s'",
-                        result.toString(DateUtils.getFormat(DateFormat.DEFAULT, DateFormat.SHORT)),
-                        nextDay.toString(DateUtils.getFormat(DateFormat.DEFAULT, DateFormat.SHORT))));
+                        DateUtils.toIsoFormat(result),
+                        DateUtils.toIsoFormat(nextDay)));
             } else { // ">" or "<"
                      // value.argvalue = String.format("'%1$s'", result);
                 pair.setSecond(StringFormat.format("'%1$s'",
-                        result.toString(DateUtils.getFormat(DateFormat.DEFAULT, DateFormat.SHORT))));
+                        DateUtils.toIsoFormat(result)));
             }
 
         } else if ("TAG".equals(fieldName)) {
