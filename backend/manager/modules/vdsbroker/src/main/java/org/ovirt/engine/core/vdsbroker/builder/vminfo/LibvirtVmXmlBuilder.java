@@ -436,6 +436,7 @@ public class LibvirtVmXmlBuilder {
 
         switch (vm.getClusterArch().getFamily()) {
             case x86:
+            case aarch64:
             case s390x:
                 writer.writeAttributeString("match", "exact");
 
