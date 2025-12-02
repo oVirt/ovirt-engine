@@ -102,6 +102,44 @@ public enum VmTestPairs {
         Pair<VM, VdsmVm> build() {
             return pairOf(null, createVmInternalData(VMStatus.Paused));
         }
+    },
+    VM_UNKNOWN_ACTUALLY_RUNNING("E") {
+        @Override
+        Pair<VM, VdsmVm> build() {
+            Pair<VM, VdsmVm> pair = createPair();
+            setPairStatuses(pair, VMStatus.Unknown, VMStatus.Up);
+            return pair;
+        }
+    },
+    VM_UNKNOWN_NOT_FOUND_ON_HOST("F") {
+        @Override
+        Pair<VM, VdsmVm> build() {
+            VM dbVm = createDbVm();
+            dbVm.setStatus(VMStatus.Unknown);
+            dbVm.setRunOnVds(SRC_HOST_ID);
+            return pairOf(dbVm, null);
+        }
+    },
+    VM_UNKNOWN_CRASHED("10") {
+        @Override
+        Pair<VM, VdsmVm> build() {
+            Pair<VM, VdsmVm> pair = createPair();
+            pair.getFirst().setStatus(VMStatus.Unknown);
+            pair.getFirst().setRunOnVds(SRC_HOST_ID);
+            pair.getSecond().getVmDynamic().setStatus(VMStatus.Down);
+            pair.getSecond().getVmDynamic().setExitStatus(VmExitStatus.Error);
+            return pair;
+        }
+    },
+    VM_UNKNOWN_WAITING_FOR_LAUNCH("11") {
+        @Override
+        Pair<VM, VdsmVm> build() {
+            Pair<VM, VdsmVm> pair = createPair();
+            pair.getFirst().setStatus(VMStatus.Unknown);
+            pair.getFirst().setRunOnVds(SRC_HOST_ID);
+            pair.getSecond().getVmDynamic().setStatus(VMStatus.WaitForLaunch);
+            return pair;
+        }
     };
     public static final Guid DST_HOST_ID = Guid.newGuid();
     public static final Guid SRC_HOST_ID = Guid.newGuid();
@@ -111,7 +149,8 @@ public enum VmTestPairs {
     private Pair<VM, VdsmVm> pair;
 
     VmTestPairs(String id) {
-        this.id = Guid.createGuidFromString(id + "0000000-0000-0000-0000-000000000000");
+        String paddedId = String.format("%8s", id).replace(' ', '0');
+        this.id = Guid.createGuidFromString(paddedId + "-0000-0000-0000-000000000000");
         pair = build();
     }
 
@@ -212,7 +251,7 @@ public enum VmTestPairs {
         return vm;
     }
 
-    private void setPairStatuses(Pair<VM, VdsmVm> pair, VMStatus dbStatus, VMStatus vdsmStatus) {
+    private static void setPairStatuses(Pair<VM, VdsmVm> pair, VMStatus dbStatus, VMStatus vdsmStatus) {
         pair.getFirst().setStatus(dbStatus);
         pair.getSecond().getVmDynamic().setStatus(vdsmStatus);
     }

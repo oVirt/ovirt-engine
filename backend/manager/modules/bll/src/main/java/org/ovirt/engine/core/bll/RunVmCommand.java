@@ -312,7 +312,12 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
                         cleanupPassthroughVnics();
                         reportCompleted();
                         throw e;
-                    case VDS_NETWORK_ERROR: // probably wrong xml format sent.
+                    case VDS_NETWORK_ERROR:
+                        resourceManager.setVmUnknown(getVm());
+                        getVm().setRunOnVds(getVdsId());
+                        cleanupPassthroughVnics();
+                        reportCompleted();
+                        throw e;
                     case PROVIDER_FAILURE:
                     case HOST_DEVICES_TAKEN_BY_OTHER_VM:
                     case INVALID_HA_VM_LEASE:
