@@ -5,6 +5,7 @@ import static org.hamcrest.core.Is.is;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
@@ -12,7 +13,10 @@ import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.ovirt.engine.core.common.vdscommands.VDSCommandType.ConnectStorageServer;
@@ -23,6 +27,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.BlockingQueue;
 import java.util.stream.Stream;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -38,6 +43,11 @@ import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
+import org.ovirt.engine.core.bll.context.CommandContext;
+import org.ovirt.engine.core.bll.network.host.NetworkDeviceHelper;
+import org.ovirt.engine.core.bll.network.host.VfScheduler;
+import org.ovirt.engine.core.bll.scheduling.SchedulingManager;
+import org.ovirt.engine.core.bll.storage.disk.managedblock.ManagedBlockStorageCommandUtil;
 import org.ovirt.engine.core.bll.storage.domain.IsoDomainListSynchronizer;
 import org.ovirt.engine.core.bll.validator.RunVmValidator;
 import org.ovirt.engine.core.common.AuditLogType;
@@ -48,6 +58,7 @@ import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotStatus;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
+import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
@@ -58,6 +69,7 @@ import org.ovirt.engine.core.common.businessentities.storage.LUNs;
 import org.ovirt.engine.core.common.businessentities.storage.LunDisk;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.config.ConfigValues;
+import org.ovirt.engine.core.common.errors.EngineException;
 import org.ovirt.engine.core.common.interfaces.VDSBrokerFrontend;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
@@ -69,23 +81,27 @@ import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dao.DiskImageDao;
 import org.ovirt.engine.core.dao.SnapshotDao;
 import org.ovirt.engine.core.dao.StorageServerConnectionDao;
+import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.VmDeviceDao;
+import org.ovirt.engine.core.dao.VmDynamicDao;
 import org.ovirt.engine.core.utils.InjectedMock;
 import org.ovirt.engine.core.utils.MockConfigDescriptor;
 import org.ovirt.engine.core.utils.MockConfigExtension;
 import org.ovirt.engine.core.utils.MockedConfig;
+import org.ovirt.engine.core.vdsbroker.ResourceManager;
+import org.ovirt.engine.core.vdsbroker.VdsManager;
+import org.ovirt.engine.core.vdsbroker.VdsMonitor;
 import org.ovirt.engine.core.vdsbroker.VmManager;
 
 @ExtendWith({MockitoExtension.class, MockConfigExtension.class})
 @MockitoSettings(strictness = Strictness.LENIENT)
 public class RunVmCommandTest extends BaseCommandTest {
-    /**
-     * The command under test.
-     */
+    private Guid vmId = Guid.newGuid();
+
     @Spy
     @InjectMocks
-    private RunVmCommand<RunVmParams> command = new RunVmCommand<>(new RunVmParams(Guid.newGuid()), null);
+    private RunVmCommand<RunVmParams> command = new RunVmCommand<>(new RunVmParams(vmId), CommandContext.createContext("test"));
 
     @Mock
     private VDSBrokerFrontend vdsBrokerFrontend;
@@ -121,6 +137,27 @@ public class RunVmCommandTest extends BaseCommandTest {
 
     @Mock
     private VmManager vmManager;
+
+    @Mock
+    private VmDynamicDao vmDynamicDao;
+
+    @Mock
+    private VdsDao vdsDao;
+
+    @Mock
+    private ManagedBlockStorageCommandUtil managedBlockStorageCommandUtil;
+
+    @Mock
+    private VfScheduler vfScheduler;
+
+    @Mock
+    private NetworkDeviceHelper networkDeviceHelper;
+
+    @Mock
+    private SchedulingManager schedulingManager;
+
+    @Mock
+    private ResourceManager resourceManager;
 
     private static final String ACTIVE_ISO_PREFIX =
             "/rhev/data-center/mnt/some_computer/f6bccab4-e2f5-4e02-bba0-5748a7bc07b6/images/11111111-1111-1111-1111-111111111111";
@@ -649,5 +686,82 @@ public class RunVmCommandTest extends BaseCommandTest {
         assertThat(captor.getValue().getConnectionList().size(), is(1));
         assertFalse(connectSucceeded);
 
+    }
+
+    private VM createVm() {
+        VM vm = new VM();
+        vm.setId(vmId);
+        vm.setStatus(VMStatus.WaitForLaunch);
+        vm.setClusterId(Guid.newGuid());
+        return vm;
+    }
+
+    @Test
+    public void testNetworkError() throws Exception {
+        VM vm = createVm();
+        command.setVm(vm);
+
+        VDS host = createHost();
+        when(vmDao.get(vmId)).thenReturn(vm);
+        when(managedBlockStorageCommandUtil.attachManagedBlockStorageDisks(vm, vmHandler, host)).thenReturn(true);
+        doReturn(vmManager).when(command).getVmManager();
+        doReturn(true).when(command).getVdsToRunOn();
+        doReturn(true).when(command).connectLunDisks(any());
+        doReturn(true).when(command).updateCinderDisksConnections();
+
+        doThrow(new org.ovirt.engine.core.common.errors.EngineException(
+                org.ovirt.engine.core.common.errors.EngineError.VDS_NETWORK_ERROR))
+                .when(command).createVm();
+
+        VdsManager vdsManager = mock(VdsManager.class);
+        VdsMonitor monitor = mock(VdsMonitor.class);
+        @SuppressWarnings("unchecked")
+        BlockingQueue<Boolean> queue = mock(BlockingQueue.class);
+        when(monitor.getQueue()).thenReturn(queue);
+        when(vdsManager.getVdsMonitor()).thenReturn(monitor);
+        when(resourceManager.getVdsManager(host.getId())).thenReturn(vdsManager);
+
+        EngineException thrown = assertThrows(EngineException.class, () -> {
+            command.runVm();
+        });
+
+        // Verify exception has correct error code
+        assertEquals(org.ovirt.engine.core.common.errors.EngineError.VDS_NETWORK_ERROR, thrown.getErrorCode());
+
+        verify(command, never()).rerun();
+        verify(resourceManager).setVmUnknown(vm);
+        assertEquals(host.getId(), vm.getRunOnVds());
+
+        verify(command).cleanupPassthroughVnics(host.getId());
+        verify(command).reportCompleted();
+    }
+
+    @Test
+    public void testOtherErrorsStillTriggerRerun() throws Exception {
+        VM vm = createVm();
+
+        createHost();
+
+        when(vmDao.get(vm.getId())).thenReturn(vm);
+        doReturn(vmManager).when(command).getVmManager();
+        doReturn(true).when(command).getVdsToRunOn();
+        doReturn(true).when(command).connectLunDisks(any());
+        doReturn(true).when(command).updateCinderDisksConnections();
+        doNothing().when(command).rerun();
+
+        doReturn(null).when(command).createVm();
+
+        command.runVm();
+
+        verify(command, times(1)).rerun();
+    }
+
+    private VDS createHost() {
+        VDS host = new VDS();
+        Guid hostId = Guid.newGuid();
+        host.setId(hostId);
+        when(vdsDao.get(hostId)).thenReturn(host);
+        command.setVdsId(hostId);
+        return host;
     }
 }

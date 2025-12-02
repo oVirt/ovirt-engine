@@ -105,6 +105,7 @@ final class RecoveryStartupBean {
         for (VM vm : vms) {
             if (!vm.isNotRunning()) {
                 if (vm.getRunOnVds() != null && hostIds.contains(vm.getRunOnVds())) {
+                    resourceManager.removeAsyncRunningVm(vm.getId());
                     resourceManager.setVmUnknown(vm);
                 }
             }

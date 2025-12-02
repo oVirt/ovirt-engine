@@ -10,6 +10,8 @@ import static org.junit.jupiter.api.Assumptions.assumeFalse;
 import static org.junit.jupiter.api.Assumptions.assumeTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.atLeastOnce;
+import static org.mockito.Mockito.atMostOnce;
+import static org.mockito.Mockito.doCallRealMethod;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.never;
@@ -370,6 +372,90 @@ public class VmAnalyzerTest {
 
     private void mockDstHostStatus(VDSStatus status) {
         when(dstHost.getStatus()).thenReturn(status);
+    }
+
+    @ParameterizedTest
+    @EnumSource(value = VmTestPairs.class, names = "VM_UNKNOWN_ACTUALLY_RUNNING")
+    public void testVmRecoveryFromUnknownVmActuallyStarted(VmTestPairs data) {
+        // given
+        initMocks(data, false);
+
+        // when
+        assumeTrue(data.dbVm() != null);
+        assumeTrue(data.vdsmVm() != null);
+        assumeTrue(data.dbVm().getStatus() == VMStatus.Unknown);
+        assumeTrue(data.vdsmVm().getVmDynamic().getStatus() == VMStatus.Up);
+        vmAnalyzer.analyze();
+
+        // then
+        assertEquals(VMStatus.Up, vmAnalyzer.getVmDynamicToSave().getStatus());
+        verify(auditLogDirector, atLeastOnce()).log(loggableCaptor.capture(), logTypeCaptor.capture());
+        verify(resourceManager, atMostOnce()).removeAsyncRunningVm(data.dbVm().getId());
+    }
+
+    @ParameterizedTest
+    @EnumSource(value = VmTestPairs.class, names = "VM_UNKNOWN_NOT_FOUND_ON_HOST")
+    public void testVmInUnknownStateNotFoundOnHost(VmTestPairs data) {
+        // given
+        initMocks(data, false);
+        when(resourceManager.isVmInAsyncRunningList(data.dbVm().getId())).thenReturn(true);
+
+        // when
+        assumeTrue(data.dbVm() != null);
+        assumeTrue(data.vdsmVm() == null);
+        assumeTrue(data.dbVm().getStatus() == VMStatus.Unknown);
+
+        doCallRealMethod().when(resourceManager).internalSetVmStatus(any(), any(), any(), any(), any());
+        when(resourceManager.isVmInAsyncRunningList(data.dbVm().getId())).thenReturn(true);
+
+        vmAnalyzer.analyze();
+
+        // then
+        assertEquals(VMStatus.Down, vmAnalyzer.getVmDynamicToSave().getStatus());
+        assertNull(vmAnalyzer.getVmDynamicToSave().getRunOnVds());
+        assertFalse(vmAnalyzer.isMovedToDown());
+        assertTrue(vmAnalyzer.isRerun());
+    }
+
+    @ParameterizedTest
+    @EnumSource(value = VmTestPairs.class, names = "VM_UNKNOWN_CRASHED")
+    public void testVmInUnknownStateVmDissapeared(VmTestPairs data) {
+        // given
+        initMocks(data, false);
+
+        // when
+        assumeTrue(data.dbVm() != null);
+        assumeTrue(data.vdsmVm() != null);
+        assumeTrue(data.dbVm().getStatus() == VMStatus.Unknown);
+        assumeTrue(data.vdsmVm().getVmDynamic().getStatus() == VMStatus.Down);
+        assumeTrue(data.vdsmVm().getVmDynamic().getExitStatus() == VmExitStatus.Error);
+
+        doCallRealMethod().when(resourceManager).internalSetVmStatus(any(), any(), any(), any(), any());
+        when(resourceManager.isVmInAsyncRunningList(data.dbVm().getId())).thenReturn(true);
+
+        vmAnalyzer.analyze();
+
+        // then
+        assertEquals(VMStatus.Down, vmAnalyzer.getVmDynamicToSave().getStatus());
+        assertFalse(vmAnalyzer.isMovedToDown());
+        assertTrue(vmAnalyzer.isRerun());
+    }
+
+    @ParameterizedTest
+    @EnumSource(value = VmTestPairs.class, names = "VM_UNKNOWN_WAITING_FOR_LAUNCH")
+    public void testVmInUnknownStateStaysUnknownUntilConfirmed(VmTestPairs data) {
+        // given
+        initMocks(data, false);
+
+        // when
+        assumeTrue(data.dbVm() != null);
+        assumeTrue(data.vdsmVm() != null);
+        assumeTrue(data.dbVm().getStatus() == VMStatus.Unknown);
+        assumeTrue(data.vdsmVm().getVmDynamic().getStatus() == VMStatus.WaitForLaunch);
+
+        // then
+        vmAnalyzer.analyze();
+        assertEquals(VMStatus.WaitForLaunch, vmAnalyzer.getVmDynamicToSave().getStatus());
     }
 
 }
