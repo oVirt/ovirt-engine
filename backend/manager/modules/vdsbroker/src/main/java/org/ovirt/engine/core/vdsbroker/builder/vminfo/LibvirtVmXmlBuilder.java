@@ -437,6 +437,7 @@ public class LibvirtVmXmlBuilder {
         switch (vm.getClusterArch().getFamily()) {
             case x86:
             case s390x:
+            case aarch64:
                 writer.writeAttributeString("match", "exact");
 
                 // is this a list of strings??..
@@ -704,6 +705,21 @@ public class LibvirtVmXmlBuilder {
                         secureBoot ? "OVMF_VARS.secboot.fd" : "OVMF_VARS.fd");
             }
             writer.writeAttributeString("template", nvramTemplate);
+            writer.writeRaw(String.format("/var/lib/libvirt/qemu/nvram/%s.fd", vm.getId()));
+            writer.writeEndElement();
+        }
+
+        if (vm.getClusterArch().getFamily() == ArchitectureType.aarch64) {
+            writer.writeStartElement("loader");
+            writer.writeAttributeString("readonly", "yes");
+            writer.writeAttributeString("type", "pflash");
+            writer.writeAttributeString("format", "raw");
+            writer.writeRaw("/usr/share/AAVMF/AAVMF_CODE.fd");
+            writer.writeEndElement();
+            writer.writeStartElement("nvram");
+            writer.writeAttributeString("template", "/usr/share/AAVMF/AAVMF_VARS.fd");
+            writer.writeAttributeString("templateFormat", "raw");
+            writer.writeAttributeString("format", "raw");
             writer.writeRaw(String.format("/var/lib/libvirt/qemu/nvram/%s.fd", vm.getId()));
             writer.writeEndElement();
         }
@@ -1070,6 +1086,7 @@ public class LibvirtVmXmlBuilder {
         switch (vm.getClusterArch().getFamily()) {
         // No mouse or tablet for s390x and for headless HP VMS with ppc architecture type.
             case x86:
+            case aarch64:
                 writeInput();
                 break;
             case ppc:
@@ -1081,7 +1098,9 @@ public class LibvirtVmXmlBuilder {
 
         writeGuestAgentChannels();
 
-        if (vm.getClusterArch() == ArchitectureType.ppc64 || vm.getClusterArch() == ArchitectureType.ppc64le) {
+        if (vm.getClusterArch() == ArchitectureType.ppc64 ||
+            vm.getClusterArch() == ArchitectureType.ppc64le ||
+            vm.getClusterArch() == ArchitectureType.aarch64) {
             writeEmulator();
         }
 
@@ -3091,7 +3110,6 @@ public class LibvirtVmXmlBuilder {
 
     private void writeInput() {
         writer.writeStartElement("input");
-
         if (vmInfoBuildUtils.isTabletEnabled(vm)) {
             writer.writeAttributeString("type", "tablet");
             writer.writeAttributeString("bus", "usb");
@@ -3099,7 +3117,13 @@ public class LibvirtVmXmlBuilder {
             writer.writeAttributeString("type", "mouse");
             writer.writeAttributeString("bus", vm.getClusterArch().getFamily() == ArchitectureType.x86 ? "ps2" : "usb");
         }
-
         writer.writeEndElement();
+
+        if (vm.getClusterArch().getFamily() == ArchitectureType.aarch64) {
+            writer.writeStartElement("input");
+            writer.writeAttributeString("type", "keyboard");
+            writer.writeAttributeString("bus", "usb");
+            writer.writeEndElement();
+        }
     }
 }
