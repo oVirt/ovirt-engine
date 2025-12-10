@@ -16,8 +16,10 @@ import javax.inject.Singleton;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
+import org.ovirt.engine.core.common.action.AddVmInterfaceParameters;
 import org.ovirt.engine.core.common.action.VmSlaPolicyParameters;
 import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.profiles.CpuProfile;
 import org.ovirt.engine.core.common.businessentities.profiles.DiskProfile;
 import org.ovirt.engine.core.common.businessentities.qos.CpuQos;
@@ -29,6 +31,9 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.DiskDao;
 import org.ovirt.engine.core.dao.DiskImageDao;
 import org.ovirt.engine.core.dao.VmDao;
+import org.ovirt.engine.core.dao.network.NetworkQoSDao;
+import org.ovirt.engine.core.dao.network.VmNetworkInterfaceDao;
+import org.ovirt.engine.core.dao.network.VnicProfileViewDao;
 import org.ovirt.engine.core.dao.profiles.CpuProfileDao;
 import org.ovirt.engine.core.dao.profiles.DiskProfileDao;
 import org.ovirt.engine.core.dao.qos.CpuQosDao;
@@ -61,6 +66,15 @@ public class VmSlaPolicyUtils {
 
     @Inject
     private BackendInternal backend;
+
+    @Inject
+    private VmNetworkInterfaceDao vmNetworkInterfaceDao;
+
+    @Inject
+    private VnicProfileViewDao vnicProfileViewDao;
+
+    @Inject
+    private NetworkQoSDao networkQoSDao;
 
     public List<Guid> getRunningVmsWithCpuProfiles(Collection<Guid> cpuProfileIds) {
         return vmDao.getAllForCpuProfiles(cpuProfileIds).stream()
@@ -196,5 +210,123 @@ public class VmSlaPolicyUtils {
                 ));
 
         refreshVmsStorageQos(vmDiskMap, storageQosDao.getQosByDiskProfileId(diskImage.getDiskProfileId()));
+    }
+
+    /**
+     * Refresh Network QoS for running VMs that use vnic profiles with the specified Network QoS.
+     * This updates the network bandwidth settings on all plugged network interfaces.
+     */
+    public void refreshRunningVmsWithNetworkQos(Guid networkQosId) {
+        List<Guid> runningVmIds = getRunningVmsWithNetworkQos(networkQosId);
+        if (runningVmIds.isEmpty()) {
+            return;
+        }
+
+        String qosName = networkQoSDao.get(networkQosId).getName();
+
+        List<ActionParametersBase> params = new ArrayList<>();
+        for (Guid vmId : runningVmIds) {
+            List<VmNetworkInterface> vmInterfaces = vmNetworkInterfaceDao.getAllForVm(vmId).stream()
+                    // Only include interfaces whose vnic profile uses the updated QoS
+                    // qosName is unique, so we can filter by name
+                    .filter(iface -> isPluggedInterfaceWithQosName(iface, qosName))
+                    .collect(Collectors.toList());
+
+            // For each interface that uses the updated QoS, trigger an update
+            params.addAll(mapToAddVmInterfaceParameters(vmId, vmInterfaces));
+        }
+
+        if (!params.isEmpty()) {
+            ThreadPoolUtil.execute(() -> backend.runInternalMultipleActions(ActionType.UpdateVmInterface, params));
+        }
+    }
+
+    /**
+     * Refresh Network QoS for running VMs that use the specified vnic profile.
+     * This should be called when a vnic profile's Network QoS is added, updated, or removed.
+     */
+    public void refreshRunningVmsWithVnicProfile(Guid vnicProfileId) {
+        List<Guid> runningVmIds = getRunningVmsWithVnicProfile(vnicProfileId);
+        if (runningVmIds.isEmpty()) {
+            return;
+        }
+
+        List<ActionParametersBase> params = new ArrayList<>();
+        for (Guid vmId : runningVmIds) {
+            List<VmNetworkInterface> vmInterfaces = vmNetworkInterfaceDao.getAllForVm(vmId).stream()
+                    .filter(iface -> isPluggedInterfaceWithProfile(iface, vnicProfileId))
+                    .collect(Collectors.toList());
+
+            // For each interface using this vnic profile, trigger an update
+            params.addAll(mapToAddVmInterfaceParameters(vmId, vmInterfaces));
+        }
+
+        if (!params.isEmpty()) {
+            ThreadPoolUtil.execute(() -> backend.runInternalMultipleActions(ActionType.UpdateVmInterface, params));
+        }
+    }
+
+    /**
+     * Get all running VMs that use vnic profiles with the specified Network QoS
+     */
+    private List<Guid> getRunningVmsWithNetworkQos(Guid networkQosId) {
+        List<Guid> vnicProfileIds = getVnicProfilesWithNetworkQos(networkQosId);
+
+        if (vnicProfileIds.isEmpty()) {
+            return Collections.emptyList();
+        }
+
+        return vnicProfileIds.stream()
+                .flatMap(profileId -> getRunningVmsWithVnicProfile(profileId).stream())
+                .distinct()
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * Return a List of all running VMs that have network interfaces using the specified vnic profile.
+     * And are qualified for a QoS change.
+     */
+    private List<Guid> getRunningVmsWithVnicProfile(Guid vnicProfileId) {
+        List<VM> vms = vmDao.getAllForVnicProfile(vnicProfileId);
+        return vms.stream()
+                .filter(vm -> vm.getStatus().isQualifiedForQosChange())
+                .map(VM::getId)
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * Get all vNIC profiles that use the specified Network QoS
+     */
+    private List<Guid> getVnicProfilesWithNetworkQos(Guid networkQosId) {
+        return vnicProfileViewDao.getAllForNetworkQos(networkQosId).stream()
+                .map(profile -> profile.getId())
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * Check if the given interface is plugged and uses the specified vnic profile
+     */
+    private boolean isPluggedInterfaceWithProfile(VmNetworkInterface iface, Guid vnicProfileId) {
+        return iface.isPlugged()
+                && vnicProfileId.equals(iface.getVnicProfileId());
+    }
+
+    /**
+     * Check if given interface is plugged and using the specified QoS name
+     */
+    private boolean isPluggedInterfaceWithQosName(VmNetworkInterface iface, String qosName) {
+        return iface.isPlugged()
+                && iface.getVnicProfileId() != null
+                && iface.getQosName() != null
+                && iface.getQosName().equals(qosName);
+    }
+
+    /**
+     * Map vmInterfaces to AddVmInterfaceParameters
+     */
+    private List<AddVmInterfaceParameters> mapToAddVmInterfaceParameters(Guid vmId, List<VmNetworkInterface> vmInterfaces) {
+        return vmInterfaces.stream()
+                .map(iface -> new AddVmInterfaceParameters(vmId, iface))
+                .collect(Collectors.toList());
     }
 }
