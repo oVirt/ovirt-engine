@@ -252,6 +252,10 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
         if (getParameters().getVmStaticData().getBiosType() == null) {
             getParameters().getVmStaticData().setBiosType(getVm().getBiosType());
         }
+        if (!getParameters().getVm().isUseHostCpuFlags()
+               && getVm().getClusterArch().getFamily() == ArchitectureType.aarch64) {
+            getParameters().getVm().setUseHostCpuFlags(true);
+        }
     }
 
     private VmPropertiesUtils getVmPropertiesUtils() {

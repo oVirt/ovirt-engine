@@ -486,6 +486,8 @@ public class ClusterValidator {
                 .when(FeatureSupported.isBiosTypeSupported(eCluster.getCompatibilityVersion())
                     && eCluster.getBiosType() != null
                     && eCluster.getBiosType() != BiosType.I440FX_SEA_BIOS
+                    && eCluster.getBiosType() != BiosType.AMPERE
+                    && eCluster.getBiosType() != BiosType.AMPERE_OVMF
                     && architecture.getFamily() != ArchitectureType.x86);
     }
 
