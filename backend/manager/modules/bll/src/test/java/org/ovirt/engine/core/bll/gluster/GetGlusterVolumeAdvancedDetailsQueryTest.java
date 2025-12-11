@@ -8,7 +8,7 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyZeroInteractions;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
 import java.util.Collections;
@@ -194,7 +194,7 @@ public class GetGlusterVolumeAdvancedDetailsQueryTest extends
         // Server is fetched directly from the brick's server,
         // and clusterUtils is not used to fetch a random UP server
         verify(vdsDao, times(1)).get(SERVER_ID);
-        verifyZeroInteractions(glusterUtils);
+        verifyNoMoreInteractions(glusterUtils);
     }
 
     @Test
@@ -217,7 +217,7 @@ public class GetGlusterVolumeAdvancedDetailsQueryTest extends
         assertEquals(expectedVolumeAdvancedDetails, volumeAdvancedDetails);
 
         // Brick's server is not fetched, rather clusterUtil is used to fetch a random UP server
-        verifyZeroInteractions(vdsDao);
+        verifyNoMoreInteractions(vdsDao);
         verify(glusterUtils, times(1)).getRandomUpServer(CLUSTER_ID);
     }
 }
