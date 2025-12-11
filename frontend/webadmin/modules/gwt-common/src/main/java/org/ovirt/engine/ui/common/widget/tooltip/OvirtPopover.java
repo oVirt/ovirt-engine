@@ -2,7 +2,6 @@ package org.ovirt.engine.ui.common.widget.tooltip;
 
 import org.gwtbootstrap3.client.ui.Popover;
 
-import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -114,10 +113,10 @@ public class OvirtPopover extends Popover {
         });
 
         Element element = getWidget().getElement();
-        JavaScriptObject baseOptions = createOptions(element, isAnimated(), isHtml(), getSelector(),
+        createOptions(element, isAnimated(), isHtml(), getSelector(),
                 getTrigger().getCssName(), getShowDelayMs(), getHideDelayMs(), getContainer(), prepareTemplate(),
                 getViewportSelector(), getViewportPadding());
-        popover(element, baseOptions, HASH + contentId, HASH + contentContainer.getElement().getId());
+        popover(element, HASH + contentId, HASH + contentContainer.getElement().getId());
         bindJavaScriptEvents(element);
         setInitialized(true);
     }
@@ -125,7 +124,7 @@ public class OvirtPopover extends Popover {
     /**
      * Create the popover.
      */
-    private native void popover(Element e, JavaScriptObject options, String contentId, String containerId) /*-{
+    private native void popover(Element e, String contentId, String containerId) /*-{
         var dataTarget = this.@org.gwtbootstrap3.client.ui.base.AbstractTooltip::dataTarget;
         var content;
 
