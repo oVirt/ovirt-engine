@@ -9,7 +9,7 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyZeroInteractions;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
 import org.apache.commons.lang.exception.ExceptionUtils;
@@ -142,7 +142,7 @@ public class LoggedUtilsTest {
         Logger log = mock(Logger.class);
 
         LoggedUtils.log(log, LogLevel.OFF, "{}", new Object());
-        verifyZeroInteractions(log);
+        verifyNoMoreInteractions(log);
     }
 
     @Test
@@ -241,7 +241,7 @@ public class LoggedUtilsTest {
     public void testLogEntryDoesntLogWhenNoAnnotation() {
         Logger log = mock(Logger.class);
         LoggedUtils.logEntry(log, "", new Object());
-        verifyZeroInteractions(log);
+        verifyNoMoreInteractions(log);
     }
 
     @Test
@@ -267,7 +267,7 @@ public class LoggedUtilsTest {
     public void testLogReturnDoesntLogWhenNoAnnotation() {
         Logger log = mock(Logger.class);
         LoggedUtils.logReturn(log, "", new Object(), new Object());
-        verifyZeroInteractions(log);
+        verifyNoMoreInteractions(log);
     }
 
     @Test
@@ -313,7 +313,7 @@ public class LoggedUtilsTest {
     public void testLogErrorDoesntLogWhenNoAnnotation() {
         Logger log = mock(Logger.class);
         LoggedUtils.logError(log, "", new Object(), new Exception());
-        verifyZeroInteractions(log);
+        verifyNoMoreInteractions(log);
     }
 
     @Test

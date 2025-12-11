@@ -5,7 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyZeroInteractions;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
 import javax.validation.ConstraintValidatorContext;
@@ -64,7 +64,7 @@ public class MaskConstraintTest {
     public void checkValidMask() {
         runSetup(TEST_MASK, true, true, "");
         assertTrue(underTest.isValid(TEST_MASK, contextMock));
-        verifyZeroInteractions(contextMock);
+        verifyNoMoreInteractions(contextMock);
     }
 
     private void runSetup(String testMask, boolean isValidFormat, boolean isMaskValidValue, String errorMessage) {

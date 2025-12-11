@@ -4,7 +4,7 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyZeroInteractions;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
@@ -57,7 +57,7 @@ public class GenericApiGWTServiceImplTest {
     @Test
     public void multiQueryWithNulls() {
         underTest.runMultipleQueries(null, null);
-        verifyZeroInteractions(backendLocal);
+        verifyNoMoreInteractions(backendLocal);
     }
 
     @Test
@@ -70,7 +70,7 @@ public class GenericApiGWTServiceImplTest {
 
         underTest.runMultipleQueries(queryTypeList, queryParamsList);
 
-        verifyZeroInteractions(backendLocal);
+        verifyNoMoreInteractions(backendLocal);
     }
 
     @Test
