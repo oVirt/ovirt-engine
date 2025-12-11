@@ -106,6 +106,7 @@
     <junit.platform.version>1.14.1</junit.platform.version>
     <mockito.version>3.12.4</mockito.version>
     <openstack-client.version>3.2.9</openstack-client.version>
+    <plexus-utils.version>4.0.2</plexus-utils.version>
     <postgres.jdbc.version>42.7.5</postgres.jdbc.version>
     <ongres.stringprep.version>1.1</ongres.stringprep.version>
     <ongres.scram.version>2.1</ongres.scram.version>
@@ -1012,6 +1013,11 @@
               <groupId>org.junit.platform</groupId>
               <artifactId>junit-platform-launcher</artifactId>
               <version>${junit.platform.version}</version>
+            </dependency>
+            <dependency>
+              <groupId>org.codehaus.plexus</groupId>
+              <artifactId>plexus-utils</artifactId>
+              <version>${plexus-utils.version}</version>
             </dependency>
           </dependencies>
           <configuration>
