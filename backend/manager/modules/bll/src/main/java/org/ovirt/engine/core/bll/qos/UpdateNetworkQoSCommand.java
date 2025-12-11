@@ -1,6 +1,8 @@
 package org.ovirt.engine.core.bll.qos;
 
+import javax.inject.Inject;
 
+import org.ovirt.engine.core.bll.VmSlaPolicyUtils;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.validator.NetworkQosValidator;
 import org.ovirt.engine.core.common.AuditLogType;
@@ -9,6 +11,9 @@ import org.ovirt.engine.core.common.businessentities.network.NetworkQoS;
 import org.ovirt.engine.core.dao.qos.QosDao;
 
 public class UpdateNetworkQoSCommand extends UpdateQosCommandBase<NetworkQoS, NetworkQosValidator> {
+
+    @Inject
+    VmSlaPolicyUtils vmSlaPolicyUtils;
 
     public UpdateNetworkQoSCommand(QosParametersBase<NetworkQoS> parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
@@ -29,6 +34,16 @@ public class UpdateNetworkQoSCommand extends UpdateQosCommandBase<NetworkQoS, Ne
     protected boolean validate() {
         return super.validate() &&
                 validate(getQosValidator(getQos()).peakConsistentWithAverage());
+    }
+
+    @Override
+    protected void executeCommand() {
+        super.executeCommand();
+
+        // Refresh VM network interfaces with the updated Network QoS
+        if (getSucceeded()) {
+            vmSlaPolicyUtils.refreshRunningVmsWithNetworkQos(getQosId());
+        }
     }
 
     @Override
