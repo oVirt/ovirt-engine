@@ -128,8 +128,12 @@ public class OvirtPopover extends Popover {
         var dataTarget = this.@org.gwtbootstrap3.client.ui.base.AbstractTooltip::dataTarget;
         var content;
 
-        options['content'] = function() {
-            return $wnd.jQuery(contentId);
+        // Create options object
+        var options = {
+            html: true,
+            content: function() {
+                return $wnd.jQuery(contentId);
+            }
         };
 
         $wnd.jQuery(e).popover(options)
