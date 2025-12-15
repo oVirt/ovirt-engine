@@ -287,7 +287,7 @@ Requires:	ed25519-java >= 0.3.0
 Requires:	slf4j-jdk14 >= 1.7.0
 Requires:	jcl-over-slf4j >= 1.7.0
 Requires:	snmp4j >= 3.6.4
-Requires:	ovirt-dependencies >= 4.5.2
+Requires:	ovirt-dependencies >= 4.5.7
 
 # cinderlib integration
 # https://bugzilla.redhat.com/1955375
@@ -793,6 +793,7 @@ common/org/springframework/main/spring-expression.jar ovirt-dependencies/spring-
 common/org/springframework/main/spring-instrument.jar ovirt-dependencies/spring-instrument.jar
 common/org/springframework/main/spring-jdbc.jar ovirt-dependencies/spring-jdbc.jar
 common/org/springframework/main/spring-tx.jar ovirt-dependencies/spring-tx.jar
+../engine.ear/webadmin.war/WEB-INF/lib/gwt-servlet.jar ovirt-dependencies/gwt-servlet.jar
 __EOF__
 
 
@@ -805,7 +806,6 @@ while read dst src; do
 	rm -f "%{buildroot}${dst}"
 	ln -s "${src}" "%{buildroot}${dst}"
 done << __EOF__
-../engine.ear/webadmin.war/WEB-INF/lib/gwt-servlet.jar ovirt-dependencies/gwt-servlet.jar
 __EOF__
 
 #
