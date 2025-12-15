@@ -2041,7 +2041,7 @@ __EOF__
 	# Make next engine-setup ask about apache
 	if [ -n "${exclude_apache}" ]; then
 		local ESC_APACHE_CONFIGURED_LINE=$(echo "${APACHE_CONFIGURED_LINE}" | sed 's;/;\\/;')
-		sed -i "${INSTALL_ROOT}/^${ESC_APACHE_CONFIGURED_LINE}\$/d" "${POSTINSTALL_RELATIVE}"
+		sed -i "/^${ESC_APACHE_CONFIGURED_LINE}\$/d" "${INSTALL_ROOT}/${POSTINSTALL_RELATIVE}"
 	fi
 
 	migrateLegacyCerts
