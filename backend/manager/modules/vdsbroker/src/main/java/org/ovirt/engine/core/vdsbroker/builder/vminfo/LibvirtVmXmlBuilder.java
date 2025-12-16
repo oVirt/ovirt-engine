@@ -2075,13 +2075,14 @@ public class LibvirtVmXmlBuilder {
                 break;
 
             case VNC:
-                writer.writeAttributeString("keymap",
-                        vm.getDynamicData().getVncKeyboardLayout() != null ?
+                String vncKeyboardLayout = vm.getDynamicData().getVncKeyboardLayout() != null ?
                                 vm.getDynamicData().getVncKeyboardLayout()
                                 : vm.getDefaultVncKeyboardLayout() != null ?
-                                        vm.getDefaultVncKeyboardLayout()
-                                        : Config.getValue(ConfigValues.VncKeyboardLayout));
-
+                                    vm.getDefaultVncKeyboardLayout()
+                                    : Config.getValue(ConfigValues.VncKeyboardLayout);
+                if (!"none".equals(vncKeyboardLayout)) {
+                    writer.writeAttributeString("keymap", vncKeyboardLayout);
+                }
                 break;
         }
 
