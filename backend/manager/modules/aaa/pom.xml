@@ -8,7 +8,7 @@
   <parent>
     <groupId>org.ovirt.engine.core</groupId>
     <artifactId>manager-modules</artifactId>
-    <version>4.5.7-SNAPSHOT</version>
+    <version>4.5.7</version>
   </parent>
 
   <artifactId>aaa</artifactId>

@@ -1226,6 +1226,9 @@ fi
 %{engine_data}/setup/bin/ovirt-engine-health
 
 %changelog
+* Wed Dec 17 2025 Jean-Louis Dupond <jean-louis@dupond.be> - 4.5.7
+- Bump version to 4.5.7
+
 * Fri Feb 09 2024 Sandro Bonazzola <sandro.bonazzola@gmail.com> - 4.5.6
 - Bump version to 4.5.6
 
