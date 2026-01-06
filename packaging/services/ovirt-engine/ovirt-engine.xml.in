@@ -20,9 +20,9 @@
     <extension module="org.jboss.as.logging"/>
     <extension module="org.jboss.as.naming"/>
     <extension module="org.jboss.as.remoting"/>
-    <extension module="org.jboss.as.security"/>
     <extension module="org.jboss.as.transactions"/>
     <extension module="org.jboss.as.weld"/>
+    <extension module="org.wildfly.extension.elytron"/>
     {% if config.getboolean('KEYCLOAK_BUNDLED') %}
     <extension module="org.keycloak.keycloak-server-subsystem"/>
     {% endif %}
@@ -40,52 +40,13 @@
   </system-properties>
 
   <management>
-    <security-realms>
-      <!-- We need to enable the management subsystem because it is an indirect
-           dependency of the Infinispan subsystem (since version 7.2 of the
-           application server) but at the same time we don't want anyone (other
-           than the root and ovirt users) to be able to connect to the
-           management port, so we just use an empty users file: -->
-      <security-realm name="management">
-        <plug-ins>
-          <plug-in module="org.ovirt.engine.core.auth-plugin"/>
-        </plug-ins>
-        <authentication>
-          <plug-in name="OvirtAuth" mechanism="PLAIN"/>
-        </authentication>
-      </security-realm>
-
-      <!-- This is required by the HTTPS listener: -->
-      <security-realm name="https">
-        <server-identities>
-          <ssl>
-            <keystore
-                alias="1"
-                key-password="mypass"
-                keystore-password="mypass"
-                path="{{ config.get('ENGINE_PKI') }}/keys/jboss.p12"
-                provider="PKCS12"/>
-          </ssl>
-        </server-identities>
-      </security-realm>
-
-      <!-- This is required by http-remoting-connector -->
-      <security-realm name="ApplicationRealm">
-        <authentication>
-          <properties path="/dev/null"/>
-        </authentication>
-        <authorization>
-          <properties path="/dev/null"/>
-        </authorization>
-      </security-realm>
-    </security-realms>
 
     <management-interfaces>
-      <native-interface security-realm="management">
+      <native-interface sasl-authentication-factory="management-sasl-authentication">
         <socket-binding native="management-native"/>
       </native-interface>
-      <http-interface security-realm="management">
-        <http-upgrade enabled="true"/>
+      <http-interface http-authentication-factory="management-http-authentication">
+        <http-upgrade enabled="true" sasl-authentication-factory="management-sasl-authentication"/>
         <socket-binding http="management"/>
       </http-interface>
     </management-interfaces>
@@ -518,7 +479,7 @@
           managed-thread-factory="java:jboss/ee/concurrency/factory/default"/>
     </subsystem>
 
-    <subsystem xmlns="urn:jboss:domain:ejb3:4.0">
+    <subsystem xmlns="urn:jboss:domain:ejb3:5.0">
       <session-bean>
         <stateful default-access-timeout="5000" cache-ref="simple" passivation-disabled-cache-ref="simple"/>
         <stateless>
@@ -561,6 +522,9 @@
         </thread-pool>
       </thread-pools>
       <default-security-domain value="other"/>
+      <application-security-domains>
+        <application-security-domain name="other" security-domain="oVirtDomain"/>
+      </application-security-domains>
       <default-missing-method-permissions-deny-access value="true"/>
       <log-system-exceptions value="true"/>
     </subsystem>
@@ -754,63 +718,129 @@
 
     <subsystem xmlns="urn:jboss:domain:remoting:4.0">
       <endpoint worker="default"/>
-      <http-connector name="http-remoting-connector" connector-ref="http-remoting" security-realm="ApplicationRealm"/>
+      <http-connector name="http-remoting-connector" connector-ref="http-remoting" sasl-authentication-factory="application-sasl-authentication"/>
     </subsystem>
 
     <subsystem xmlns="urn:jboss:domain:resource-adapters:4.0"/>
 
-    <subsystem xmlns="urn:jboss:domain:security:1.2">
+    <!-- Elytron Security Subsystem -->
+    <subsystem xmlns="urn:wildfly:elytron:13.0" final-providers="combined-providers" disallowed-providers="OracleUcrypto">
+      <providers>
+        <provider-loader name="elytron" module="org.wildfly.security.elytron"/>
+        <provider-loader name="openssl" module="org.wildfly.openssl"/>
+        <aggregate-providers name="combined-providers">
+          <providers name="elytron"/>
+          <providers name="openssl"/>
+        </aggregate-providers>
+      </providers>
+
+      <!-- Custom oVirt Security Realm -->
+      <security-realms>
+        <custom-realm name="oVirtRealm"
+                      module="org.ovirt.engine.core.auth-plugin"
+                      class-name="org.ovirt.engine.core.jboss_auth_plugin.OvirtElytronRealm"/>
+        <!-- Filesystem realm for http-remoting (JBOSS-LOCAL-USER mechanism for local CLI access) -->
+        <!-- Uses engine temp directory; realm will be empty but valid -->
+        <filesystem-realm name="ApplicationRealm">
+          <file path="{{ config.get('ENGINE_TMP') }}/elytron-identities"/>
+        </filesystem-realm>
+      </security-realms>
+
+      <!-- Security Domain -->
       <security-domains>
-        <security-domain name="other" cache-type="default">
-          <authentication>
-            <login-module code="Remoting" flag="optional">
-              <module-option name="password-stacking" value="useFirstPass"/>
-            </login-module>
-          </authentication>
+        <security-domain name="oVirtDomain"
+                         default-realm="oVirtRealm"
+                         permission-mapper="default-permission-mapper">
+          <realm name="oVirtRealm"/>
         </security-domain>
-        <security-domain name="jboss-web-policy" cache-type="default">
-          <authorization>
-            <policy-module code="Delegating" flag="required"/>
-          </authorization>
-        </security-domain>
-        <security-domain name="jboss-ejb-policy" cache-type="default">
-          <authorization>
-            <policy-module code="Delegating" flag="required"/>
-          </authorization>
-        </security-domain>
-        <security-domain name="oVirtKerb">
-          <authentication>
-            <login-module code="com.sun.security.auth.module.Krb5LoginModule" flag="required"/>
-          </authentication>
-        </security-domain>
-        <security-domain name="oVirtKerbDebug">
-          <authentication>
-            <login-module code="com.sun.security.auth.module.Krb5LoginModule" flag="required">
-              <module-option name="debug" value="true"/>
-            </login-module>
-          </authentication>
-        </security-domain>
-        <!-- This security-domain enables authentication via ticket cache or keytab. -->
-        <security-domain name="oVirtKerbAAA">
-          <authentication>
-            <login-module code="com.sun.security.auth.module.Krb5LoginModule" flag="required">
-              <module-option name="useTicketCache" value="{{ config.getboolean('AAA_JAAS_USE_TICKET_CACHE') }}"/>
-              {% if config.get('AAA_JAAS_TICKET_CACHE_FILE') != "" %}
-              <module-option name="ticketCache" value="{{ config.get('AAA_JAAS_TICKET_CACHE_FILE') }}"/>
-              {% endif %}
-              <module-option name="useKeyTab" value="{{ config.getboolean('AAA_JAAS_USE_KEYTAB') }}"/>
-              {% if config.get('AAA_JAAS_KEYTAB_FILE') != "" %}
-              <module-option name="keyTab" value="{{ config.get('AAA_JAAS_KEYTAB_FILE') }}"/>
-              {% endif %}
-              {% if config.get('AAA_JAAS_PRINCIPAL_NAME') != "" %}
-              <module-option name="principal" value="{{ config.get('AAA_JAAS_PRINCIPAL_NAME') }}"/>
-              {% endif %}
-              <module-option name="debug" value="{{ config.getboolean('AAA_JAAS_ENABLE_DEBUG') }}"/>
-              <module-option name="doNotPrompt" value="true"/>
-            </login-module>
-          </authentication>
+        <!-- Domain for http-remoting-connector (equivalent to legacy ApplicationRealm) -->
+        <security-domain name="ApplicationDomain"
+                         default-realm="ApplicationRealm"
+                         permission-mapper="default-permission-mapper">
+          <realm name="ApplicationRealm"/>
         </security-domain>
       </security-domains>
+
+      <!-- Mappers -->
+      <mappers>
+        <simple-permission-mapper name="default-permission-mapper" mapping-mode="first">
+          <permission-mapping match-all="true">
+            <permission-set name="login-permission"/>
+          </permission-mapping>
+        </simple-permission-mapper>
+        <constant-realm-mapper name="local" realm-name="ApplicationRealm"/>
+      </mappers>
+
+      <!-- Permission Sets -->
+      <permission-sets>
+        <permission-set name="login-permission">
+          <permission class-name="org.wildfly.security.auth.permission.LoginPermission"/>
+        </permission-set>
+      </permission-sets>
+
+      <!-- HTTP Authentication -->
+      <http>
+        <http-authentication-factory name="management-http-authentication"
+                                     http-server-mechanism-factory="global"
+                                     security-domain="oVirtDomain">
+          <mechanism-configuration>
+            <mechanism mechanism-name="BASIC">
+              <mechanism-realm realm-name="oVirtRealm"/>
+            </mechanism>
+          </mechanism-configuration>
+        </http-authentication-factory>
+        <provider-http-server-mechanism-factory name="global"/>
+      </http>
+
+      <!-- SASL Authentication -->
+      <sasl>
+        <sasl-authentication-factory name="management-sasl-authentication"
+                                     sasl-server-factory="configured"
+                                     security-domain="oVirtDomain">
+          <mechanism-configuration>
+            <mechanism mechanism-name="PLAIN"/>
+          </mechanism-configuration>
+        </sasl-authentication-factory>
+        <!-- SASL factory for http-remoting-connector -->
+        <sasl-authentication-factory name="application-sasl-authentication"
+                                     sasl-server-factory="configured"
+                                     security-domain="ApplicationDomain">
+          <mechanism-configuration>
+            <mechanism mechanism-name="JBOSS-LOCAL-USER" realm-mapper="local"/>
+            <mechanism mechanism-name="DIGEST-MD5">
+              <mechanism-realm realm-name="ApplicationRealm"/>
+            </mechanism>
+          </mechanism-configuration>
+        </sasl-authentication-factory>
+        <provider-sasl-server-factory name="global"/>
+        <configurable-sasl-server-factory name="configured" sasl-server-factory="global">
+          <filters>
+            <filter pattern="JBOSS-LOCAL-USER"/>
+            <filter pattern="PLAIN"/>
+            <filter pattern="DIGEST-MD5"/>
+          </filters>
+        </configurable-sasl-server-factory>
+      </sasl>
+
+      <!-- TLS Configuration -->
+      <tls>
+        <key-stores>
+          <key-store name="httpsKeyStore">
+            <credential-reference clear-text="mypass"/>
+            <implementation type="PKCS12"/>
+            <file path="{{ config.get('ENGINE_PKI') }}/keys/jboss.p12"/>
+          </key-store>
+        </key-stores>
+        <key-managers>
+          <key-manager name="httpsKeyManager" key-store="httpsKeyStore" alias-filter="1">
+            <credential-reference clear-text="mypass"/>
+          </key-manager>
+        </key-managers>
+        <server-ssl-contexts>
+          <server-ssl-context name="httpsSSC" key-manager="httpsKeyManager" protocols="{{ config.get('ENGINE_HTTPS_PROTOCOLS').replace(',', ' ') }}"/>
+        </server-ssl-contexts>
+      </tls>
+
     </subsystem>
 
     <subsystem xmlns="urn:jboss:domain:transactions:3.0">
@@ -822,7 +852,7 @@
       <recovery-environment socket-binding="txn-recovery-environment" status-socket-binding="txn-status-manager"/>
     </subsystem>
 
-    <subsystem xmlns="urn:jboss:domain:undertow:3.0">
+    <subsystem xmlns="urn:jboss:domain:undertow:12.0">
       <buffer-cache name="default"/>
 
       <server name="default-server">
@@ -840,8 +870,7 @@
         <https-listener
             name="https"
             socket-binding="https"
-            security-realm="https"
-            enabled-protocols="{{ config.get('ENGINE_HTTPS_PROTOCOLS') }}"/>
+            ssl-context="httpsSSC"/>
         {% endif %}
         {% if config.getboolean('ENGINE_AJP_ENABLED') %}
         <ajp-listener

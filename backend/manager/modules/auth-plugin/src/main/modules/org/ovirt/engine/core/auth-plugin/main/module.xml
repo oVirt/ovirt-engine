@@ -10,7 +10,8 @@
     <module name="javax.api"/>
     <module name="org.ovirt.engine.core.aaa"/>
     <module name="org.ovirt.engine.core.common"/>
-    <module name="org.jboss.as.domain-management"/>
+    <module name="org.wildfly.security.elytron"/>
+    <module name="org.slf4j"/>
   </dependencies>
 
 </module>

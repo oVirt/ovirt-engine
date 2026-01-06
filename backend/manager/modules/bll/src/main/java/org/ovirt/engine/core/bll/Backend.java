@@ -101,7 +101,7 @@ import org.slf4j.LoggerFactory;
 // to all the business and timeout methods in the singleton.
 // The developer of the singleton is responsible for ensuring that the state
 // of the singleton is synchronized across all clients.
-@DependsOn("LockManager")
+@DependsOn({"JaasConfigurationInitializer", "LockManager"})
 @Local({ BackendLocal.class, BackendInternal.class, BackendCommandObjectsHandler.class })
 @Interceptors(CorrelationIdTrackerInterceptor.class)
 @Singleton

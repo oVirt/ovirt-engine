@@ -92,8 +92,8 @@
     <javax.mail.version>1.4.7</javax.mail.version>
     <javax.transaction>1.1</javax.transaction>
     <jaxb.version>2.3.1</jaxb.version>
-    <jboss-as-domain-management.version>7.2.0.Final</jboss-as-domain-management.version>
     <jboss-concurrency-api_1.0_spec.version>2.0.0.Final</jboss-concurrency-api_1.0_spec.version>
+    <wildfly-elytron.version>1.20.4.Final</wildfly-elytron.version>
     <jboss.ejb3.core.version>1.3.7</jboss.ejb3.core.version>
     <jboss.ejb3.ext.api.version>2.4.0.Final</jboss.ejb3.ext.api.version>
     <jboss-javaee-7.0.version>1.1.1.Final</jboss-javaee-7.0.version>
@@ -312,9 +312,9 @@
         <scope>provided</scope>
       </dependency>
       <dependency>
-        <groupId>org.jboss.as</groupId>
-        <artifactId>jboss-as-domain-management</artifactId>
-        <version>${jboss-as-domain-management.version}</version>
+        <groupId>org.wildfly.security</groupId>
+        <artifactId>wildfly-elytron</artifactId>
+        <version>${wildfly-elytron.version}</version>
       </dependency>
       <dependency>
         <groupId>org.jboss.modules</groupId>
