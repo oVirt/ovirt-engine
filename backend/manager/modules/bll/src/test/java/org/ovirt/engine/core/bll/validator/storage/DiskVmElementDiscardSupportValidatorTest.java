@@ -59,8 +59,6 @@ public class DiskVmElementDiscardSupportValidatorTest {
                         null, null, ValidationResult.VALID),
 
                 // Unsupported interface
-                Arguments.of(new DiskImage(), true, DiskInterface.VirtIO, null, null,
-                        null, null, passDiscardNotSupportedByDiskInterface),
                 Arguments.of(new DiskImage(), true, DiskInterface.SPAPR_VSCSI, null, null,
                         null, null, passDiscardNotSupportedByDiskInterface),
 
@@ -82,6 +80,8 @@ public class DiskVmElementDiscardSupportValidatorTest {
                 - different interfaces
                 - different file storage types
                  */
+                Arguments.of(new DiskImage(), true, DiskInterface.VirtIO, null, StorageType.NFS,
+                        true, null, ValidationResult.VALID),
                 Arguments.of(new DiskImage(), true, DiskInterface.VirtIO_SCSI, null, StorageType.NFS,
                         true, null, ValidationResult.VALID),
                 Arguments.of(new DiskImage(), true, DiskInterface.IDE, null, StorageType.POSIXFS,
@@ -94,6 +94,8 @@ public class DiskVmElementDiscardSupportValidatorTest {
                 - different interfaces
                 - different block storage types
                  */
+                Arguments.of(new DiskImage(), true, DiskInterface.VirtIO, null, StorageType.ISCSI,
+                        false, null, passDiscardNotSupportedForDiskImageByUnderlyingStorage),
                 Arguments.of(new DiskImage(), true, DiskInterface.VirtIO_SCSI, null, StorageType.ISCSI,
                         false, null, passDiscardNotSupportedForDiskImageByUnderlyingStorage),
                 Arguments.of(new DiskImage(), true, DiskInterface.IDE, null, StorageType.FCP,
@@ -104,6 +106,8 @@ public class DiskVmElementDiscardSupportValidatorTest {
                 - different interfaces
                 - different block storage types
                  */
+                Arguments.of(new DiskImage(), true, DiskInterface.VirtIO, null, StorageType.ISCSI,
+                        true, null, ValidationResult.VALID),
                 Arguments.of(new DiskImage(), true, DiskInterface.VirtIO_SCSI, null, StorageType.ISCSI,
                         true, null, ValidationResult.VALID),
                 Arguments.of(new DiskImage(), true, DiskInterface.IDE, null, StorageType.FCP,
@@ -114,6 +118,10 @@ public class DiskVmElementDiscardSupportValidatorTest {
                 - different interfaces
                 - different block storage types
                  */
+                Arguments.of(new DiskImage(), true, DiskInterface.VirtIO, null, StorageType.ISCSI,
+                        true, true, new ValidationResult(EngineMessage
+                        .ACTION_TYPE_FAILED_PASS_DISCARD_NOT_SUPPORTED_BY_UNDERLYING_STORAGE_WHEN_WAD_IS_ENABLED,
+                        getStorageDomainNameVarReplacement(), getDiskAliasVarReplacement())),
                 Arguments.of(new DiskImage(), true, DiskInterface.VirtIO_SCSI, null, StorageType.ISCSI,
                         true, true, new ValidationResult(EngineMessage
                         .ACTION_TYPE_FAILED_PASS_DISCARD_NOT_SUPPORTED_BY_UNDERLYING_STORAGE_WHEN_WAD_IS_ENABLED,
@@ -128,12 +136,16 @@ public class DiskVmElementDiscardSupportValidatorTest {
                 - different interfaces
                 - different non file or block storage types
                  */
+                Arguments.of(new DiskImage(), true, DiskInterface.VirtIO, null, StorageType.UNKNOWN,
+                        null, null, createPassDiscardNotSupportedByStorageTypeValResult(StorageType.UNKNOWN)),
                 Arguments.of(new DiskImage(), true, DiskInterface.VirtIO_SCSI, null, StorageType.UNKNOWN,
                         null, null, createPassDiscardNotSupportedByStorageTypeValResult(StorageType.UNKNOWN)),
                 Arguments.of(new DiskImage(), true, DiskInterface.IDE, null, StorageType.CINDER,
                         null, null, createPassDiscardNotSupportedByStorageTypeValResult(StorageType.CINDER)),
 
                 // Unsupported disk storage type (different interfaces)
+                Arguments.of(new CinderDisk(), true, DiskInterface.VirtIO, null, null,
+                        null, null, passDiscardNotSupportedByCinder),
                 Arguments.of(new CinderDisk(), true, DiskInterface.VirtIO_SCSI, null, null,
                         null, null, passDiscardNotSupportedByCinder),
                 Arguments.of(new CinderDisk(), true, DiskInterface.IDE, null, null,

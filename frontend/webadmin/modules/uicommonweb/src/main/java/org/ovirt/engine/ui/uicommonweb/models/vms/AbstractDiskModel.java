@@ -716,6 +716,7 @@ public abstract class AbstractDiskModel extends DiskModel {
             DiskInterface selectedInterface = getDiskInterface().getSelectedItem();
             DiskStorageType selectedDiskStorageType = getDiskStorageType().getEntity();
             boolean isApplicableInterface = selectedInterface == DiskInterface.VirtIO_SCSI ||
+                    selectedInterface == DiskInterface.VirtIO ||
                     selectedInterface == DiskInterface.IDE ||
                     selectedInterface == DiskInterface.SATA;
             boolean isApplicableDiskStorageType = selectedDiskStorageType == DiskStorageType.LUN ||
