@@ -6,6 +6,17 @@ Before starting, ensure that https://www.docker.com/[Docker] is installed on the
 
 Opening the repository in VS Code with the Dev Containers extension will automatically start both the `engine` and `postgres` services defined in `docker-compose.yml` (plus the selected CentOS variant override).
 
+### Hosts File Configuration
+
+The engine container uses the hostname `ovirt-engine.dev`. To access the oVirt UI in your browser, add this hostname to your local hosts file, pointing to the IP address of the machine where the container runs:
+
+Add a line in `/etc/hosts`:
+```
+192.168.1.100  ovirt-engine.dev
+```
+
+Replace `192.168.1.100` with the actual IP of the machine running the container. If running locally, use `127.0.0.1`.
+
 PostgreSQL is reachable internally from the engine container at host `postgres` port `5432`. 
 
 ### Opening the Dev Container
