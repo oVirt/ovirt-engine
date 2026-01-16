@@ -136,5 +136,25 @@ public class SubTabClusterVmView extends AbstractSubTabTableView<Cluster, VM, Cl
         };
         ipColumn.makeSortable(VmConditionFieldAutoCompleter.IP);
         getTable().addColumn(ipColumn, constants.ipVm(), "120px"); //$NON-NLS-1$
+
+        AbstractTextColumn<VM> vCpusColumn = new AbstractTextColumn<VM>() {
+            @Override
+            public String getValue(VM object) {
+                return Integer.toString(object.getNumOfCpus());
+            }
+        };
+        getTable().addColumn(vCpusColumn, constants.vcpus(), "80px"); //$NON-NLS-1$
+        vCpusColumn.makeSortable(VmConditionFieldAutoCompleter.VCPUS);
+        getTable().hideColumnByDefault(vCpusColumn);
+
+        AbstractTextColumn<VM> definedMemoryColumn = new AbstractTextColumn<VM>() {
+            @Override
+            public String getValue(VM object) {
+                return object.getMemSizeMb() + " MB"; //$NON-NLS-1$
+            }
+        };
+        getTable().addColumn(definedMemoryColumn, constants.memoryVmMB(), "100px"); //$NON-NLS-1$
+        definedMemoryColumn.makeSortable(VmConditionFieldAutoCompleter.MEMORY);
+        getTable().hideColumnByDefault(definedMemoryColumn);
     }
 }
