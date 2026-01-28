@@ -23,9 +23,9 @@ import org.ovirt.engine.core.common.businessentities.SubjectEntity;
 import org.ovirt.engine.core.common.businessentities.storage.ManagedBlockStorage;
 import org.ovirt.engine.core.common.businessentities.storage.ManagedBlockStorageDisk;
 import org.ovirt.engine.core.common.utils.Pair;
-import org.ovirt.engine.core.common.utils.cinderlib.CinderlibCommandParameters;
-import org.ovirt.engine.core.common.utils.cinderlib.CinderlibExecutor;
-import org.ovirt.engine.core.common.utils.cinderlib.CinderlibReturnValue;
+import org.ovirt.engine.core.common.utils.managedblock.ManagedBlockCommandParameters;
+import org.ovirt.engine.core.common.utils.managedblock.ManagedBlockExecutor;
+import org.ovirt.engine.core.common.utils.managedblock.ManagedBlockReturnValue;
 import org.ovirt.engine.core.dao.BaseDiskDao;
 import org.ovirt.engine.core.dao.CinderStorageDao;
 import org.ovirt.engine.core.dao.DiskImageDao;
@@ -51,7 +51,7 @@ public class RemoveManagedBlockStorageDiskCommand<T extends RemoveDiskParameters
     private DiskImageDynamicDao diskImageDynamicDao;
 
     @Inject
-    private CinderlibExecutor cinderlibExecutor;
+    private ManagedBlockExecutor managedBlockExecutor;
 
     @Inject
     private CinderStorageDao cinderStorageDao;
@@ -80,7 +80,7 @@ public class RemoveManagedBlockStorageDiskCommand<T extends RemoveDiskParameters
         ManagedBlockStorage managedBlockStorage = cinderStorageDao.get(getParameters().getStorageDomainId());
         List<String> extraParams = new ArrayList<>();
         extraParams.add(getParameters().getDiskId().toString());
-        CinderlibReturnValue returnValue;
+        ManagedBlockReturnValue returnValue;
 
         TransactionSupport.executeInNewTransaction(() -> {
             managedBlockStorageDiskUtil.lockImage(getParameters().getDiskId());
@@ -88,12 +88,12 @@ public class RemoveManagedBlockStorageDiskCommand<T extends RemoveDiskParameters
         });
 
         try {
-            CinderlibCommandParameters params =
-                    new CinderlibCommandParameters(JsonHelper.mapToJson(managedBlockStorage.getAllDriverOptions(),
+            ManagedBlockCommandParameters params =
+                    new ManagedBlockCommandParameters(JsonHelper.mapToJson(managedBlockStorage.getAllDriverOptions(),
                             false),
                             extraParams,
                             getCorrelationId());
-            returnValue = cinderlibExecutor.runCommand(CinderlibExecutor.CinderlibCommand.DELETE_VOLUME, params);
+            returnValue = managedBlockExecutor.runCommand(ManagedBlockExecutor.ManagedBlockCommand.DELETE_VOLUME, params);
         } catch (Exception e) {
             log.error("Failed to remove volume: {}", e);
             getReturnValue().setActionReturnValue(false);

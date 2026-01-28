@@ -29,10 +29,10 @@ import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.utils.SizeConverter;
-import org.ovirt.engine.core.common.utils.cinderlib.CinderlibCommandParameters;
-import org.ovirt.engine.core.common.utils.cinderlib.CinderlibExecutor;
-import org.ovirt.engine.core.common.utils.cinderlib.CinderlibExecutor.CinderlibCommand;
-import org.ovirt.engine.core.common.utils.cinderlib.CinderlibReturnValue;
+import org.ovirt.engine.core.common.utils.managedblock.ManagedBlockCommandParameters;
+import org.ovirt.engine.core.common.utils.managedblock.ManagedBlockExecutor;
+import org.ovirt.engine.core.common.utils.managedblock.ManagedBlockExecutor.ManagedBlockCommand;
+import org.ovirt.engine.core.common.utils.managedblock.ManagedBlockReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.BaseDiskDao;
 import org.ovirt.engine.core.dao.CinderStorageDao;
@@ -49,7 +49,7 @@ public class AddManagedBlockStorageDiskCommand<T extends AddManagedBlockStorageD
     private CinderStorageDao cinderStorageDao;
 
     @Inject
-    private CinderlibExecutor cinderlibExecutor;
+    private ManagedBlockExecutor managedBlockExecutor;
 
     @Inject
     private BaseDiskDao baseDiskDao;
@@ -86,16 +86,16 @@ public class AddManagedBlockStorageDiskCommand<T extends AddManagedBlockStorageD
                 SizeConverter.SizeUnit.BYTES,
                 SizeConverter.SizeUnit.GiB).longValue()));
 
-        CinderlibReturnValue returnValue;
+        ManagedBlockReturnValue returnValue;
 
         try {
-            CinderlibCommandParameters params =
-                    new CinderlibCommandParameters(JsonHelper.mapToJson(
+            ManagedBlockCommandParameters params =
+                    new ManagedBlockCommandParameters(JsonHelper.mapToJson(
                                 managedBlockStorage.getAllDriverOptions(),
                             false),
                                 extraParams,
                                 getCorrelationId());
-            returnValue = cinderlibExecutor.runCommand(CinderlibCommand.CREATE_VOLUME, params);
+            returnValue = managedBlockExecutor.runCommand(ManagedBlockCommand.CREATE_VOLUME, params);
         } catch (Exception e) {
             log.error("Failed executing volume creation", e);
             return;

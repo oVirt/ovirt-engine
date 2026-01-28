@@ -1,14 +1,14 @@
-package org.ovirt.engine.core.common.utils.cinderlib;
+package org.ovirt.engine.core.common.utils.managedblock;
 
 import java.util.List;
 import java.util.Objects;
 
-public class CinderlibCommandParameters {
+public class ManagedBlockCommandParameters {
     private String driverInfo;
     private List<String> extraParams;
     private String correlationId;
 
-    public CinderlibCommandParameters(String driverInfo, List<String> extraParams, String correlationId) {
+    public ManagedBlockCommandParameters(String driverInfo, List<String> extraParams, String correlationId) {
         this.driverInfo = driverInfo;
         this.extraParams = extraParams;
         this.correlationId = correlationId;
@@ -43,10 +43,10 @@ public class CinderlibCommandParameters {
         if (this == o) {
             return true;
         }
-        if (!(o instanceof CinderlibCommandParameters)) {
+        if (!(o instanceof ManagedBlockCommandParameters)) {
             return false;
         }
-        CinderlibCommandParameters that = (CinderlibCommandParameters) o;
+        ManagedBlockCommandParameters that = (ManagedBlockCommandParameters) o;
         return Objects.equals(driverInfo, that.driverInfo) &&
                 Objects.equals(extraParams, that.extraParams) &&
                 Objects.equals(correlationId, that.correlationId);

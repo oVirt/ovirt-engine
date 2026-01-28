@@ -10,8 +10,8 @@ import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.action.SaveManagedBlockStorageDiskDeviceCommandParameters;
 import org.ovirt.engine.core.common.businessentities.storage.ManagedBlockStorage;
-import org.ovirt.engine.core.common.utils.cinderlib.CinderlibCommandParameters;
-import org.ovirt.engine.core.common.utils.cinderlib.CinderlibExecutor;
+import org.ovirt.engine.core.common.utils.managedblock.ManagedBlockCommandParameters;
+import org.ovirt.engine.core.common.utils.managedblock.ManagedBlockExecutor;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.CinderStorageDao;
 import org.ovirt.engine.core.utils.JsonHelper;
@@ -22,7 +22,7 @@ public class SaveManagedBlockStorageDiskDeviceCommand<T extends SaveManagedBlock
     private CinderStorageDao cinderStorageDao;
 
     @Inject
-    private CinderlibExecutor cinderlibExecutor;
+    private ManagedBlockExecutor managedBlockExecutor;
 
     public SaveManagedBlockStorageDiskDeviceCommand(T parameters,
             CommandContext cmdContext) {
@@ -43,13 +43,13 @@ public class SaveManagedBlockStorageDiskDeviceCommand<T extends SaveManagedBlock
             extraParams.add(getParameters().getDiskId().toString());
             extraParams.add(JsonHelper.mapToJson(getParameters().getDevice(), false));
 
-            CinderlibCommandParameters params = new CinderlibCommandParameters(
+            ManagedBlockCommandParameters params = new ManagedBlockCommandParameters(
                     JsonHelper.mapToJson(managedBlockStorage.getAllDriverOptions(),
                             false),
                     extraParams,
                     getCorrelationId());
-            succeeded = cinderlibExecutor
-                    .runCommand(CinderlibExecutor.CinderlibCommand.SAVE_DEVICE, params)
+            succeeded = managedBlockExecutor
+                    .runCommand(ManagedBlockExecutor.ManagedBlockCommand.SAVE_DEVICE, params)
                     .getSucceed();
         } catch (Exception e) {
             log.error("Failed executing save_device verb", e);

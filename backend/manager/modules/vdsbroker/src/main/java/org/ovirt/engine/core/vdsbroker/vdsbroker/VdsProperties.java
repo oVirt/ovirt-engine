@@ -570,7 +570,7 @@ public final class VdsProperties {
     // Network provider agent id
     public static final String OPENSTACK_BINDING_HOST_IDS = "openstack_binding_host_ids";
 
-    // cinderlib
+    // Managed Block Storage
     public static final String CONNECTOR_INFO = "connector_info";
 
     // incremental backup
