@@ -7,6 +7,7 @@ import java.io.InputStreamReader;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import javax.annotation.PostConstruct;
@@ -15,6 +16,7 @@ import javax.inject.Singleton;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.utils.EngineLocalConfig;
+import org.ovirt.engine.core.utils.JsonHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -22,7 +24,7 @@ import org.slf4j.LoggerFactory;
 public class ManagedBlockExecutor {
     EngineLocalConfig config = EngineLocalConfig.getInstance();
     private static final Logger log = LoggerFactory.getLogger(ManagedBlockExecutor.class);
-    private static final String CINDERLIB_PREFIX = "./cinderlib-client.py";
+    private static final String CINDERLIB_ADAPTER = "cinderlib-client.py";
     private static final String MANAGEDBLOCK_DIR = "/managedblock";
     private static final String MANAGEDBLOCK_DB_USER = "MANAGEDBLOCK_DB_USER";
     private static final String MANAGEDBLOCK_DB_PASSWORD = "MANAGEDBLOCK_DB_PASSWORD";
@@ -82,9 +84,9 @@ public class ManagedBlockExecutor {
         return "";
     }
 
-    private List<String> generateCommand(ManagedBlockCommand command, ManagedBlockCommandParameters params) {
+    private List<String> generateCommand(ManagedBlockCommand command, ManagedBlockCommandParameters params) throws Exception {
         List<String> commandArgs = new ArrayList<>();
-        commandArgs.add(CINDERLIB_PREFIX);
+        commandArgs.add(getStorageAdapter(params.getDriverInfo()));
         commandArgs.add(command.toString());
         commandArgs.add(params.getDriverInfo());
         commandArgs.add(url);
@@ -92,6 +94,23 @@ public class ManagedBlockExecutor {
         commandArgs.addAll(params.getExtraParams());
 
         return commandArgs;
+    }
+
+    public String getStorageAdapter(String driverInfo) throws Exception {
+        String adapterFile = CINDERLIB_ADAPTER;
+        try {
+            Map<String, Object> info = JsonHelper.jsonToMap(driverInfo);
+            if (info.containsKey("adapter")) {
+                adapterFile = info.get("adapter") + "-adapter";
+            }
+        } catch (IOException e) {
+            log.warn("Failed to parse driver info JSON: {}, using default adapter", e.getMessage());
+        }
+        File adapterPath = new File(managedBlockDir, adapterFile);
+        if (!adapterPath.exists()) {
+            throw new Exception("Storage adapter not found at " + adapterPath.getAbsolutePath());
+        }
+        return adapterPath.getAbsolutePath();
     }
 
 
