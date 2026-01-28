@@ -24,9 +24,9 @@ import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.storage.ManagedBlockStorage;
 import org.ovirt.engine.core.common.businessentities.storage.ManagedBlockStorageDisk;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeClassification;
-import org.ovirt.engine.core.common.utils.cinderlib.CinderlibCommandParameters;
-import org.ovirt.engine.core.common.utils.cinderlib.CinderlibExecutor;
-import org.ovirt.engine.core.common.utils.cinderlib.CinderlibReturnValue;
+import org.ovirt.engine.core.common.utils.managedblock.ManagedBlockCommandParameters;
+import org.ovirt.engine.core.common.utils.managedblock.ManagedBlockExecutor;
+import org.ovirt.engine.core.common.utils.managedblock.ManagedBlockReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.CinderStorageDao;
 import org.ovirt.engine.core.dao.DiskImageDao;
@@ -39,7 +39,7 @@ public class CreateManagedBlockStorageDiskSnapshotCommand<T extends CreateManage
         extends CommandBase<T> {
 
     @Inject
-    private CinderlibExecutor cinderlibExecutor;
+    private ManagedBlockExecutor managedBlockExecutor;
 
     @Inject
     private CinderStorageDao cinderStorageDao;
@@ -75,18 +75,18 @@ public class CreateManagedBlockStorageDiskSnapshotCommand<T extends CreateManage
         ManagedBlockStorage managedBlockStorage = cinderStorageDao.get(getParameters().getStorageDomainId());
         List<String> extraParams = new ArrayList<>();
         extraParams.add(getParameters().getVolumeId().toString());
-        CinderlibReturnValue returnValue;
+        ManagedBlockReturnValue returnValue;
         Guid snapshotId;
 
         try {
-            CinderlibCommandParameters params =
-                    new CinderlibCommandParameters(JsonHelper.mapToJson(
+            ManagedBlockCommandParameters params =
+                    new ManagedBlockCommandParameters(JsonHelper.mapToJson(
                             managedBlockStorage.getAllDriverOptions(),
                             false),
                             extraParams,
                             getCorrelationId());
             returnValue =
-                    cinderlibExecutor.runCommand(CinderlibExecutor.CinderlibCommand.CREATE_SNAPSHOT, params);
+                    managedBlockExecutor.runCommand(ManagedBlockExecutor.ManagedBlockCommand.CREATE_SNAPSHOT, params);
             snapshotId = Guid.createGuidFromString(returnValue.getOutput());
         } catch (Exception e) {
             log.error("Failed executing snapshot creation", e);

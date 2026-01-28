@@ -12,8 +12,8 @@ import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.action.DisconnectManagedBlockStorageDeviceParameters;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.storage.ManagedBlockStorage;
-import org.ovirt.engine.core.common.utils.cinderlib.CinderlibCommandParameters;
-import org.ovirt.engine.core.common.utils.cinderlib.CinderlibExecutor;
+import org.ovirt.engine.core.common.utils.managedblock.ManagedBlockCommandParameters;
+import org.ovirt.engine.core.common.utils.managedblock.ManagedBlockExecutor;
 import org.ovirt.engine.core.common.vdscommands.AttachManagedBlockStorageVolumeVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
@@ -26,7 +26,7 @@ import org.ovirt.engine.core.utils.JsonHelper;
 public class DisconnectManagedBlockStorageDeviceCommand<T extends DisconnectManagedBlockStorageDeviceParameters> extends CommandBase<T> {
 
     @Inject
-    private CinderlibExecutor cinderlibExecutor;
+    private ManagedBlockExecutor managedBlockExecutor;
 
     @Inject
     private CinderStorageDao cinderStorageDao;
@@ -54,14 +54,14 @@ public class DisconnectManagedBlockStorageDeviceCommand<T extends DisconnectMana
         extraParams.add(getParameters().getDiskId().toString());
 
         try {
-            CinderlibCommandParameters params =
-                    new CinderlibCommandParameters(JsonHelper.mapToJson(managedBlockStorage.getAllDriverOptions(),
+            ManagedBlockCommandParameters params =
+                    new ManagedBlockCommandParameters(JsonHelper.mapToJson(managedBlockStorage.getAllDriverOptions(),
                             false),
                             extraParams,
                             getCorrelationId());
 
-            succeeded = cinderlibExecutor
-                        .runCommand(CinderlibExecutor.CinderlibCommand.DISCONNECT_VOLUME, params)
+            succeeded = managedBlockExecutor
+                        .runCommand(ManagedBlockExecutor.ManagedBlockCommand.DISCONNECT_VOLUME, params)
                         .getSucceed();
         } catch (Exception e) {
             log.error("Failed executing disconnect_volume verb", e);

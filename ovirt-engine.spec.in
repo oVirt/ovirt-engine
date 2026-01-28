@@ -673,7 +673,7 @@ install -dm 700 "%{buildroot}/%{engine_state}/.ssh"
 install -dm 755 "%{buildroot}/%{engine_state}"/{content,setup/answers,ansible-runner}
 # see also relevant %%dir line to set permissions
 install -dm 700 "%{buildroot}/%{engine_log}"
-install -dm 700 "%{buildroot}/%{engine_log}"/{ova,host-deploy,setup,notifier,dump,ansible,db-manual,brick-setup,cinderlib}
+install -dm 700 "%{buildroot}/%{engine_log}"/{ova,host-deploy,setup,notifier,dump,ansible,db-manual,brick-setup,managedblock}
 install -dm 755 "%{buildroot}/%{engine_cache}"
 install -dm 755 "%{buildroot}/%{engine_run}/notifier"
 
@@ -874,7 +874,7 @@ fi
 %dir %{engine_data}/bin
 %dir %{engine_data}/brands
 %dir %{engine_data}/conf
-%dir %{engine_data}/cinderlib
+%dir %{engine_data}/managedblock
 %dir %{engine_data}/engine.ear
 %dir %{engine_data}/extensions.d
 %dir %{engine_data}/services
@@ -891,13 +891,13 @@ fi
 %{engine_etc}/engine.conf.d/
 %{engine_etc}/cinderlib/README
 %{engine_etc}/timezones/
-%config %{engine_data}/cinderlib/logger.conf
+%config %{engine_data}/managedblock/logger.conf
 %config %attr(0700,%{engine_user},%{engine_group}) %{engine_etc}/cinderlib/ssh_known_hosts
 
-%{engine_data}/cinderlib/cinderlib-client.*
-%{engine_data}/cinderlib/config.*
-%{engine_data}/cinderlib/__pycache__/cinderlib-client.*
-%{engine_data}/cinderlib/__pycache__/config.*
+%{engine_data}/managedblock/cinderlib-client.*
+%{engine_data}/managedblock/config.*
+%{engine_data}/managedblock/__pycache__/cinderlib-client.*
+%{engine_data}/managedblock/__pycache__/config.*
 
 #
 # ATTENTION:
@@ -935,7 +935,7 @@ fi
 %license LICENSE
 %license backend/manager/modules/services/src/main/webapp/gpl-3.0.txt
 %license backend/manager/modules/services/src/main/webapp/lgpl-3.0.txt
-%attr(-, %{engine_user}, %{engine_group}) %{engine_log}/cinderlib
+%attr(-, %{engine_user}, %{engine_group}) %{engine_log}/managedblock
 %attr(-, %{engine_user}, %{engine_group}) %{engine_log}/brick-setup
 %attr(-, %{engine_user}, %{engine_group}) %{engine_log}/host-deploy
 %attr(-, %{engine_user}, %{engine_group}) %{engine_log}/ansible
