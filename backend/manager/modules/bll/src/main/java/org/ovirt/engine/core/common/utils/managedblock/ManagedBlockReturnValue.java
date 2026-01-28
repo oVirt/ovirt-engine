@@ -1,14 +1,14 @@
-package org.ovirt.engine.core.common.utils.cinderlib;
+package org.ovirt.engine.core.common.utils.managedblock;
 
 import java.util.Objects;
 
 import org.ovirt.engine.core.common.utils.ToStringBuilder;
 
-public class CinderlibReturnValue {
+public class ManagedBlockReturnValue {
     private int returnCode;
     private String output;
 
-    public CinderlibReturnValue(int returnCode, String output) {
+    public ManagedBlockReturnValue(int returnCode, String output) {
         this.returnCode = returnCode;
         this.output = output;
     }
@@ -38,10 +38,10 @@ public class CinderlibReturnValue {
         if (this == o) {
             return true;
         }
-        if (!(o instanceof CinderlibReturnValue)) {
+        if (!(o instanceof ManagedBlockReturnValue)) {
             return false;
         }
-        CinderlibReturnValue that = (CinderlibReturnValue) o;
+        ManagedBlockReturnValue that = (ManagedBlockReturnValue) o;
         return returnCode == that.returnCode &&
                 Objects.equals(output, that.output);
     }

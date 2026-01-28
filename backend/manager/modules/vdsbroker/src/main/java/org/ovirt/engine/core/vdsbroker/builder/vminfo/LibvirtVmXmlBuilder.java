@@ -51,7 +51,6 @@ import org.ovirt.engine.core.common.businessentities.network.VmNic;
 import org.ovirt.engine.core.common.businessentities.network.VnicProfile;
 import org.ovirt.engine.core.common.businessentities.qos.StorageQos;
 import org.ovirt.engine.core.common.businessentities.storage.CinderDisk;
-import org.ovirt.engine.core.common.businessentities.storage.CinderVolumeDriver;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskInterface;
@@ -59,6 +58,7 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
 import org.ovirt.engine.core.common.businessentities.storage.LunDisk;
 import org.ovirt.engine.core.common.businessentities.storage.ManagedBlockStorageDisk;
+import org.ovirt.engine.core.common.businessentities.storage.ManagedVolumeDriver;
 import org.ovirt.engine.core.common.businessentities.storage.PropagateErrors;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
 import org.ovirt.engine.core.common.config.Config;
@@ -2461,9 +2461,9 @@ public class LibvirtVmXmlBuilder {
                     path = (String) managedBlockStorageDisk.getDevice().get(DeviceInfoReturn.PATH);
                 }
 
-                if (managedBlockStorageDisk.getCinderVolumeDriver() == CinderVolumeDriver.RBD) {
+                if (managedBlockStorageDisk.getManagedVolumeDriver() == ManagedVolumeDriver.RBD) {
                     metadata.put("RBD", path);
-                } else if (managedBlockStorageDisk.getCinderVolumeDriver() == CinderVolumeDriver.BLOCK) {
+                } else if (managedBlockStorageDisk.getManagedVolumeDriver() == ManagedVolumeDriver.BLOCK) {
                     Map<String, Object> attachment =
                             (Map<String, Object>) managedBlockStorageDisk.getDevice().get(DeviceInfoReturn.ATTACHMENT);
                     metadata.put("GUID", (String) attachment.get(DeviceInfoReturn.SCSI_WWN));

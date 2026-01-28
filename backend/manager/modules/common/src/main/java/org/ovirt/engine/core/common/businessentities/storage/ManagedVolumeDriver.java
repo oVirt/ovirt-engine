@@ -5,21 +5,21 @@ import java.util.Map;
 
 import org.ovirt.engine.core.common.businessentities.Nameable;
 
-public enum CinderVolumeDriver implements Nameable {
+public enum ManagedVolumeDriver implements Nameable {
     RBD("rbd"),
     BLOCK("block");
 
     private String name;
-    private static Map<String, CinderVolumeDriver> mappings;
+    private static Map<String, ManagedVolumeDriver> mappings;
 
     static {
         mappings = new HashMap<>();
-        for (CinderVolumeDriver type : values()) {
+        for (ManagedVolumeDriver type : values()) {
             mappings.put(type.getName(), type);
         }
     }
 
-    CinderVolumeDriver(String name) {
+    ManagedVolumeDriver(String name) {
         this.name = name;
     }
 
@@ -27,7 +27,7 @@ public enum CinderVolumeDriver implements Nameable {
         return name;
     }
 
-    public static CinderVolumeDriver forValue(String value) {
+    public static ManagedVolumeDriver forValue(String value) {
         return mappings.get(value);
     }
 }

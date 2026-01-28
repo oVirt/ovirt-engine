@@ -1,4 +1,4 @@
-package org.ovirt.engine.core.common.utils.cinderlib;
+package org.ovirt.engine.core.common.utils.managedblock;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -19,11 +19,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @Singleton
-public class CinderlibExecutor {
+public class ManagedBlockExecutor {
     EngineLocalConfig config = EngineLocalConfig.getInstance();
-    private static final Logger log = LoggerFactory.getLogger(CinderlibExecutor.class);
+    private static final Logger log = LoggerFactory.getLogger(ManagedBlockExecutor.class);
     private static final String CINDERLIB_PREFIX = "./cinderlib-client.py";
-    private static final String CINDERLIB_DIR = "/cinderlib";
+    private static final String MANAGEDBLOCK_DIR = "/managedblock";
     private static final String CINDERLIB_DB_USER = "CINDERLIB_DB_USER";
     private static final String CINDERLIB_DB_PASSWORD = "CINDERLIB_DB_PASSWORD";
     private static final String CINDERLIB_DB_HOST = "CINDERLIB_DB_HOST";
@@ -31,7 +31,7 @@ public class CinderlibExecutor {
     private static final String CINDERLIB_DB_DATABASE = "CINDERLIB_DB_DATABASE";
     private final String urlTemplate = "postgresql+psycopg2://%s:%s@%s:%s/%s";
     private String url;
-    private File cinderlibDir;
+    private File managedBlockDir;
 
     @PostConstruct
     private void init() {
@@ -40,26 +40,26 @@ public class CinderlibExecutor {
                 config.getProperty(CINDERLIB_DB_HOST),
                 config.getProperty(CINDERLIB_DB_PORT),
                 config.getProperty(CINDERLIB_DB_DATABASE));
-        cinderlibDir = Paths.get(config.getUsrDir().getAbsolutePath() + CINDERLIB_DIR).toFile();
+        managedBlockDir = Paths.get(config.getUsrDir().getAbsolutePath() + MANAGEDBLOCK_DIR).toFile();
     }
 
-    public CinderlibReturnValue runCommand(CinderlibCommand command, CinderlibCommandParameters params)
+    public ManagedBlockReturnValue runCommand(ManagedBlockCommand command, ManagedBlockCommandParameters params)
             throws Exception {
-        ProcessBuilder cinderlibProcessBuilder = new ProcessBuilder()
-                .directory(cinderlibDir)
+        ProcessBuilder commandProcessBuilder = new ProcessBuilder()
+                .directory(managedBlockDir)
                 .command(generateCommand(command, params))
                 .redirectErrorStream(true);
 
-        Process process = cinderlibProcessBuilder.start();
+        Process process = commandProcessBuilder.start();
         String output = getOutput(process, params.getCorrelationId());
-        if (!process.waitFor(Config.getValue(ConfigValues.CinderlibCommandTimeoutInMinutes), TimeUnit.MINUTES)) {
-            throw new Exception("cinderlib call timed out");
+        if (!process.waitFor(Config.getValue(ConfigValues.ManagedBlockCommandTimeoutInMinutes), TimeUnit.MINUTES)) {
+            throw new Exception("managed block call timed out");
         }
-        CinderlibReturnValue returnValue = new CinderlibReturnValue(process.exitValue(), output);
+        ManagedBlockReturnValue returnValue = new ManagedBlockReturnValue(process.exitValue(), output);
         if (!returnValue.getSucceed()) {
-            log.error("cinderlib execution failed: {}", output);
+            log.error("managed block execution failed: {}", output);
         } else {
-            log.info("cinderlib output: {}", output);
+            log.info("managed block output: {}", output);
         }
         return returnValue;
     }
@@ -76,13 +76,13 @@ public class CinderlibExecutor {
                 return output.substring(correlationId.length() + 1);
             }
 
-            log.debug("ignored cinderlib output: {}", output);
+            log.debug("ignored managed block output: {}", output);
         }
 
         return "";
     }
 
-    private List<String> generateCommand(CinderlibCommand command, CinderlibCommandParameters params) {
+    private List<String> generateCommand(ManagedBlockCommand command, ManagedBlockCommandParameters params) {
         List<String> commandArgs = new ArrayList<>();
         commandArgs.add(CINDERLIB_PREFIX);
         commandArgs.add(command.toString());
@@ -95,7 +95,7 @@ public class CinderlibExecutor {
     }
 
 
-    public enum CinderlibCommand {
+    public enum ManagedBlockCommand {
         CREATE_VOLUME("create_volume"),
         DELETE_VOLUME("delete_volume"),
         CONNECT_VOLUME("connect_volume"),
@@ -111,7 +111,7 @@ public class CinderlibExecutor {
 
         private final String commandName;
 
-        CinderlibCommand(String commandName) {
+        ManagedBlockCommand(String commandName) {
             this.commandName = commandName;
         }
 
