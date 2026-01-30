@@ -18,7 +18,7 @@ import org.ovirt.engine.core.common.vdscommands.AttachManagedBlockStorageVolumeV
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.CinderStorageDao;
+import org.ovirt.engine.core.dao.ManagedBlockStorageDao;
 import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.utils.JsonHelper;
 
@@ -29,7 +29,7 @@ public class DisconnectManagedBlockStorageDeviceCommand<T extends DisconnectMana
     private ManagedBlockExecutor managedBlockExecutor;
 
     @Inject
-    private CinderStorageDao cinderStorageDao;
+    private ManagedBlockStorageDao managedBlockStorageDao;
 
     @Inject
     private VdsDao vdsDao;
@@ -49,7 +49,7 @@ public class DisconnectManagedBlockStorageDeviceCommand<T extends DisconnectMana
         }
 
         boolean succeeded;
-        ManagedBlockStorage managedBlockStorage = cinderStorageDao.get(getParameters().getStorageDomainId());
+        ManagedBlockStorage managedBlockStorage = managedBlockStorageDao.get(getParameters().getStorageDomainId());
         List<String> extraParams = new ArrayList<>();
         extraParams.add(getParameters().getDiskId().toString());
 

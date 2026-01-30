@@ -27,11 +27,11 @@ import org.ovirt.engine.core.common.utils.managedblock.ManagedBlockCommandParame
 import org.ovirt.engine.core.common.utils.managedblock.ManagedBlockExecutor;
 import org.ovirt.engine.core.common.utils.managedblock.ManagedBlockReturnValue;
 import org.ovirt.engine.core.dao.BaseDiskDao;
-import org.ovirt.engine.core.dao.CinderStorageDao;
 import org.ovirt.engine.core.dao.DiskImageDao;
 import org.ovirt.engine.core.dao.DiskImageDynamicDao;
 import org.ovirt.engine.core.dao.ImageDao;
 import org.ovirt.engine.core.dao.ImageStorageDomainMapDao;
+import org.ovirt.engine.core.dao.ManagedBlockStorageDao;
 import org.ovirt.engine.core.utils.JsonHelper;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
@@ -54,7 +54,7 @@ public class RemoveManagedBlockStorageDiskCommand<T extends RemoveDiskParameters
     private ManagedBlockExecutor managedBlockExecutor;
 
     @Inject
-    private CinderStorageDao cinderStorageDao;
+    private ManagedBlockStorageDao managedBlockStorageDao;
 
     @Inject
     private BaseDiskDao baseDiskDao;
@@ -77,7 +77,7 @@ public class RemoveManagedBlockStorageDiskCommand<T extends RemoveDiskParameters
 
     @Override
     protected void executeCommand() {
-        ManagedBlockStorage managedBlockStorage = cinderStorageDao.get(getParameters().getStorageDomainId());
+        ManagedBlockStorage managedBlockStorage = managedBlockStorageDao.get(getParameters().getStorageDomainId());
         List<String> extraParams = new ArrayList<>();
         extraParams.add(getParameters().getDiskId().toString());
         ManagedBlockReturnValue returnValue;

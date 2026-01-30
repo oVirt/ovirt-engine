@@ -13,13 +13,13 @@ import org.ovirt.engine.core.common.businessentities.storage.ManagedBlockStorage
 import org.ovirt.engine.core.common.utils.managedblock.ManagedBlockCommandParameters;
 import org.ovirt.engine.core.common.utils.managedblock.ManagedBlockExecutor;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.CinderStorageDao;
+import org.ovirt.engine.core.dao.ManagedBlockStorageDao;
 import org.ovirt.engine.core.utils.JsonHelper;
 
 public class SaveManagedBlockStorageDiskDeviceCommand<T extends SaveManagedBlockStorageDiskDeviceCommandParameters> extends CommandBase<T> {
 
     @Inject
-    private CinderStorageDao cinderStorageDao;
+    private ManagedBlockStorageDao managedBlockStorageDao;
 
     @Inject
     private ManagedBlockExecutor managedBlockExecutor;
@@ -36,7 +36,7 @@ public class SaveManagedBlockStorageDiskDeviceCommand<T extends SaveManagedBlock
     @Override
     protected void executeCommand() {
         boolean succeeded;
-        ManagedBlockStorage managedBlockStorage = cinderStorageDao.get(getParameters().getStorageDomainId());
+        ManagedBlockStorage managedBlockStorage = managedBlockStorageDao.get(getParameters().getStorageDomainId());
 
         try {
             List<String> extraParams = new ArrayList<>();

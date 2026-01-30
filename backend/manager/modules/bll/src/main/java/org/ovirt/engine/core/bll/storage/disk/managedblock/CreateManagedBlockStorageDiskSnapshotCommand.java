@@ -28,9 +28,9 @@ import org.ovirt.engine.core.common.utils.managedblock.ManagedBlockCommandParame
 import org.ovirt.engine.core.common.utils.managedblock.ManagedBlockExecutor;
 import org.ovirt.engine.core.common.utils.managedblock.ManagedBlockReturnValue;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.CinderStorageDao;
 import org.ovirt.engine.core.dao.DiskImageDao;
 import org.ovirt.engine.core.dao.ImageDao;
+import org.ovirt.engine.core.dao.ManagedBlockStorageDao;
 import org.ovirt.engine.core.utils.JsonHelper;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
@@ -42,7 +42,7 @@ public class CreateManagedBlockStorageDiskSnapshotCommand<T extends CreateManage
     private ManagedBlockExecutor managedBlockExecutor;
 
     @Inject
-    private CinderStorageDao cinderStorageDao;
+    private ManagedBlockStorageDao managedBlockStorageDao;
 
     @Inject
     private DiskImageDao diskImageDao;
@@ -72,7 +72,7 @@ public class CreateManagedBlockStorageDiskSnapshotCommand<T extends CreateManage
 
     @Override
     protected void executeCommand() {
-        ManagedBlockStorage managedBlockStorage = cinderStorageDao.get(getParameters().getStorageDomainId());
+        ManagedBlockStorage managedBlockStorage = managedBlockStorageDao.get(getParameters().getStorageDomainId());
         List<String> extraParams = new ArrayList<>();
         extraParams.add(getParameters().getVolumeId().toString());
         ManagedBlockReturnValue returnValue;
