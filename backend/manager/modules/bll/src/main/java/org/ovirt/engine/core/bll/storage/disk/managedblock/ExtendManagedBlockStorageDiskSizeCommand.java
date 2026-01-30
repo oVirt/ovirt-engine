@@ -26,15 +26,15 @@ import org.ovirt.engine.core.common.utils.managedblock.ManagedBlockCommandParame
 import org.ovirt.engine.core.common.utils.managedblock.ManagedBlockExecutor;
 import org.ovirt.engine.core.common.utils.managedblock.ManagedBlockExecutor.ManagedBlockCommand;
 import org.ovirt.engine.core.common.utils.managedblock.ManagedBlockReturnValue;
-import org.ovirt.engine.core.dao.CinderStorageDao;
 import org.ovirt.engine.core.dao.ImageDao;
+import org.ovirt.engine.core.dao.ManagedBlockStorageDao;
 import org.ovirt.engine.core.utils.JsonHelper;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 @InternalCommandAttribute
 public class ExtendManagedBlockStorageDiskSizeCommand<T extends ExtendManagedBlockStorageDiskSizeParameters> extends UpdateDiskCommand<T> {
     @Inject
-    private CinderStorageDao cinderStorageDao;
+    private ManagedBlockStorageDao managedBlockStorageDao;
 
     @Inject
     private ManagedBlockExecutor managedBlockExecutor;
@@ -57,7 +57,7 @@ public class ExtendManagedBlockStorageDiskSizeCommand<T extends ExtendManagedBlo
 
     @Override
     protected void executeCommand() {
-        ManagedBlockStorage managedBlockStorage = cinderStorageDao.get(getParameters().getStorageDomainId());
+        ManagedBlockStorage managedBlockStorage = managedBlockStorageDao.get(getParameters().getStorageDomainId());
         List<String> extraParams = new ArrayList<>();
         extraParams.add(getNewDisk().getId().toString());
         Number sizeInGiB = SizeConverter.convert(getParameters().getDiskInfo().getSize(),

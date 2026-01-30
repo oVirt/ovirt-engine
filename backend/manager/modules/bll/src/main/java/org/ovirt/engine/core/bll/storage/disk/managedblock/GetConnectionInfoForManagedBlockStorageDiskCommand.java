@@ -15,7 +15,7 @@ import org.ovirt.engine.core.common.utils.managedblock.ManagedBlockCommandParame
 import org.ovirt.engine.core.common.utils.managedblock.ManagedBlockExecutor;
 import org.ovirt.engine.core.common.utils.managedblock.ManagedBlockReturnValue;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.CinderStorageDao;
+import org.ovirt.engine.core.dao.ManagedBlockStorageDao;
 import org.ovirt.engine.core.utils.JsonHelper;
 
 @NonTransactiveCommandAttribute
@@ -25,7 +25,7 @@ public class GetConnectionInfoForManagedBlockStorageDiskCommand<T extends Connec
     private ManagedBlockExecutor managedBlockExecutor;
 
     @Inject
-    private CinderStorageDao cinderStorageDao;
+    private ManagedBlockStorageDao managedBlockStorageDao;
 
     public GetConnectionInfoForManagedBlockStorageDiskCommand(T parameters,
             CommandContext cmdContext) {
@@ -38,7 +38,7 @@ public class GetConnectionInfoForManagedBlockStorageDiskCommand<T extends Connec
 
     @Override
     protected void executeCommand() {
-        ManagedBlockStorage managedBlockStorage = cinderStorageDao.get(getParameters().getStorageDomainId());
+        ManagedBlockStorage managedBlockStorage = managedBlockStorageDao.get(getParameters().getStorageDomainId());
         List<String> extraParams = new ArrayList<>();
         extraParams.add(getParameters().getDiskId().toString());
 

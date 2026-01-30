@@ -12,12 +12,12 @@ import org.ovirt.engine.core.common.businessentities.StorageFormatType;
 import org.ovirt.engine.core.common.businessentities.storage.ManagedBlockStorage;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.CinderStorageDao;
+import org.ovirt.engine.core.dao.ManagedBlockStorageDao;
 
 public class AddManagedBlockStorageDomainCommand<T extends AddManagedBlockStorageDomainParameters> extends AddStorageDomainCommand<T> {
 
     @Inject
-    private CinderStorageDao cinderStorageDao;
+    private ManagedBlockStorageDao managedBlockStorageDao;
 
     public AddManagedBlockStorageDomainCommand(Guid commandId) {
         super(commandId);
@@ -52,7 +52,7 @@ public class AddManagedBlockStorageDomainCommand<T extends AddManagedBlockStorag
         managedBlockStorage.setId(getStorageDomainId());
         managedBlockStorage.setDriverOptions(parameters.getDriverOptions());
         managedBlockStorage.setDriverSensitiveOptions(parameters.getDriverSensitiveOptions());
-        cinderStorageDao.save(managedBlockStorage);
+        managedBlockStorageDao.save(managedBlockStorage);
         setSucceeded(true);
     }
 
