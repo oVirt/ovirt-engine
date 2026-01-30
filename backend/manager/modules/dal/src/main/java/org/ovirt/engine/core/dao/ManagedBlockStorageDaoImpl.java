@@ -16,17 +16,17 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
 @Named
 @Singleton
-public class CinderStorageDaoImpl extends DefaultGenericDao<ManagedBlockStorage, Guid> implements CinderStorageDao {
+public class ManagedBlockStorageDaoImpl extends DefaultGenericDao<ManagedBlockStorage, Guid> implements ManagedBlockStorageDao {
 
-    public CinderStorageDaoImpl() {
-        super("CinderStorage");
-        setProcedureNameForGet("GetCinderStorage");
+    public ManagedBlockStorageDaoImpl() {
+        super("ManagedBlockStorage");
+        setProcedureNameForGet("GetManagedBlockStorage");
     }
 
     @Override
-    public List<ManagedBlockStorage> getCinderStorageByDrivers(Map<String, Object> driverOptions) {
-        return getCallsHandler().executeReadList("GetCinderStorageByDrivers",
-                cinderStorageDomainStaticRowMapper,
+    public List<ManagedBlockStorage> getManagedBlockStorageByDrivers(Map<String, Object> driverOptions) {
+        return getCallsHandler().executeReadList("GetManagedBlockStorageByDrivers",
+                managedBlockStorageDomainStaticRowMapper,
                 getCustomMapSqlParameterSource()
                         .addValue("driver_options",
                                 ObjectUtils.mapNullable(driverOptions, JsonHelper::mapToJsonUnchecked)));
@@ -49,10 +49,10 @@ public class CinderStorageDaoImpl extends DefaultGenericDao<ManagedBlockStorage,
 
     @Override
     protected RowMapper<ManagedBlockStorage> createEntityRowMapper() {
-        return cinderStorageDomainStaticRowMapper;
+        return managedBlockStorageDomainStaticRowMapper;
     }
 
-    private static final RowMapper<ManagedBlockStorage> cinderStorageDomainStaticRowMapper = (rs, rowNum) -> {
+    private static final RowMapper<ManagedBlockStorage> managedBlockStorageDomainStaticRowMapper = (rs, rowNum) -> {
         ManagedBlockStorage entity = new ManagedBlockStorage();
         entity.setId(getGuidDefaultNewGuid(rs, "storage_domain_id"));
         entity.setDriverOptions(ObjectUtils.mapNullable(rs.getString("driver_options"), JsonHelper::jsonToMapUnchecked));

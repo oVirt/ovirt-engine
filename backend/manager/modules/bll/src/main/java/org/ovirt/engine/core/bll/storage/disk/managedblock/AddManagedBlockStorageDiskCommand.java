@@ -35,9 +35,9 @@ import org.ovirt.engine.core.common.utils.managedblock.ManagedBlockExecutor.Mana
 import org.ovirt.engine.core.common.utils.managedblock.ManagedBlockReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.BaseDiskDao;
-import org.ovirt.engine.core.dao.CinderStorageDao;
 import org.ovirt.engine.core.dao.DiskVmElementDao;
 import org.ovirt.engine.core.dao.ImageDao;
+import org.ovirt.engine.core.dao.ManagedBlockStorageDao;
 import org.ovirt.engine.core.utils.JsonHelper;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
@@ -46,7 +46,7 @@ import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 public class AddManagedBlockStorageDiskCommand<T extends AddManagedBlockStorageDiskParameters> extends CommandBase<T> {
 
     @Inject
-    private CinderStorageDao cinderStorageDao;
+    private ManagedBlockStorageDao managedBlockStorageDao;
 
     @Inject
     private ManagedBlockExecutor managedBlockExecutor;
@@ -76,12 +76,12 @@ public class AddManagedBlockStorageDiskCommand<T extends AddManagedBlockStorageD
 
     @Override
     protected void executeCommand() {
-        ManagedBlockStorage managedBlockStorage = cinderStorageDao.get(getParameters().getStorageDomainId());
+        ManagedBlockStorage managedBlockStorage = managedBlockStorageDao.get(getParameters().getStorageDomainId());
         Guid volumeId = getParameters().getDiskInfo().getId();
         List<String> extraParams = new ArrayList<>();
         extraParams.add(volumeId.toString());
 
-        // Rounding and converting to GiB is required since cinderlib works with GiB multiples and not bytes
+        // Rounding and converting to GiB is required since the original managed block storage backend (cinderlib) works with GiB multiples and not bytes
         extraParams.add(Long.toString(SizeConverter.convert(getDiskSize(getParameters().getDiskInfo().getSize()),
                 SizeConverter.SizeUnit.BYTES,
                 SizeConverter.SizeUnit.GiB).longValue()));

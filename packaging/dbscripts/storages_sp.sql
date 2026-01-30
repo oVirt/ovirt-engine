@@ -1366,18 +1366,18 @@ END;$FUNCTION$
 LANGUAGE plpgsql;
 
 -- ----------------------------------------------------------------
--- [cinder_storage] Table
+-- [mb_storage] Table
 --
 --This function is also called during installation. If you change it, please verify
 --that functions in inst_sp.sql can be executed successfully.
-CREATE OR REPLACE FUNCTION InsertCinderStorage (
+CREATE OR REPLACE FUNCTION InsertManagedBlockStorage (
     v_storage_domain_id UUID,
     v_driver_options JSONB,
     v_driver_sensitive_options TEXT
     )
 RETURNS VOID AS $FUNCTION$
 BEGIN
-    INSERT INTO cinder_storage (
+    INSERT INTO mb_storage (
         storage_domain_id,
         driver_options,
         driver_sensitive_options
@@ -1390,7 +1390,7 @@ BEGIN
 END;$FUNCTION$
 LANGUAGE plpgsql;
 
-CREATE OR REPLACE FUNCTION UpdateCinderStorage (
+CREATE OR REPLACE FUNCTION UpdateManagedBlockStorage (
     v_storage_domain_id UUID,
     v_driver_options JSONB,
     v_driver_sensitive_options TEXT
@@ -1398,14 +1398,14 @@ CREATE OR REPLACE FUNCTION UpdateCinderStorage (
 RETURNS VOID
     AS $FUNCTION$
 BEGIN
-    UPDATE cinder_storage
+    UPDATE mb_storage
     SET driver_options = v_driver_options,
         driver_sensitive_options = v_driver_sensitive_options
     WHERE storage_domain_id = v_storage_domain_id;
 END;$FUNCTION$
 LANGUAGE plpgsql;
 
-CREATE OR REPLACE FUNCTION DeleteCinderStorage (v_storage_domain_id UUID)
+CREATE OR REPLACE FUNCTION DeleteManagedBlockStorage (v_storage_domain_id UUID)
 RETURNS VOID AS $FUNCTION$
 DECLARE v_val UUID;
 
@@ -1414,35 +1414,35 @@ BEGIN
     -- in order to force locking parent before children
     SELECT id
     INTO v_val
-    FROM cinder_storage
+    FROM mb_storage
     WHERE storage_domain_id = v_storage_domain_id
     FOR UPDATE;
 
     DELETE
-    FROM cinder_storage
+    FROM mb_storage
     WHERE id = v_storage_domain_id;
 END;$FUNCTION$
 LANGUAGE plpgsql;
 
-CREATE OR REPLACE FUNCTION GetCinderStorage (v_storage_domain_id UUID)
-RETURNS SETOF cinder_storage STABLE AS $FUNCTION$
+CREATE OR REPLACE FUNCTION GetManagedBlockStorage (v_storage_domain_id UUID)
+RETURNS SETOF mb_storage STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
     SELECT *
-    FROM cinder_storage
+    FROM mb_storage
     WHERE storage_domain_id = v_storage_domain_id;
 END;$FUNCTION$
 LANGUAGE plpgsql;
 
-CREATE OR REPLACE FUNCTION GetCinderStorageByDrivers (
+CREATE OR REPLACE FUNCTION GetManagedBlockStorageByDrivers (
     v_driver_options JSONB)
-RETURNS SETOF cinder_storage STABLE AS $FUNCTION$
+RETURNS SETOF mb_storage STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
     SELECT *
-    FROM cinder_storage
+    FROM mb_storage
     WHERE driver_options = v_driver_options;
 END;$FUNCTION$
 LANGUAGE plpgsql;
