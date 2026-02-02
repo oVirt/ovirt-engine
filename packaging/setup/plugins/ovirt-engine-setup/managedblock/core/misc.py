@@ -7,7 +7,7 @@
 #
 
 
-"""Cinderlib Misc plugin."""
+"""Managed Block Misc plugin."""
 
 
 import gettext
@@ -16,7 +16,7 @@ from otopi import plugin
 from otopi import util
 
 from ovirt_engine_setup import constants as osetupcons
-from ovirt_engine_setup.cinderlib import constants as oclcons
+from ovirt_engine_setup.managedblock import constants as ombcons
 
 from ovirt_setup_lib import dialog
 
@@ -27,7 +27,7 @@ def _(m):
 
 @util.export
 class Plugin(plugin.PluginBase):
-    """Cinderlib Misc plugin."""
+    """Managed Block Misc plugin."""
 
     def __init__(self, context):
         super(Plugin, self).__init__(context=context)
@@ -37,7 +37,7 @@ class Plugin(plugin.PluginBase):
     )
     def _init(self):
         self.environment.setdefault(
-            oclcons.CoreEnv.ENABLE,
+            ombcons.CoreEnv.ENABLE,
             None
         )
 
@@ -50,16 +50,16 @@ class Plugin(plugin.PluginBase):
             osetupcons.Stages.DIALOG_TITLES_S_PRODUCT_OPTIONS,
         ),
     )
-    def __customization_cinderlib_db_enable(self):
-        if self.environment[oclcons.CoreEnv.ENABLE] is None:
-            self.environment[oclcons.CoreEnv.ENABLE] = \
+    def __customization_managedblock_db_enable(self):
+        if self.environment[ombcons.CoreEnv.ENABLE] is None:
+            self.environment[ombcons.CoreEnv.ENABLE] = \
                 dialog.queryBoolean(
                     dialog=self.dialog,
-                    name='ovirt-cinderlib-enable',
+                    name='ovirt-managedblock-enable',
                     note=_(
-                        'Configure Cinderlib integration '
-                        '(Currently in tech preview - '
-                        'not supported on RHEL 10)'
+                        'Configure managed block integration '
+                        '(note that the legacy CinderLib '
+                        'adapter is not supported on RHEL 10)'
                         '(@VALUES@) [@DEFAULT@]: '
                     ),
                     prompt=True,

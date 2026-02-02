@@ -7,7 +7,7 @@
 #
 
 
-"""cinderlib DB pgpass plugin."""
+"""managed block DB pgpass plugin."""
 
 
 import gettext
@@ -15,8 +15,8 @@ import gettext
 from otopi import plugin
 from otopi import util
 
-from ovirt_engine_setup.cinderlib import constants as oclcons
 from ovirt_engine_setup.engine_common import database
+from ovirt_engine_setup.managedblock import constants as ombcons
 
 
 def _(m):
@@ -25,7 +25,7 @@ def _(m):
 
 @util.export
 class Plugin(plugin.PluginBase):
-    """cinderlib DB pgpass plugin."""
+    """managed block DB pgpass plugin."""
     def __init__(self, context):
         super(Plugin, self).__init__(context=context)
 
@@ -33,33 +33,33 @@ class Plugin(plugin.PluginBase):
         stage=plugin.Stages.STAGE_INIT,
     )
     def _init(self):
-        self.environment[oclcons.CinderlibDBEnv.PGPASS_FILE] = None
+        self.environment[ombcons.ManagedBlockDBEnv.PGPASS_FILE] = None
 
     @plugin.event(
         stage=plugin.Stages.STAGE_VALIDATION,
-        name=oclcons.Stages.DB_CL_CREDENTIALS_AVAILABLE_EARLY,
+        name=ombcons.Stages.DB_MB_CREDENTIALS_AVAILABLE_EARLY,
         condition=lambda self: self.environment[
-            oclcons.CinderlibDBEnv.PASSWORD
+            ombcons.ManagedBlockDBEnv.PASSWORD
         ] is not None
     )
     def _validation(self):
         # this required for dbvalidations
         database.OvirtUtils(
             plugin=self,
-            dbenvkeys=oclcons.Const.CINDERLIB_DB_ENV_KEYS,
+            dbenvkeys=ombcons.Const.MANAGEDBLOCK_DB_ENV_KEYS,
         ).createPgPass()
 
     @plugin.event(
         stage=plugin.Stages.STAGE_MISC,
-        name=oclcons.Stages.DB_CL_CREDENTIALS_AVAILABLE_LATE,
+        name=ombcons.Stages.DB_MB_CREDENTIALS_AVAILABLE_LATE,
         condition=lambda self: self.environment[
-            oclcons.CinderlibDBEnv.PASSWORD
+            ombcons.ManagedBlockDBEnv.PASSWORD
         ] is not None,
     )
     def _misc(self):
         database.OvirtUtils(
             plugin=self,
-            dbenvkeys=oclcons.Const.CINDERLIB_DB_ENV_KEYS,
+            dbenvkeys=ombcons.Const.MANAGEDBLOCK_DB_ENV_KEYS,
         ).createPgPass()
 
 

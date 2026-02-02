@@ -7,7 +7,7 @@
 #
 
 
-"""Cinderlib Database plugin."""
+"""Managed Block Database plugin."""
 
 
 import gettext
@@ -18,10 +18,10 @@ from otopi import plugin
 from otopi import util
 
 from ovirt_engine_setup import constants as osetupcons
-from ovirt_engine_setup.cinderlib import constants as oclcons
 from ovirt_engine_setup.engine import constants as oenginecons
 from ovirt_engine_setup.engine_common import constants as oengcommcons
 from ovirt_engine_setup.engine_common import database
+from ovirt_engine_setup.managedblock import constants as ombcons
 
 
 def _(m):
@@ -30,7 +30,7 @@ def _(m):
 
 @util.export
 class Plugin(plugin.PluginBase):
-    """Cinderlib Database plugin."""
+    """Managed Block Database plugin."""
 
     def __init__(self, context):
         super(Plugin, self).__init__(context=context)
@@ -39,19 +39,19 @@ class Plugin(plugin.PluginBase):
     @plugin.event(
         stage=plugin.Stages.STAGE_MISC,
         after=(
-            oclcons.Stages.DB_CL_SCHEMA,
+            ombcons.Stages.DB_MB_SCHEMA,
         ),
         condition=lambda self: (
             self.environment[oenginecons.CoreEnv.ENABLE] and
-            self.environment[oclcons.CoreEnv.ENABLE]
+            self.environment[ombcons.CoreEnv.ENABLE]
         ),
     )
     def _misc(self):
         self.environment[otopicons.CoreEnv.MAIN_TRANSACTION].append(
             filetransaction.FileTransaction(
                 name=(
-                    oclcons.FileLocations.
-                    OVIRT_ENGINE_SERVICE_CONFIG_CINDERLIB_DATABASE
+                    ombcons.FileLocations.
+                    OVIRT_ENGINE_SERVICE_CONFIG_MANAGEDBLOCK_DATABASE
                 ),
                 mode=0o640,
                 owner=self.environment[oengcommcons.SystemEnv.USER_ROOT],
@@ -59,9 +59,9 @@ class Plugin(plugin.PluginBase):
                 enforcePermissions=True,
                 content=database.OvirtUtils(
                     plugin=self,
-                    dbenvkeys=oclcons.Const.CINDERLIB_DB_ENV_KEYS
+                    dbenvkeys=ombcons.Const.MANAGEDBLOCK_DB_ENV_KEYS
                 ).getDBConfig(
-                    prefix="CINDERLIB"
+                    prefix="MANAGEDBLOCK"
                 ),
                 modifiedList=self.environment[
                     otopicons.CoreEnv.MODIFIED_FILES

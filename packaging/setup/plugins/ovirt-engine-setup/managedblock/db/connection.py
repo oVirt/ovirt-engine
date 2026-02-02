@@ -7,7 +7,7 @@
 #
 
 
-"""Cinderlib connection plugin."""
+"""Managed block connection plugin."""
 
 
 import gettext
@@ -17,10 +17,10 @@ from otopi import plugin
 from otopi import transaction
 from otopi import util
 
-from ovirt_engine_setup.cinderlib import constants as oclcons
 from ovirt_engine_setup.engine import constants as oenginecons
 from ovirt_engine_setup.engine_common import constants as oengcommcons
 from ovirt_engine_setup.engine_common import database
+from ovirt_engine_setup.managedblock import constants as ombcons
 
 
 def _(m):
@@ -29,7 +29,7 @@ def _(m):
 
 @util.export
 class Plugin(plugin.PluginBase):
-    """Cinderlib connection plugin."""
+    """Managed block connection plugin."""
 
     class DBTransaction(transaction.TransactionElement):
         """DB transaction element."""
@@ -38,24 +38,24 @@ class Plugin(plugin.PluginBase):
             self._parent = parent
 
         def __str__(self):
-            return _("CinderLib Database Transaction")
+            return _("Managed Block Database Transaction")
 
         def prepare(self):
             pass
 
         def abort(self):
             connection = self._parent.environment[
-                oclcons.CinderlibDBEnv.CONNECTION
+                ombcons.ManagedBlockDBEnv.CONNECTION
             ]
             if connection is not None:
                 connection.rollback()
                 self._parent.environment[
-                    oclcons.CinderlibDBEnv.CONNECTION
+                    ombcons.ManagedBlockDBEnv.CONNECTION
                 ] = None
 
         def commit(self):
             connection = self._parent.environment[
-                oclcons.CinderlibDBEnv.CONNECTION
+                ombcons.ManagedBlockDBEnv.CONNECTION
             ]
             if connection is not None:
                 connection.commit()
@@ -75,71 +75,71 @@ class Plugin(plugin.PluginBase):
     @plugin.event(
         stage=plugin.Stages.STAGE_CUSTOMIZATION,
         before=(
-            oclcons.Stages.DB_CL_CONNECTION_CUSTOMIZATION,
+            ombcons.Stages.DB_MB_CONNECTION_CUSTOMIZATION,
         ),
         after=(
             oengcommcons.Stages.DIALOG_TITLES_S_DATABASE,
         ),
-        name=oclcons.Stages.CL_CONNECTION_ALLOW,
+        name=ombcons.Stages.MB_CONNECTION_ALLOW,
     )
     def _customization_enable(self):
         if not self.environment[oenginecons.CoreEnv.ENABLE] or not\
-                self.environment[oclcons.CoreEnv.ENABLE]:
+                self.environment[ombcons.CoreEnv.ENABLE]:
             self._enabled = False
 
     @plugin.event(
         stage=plugin.Stages.STAGE_CUSTOMIZATION,
-        name=oclcons.Stages.DB_CL_CONNECTION_CUSTOMIZATION,
+        name=ombcons.Stages.DB_MB_CONNECTION_CUSTOMIZATION,
         before=(
             oengcommcons.Stages.DB_OWNERS_CONNECTIONS_CUSTOMIZED,
         ),
         after=(
             oengcommcons.Stages.DIALOG_TITLES_S_DATABASE,
-            oclcons.Stages.CL_CONNECTION_ALLOW,
+            ombcons.Stages.MB_CONNECTION_ALLOW,
         ),
         condition=lambda self: self._enabled,
     )
     def _customization(self):
         database.OvirtUtils(
             plugin=self,
-            dbenvkeys=oclcons.Const.CINDERLIB_DB_ENV_KEYS,
+            dbenvkeys=ombcons.Const.MANAGEDBLOCK_DB_ENV_KEYS,
         ).getCredentials(
-            name='Cinderlib',
-            defaultdbenvkeys=oclcons.Const.DEFAULT_CINDERLIB_DB_ENV_KEYS,
+            name='Managed Block',
+            defaultdbenvkeys=ombcons.Const.DEFAULT_MANAGEDBLOCK_DB_ENV_KEYS,
             show_create_msg=True,
         )
 
     @plugin.event(
         stage=plugin.Stages.STAGE_MISC,
-        name=oclcons.Stages.DB_CL_SCHEMA,
+        name=ombcons.Stages.DB_MB_SCHEMA,
         after=(
-            oclcons.Stages.DB_CL_CREDENTIALS_AVAILABLE_LATE,
+            ombcons.Stages.DB_MB_CREDENTIALS_AVAILABLE_LATE,
         ),
         condition=lambda self: self.environment[oenginecons.CoreEnv.ENABLE],
     )
-    def _misc_cinderlib_schema(self):
+    def _misc_managedblock_schema(self):
         # Do nothing for now, needed for scheduling only.
         pass
 
     @plugin.event(
         stage=plugin.Stages.STAGE_MISC,
-        name=oclcons.Stages.DB_CL_CONNECTION_AVAILABLE,
+        name=ombcons.Stages.DB_MB_CONNECTION_AVAILABLE,
         after=(
-            oclcons.Stages.DB_CL_SCHEMA,
+            ombcons.Stages.DB_MB_SCHEMA,
         ),
         condition=lambda self: self._enabled,
     )
     def _connection(self):
         self.environment[
-            oclcons.CinderlibDBEnv.STATEMENT
+            ombcons.ManagedBlockDBEnv.STATEMENT
         ] = database.Statement(
-            dbenvkeys=oclcons.Const.CINDERLIB_DB_ENV_KEYS,
+            dbenvkeys=ombcons.Const.MANAGEDBLOCK_DB_ENV_KEYS,
             environment=self.environment,
         )
         # must be here as we do not have database at validation
         self.environment[
-            oclcons.CinderlibDBEnv.CONNECTION
-        ] = self.environment[oclcons.CinderlibDBEnv.STATEMENT].connect()
+            ombcons.ManagedBlockDBEnv.CONNECTION
+        ] = self.environment[ombcons.ManagedBlockDBEnv.STATEMENT].connect()
 
 
 # vim: expandtab tabstop=4 shiftwidth=4

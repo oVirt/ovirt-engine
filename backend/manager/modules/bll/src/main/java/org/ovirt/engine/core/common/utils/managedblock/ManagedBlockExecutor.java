@@ -24,22 +24,22 @@ public class ManagedBlockExecutor {
     private static final Logger log = LoggerFactory.getLogger(ManagedBlockExecutor.class);
     private static final String CINDERLIB_PREFIX = "./cinderlib-client.py";
     private static final String MANAGEDBLOCK_DIR = "/managedblock";
-    private static final String CINDERLIB_DB_USER = "CINDERLIB_DB_USER";
-    private static final String CINDERLIB_DB_PASSWORD = "CINDERLIB_DB_PASSWORD";
-    private static final String CINDERLIB_DB_HOST = "CINDERLIB_DB_HOST";
-    private static final String CINDERLIB_DB_PORT = "CINDERLIB_DB_PORT";
-    private static final String CINDERLIB_DB_DATABASE = "CINDERLIB_DB_DATABASE";
+    private static final String MANAGEDBLOCK_DB_USER = "MANAGEDBLOCK_DB_USER";
+    private static final String MANAGEDBLOCK_DB_PASSWORD = "MANAGEDBLOCK_DB_PASSWORD";
+    private static final String MANAGEDBLOCK_DB_HOST = "MANAGEDBLOCK_DB_HOST";
+    private static final String MANAGEDBLOCK_DB_PORT = "MANAGEDBLOCK_DB_PORT";
+    private static final String MANAGEDBLOCK_DB_DATABASE = "MANAGEDBLOCK_DB_DATABASE";
     private final String urlTemplate = "postgresql+psycopg2://%s:%s@%s:%s/%s";
     private String url;
     private File managedBlockDir;
 
     @PostConstruct
     private void init() {
-        url = String.format(urlTemplate, config.getProperty(CINDERLIB_DB_USER),
-                config.getProperty(CINDERLIB_DB_PASSWORD),
-                config.getProperty(CINDERLIB_DB_HOST),
-                config.getProperty(CINDERLIB_DB_PORT),
-                config.getProperty(CINDERLIB_DB_DATABASE));
+        url = String.format(urlTemplate, config.getProperty(MANAGEDBLOCK_DB_USER),
+                config.getProperty(MANAGEDBLOCK_DB_PASSWORD),
+                config.getProperty(MANAGEDBLOCK_DB_HOST),
+                config.getProperty(MANAGEDBLOCK_DB_PORT),
+                config.getProperty(MANAGEDBLOCK_DB_DATABASE));
         managedBlockDir = Paths.get(config.getUsrDir().getAbsolutePath() + MANAGEDBLOCK_DIR).toFile();
     }
 

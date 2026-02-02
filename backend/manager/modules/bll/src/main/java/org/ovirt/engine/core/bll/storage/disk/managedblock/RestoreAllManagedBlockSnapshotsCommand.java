@@ -106,7 +106,7 @@ public class RestoreAllManagedBlockSnapshotsCommand<T extends RestoreAllManagedB
     }
 
     private boolean handleCommit() {
-        // Snapshots to remove from the cinderlib DB
+        // Snapshots to remove from the Managed Block Storage backend
         List<DiskImage> imagesToRemove = new ArrayList<>();
 
         // Snapshots to remove from engine DB

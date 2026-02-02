@@ -7,17 +7,19 @@
 #
 
 
-"""cinderlib core plugin."""
+"""ovirt-host-setup managed block database plugin."""
 
 
 from otopi import util
 
-from . import misc
+from . import connection
+from . import pgpass
 
 
 @util.export
 def createPlugins(context):
-    misc.Plugin(context=context)
+    connection.Plugin(context=context)
+    pgpass.Plugin(context=context)
 
 
 # vim: expandtab tabstop=4 shiftwidth=4
