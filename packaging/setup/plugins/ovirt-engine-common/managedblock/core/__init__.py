@@ -7,7 +7,7 @@
 #
 
 
-"""ovirt-engine-setup cinderlib core plugin."""
+"""managed block core plugin."""
 
 
 from otopi import util

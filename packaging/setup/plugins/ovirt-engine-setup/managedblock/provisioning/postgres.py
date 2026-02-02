@@ -7,7 +7,7 @@
 #
 
 
-"""Local cinderlib Postgres plugin."""
+"""Local managed block Postgres plugin."""
 
 
 import gettext
@@ -16,10 +16,10 @@ from otopi import plugin
 from otopi import util
 
 from ovirt_engine_setup import constants as osetupcons
-from ovirt_engine_setup.cinderlib import constants as oclcons
 from ovirt_engine_setup.engine import constants as oenginecons
 from ovirt_engine_setup.engine_common import constants as oengcommcons
 from ovirt_engine_setup.engine_common import postgres
+from ovirt_engine_setup.managedblock import constants as ombcons
 
 from ovirt_setup_lib import dialog
 
@@ -30,7 +30,7 @@ def _(m):
 
 @util.export
 class Plugin(plugin.PluginBase):
-    """Local cinderlib Postgres plugin."""
+    """Local managed block Postgres plugin."""
 
     def __init__(self, context):
         super(Plugin, self).__init__(context=context)
@@ -38,8 +38,8 @@ class Plugin(plugin.PluginBase):
         self._renamedDBResources = False
         self._provisioning = postgres.Provisioning(
             plugin=self,
-            dbenvkeys=oclcons.Const.CINDERLIB_DB_ENV_KEYS,
-            defaults=oclcons.Const.DEFAULT_CINDERLIB_DB_ENV_KEYS,
+            dbenvkeys=ombcons.Const.MANAGEDBLOCK_DB_ENV_KEYS,
+            defaults=ombcons.Const.DEFAULT_MANAGEDBLOCK_DB_ENV_KEYS,
         )
 
     @plugin.event(
@@ -47,21 +47,21 @@ class Plugin(plugin.PluginBase):
     )
     def _init(self):
         self.environment.setdefault(
-            oclcons.ProvisioningEnv.POSTGRES_PROVISIONING_ENABLED,
+            ombcons.ProvisioningEnv.POSTGRES_PROVISIONING_ENABLED,
             None
         )
 
     @plugin.event(
         stage=plugin.Stages.STAGE_SETUP,
         after=(
-            oclcons.Stages.DB_CL_CONNECTION_SETUP,
+            ombcons.Stages.DB_MB_CONNECTION_SETUP,
         ),
         condition=lambda self: (
             not self.environment[
                 osetupcons.CoreEnv.DEVELOPER_MODE
             ] and
             self.environment[
-                oclcons.CinderlibDBEnv.NEW_DATABASE
+                ombcons.ManagedBlockDBEnv.NEW_DATABASE
             ]
         ),
     )
@@ -74,7 +74,7 @@ class Plugin(plugin.PluginBase):
         stage=plugin.Stages.STAGE_CUSTOMIZATION,
         before=(
             oengcommcons.Stages.DIALOG_TITLES_E_DATABASE,
-            oclcons.Stages.DB_CL_CONNECTION_CUSTOMIZATION,
+            ombcons.Stages.DB_MB_CONNECTION_CUSTOMIZATION,
         ),
         after=(
             oengcommcons.Stages.DIALOG_TITLES_S_DATABASE,
@@ -82,7 +82,7 @@ class Plugin(plugin.PluginBase):
         condition=lambda self: not self.environment[
             oenginecons.CoreEnv.ENABLE
         ],
-        name=oclcons.Stages.POSTGRES_CL_PROVISIONING_ALLOWED,
+        name=ombcons.Stages.POSTGRES_MB_PROVISIONING_ALLOWED,
     )
     def _customization_enable(self):
         self._enabled = False
@@ -91,19 +91,19 @@ class Plugin(plugin.PluginBase):
         stage=plugin.Stages.STAGE_CUSTOMIZATION,
         before=(
             oengcommcons.Stages.DIALOG_TITLES_E_DATABASE,
-            oclcons.Stages.DB_CL_CONNECTION_CUSTOMIZATION,
+            ombcons.Stages.DB_MB_CONNECTION_CUSTOMIZATION,
         ),
         after=(
-            oclcons.Stages.POSTGRES_CL_PROVISIONING_ALLOWED,
+            ombcons.Stages.POSTGRES_MB_PROVISIONING_ALLOWED,
         ),
         condition=lambda self: self._enabled,
     )
     def _customization(self):
         enabled = self.environment[
-            oclcons.ProvisioningEnv.POSTGRES_PROVISIONING_ENABLED
+            ombcons.ProvisioningEnv.POSTGRES_PROVISIONING_ENABLED
         ]
 
-        if not self.environment[oclcons.CoreEnv.ENABLE]:
+        if not self.environment[ombcons.CoreEnv.ENABLE]:
             enabled = False
 
         if enabled is None:
@@ -111,7 +111,7 @@ class Plugin(plugin.PluginBase):
                 dialog=self.dialog,
                 name='OVESETUP_PROVISIONING_POSTGRES_LOCATION',
                 note=_(
-                    'Where is the ovirt cinderlib database located? '
+                    'Where is the ovirt managed block database located? '
                     '(@VALUES@) [@DEFAULT@]: '
                 ),
                 prompt=True,
@@ -120,26 +120,26 @@ class Plugin(plugin.PluginBase):
                 default=True,
             )
             if local:
-                self.environment[oclcons.CinderlibDBEnv.HOST] = 'localhost'
+                self.environment[ombcons.ManagedBlockDBEnv.HOST] = 'localhost'
                 self.environment[
-                    oclcons.CinderlibDBEnv.PORT
-                ] = oclcons.Defaults.DEFAULT_CINDERLIB_DB_PORT
+                    ombcons.ManagedBlockDBEnv.PORT
+                ] = ombcons.Defaults.DEFAULT_MANAGEDBLOCK_DB_PORT
 
                 # TODO:
                 # consider creating database and role
                 # at engine_@RANDOM@
                 self.environment[
-                    oclcons.ProvisioningEnv.
+                    ombcons.ProvisioningEnv.
                     POSTGRES_PROVISIONING_ENABLED
                 ] = dialog.queryBoolean(
                     dialog=self.dialog,
-                    name='OVESETUP_PROVISIONING__CL_POSTGRES_ENABLED',
+                    name='OVESETUP_PROVISIONING__MB_POSTGRES_ENABLED',
                     note=_(
                         'Setup can configure the local postgresql server '
-                        'automatically for the CinderLib to run. This may '
+                        'automatically for the Managed Block to run. This may '
                         'conflict with existing applications.\n'
                         'Would you like Setup to automatically configure '
-                        'postgresql and create CinderLib database, '
+                        'postgresql and create Managed Block database, '
                         'or prefer to perform that '
                         'manually? (@VALUES@) [@DEFAULT@]: '
                     ),
@@ -151,12 +151,12 @@ class Plugin(plugin.PluginBase):
 
             else:
                 self.environment[
-                    oclcons.ProvisioningEnv.
+                    ombcons.ProvisioningEnv.
                     POSTGRES_PROVISIONING_ENABLED
                 ] = False
 
         self._enabled = self.environment[
-            oclcons.ProvisioningEnv.POSTGRES_PROVISIONING_ENABLED
+            ombcons.ProvisioningEnv.POSTGRES_PROVISIONING_ENABLED
         ]
         if self._enabled:
             self._provisioning.applyEnvironment()
@@ -166,7 +166,7 @@ class Plugin(plugin.PluginBase):
         priority=plugin.Stages.PRIORITY_LAST,
         condition=lambda self: (
             self.environment[
-                oclcons.CinderlibDBEnv.HOST
+                ombcons.ManagedBlockDBEnv.HOST
             ] == 'localhost'
         ),
     )
@@ -188,8 +188,8 @@ class Plugin(plugin.PluginBase):
     @plugin.event(
         stage=plugin.Stages.STAGE_MISC,
         before=(
-            oclcons.Stages.DB_CL_CREDENTIALS_AVAILABLE_LATE,
-            oclcons.Stages.DB_CL_SCHEMA,
+            ombcons.Stages.DB_MB_CREDENTIALS_AVAILABLE_LATE,
+            ombcons.Stages.DB_MB_SCHEMA,
         ),
         after=(
             osetupcons.Stages.SYSTEM_SYSCTL_CONFIG_AVAILABLE,
@@ -212,15 +212,15 @@ class Plugin(plugin.PluginBase):
     def _closeup(self):
         self.dialog.note(
             text=_(
-                'ovirt cinderlib database resources:\n'
+                'ovirt managed block database resources:\n'
                 '    Database name:      {database}\n'
                 '    Database user name: {user}\n'
             ).format(
                 database=self.environment[
-                    oclcons.CinderlibDBEnv.DATABASE
+                    ombcons.ManagedBlockDBEnv.DATABASE
                 ],
                 user=self.environment[
-                    oclcons.CinderlibDBEnv.USER
+                    ombcons.ManagedBlockDBEnv.USER
                 ],
             )
         )
