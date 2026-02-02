@@ -14,7 +14,7 @@ from otopi import plugin
 from otopi import util
 
 from ovirt_engine_setup import constants as osetupcons
-from ovirt_engine_setup.cinderlib import constants as oclcons
+from ovirt_engine_setup.managedblock import constants as ombcons
 
 
 @util.export
@@ -34,7 +34,7 @@ class Plugin(plugin.PluginBase):
         self.environment[
             osetupcons.CoreEnv.SETUP_ATTRS_MODULES
         ].append(
-            oclcons,
+            ombcons,
         )
 
 

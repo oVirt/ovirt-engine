@@ -7,7 +7,7 @@
 #
 
 
-"""cinderlib database plugins."""
+"""managed block database plugins."""
 
 
 from otopi import util

@@ -447,7 +447,7 @@ Group:		%{ovirt_product_group}
 Requires:	%{name} >= 4.4.0
 Requires:	%{name}-setup-plugin-ovirt-engine-common = %{version}-%{release}
 Requires:	%{name}-setup-plugin-vmconsole-proxy-helper = %{version}-%{release}
-Requires:	%{name}-setup-plugin-cinderlib = %{version}-%{release}
+Requires:	%{name}-setup-plugin-managedblock = %{version}-%{release}
 Requires:	%{name}-setup-plugin-imageio = %{version}-%{release}
 Requires:	%{name}-dwh-setup >= 4.4.1.2
 Requires:	ovirt-engine-keycloak-setup
@@ -628,14 +628,15 @@ Requires:	makeself >= 2.2
 %description health-check-bundler
 A utility for creating a bundle script that runs a health check.
 
-%package setup-plugin-cinderlib
-Summary:	Setup and upgrade specific plugins for cinderlib integration database
+%package setup-plugin-managedblock
+Summary:	Setup and upgrade specific plugins for managed block integration database
+Obsoletes:	%{name}-setup-plugin-cinderlib
 Requires:	%{name}-setup-plugin-ovirt-engine = %{version}-%{release}
 Requires:	%{name}-setup-plugin-ovirt-engine-common = %{version}-%{release}
 Requires:	openssh
 
-%description setup-plugin-cinderlib
-Setup and upgrade specific plugins for cinderlib integration database
+%description setup-plugin-managedblock
+Setup and upgrade specific plugins for managed block integration database
 
 %package setup-plugin-imageio
 Summary:	Setup imageio service.
@@ -1092,10 +1093,10 @@ fi
 %{engine_data}/setup/ovirt_engine_setup/vmconsole_proxy_helper/
 %{engine_data}/setup/plugins/*/vmconsole_proxy_helper/
 
-%files setup-plugin-cinderlib
+%files setup-plugin-managedblock
 %license LICENSE
-%{engine_data}/setup/ovirt_engine_setup/cinderlib/
-%{engine_data}/setup/plugins/*/cinderlib
+%{engine_data}/setup/ovirt_engine_setup/managedblock/
+%{engine_data}/setup/plugins/*/managedblock
 
 %files setup-plugin-imageio
 %license LICENSE
