@@ -147,8 +147,8 @@ dwh_enabled() {
 	engine_setup_service_enabled "OVESETUP_DWH_CORE/enable"
 }
 
-cinderlib_enabled() {
-	engine_setup_service_enabled "OVESETUP_CL_DB/enable"
+managedblock_enabled() {
+	engine_setup_service_enabled "OVESETUP_MB_DB/enable"
 }
 
 keycloak_enabled() {
@@ -232,6 +232,7 @@ DWHDB_BACKUP_FILE_NAME="dwh_backup.db"
 CINDERLIBDB_BACKUP_FILE_NAME="cinderlib_backup.db"
 GRAFANA_BACKUP_FILE_NAME="grafana.db"
 KEYCLOAKDB_BACKUP_FILE_NAME="keycloak_backup.db"
+MANAGEDBLOCKDB_BACKUP_FILE_NAME="managedblock_backup.db"
 
 PACKAGE_VERSION_FILENAME="version"
 OS_VERSION_FILENAME="os_version"
@@ -270,9 +271,10 @@ USAGE:
     files                           product files only
     db                              Engine database only
     dwhdb                           Data Warehouse database only
-    cinderlibdb                     Cinderlib database only
+    cinderlibdb                     Cinderlib database only (restore only)
     keycloakdb                      Keycloak database only
     grafanadb                       Grafana database only
+    managedblockdb                  Managed Block database only
     The option --scope can be passed more than once, with different scopes.
  --file=FILE                        file to use during backup or restore.
                                     If mode is backup,  default to $ENGINE_BACKUP_DEFAULT_DIR/ovirt-engine-backup-YmdHMS.backup
@@ -346,6 +348,23 @@ USAGE:
  --cinderlib-db-name=name                 set Cinderlib database name
  --cinderlib-db-secured                   set a secured connection for the Cinderlib database
  --cinderlib-db-secured-validation        validate host for Cinderlib database
+ --managedblock-db-compressor=COMPRESSOR     compress the Managed Block database, same options as --archive-compressor
+ --managedblock-db-dump-format=FORMAT        Managed Block database dump format, same options as --db-dump-format
+ --managedblock-db-restore-jobs=JOBS         for Managed Block database, same as --db-restore-jobs
+ --provision-managedblock-db                 create a PostgreSQL database for Managed Block on restore
+ --change-managedblock-db-credentials        activate the following options, to restore
+                                    the Managed Block database using credentials other
+                                    than those stored in the backup itself.
+                                    If used, existing credentials are ignored.
+ --managedblock-db-host=host              set Managed Block database host
+ --managedblock-db-port=port              set Managed Block database port
+ --managedblock-db-user=user              set Managed Block database user
+ --managedblock-db-passfile=file          set Managed Block database password - read from file
+ --managedblock-db-password=pass          set Managed Block database password
+ --managedblock-db-password               set Managed Block database password - interactively
+ --managedblock-db-name=name              set Managed Block database name
+ --managedblock-db-secured                set a secured connection for the Managed Block database
+ --managedblock-db-secured-validation     validate host for Managed Block database
 
  --keycloak-db-compressor=COMPRESSOR     compress the Keycloak database, same options as --archive-compressor
  --keycloak-db-dump-format=FORMAT        Keycloak database dump format, same options as --db-dump-format
@@ -418,6 +437,8 @@ USAGE:
      Database password as if provided by --dwh-db-password=pass option.
  OVIRT_CINDERLIB_DATABASE_PASSWORD
      Database password as if provided by --cinderlib-db-password=pass option.
+ OVIRT_MANAGEDBLOCK_DATABASE_PASSWORD
+     Database password as if provided by --managedblock-db-password=pass option.
  OVIRT_KEYCLOAK_DATABASE_PASSWORD
      Database password as if provided by --keycloak-db-password=pass option.
 
@@ -461,6 +482,7 @@ SCOPE_FILES=
 SCOPE_ENGINE_DB=
 SCOPE_DWH_DB=
 SCOPE_CINDERLIB_DB=
+SCOPE_MANAGEDBLOCK_DB=
 SCOPE_KEYCLOAK_DB=
 SCOPE_GRAFANA_DB=
 KEEP_TEMPORARY_DATA=
@@ -510,6 +532,20 @@ MY_CINDERLIB_DB_DATABASE=
 MY_CINDERLIB_DB_SECURED=False
 MY_CINDERLIB_DB_SECURED_VALIDATION=False
 MY_CINDERLIB_DB_CREDS=
+MANAGEDBLOCK_DB_DUMP_COMPRESSOR=
+MANAGEDBLOCK_DB_DUMP_FORMAT=custom
+MANAGEDBLOCK_DB_RESTORE_JOBS=2
+PROVISION_MANAGEDBLOCK_DB=
+CHANGE_MANAGEDBLOCK_DB_CREDENTIALS=
+MY_MANAGEDBLOCK_DB_HOST=
+MY_MANAGEDBLOCK_DB_PORT="${POSTGRESQL_DEFAULT_PORT}"
+MY_MANAGEDBLOCK_DB_USER=
+ORIG_MANAGEDBLOCK_DB_USER=
+MY_MANAGEDBLOCK_DB_PASSWORD="${OVIRT_MANAGEDBLOCK_DATABASE_PASSWORD}"
+MY_MANAGEDBLOCK_DB_DATABASE=
+MY_MANAGEDBLOCK_DB_SECURED=False
+MY_MANAGEDBLOCK_DB_SECURED_VALIDATION=False
+MY_MANAGEDBLOCK_DB_CREDS=
 KEYCLOAK_DB_DUMP_COMPRESSOR=
 KEYCLOAK_DB_DUMP_FORMAT=custom
 KEYCLOAK_DB_RESTORE_JOBS=2
@@ -605,6 +641,7 @@ set_scope() {
 			SCOPE_ENGINE_DB=1
 			SCOPE_DWH_DB=1
 			SCOPE_CINDERLIB_DB=1
+			SCOPE_MANAGEDBLOCK_DB=1
 			SCOPE_KEYCLOAK_DB=1
 			SCOPE_GRAFANA_DB=1
 			;;
@@ -619,6 +656,9 @@ set_scope() {
 			;;
 		cinderlibdb)
 			SCOPE_CINDERLIB_DB=1
+			;;
+		managedblockdb)
+			SCOPE_MANAGEDBLOCK_DB=1
 			;;
 		keycloakdb)
 			SCOPE_KEYCLOAK_DB=1
@@ -824,6 +864,56 @@ parseArgs() {
 			--cinderlib-db-sec-validation)
 				MY_CINDERLIB_DB_SECURED_VALIDATION="True"
 			;;
+			--managedblock-db-compressor=*)
+				MANAGEDBLOCK_DB_DUMP_COMPRESSOR=$(compressor_to_command "${v}")
+				[ $? != 0 ] && die "failed parsing compressor"
+			;;
+			--managedblock-db-dump-format=*)
+				MANAGEDBLOCK_DB_DUMP_FORMAT=$(parse_dump_format "${v}")
+				[ $? != 0 ] && die "failed parsing dump format"
+			;;
+			--managedblock-db-restore-jobs=*)
+				MANAGEDBLOCK_DB_RESTORE_JOBS=$(parse_jobs "${v}")
+				[ $? != 0 ] && die "failed parsing jobs"
+			;;
+			--provision-managedblock-db)
+				PROVISION_MANAGEDBLOCK_DB=1
+				PROVISIONING=1
+			;;
+			--change-managedblock-db-credentials)
+				CHANGE_MANAGEDBLOCK_DB_CREDENTIALS=1
+			;;
+			--managedblock-db-host=*)
+				MY_MANAGEDBLOCK_DB_HOST="${v}"
+			;;
+			--managedblock-db-port=*)
+				MY_MANAGEDBLOCK_DB_PORT="${v}"
+			;;
+			--managedblock-db-user=*)
+				MY_MANAGEDBLOCK_DB_USER="${v}"
+				ORIG_MANAGEDBLOCK_DB_USER="${MANAGEDBLOCK_DB_USER}"
+			;;
+			--managedblock-db-passfile=*)
+				DB_PASSFILE="${v}"
+				[ -r "${DB_PASSFILE}" ] || \
+					die "Can not read password file ${DB_PASSFILE}"
+				read -r MY_MANAGEDBLOCK_DB_PASSWORD < "${DB_PASSFILE}"
+			;;
+			--managedblock-db-password=*)
+				MY_MANAGEDBLOCK_DB_PASSWORD="${v}"
+			;;
+			--managedblock-db-password)
+				MY_MANAGEDBLOCK_DB_PASSWORD="$(readdbpassword MANAGEDBLOCK)" || exit 1
+			;;
+			--managedblock-db-name=*)
+				MY_MANAGEDBLOCK_DB_DATABASE="${v}"
+			;;
+			--managedblock-db-secured)
+				MY_MANAGEDBLOCK_DB_SECURED="True"
+			;;
+			--managedblock-db-sec-validation)
+				MY_MANAGEDBLOCK_DB_SECURED_VALIDATION="True"
+			;;
 			--keycloak-db-compressor=*)
 				KEYCLOAK_DB_DUMP_COMPRESSOR=$(compressor_to_command "${v}")
 				[ $? != 0 ] && die "failed parsing compressor"
@@ -1016,6 +1106,22 @@ verifyArgs() {
 			-o -n "${MY_CINDERLIB_DB_DATABASE}" \
 		\) \
 	] && die "Please use --change-cinderlib-db-credentials to change cinderlib db credentials"
+	if [ -n "${CHANGE_MANAGEDBLOCK_DB_CREDENTIALS}" ]; then
+		[ -n "${PROVISION_MANAGEDBLOCK_DB}" -o -n "${PROVISION_ALL_DBS}" ] && die "Cannot change credentials if provisioning a database"
+		[ -n "${MY_MANAGEDBLOCK_DB_HOST}" ] || die "--managedblock-db-host is missing"
+		[ -n "${MY_MANAGEDBLOCK_DB_USER}" ] || die "--managedblock-db-user is missing"
+		[ -n "${MY_MANAGEDBLOCK_DB_PASSWORD}" ] || \
+			die "--managedblock-db-passfile or --managedblock-db-password is missing"
+		[ -n "${MY_MANAGEDBLOCK_DB_DATABASE}" ] || die "--managedblock-db-name is missing"
+	fi
+	[ -z "${CHANGE_MANAGEDBLOCK_DB_CREDENTIALS}" -a \
+		\( \
+			-n "${MY_MANAGEDBLOCK_DB_HOST}" \
+			-o -n "${MY_MANAGEDBLOCK_DB_USER}" \
+			-o -n "${MY_MANAGEDBLOCK_DB_PASSWORD}" \
+			-o -n "${MY_MANAGEDBLOCK_DB_DATABASE}" \
+		\) \
+	] && die "Please use --change-managedblock-db-credentials to change managedblock db credentials"
 
 	if [ -n "${CHANGE_KEYCLOAK_DB_CREDENTIALS}" ]; then
 		[ -n "${PROVISION_KEYCLOAK_DB}" -o -n "${PROVISION_ALL_DBS}" ] && die "Cannot change credentials if provisioning a database"
@@ -1037,6 +1143,7 @@ verifyArgs() {
 	if [ "${DB_DUMP_FORMAT}" = "plain" \
 		-o "${DWH_DB_DUMP_FORMAT}" = "plain" \
 		-o "${CINDERLIB_DB_DUMP_FORMAT}" = "plain" \
+		-o "${MANAGEDBLOCK_DB_DUMP_FORMAT}" = "plain" \
 		-o "${KEYCLOAK_DB_DUMP_FORMAT}" = "plain" \
 	]; then
 		output "#####################################################################################################"
@@ -1059,6 +1166,7 @@ verifyArgsConfig() {
 				"${DB_DUMP_FORMAT}" = "custom" \
 				-o "${DWH_DB_DUMP_FORMAT}" = "custom" \
 				-o "${CINDERLIB_DB_DUMP_FORMAT}" = "custom" \
+				-o "${MANAGEDBLOCK_DB_DUMP_FORMAT}" = "custom" \
 				-o "${KEYCLOAK_DB_DUMP_FORMAT}" = "custom" \
 			\) \
 		] && die "Please pass one of --restore-permissions or --no-restore-permissions when restoring a backup with a custom dump format"
@@ -1111,10 +1219,10 @@ dobackup() {
 		log "Backing up dwh database to ${tardir}/db/${DWHDB_BACKUP_FILE_NAME}"
 		backupDB "${tardir}/db/${DWHDB_BACKUP_FILE_NAME}" "${DWH_DB_USER}" "${DWH_DB_HOST}" "${DWH_DB_PORT}" "${DWH_DB_DATABASE}" "${DWH_DB_DUMP_COMPRESSOR}" "${DWH_DB_DUMP_FORMAT}"
 	fi
-	if cinderlib_enabled && [ -n "${SCOPE_CINDERLIB_DB}" -a -n "${CINDERLIB_DB_USER}" ]; then
-		output "- CINDERLIB database '"${CINDERLIB_DB_DATABASE}"'"
-		log "Backing up cinderlib database to ${tardir}/db/${CINDERLIBDB_BACKUP_FILE_NAME}"
-		backupDB "${tardir}/db/${CINDERLIBDB_BACKUP_FILE_NAME}" "${CINDERLIB_DB_USER}" "${CINDERLIB_DB_HOST}" "${CINDERLIB_DB_PORT}" "${CINDERLIB_DB_DATABASE}" "${CINDERLIB_DB_DUMP_COMPRESSOR}" "${CINDERLIB_DB_DUMP_FORMAT}"
+	if managedblock_enabled && [ -n "${SCOPE_MANAGEDBLOCK_DB}" -a -n "${MANAGEDBLOCK_DB_USER}" ]; then
+		output "- MANAGEDBLOCK database '"${MANAGEDBLOCK_DB_DATABASE}"'"
+		log "Backing up managedblock database to ${tardir}/db/${MANAGEDBLOCKDB_BACKUP_FILE_NAME}"
+		backupDB "${tardir}/db/${MANAGEDBLOCKDB_BACKUP_FILE_NAME}" "${MANAGEDBLOCK_DB_USER}" "${MANAGEDBLOCK_DB_HOST}" "${MANAGEDBLOCK_DB_PORT}" "${MANAGEDBLOCK_DB_DATABASE}" "${MANAGEDBLOCK_DB_DUMP_COMPRESSOR}" "${MANAGEDBLOCK_DB_DUMP_FORMAT}"
 	fi
 	if keycloak_enabled && [ -n "${SCOPE_KEYCLOAK_DB}" -a -n "${KEYCLOAK_DB_USER}" ]; then
 		output "- KEYCLOAK database '"${KEYCLOAK_DB_DATABASE}"'"
@@ -1282,6 +1390,12 @@ dorestore() {
 		generatePgPass
 		verifyConnection "${CINDERLIB_DB_USER}" "${CINDERLIB_DB_HOST}" "${CINDERLIB_DB_PORT}" "${CINDERLIB_DB_DATABASE}"
 	fi
+	if [ -n "${CHANGE_MANAGEDBLOCK_DB_CREDENTIALS}" ]; then
+		output "- Setting credentials for Managed Block database '${MY_MANAGEDBLOCK_DB_DATABASE}'"
+		setMyManagedBlockDBCredentials
+		generatePgPass
+		verifyConnection "${MANAGEDBLOCK_DB_USER}" "${MANAGEDBLOCK_DB_HOST}" "${MANAGEDBLOCK_DB_PORT}" "${MANAGEDBLOCK_DB_DATABASE}"
+	fi
 	if [ -n "${CHANGE_KEYCLOAK_DB_CREDENTIALS}" ]; then
 		output "- Setting credentials for Keycloak database '${MY_KEYCLOAK_DB_DATABASE}'"
 		setMyKeycloakDBCredentials
@@ -1305,18 +1419,24 @@ dorestore() {
 	[ -s "${TEMP_FOLDER}/db/${DB_BACKUP_FILE_NAME}" ] || SCOPE_ENGINE_DB=
 	[ -s "${TEMP_FOLDER}/db/${DWHDB_BACKUP_FILE_NAME}" ] || SCOPE_DWH_DB=
 	[ -s "${TEMP_FOLDER}/db/${CINDERLIBDB_BACKUP_FILE_NAME}" ] || SCOPE_CINDERLIB_DB=
+	[ -s "${TEMP_FOLDER}/db/${MANAGEDBLOCKDB_BACKUP_FILE_NAME}" ] || SCOPE_MANAGEDBLOCK_DB=
 	[ -s "${TEMP_FOLDER}/db/${KEYCLOAKDB_BACKUP_FILE_NAME}" ] || SCOPE_KEYCLOAK_DB=
 	[ -s "${TEMP_FOLDER}/db/${GRAFANA_BACKUP_FILE_NAME}" ] || SCOPE_GRAFANA_DB=
 
 	log 'Scope after checking backup content:'
-	for v in SCOPE_FILES SCOPE_ENGINE_DB SCOPE_DWH_DB SCOPE_CINDERLIB_DB SCOPE_KEYCLOAK_DB SCOPE_GRAFANA_DB; do
+	for v in SCOPE_FILES SCOPE_ENGINE_DB SCOPE_DWH_DB SCOPE_CINDERLIB_DB SCOPE_MANAGEDBLOCK_DB SCOPE_KEYCLOAK_DB SCOPE_GRAFANA_DB; do
 		log "$v:${!v}"
 	done
+
+	if [ -n "${SCOPE_CINDERLIB_DB}" -a -n "${SCOPE_MANAGEDBLOCK_DB}" ]; then
+		output "Warning: both Cinderlib and Managed Block dumps found in the backup file"
+	fi
 
 	if [ -n "${PROVISION_ALL_DBS}" ]; then
 		[ -n "${SCOPE_ENGINE_DB}" ] && PROVISION_DB=1
 		[ -n "${SCOPE_DWH_DB}" ] && PROVISION_DWH_DB=1
 		[ -n "${SCOPE_CINDERLIB_DB}" ] && PROVISION_CINDERLIB_DB=1
+		[ -n "${SCOPE_MANAGEDBLOCK_DB}" ] && PROVISION_MANAGEDBLOCK_DB=1
 		[ -n "${SCOPE_KEYCLOAK_DB}" ] && PROVISION_KEYCLOAK_DB=1
 	fi
 
@@ -1337,14 +1457,17 @@ dorestore() {
 		-z "${CHANGE_DWH_DB_CREDENTIALS}" -a \
 		-z "${CHANGE_KEYCLOAK_DB_CREDENTIALS}" -a \
 		-z "${CHANGE_CINDERLIB_DB_CREDENTIALS}" -a \
+		-z "${CHANGE_MANAGEDBLOCK_DB_CREDENTIALS}" -a \
 		"${ENGINE_DB_HOST}" == "localhost" -a \
 		"${DWH_DB_HOST}" == "localhost" -a \
 		"${KEYCLOAK_DB_HOST}" == "localhost" -a \
-		"${CINDERLIB_DB_HOST}" == "localhost" \
+		"${CINDERLIB_DB_HOST}" == "localhost" -a \
+		"${MANAGEDBLOCK_DB_HOST}" == "localhost" \
 	] && \
 		! canConnectToDB "${ENGINE_DB_USER}" "${ENGINE_DB_HOST}" "${ENGINE_DB_PORT}" "${ENGINE_DB_DATABASE}" && \
 		! canConnectToDB "${DWH_DB_USER}" "${DWH_DB_HOST}" "${DWH_DB_PORT}" "${DWH_DB_DATABASE}" && \
-		! canConnectToDB "${CINDERLIB_DB_USER}" "${CINDERLIB_DB_HOST}" "${CINDERLIB_DB_PORT}" "${CINDERLIB_DB_DATABASE}" \
+		! canConnectToDB "${CINDERLIB_DB_USER}" "${CINDERLIB_DB_HOST}" "${CINDERLIB_DB_PORT}" "${CINDERLIB_DB_DATABASE}" && \
+		! canConnectToDB "${MANAGEDBLOCK_DB_USER}" "${MANAGEDBLOCK_DB_HOST}" "${MANAGEDBLOCK_DB_PORT}" "${MANAGEDBLOCK_DB_DATABASE}" && \
 		! canConnectToDB "${KEYCLOAK_DB_USER}" "${KEYCLOAK_DB_HOST}" "${KEYCLOAK_DB_PORT}" "${KEYCLOAK_DB_DATABASE}" \
 	; then
 		PROVISIONING=1
@@ -1352,6 +1475,7 @@ dorestore() {
 		PROVISION_DB=1
 		PROVISION_DWH_DB=1
 		PROVISION_CINDERLIB_DB=1
+		PROVISION_MANAGEDBLOCK_DB=1
 		PROVISION_KEYCLOAK_DB=1
 		[ -z "${RESTORE_PERMISSIONS}" ] && RESTORE_PERMISSIONS="1"
 	fi
@@ -1369,6 +1493,9 @@ dorestore() {
 		if [ -n "${PROVISION_CINDERLIB_DB}" -a -n "${SCOPE_CINDERLIB_DB}" ]; then
 			provisionDB "${CINDERLIB_DB_USER}" "${CINDERLIB_DB_HOST}" "${CINDERLIB_DB_PORT}" "${CINDERLIB_DB_DATABASE}" "${CINDERLIB_DB_PASSWORD}" "${CINDERLIB_DB_SECURED}" "${CINDERLIB_DB_SECURED_VALIDATION}" "${TEMP_FOLDER}/db/${CINDERLIBDB_BACKUP_FILE_NAME}" "${CINDERLIB_DB_DUMP_COMPRESSOR}" "${CINDERLIB_DB_DUMP_FORMAT}"
 		fi
+		if [ -n "${PROVISION_MANAGEDBLOCK_DB}" -a -n "${SCOPE_MANAGEDBLOCK_DB}" ]; then
+			provisionDB "${MANAGEDBLOCK_DB_USER}" "${MANAGEDBLOCK_DB_HOST}" "${MANAGEDBLOCK_DB_PORT}" "${MANAGEDBLOCK_DB_DATABASE}" "${MANAGEDBLOCK_DB_PASSWORD}" "${MANAGEDBLOCK_DB_SECURED}" "${MANAGEDBLOCK_DB_SECURED_VALIDATION}" "${TEMP_FOLDER}/db/${MANAGEDBLOCKDB_BACKUP_FILE_NAME}" "${MANAGEDBLOCK_DB_DUMP_COMPRESSOR}" "${MANAGEDBLOCK_DB_DUMP_FORMAT}"
+		fi
 		if [ -n "${PROVISION_KEYCLOAK_DB}" -a -n "${SCOPE_KEYCLOAK_DB}" ]; then
 			provisionDB "${KEYCLOAK_DB_USER}" "${KEYCLOAK_DB_HOST}" "${KEYCLOAK_DB_PORT}" "${KEYCLOAK_DB_DATABASE}" "${KEYCLOAK_DB_PASSWORD}" "${KEYCLOAK_DB_SECURED}" "${KEYCLOAK_DB_SECURED_VALIDATION}" "${TEMP_FOLDER}/db/${KEYCLOAKDB_BACKUP_FILE_NAME}" "${KEYCLOAK_DB_DUMP_COMPRESSOR}" "${KEYCLOAK_DB_DUMP_FORMAT}"
 		fi
@@ -1378,6 +1505,7 @@ dorestore() {
 	[ -n "${CHANGE_DB_CREDENTIALS}" ] && setMyEngineDBCredentials
 	[ -n "${CHANGE_DWH_DB_CREDENTIALS}" ] && setMyDwhDBCredentials
 	[ -n "${CHANGE_CINDERLIB_DB_CREDENTIALS}" ] && setMyCinderlibDBCredentials
+	[ -n "${CHANGE_MANAGEDBLOCK_DB_CREDENTIALS}" ] && setMyManagedBlockDBCredentials
 	[ -n "${CHANGE_KEYCLOAK_DB_CREDENTIALS}" ] && setMyKeycloakDBCredentials
 
 	log "Generating pgpass"
@@ -1386,6 +1514,7 @@ dorestore() {
 	[ -n "${SCOPE_ENGINE_DB}" -a -n "${ENGINE_DB_USER}" ] && verifyConnection "${ENGINE_DB_USER}" "${ENGINE_DB_HOST}" "${ENGINE_DB_PORT}" "${ENGINE_DB_DATABASE}"
 	[ -n "${SCOPE_DWH_DB}" -a -n "${DWH_DB_USER}" ] && verifyConnection "${DWH_DB_USER}" "${DWH_DB_HOST}" "${DWH_DB_PORT}" "${DWH_DB_DATABASE}"
 	[ -n "${SCOPE_CINDERLIB_DB}" -a -n "${CINDERLIB_DB_USER}" ] && verifyConnection "${CINDERLIB_DB_USER}" "${CINDERLIB_DB_HOST}" "${CINDERLIB_DB_PORT}" "${CINDERLIB_DB_DATABASE}"
+	[ -n "${SCOPE_MANAGEDBLOCK_DB}" -a -n "${MANAGEDBLOCK_DB_USER}" ] && verifyConnection "${MANAGEDBLOCK_DB_USER}" "${MANAGEDBLOCK_DB_HOST}" "${MANAGEDBLOCK_DB_PORT}" "${MANAGEDBLOCK_DB_DATABASE}"
 	[ -n "${SCOPE_KEYCLOAK_DB}" -a -n "${KEYCLOAK_DB_USER}" ] && verifyConnection "${KEYCLOAK_DB_USER}" "${KEYCLOAK_DB_HOST}" "${KEYCLOAK_DB_PORT}" "${KEYCLOAK_DB_DATABASE}"
 
 	if [ -n "${SCOPE_ENGINE_DB}" -a -n "${ENGINE_DB_USER}" ]; then
@@ -1424,6 +1553,11 @@ __EOF__
 		log "Restoring Cinderlib database backup at ${TEMP_FOLDER}/db/${CINDERLIBDB_BACKUP_FILE_NAME}"
 		restoreDB "${TEMP_FOLDER}/db/${CINDERLIBDB_BACKUP_FILE_NAME}" "${CINDERLIB_DB_USER}" "${CINDERLIB_DB_HOST}" "${CINDERLIB_DB_PORT}" "${CINDERLIB_DB_DATABASE}" "${ORIG_CINDERLIB_DB_USER}" "${CINDERLIB_DB_DUMP_COMPRESSOR}" "${CINDERLIB_DB_DUMP_FORMAT}" "${CINDERLIB_DB_RESTORE_JOBS}"
 	fi
+	if [ -n "${SCOPE_MANAGEDBLOCK_DB}" -a -n "${MANAGEDBLOCK_DB_USER}" ]; then
+		output "- Managed Block database '"${MANAGEDBLOCK_DB_DATABASE}"'"
+		log "Restoring Managed Block database backup at ${TEMP_FOLDER}/db/${MANAGEDBLOCKDB_BACKUP_FILE_NAME}"
+		restoreDB "${TEMP_FOLDER}/db/${MANAGEDBLOCKDB_BACKUP_FILE_NAME}" "${MANAGEDBLOCK_DB_USER}" "${MANAGEDBLOCK_DB_HOST}" "${MANAGEDBLOCK_DB_PORT}" "${MANAGEDBLOCK_DB_DATABASE}" "${ORIG_MANAGEDBLOCK_DB_USER}" "${MANAGEDBLOCK_DB_DUMP_COMPRESSOR}" "${MANAGEDBLOCK_DB_DUMP_FORMAT}" "${MANAGEDBLOCK_DB_RESTORE_JOBS}"
+	fi
 	if [ -n "${SCOPE_KEYCLOAK_DB}" -a -n "${KEYCLOAK_DB_USER}" ]; then
 		output "- KEYCLOAK database '"${KEYCLOAK_DB_DATABASE}"'"
 		log "Restoring KEYCLOAK database backup at ${TEMP_FOLDER}/db/${KEYCLOAKDB_BACKUP_FILE_NAME}"
@@ -1436,6 +1570,7 @@ __EOF__
 	[ -n "${CHANGE_DB_CREDENTIALS}" ] && changeEngineDBConf
 	[ -n "${DWH_DB_USER}" ] && [ -n "${CHANGE_DWH_DB_CREDENTIALS}" -o -n "${CHANGE_DB_CREDENTIALS}" ] && changeDwhDBConf
 	[ -n "${CINDERLIB_DB_USER}" ] && [ -n "${CHANGE_CINDERLIB_DB_CREDENTIALS}" -o -n "${CHANGE_DB_CREDENTIALS}" ] && changeCinderlibDBConf
+	[ -n "${MANAGEDBLOCK_DB_USER}" ] && [ -n "${CHANGE_MANAGEDBLOCK_DB_CREDENTIALS}" -o -n "${CHANGE_DB_CREDENTIALS}" ] && changeManagedBlockDBConf
 	[ -n "${KEYCLOAK_DB_USER}" ] && [ -n "${CHANGE_KEYCLOAK_DB_CREDENTIALS}" -o -n "${CHANGE_DB_CREDENTIALS}" ] && changeKeycloakDBConf
 	source_d dorestore
 	output "You should now run engine-setup."
@@ -2145,6 +2280,36 @@ __EOF__
 	eval "${MY_CINDERLIB_DB_CREDS}"
 }
 
+setMyManagedBlockDBCredentials() {
+	local options
+
+	[ "${MY_MANAGEDBLOCK_DB_SECURED}" = "True" ] && \
+		options="${options}&ssl=true"
+	[ "${MY_MANAGEDBLOCK_DB_SECURED_VALIDATION}" != "True" ] && \
+		options="${options}&sslfactory=org.postgresql.ssl.NonValidatingFactory"
+
+	[ -n "${options}" ] && options="${options#&}"
+
+	local encpass="$(sed 's;\(["\$]\);\\\1;g' << __EOF__
+${MY_MANAGEDBLOCK_DB_PASSWORD}
+__EOF__
+)"
+
+	MY_MANAGEDBLOCK_DB_CREDS="$(cat << __EOF__
+MANAGEDBLOCK_DB_HOST="${MY_MANAGEDBLOCK_DB_HOST}"
+MANAGEDBLOCK_DB_PORT="${MY_MANAGEDBLOCK_DB_PORT}"
+MANAGEDBLOCK_DB_USER="${MY_MANAGEDBLOCK_DB_USER}"
+MANAGEDBLOCK_DB_PASSWORD="${encpass}"
+MANAGEDBLOCK_DB_DATABASE="${MY_MANAGEDBLOCK_DB_DATABASE}"
+MANAGEDBLOCK_DB_SECURED="${MY_MANAGEDBLOCK_DB_SECURED}"
+MANAGEDBLOCK_DB_SECURED_VALIDATION="${MY_MANAGEDBLOCK_DB_SECURED_VALIDATION}"
+MANAGEDBLOCK_DB_DRIVER="org.postgresql.Driver"
+MANAGEDBLOCK_DB_URL="jdbc:postgresql://\${MANAGEDBLOCK_DB_HOST}:\${MANAGEDBLOCK_DB_PORT}/\${MANAGEDBLOCK_DB_DATABASE}?${options}"
+__EOF__
+)"
+	eval "${MY_MANAGEDBLOCK_DB_CREDS}"
+}
+
 setMyKeycloakDBCredentials() {
 	local options
 
@@ -2229,6 +2394,17 @@ changeCinderlibDBConf() {
 	printf "%s\n" "${MY_CINDERLIB_DB_CREDS}" > "${conf}"
 }
 
+changeManagedBlockDBConf() {
+	local conf="${ENGINE_ETC}/engine.conf.d/10-setup-managedblock-database.conf"
+	[ -f "${conf}" ] || logdie "Can not find ${conf}"
+
+	local backup="${conf}.$(date +"%Y%m%d%H%M%S")"
+	log "Backing up ${conf} to ${backup}"
+	cp -a "${conf}" "${backup}" || logdie "Failed to backup ${conf}"
+	output "Rewriting ${conf}"
+	printf "%s\n" "${MY_MANAGEDBLOCK_DB_CREDS}" > "${conf}"
+}
+
 changeKeycloakDBConf() {
 	local conf="${ENGINE_ETC}/engine.conf.d/12-setup-keycloak.conf"
 	[ -f "${conf}" ] || logdie "Can not find ${conf}"
@@ -2244,7 +2420,7 @@ generatePgPass() {
 	local password="${ENGINE_DB_PASSWORD}"
 	local dwh_password="${DWH_DB_PASSWORD}"
 	local cinderlib_password="${CINDERLIB_DB_PASSWORD}"
-	local cinderlib_password="${CINDERLIB_DB_PASSWORD}"
+	local managedblock_password="${MANAGEDBLOCK_DB_PASSWORD}"
 	local keycloak_password="${KEYCLOAK_DB_PASSWORD}"
 	MYPGPASS="${TEMP_FOLDER}/.pgpass"
 
@@ -2262,6 +2438,7 @@ generatePgPass() {
 	if ! psql -V | grep -q ' 8\.'; then
 		password="$(printf "%s" "${password}" | sed -e 's/\\/\\\\/g' -e 's/:/\\:/g')"
 		dwh_password="$(printf "%s" "${dwh_password}" | sed -e 's/\\/\\\\/g' -e 's/:/\\:/g')"
+		managedblock_password="$(printf "%s" "${managedblock_password}" | sed -e 's/\\/\\\\/g' -e 's/:/\\:/g')"
 		cinderlib_password="$(printf "%s" "${cinderlib_password}" | sed -e 's/\\/\\\\/g' -e 's/:/\\:/g')"
 		keycloak_password="$(printf "%s" "${keycloak_password}" | sed -e 's/\\/\\\\/g' -e 's/:/\\:/g')"
 	fi
@@ -2274,6 +2451,9 @@ ${DWH_DB_HOST}:${DWH_DB_PORT}:${DWH_DB_DATABASE}:${DWH_DB_USER}:${dwh_password}
 __EOF__
 	[ -n "${CINDERLIB_DB_USER}" ] && cat >> "${MYPGPASS}" << __EOF__
 ${CINDERLIB_DB_HOST}:${CINDERLIB_DB_PORT}:${CINDERLIB_DB_DATABASE}:${CINDERLIB_DB_USER}:${cinderlib_password}
+__EOF__
+	[ -n "${MANAGEDBLOCK_DB_USER}" ] && cat >> "${MYPGPASS}" << __EOF__
+${MANAGEDBLOCK_DB_HOST}:${MANAGEDBLOCK_DB_PORT}:${MANAGEDBLOCK_DB_DATABASE}:${MANAGEDBLOCK_DB_USER}:${managedblock_password}
 __EOF__
 	[ -n "${KEYCLOAK_DB_USER}" ] && cat >> "${MYPGPASS}" << __EOF__
 ${KEYCLOAK_DB_HOST}:${KEYCLOAK_DB_PORT}:${KEYCLOAK_DB_DATABASE}:${KEYCLOAK_DB_USER}:${keycloak_password}
@@ -2332,8 +2512,8 @@ DWH_DB_DUMP_COMPRESSOR
 DWH_DB_DUMP_FORMAT
 KEYCLOAK_DB_DUMP_COMPRESSOR
 KEYCLOAK_DB_DUMP_FORMAT
-CINDERLIB_DB_DUMP_COMPRESSOR
-CINDERLIB_DB_DUMP_FORMAT"
+MANAGEDBLOCK_DB_DUMP_COMPRESSOR
+MANAGEDBLOCK_DB_DUMP_FORMAT"
 	echo "${VARS_TO_SAVE}" | while read -r var; do
 		eval echo "${var}=\${${var}}"
 	done
@@ -2364,6 +2544,7 @@ notify_engine() {
 	[ -n "${SCOPE_ENGINE_DB}" ] && do_notify 'db'
 	[ -n "${SCOPE_DWH_DB}" ] && do_notify 'dwhdb'
 	[ -n "${SCOPE_CINDERLIB_DB}" ] && do_notify 'cinderlib'
+	[ -n "${SCOPE_MANAGEDBLOCK_DB}" ] && do_notify 'managedblock'
 	[ -n "${SCOPE_KEYCLOAK_DB}" ] && do_notify 'keycloak'
 	[ -n "${SCOPE_GRAFANA_DB}" ] && do_notify 'grafanadb'
 
@@ -2389,6 +2570,7 @@ doverify() {
 	[ -s "${TEMP_FOLDER}/db/${DB_BACKUP_FILE_NAME}" ] || SCOPE_ENGINE_DB=
 	[ -s "${TEMP_FOLDER}/db/${DWHDB_BACKUP_FILE_NAME}" ] || SCOPE_DWH_DB=
 	[ -s "${TEMP_FOLDER}/db/${CINDERLIBDB_BACKUP_FILE_NAME}" ] || SCOPE_CINDERLIB_DB=
+	[ -s "${TEMP_FOLDER}/db/${MANAGEDBLOCKDB_BACKUP_FILE_NAME}" ] || SCOPE_MANAGEDBLOCK_DB=
 	[ -s "${TEMP_FOLDER}/db/${KEYCLOAKDB_BACKUP_FILE_NAME}" ] || SCOPE_KEYCLOAK_DB=
 	[ -s "${TEMP_FOLDER}/db/${GRAFANA_BACKUP_FILE_NAME}" ] || SCOPE_GRAFANA_DB=
 
