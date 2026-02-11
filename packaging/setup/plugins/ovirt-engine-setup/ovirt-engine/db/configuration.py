@@ -35,6 +35,7 @@ class Plugin(plugin.PluginBase):
             dbenvkeys=oenginecons.Const.ENGINE_DB_ENV_KEYS,
             defaults=oenginecons.Const.DEFAULT_ENGINE_DB_ENV_KEYS,
         )
+        self._pg_hba_refresh_flag = 'OVESETUP_ENGINE_DB/needsPgHbaRefresh'
 
     def _setupOwnsDB(self):
         # FIXME localhost is inappropriate in case of docker e.g
@@ -100,6 +101,10 @@ class Plugin(plugin.PluginBase):
         self.environment.setdefault(
             oengcommcons.ProvisioningEnv.POSTGRES_EXTRA_CONFIG_ITEMS,
             ()
+        )
+        self.environment.setdefault(
+            self._pg_hba_refresh_flag,
+            False,
         )
 
     @plugin.event(
@@ -169,11 +174,20 @@ class Plugin(plugin.PluginBase):
         ]
     )
     def _updatePGConf(self):
+        invalid_config_items = (
+            self.environment[oenginecons.EngineDBEnv.INVALID_CONFIG_ITEMS]
+            or []
+        )
+        needs_auth_update = any(
+            item.get('key') == 'password_encryption'
+            for item in invalid_config_items
+        ) and self._setupOwnsDB()
         self.logger.info(_('Updating PostgreSQL configuration'))
         with transaction.Transaction() as localtransaction:
             self._provisioning._updatePostgresConf(
                 transaction=localtransaction,
             )
+        self.environment[self._pg_hba_refresh_flag] = needs_auth_update
         self._provisioning.restartPG()
         dbutils = database.OvirtUtils(
             plugin=self,
@@ -188,6 +202,24 @@ class Plugin(plugin.PluginBase):
             raise RuntimeError(
                 database.getInvalidConfigItemsMessage(invalid_config_items)
             )
+
+    @plugin.event(
+        stage=plugin.Stages.STAGE_CLEANUP,
+        after=(
+            oengcommcons.Stages.SCRAM_ROTATION,
+        ),
+        condition=lambda self: (self.environment.get(
+            self._pg_hba_refresh_flag, False)),
+    )
+    def _updatePgHbaAfterScram(self):
+        self.logger.info(
+            _('Updating PostgreSQL client access configuration (pg_hba)'))
+        with transaction.Transaction() as localtransaction:
+            self._provisioning.addPgHbaDatabaseAccess(
+                transaction=localtransaction,
+            )
+        self._provisioning.reloadPgConf()
+        self.environment[self._pg_hba_refresh_flag] = False
 
     @plugin.event(
         stage=plugin.Stages.STAGE_VALIDATION,
