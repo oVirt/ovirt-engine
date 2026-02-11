@@ -162,11 +162,11 @@ class Plugin(plugin.PluginBase):
         condition=lambda self:
             self.environment[
                 oenginecons.CoreEnv.ENABLE
-            ] and self.environment[
+        ] and self.environment[
                 oenginecons.EngineDBEnv.FIX_DB_CONFIGURATION
-            ] and self.environment[
+        ] and self.environment[
                 oenginecons.EngineDBEnv.INVALID_CONFIG_ITEMS
-            ]
+        ]
     )
     def _updatePGConf(self):
         self.logger.info(_('Updating PostgreSQL configuration'))
