@@ -150,6 +150,7 @@ class Defaults(object):
     DEFAULT_POSTGRES_PROVISIONING_MAX_CONN = 150
     DEFAULT_POSTGRES_PROVISIONING_LISTEN_ADDRESS = "'*'"
     DEFAULT_POSTGRES_PROVISIONING_LC_MESSAGES = "'en_US.UTF-8'"
+    DEFAULT_POSTGRES_AUTH_METHOD = "scram-sha-256"
     PG_PROV_AUTOVACUUM_VACUUM_SCALE_FACTOR = 0.01
     PG_PROV_AUTOVACUUM_ANALYZE_SCALE_FACTOR = 0.075
     PG_PROV_AUTOVACUUM_MAX_WORKERS = 6
@@ -323,6 +324,14 @@ class ProvisioningEnv(object):
     POSTGRES_LISTEN_ADDRESS = "OVESETUP_PROVISIONING/postgresListenAddress"
     POSTGRES_LC_MESSAGES = "OVESETUP_PROVISIONING/postgresLCMessages"
 
+    @osetupattrs(
+        answerfile=True,
+        summary=True,
+        description=_("PostgreSQL password auth method"),
+    )
+    def POSTGRES_AUTH_METHOD(self):
+        return "OVESETUP_PROVISIONING/postgresAuthMethod"
+
     PG_AUTOVACUUM_VACUUM_SCALE_FACTOR = (
         "OVESETUP_PROVISIONING/postgresAutovacuumVacuumScaleFactor"
     )
@@ -338,6 +347,14 @@ class ProvisioningEnv(object):
     PG_WORK_MEM_KB = "OVESETUP_PROVISIONING/postgresWorkMemKb"
     PG_UPGRADE_INPLACE = "OVESETUP_PROVISIONING/postgresUpgradeInplace"
     PG_UPGRADE_CLEANOLD = "OVESETUP_PROVISIONING/postgresUpgradeCleanold"
+
+    @osetupattrs(
+        answerfile=True,
+        summary=True,
+        description=_("Rotate md5 verifiers to SCRAM during setup"),
+    )
+    def POSTGRES_SCRAM_ROTATION_ENABLED(self):
+        return "OVESETUP_PROVISIONING/postgresScramRotationEnabled"
 
 
 @util.export

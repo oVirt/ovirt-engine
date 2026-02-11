@@ -47,6 +47,26 @@ class Plugin(plugin.PluginBase):
         self.environment.setdefault(
             oengcommcons.ProvisioningEnv.POSTGRES_PROVISIONING_ENABLED, None
         )
+        if (
+            oengcommcons.ProvisioningEnv.POSTGRES_AUTH_METHOD
+            not in self.environment
+        ):
+            import os
+
+            from ovirt_engine_setup.engine_common.constants import \
+                Defaults as CommonDefaults
+
+            default_method = CommonDefaults.DEFAULT_POSTGRES_AUTH_METHOD
+            method = (
+                os.environ.get("OVIRT_POSTGRES_AUTH_METHOD", default_method)
+                .strip()
+                .lower()
+            )
+            if method not in ("scram-sha-256", "md5"):
+                method = default_method
+            self.environment[
+                oengcommcons.ProvisioningEnv.POSTGRES_AUTH_METHOD
+            ] = method
 
     @plugin.event(
         stage=plugin.Stages.STAGE_SETUP,
