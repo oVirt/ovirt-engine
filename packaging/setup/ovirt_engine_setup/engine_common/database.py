@@ -954,6 +954,8 @@ class OvirtUtils(base.Base):
         )
 
     def _pg_conf_info(self):
+        from ovirt_engine_setup.engine_common.postgres import Provisioning
+        auth_method = Provisioning.get_postgres_auth_method(self.environment)
         return self.environment.get(
             oengcommcons.ProvisioningEnv.POSTGRES_EXTRA_CONFIG_ITEMS,
             ()
@@ -1133,6 +1135,16 @@ class OvirtUtils(base.Base):
                 'check_on_use': False,
                 'needed_on_create': True,
                 'error_msg': None,
+            },
+            {
+                'key': 'password_encryption',
+                'expected': auth_method,
+                'ok': self._lower_equal,
+                'check_on_use': True,
+                'needed_on_create': True,
+                'error_msg': '{specific}'.format(
+                    specific=_('{key} must be {expected}'),
+                ),
             },
         )
 
