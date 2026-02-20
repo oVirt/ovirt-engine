@@ -6,6 +6,7 @@ import java.util.logging.Logger;
 
 import org.ovirt.engine.core.common.action.TransferDiskImageParameters;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
+import org.ovirt.engine.core.common.businessentities.storage.DiskContentType;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.storage.ImageTransfer;
@@ -37,10 +38,16 @@ public class DownloadImageHandler {
     static TransferDiskImageParameters createInitParams(DiskImage diskImage) {
         TransferDiskImageParameters parameters = new TransferDiskImageParameters();
         parameters.setTransferType(TransferType.Download);
+        String fileExtension = "";
+        if (diskImage.getContentType() == DiskContentType.ISO) {
+            if (!diskImage.getDiskAlias().endsWith(".iso")) { //$NON-NLS-1$
+                fileExtension = ".iso"; //$NON-NLS-1$
+            }
+        } else {
+            fileExtension = diskImage.getVolumeFormat() == VolumeFormat.COW ? ".qcow2" : ".raw"; //$NON-NLS-1$ //$NON-NLS-2$
+        }
         parameters.setImageGroupID(diskImage.getId());
-        String fileExtension = diskImage.getVolumeFormat() == VolumeFormat.COW ?
-                ".qcow2" : ".raw"; //$NON-NLS-1$ //$NON-NLS-2$
-        parameters.setDownloadFilename(diskImage.getDiskAlias() + fileExtension); //$NON-NLS-1$
+        parameters.setDownloadFilename(diskImage.getDiskAlias() + fileExtension);
         parameters.setTransferSize(diskImage.getActualSizeInBytes());
         parameters.setTransferClientType(TransferClientType.TRANSFER_VIA_BROWSER);
 
