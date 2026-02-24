@@ -45,6 +45,7 @@ select fn_db_rename_config_key('FreeSpaceLow', 'WarningLowSpaceIndicator', 'gene
 select fn_db_rename_config_key('MaxBlockDiskSize', 'MaxBlockDiskSizeInGibiBytes', 'general');
 select fn_db_rename_config_key('RetryToRunAutoStartVmIntervalInSeconds','RetryToRunAutoStartVmShortIntervalInSeconds','general');
 select fn_db_rename_config_key('MaxNumOfTriesToRunFailedAutoStartVm','NumOfTriesToRunFailedAutoStartVmInShortIntervals','general');
+select fn_db_rename_config_key('CinderlibCommandTimeoutInMinutes', 'ManagedBlockCommandTimeoutInMinutes', 'general');
 
 ------------------------------------------------------------------------------------
 --                  Add configuration values section
@@ -1001,7 +1002,7 @@ select fn_db_add_config_value('MaxBackupBlockScratchDiskInitialSizePercents','20
 select fn_db_add_config_value('MinBackupBlockScratchDiskInitialSizeInGB','4','general');
 
 -- Managed block storage
-select fn_db_add_config_value('CinderlibCommandTimeoutInMinutes','2','general');
+select fn_db_add_config_value('ManagedBlockCommandTimeoutInMinutes','2','general');
 
 select fn_db_add_config_value('NumOfPciExpressPorts', '16', 'general');
 

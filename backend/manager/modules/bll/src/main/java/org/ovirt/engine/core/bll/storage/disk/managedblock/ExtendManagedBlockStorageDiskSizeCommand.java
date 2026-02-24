@@ -22,22 +22,22 @@ import org.ovirt.engine.core.common.businessentities.storage.ManagedBlockStorage
 import org.ovirt.engine.core.common.businessentities.storage.ManagedBlockStorageDisk;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.utils.SizeConverter;
-import org.ovirt.engine.core.common.utils.cinderlib.CinderlibCommandParameters;
-import org.ovirt.engine.core.common.utils.cinderlib.CinderlibExecutor;
-import org.ovirt.engine.core.common.utils.cinderlib.CinderlibExecutor.CinderlibCommand;
-import org.ovirt.engine.core.common.utils.cinderlib.CinderlibReturnValue;
-import org.ovirt.engine.core.dao.CinderStorageDao;
+import org.ovirt.engine.core.common.utils.managedblock.ManagedBlockCommandParameters;
+import org.ovirt.engine.core.common.utils.managedblock.ManagedBlockExecutor;
+import org.ovirt.engine.core.common.utils.managedblock.ManagedBlockExecutor.ManagedBlockCommand;
+import org.ovirt.engine.core.common.utils.managedblock.ManagedBlockReturnValue;
 import org.ovirt.engine.core.dao.ImageDao;
+import org.ovirt.engine.core.dao.ManagedBlockStorageDao;
 import org.ovirt.engine.core.utils.JsonHelper;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 @InternalCommandAttribute
 public class ExtendManagedBlockStorageDiskSizeCommand<T extends ExtendManagedBlockStorageDiskSizeParameters> extends UpdateDiskCommand<T> {
     @Inject
-    private CinderStorageDao cinderStorageDao;
+    private ManagedBlockStorageDao managedBlockStorageDao;
 
     @Inject
-    private CinderlibExecutor cinderlibExecutor;
+    private ManagedBlockExecutor managedBlockExecutor;
 
     @Inject
     private ImageDao imageDao;
@@ -57,7 +57,7 @@ public class ExtendManagedBlockStorageDiskSizeCommand<T extends ExtendManagedBlo
 
     @Override
     protected void executeCommand() {
-        ManagedBlockStorage managedBlockStorage = cinderStorageDao.get(getParameters().getStorageDomainId());
+        ManagedBlockStorage managedBlockStorage = managedBlockStorageDao.get(getParameters().getStorageDomainId());
         List<String> extraParams = new ArrayList<>();
         extraParams.add(getNewDisk().getId().toString());
         Number sizeInGiB = SizeConverter.convert(getParameters().getDiskInfo().getSize(),
@@ -65,15 +65,15 @@ public class ExtendManagedBlockStorageDiskSizeCommand<T extends ExtendManagedBlo
                 SizeConverter.SizeUnit.GiB);
         extraParams.add(Long.toString(sizeInGiB.longValue()));
 
-        CinderlibReturnValue returnValue;
+        ManagedBlockReturnValue returnValue;
 
         try {
-            CinderlibCommandParameters params =
-                    new CinderlibCommandParameters(JsonHelper.mapToJson(managedBlockStorage.getAllDriverOptions(),
+            ManagedBlockCommandParameters params =
+                    new ManagedBlockCommandParameters(JsonHelper.mapToJson(managedBlockStorage.getAllDriverOptions(),
                             false),
                             extraParams,
                             getCorrelationId());
-            returnValue = cinderlibExecutor.runCommand(CinderlibCommand.EXTEND_VOLUME, params);
+            returnValue = managedBlockExecutor.runCommand(ManagedBlockCommand.EXTEND_VOLUME, params);
         } catch (Exception e) {
             log.error("Failed executing volume extension", e);
             return;

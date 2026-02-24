@@ -447,7 +447,7 @@ Group:		%{ovirt_product_group}
 Requires:	%{name} >= 4.4.0
 Requires:	%{name}-setup-plugin-ovirt-engine-common = %{version}-%{release}
 Requires:	%{name}-setup-plugin-vmconsole-proxy-helper = %{version}-%{release}
-Requires:	%{name}-setup-plugin-cinderlib = %{version}-%{release}
+Requires:	%{name}-setup-plugin-managedblock = %{version}-%{release}
 Requires:	%{name}-setup-plugin-imageio = %{version}-%{release}
 Requires:	%{name}-dwh-setup >= 4.4.1.2
 Requires:	ovirt-engine-keycloak-setup
@@ -628,14 +628,15 @@ Requires:	makeself >= 2.2
 %description health-check-bundler
 A utility for creating a bundle script that runs a health check.
 
-%package setup-plugin-cinderlib
-Summary:	Setup and upgrade specific plugins for cinderlib integration database
+%package setup-plugin-managedblock
+Summary:	Setup and upgrade specific plugins for managed block integration database
+Obsoletes:	%{name}-setup-plugin-cinderlib
 Requires:	%{name}-setup-plugin-ovirt-engine = %{version}-%{release}
 Requires:	%{name}-setup-plugin-ovirt-engine-common = %{version}-%{release}
 Requires:	openssh
 
-%description setup-plugin-cinderlib
-Setup and upgrade specific plugins for cinderlib integration database
+%description setup-plugin-managedblock
+Setup and upgrade specific plugins for managed block integration database
 
 %package setup-plugin-imageio
 Summary:	Setup imageio service.
@@ -673,7 +674,7 @@ install -dm 700 "%{buildroot}/%{engine_state}/.ssh"
 install -dm 755 "%{buildroot}/%{engine_state}"/{content,setup/answers,ansible-runner}
 # see also relevant %%dir line to set permissions
 install -dm 700 "%{buildroot}/%{engine_log}"
-install -dm 700 "%{buildroot}/%{engine_log}"/{ova,host-deploy,setup,notifier,dump,ansible,db-manual,brick-setup,cinderlib}
+install -dm 700 "%{buildroot}/%{engine_log}"/{ova,host-deploy,setup,notifier,dump,ansible,db-manual,brick-setup,managedblock}
 install -dm 755 "%{buildroot}/%{engine_cache}"
 install -dm 755 "%{buildroot}/%{engine_run}/notifier"
 
@@ -874,7 +875,7 @@ fi
 %dir %{engine_data}/bin
 %dir %{engine_data}/brands
 %dir %{engine_data}/conf
-%dir %{engine_data}/cinderlib
+%dir %{engine_data}/managedblock
 %dir %{engine_data}/engine.ear
 %dir %{engine_data}/extensions.d
 %dir %{engine_data}/services
@@ -891,13 +892,13 @@ fi
 %{engine_etc}/engine.conf.d/
 %{engine_etc}/cinderlib/README
 %{engine_etc}/timezones/
-%config %{engine_data}/cinderlib/logger.conf
+%config %{engine_data}/managedblock/logger.conf
 %config %attr(0700,%{engine_user},%{engine_group}) %{engine_etc}/cinderlib/ssh_known_hosts
 
-%{engine_data}/cinderlib/cinderlib-client.*
-%{engine_data}/cinderlib/config.*
-%{engine_data}/cinderlib/__pycache__/cinderlib-client.*
-%{engine_data}/cinderlib/__pycache__/config.*
+%{engine_data}/managedblock/cinderlib-client.*
+%{engine_data}/managedblock/config.*
+%{engine_data}/managedblock/__pycache__/cinderlib-client.*
+%{engine_data}/managedblock/__pycache__/config.*
 
 #
 # ATTENTION:
@@ -935,7 +936,7 @@ fi
 %license LICENSE
 %license backend/manager/modules/services/src/main/webapp/gpl-3.0.txt
 %license backend/manager/modules/services/src/main/webapp/lgpl-3.0.txt
-%attr(-, %{engine_user}, %{engine_group}) %{engine_log}/cinderlib
+%attr(-, %{engine_user}, %{engine_group}) %{engine_log}/managedblock
 %attr(-, %{engine_user}, %{engine_group}) %{engine_log}/brick-setup
 %attr(-, %{engine_user}, %{engine_group}) %{engine_log}/host-deploy
 %attr(-, %{engine_user}, %{engine_group}) %{engine_log}/ansible
@@ -1092,10 +1093,10 @@ fi
 %{engine_data}/setup/ovirt_engine_setup/vmconsole_proxy_helper/
 %{engine_data}/setup/plugins/*/vmconsole_proxy_helper/
 
-%files setup-plugin-cinderlib
+%files setup-plugin-managedblock
 %license LICENSE
-%{engine_data}/setup/ovirt_engine_setup/cinderlib/
-%{engine_data}/setup/plugins/*/cinderlib
+%{engine_data}/setup/ovirt_engine_setup/managedblock/
+%{engine_data}/setup/plugins/*/managedblock
 
 %files setup-plugin-imageio
 %license LICENSE
