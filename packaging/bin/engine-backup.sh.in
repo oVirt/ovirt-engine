@@ -443,8 +443,8 @@ USAGE:
 
  and open access there by adding the following lines:
 
- host    <database>      <user>          0.0.0.0/0               md5
- host    <database>      <user>          ::0/0                   md5
+ host    <database>      <user>          0.0.0.0/0               scram-sha-256
+ host    <database>      <user>          ::0/0                   scram-sha-256
 
  Replace <user>, <password>, <database> with appropriate values.
  Repeat for Engine, Data Warehouse as required.
