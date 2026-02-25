@@ -93,6 +93,7 @@ public class LibvirtVmXmlBuilderTest {
         hotPlugCpuMap.put("s390x", "false");
         hotPlugCpuMap.put("x86", "false");
         hotPlugCpuMap.put("ppc", "false");
+        hotPlugCpuMap.put("aarch64", "false");
         return Stream.of(MockConfigDescriptor.of(ConfigValues.HotPlugCpuSupported, Version.v4_5, hotPlugCpuMap),
                 MockConfigDescriptor.of(ConfigValues.HotPlugCpuSupported, Version.v4_3, hotPlugCpuMap),
                 MockConfigDescriptor.of(ConfigValues.HotPlugCpuSupported, Version.v4_2, hotPlugCpuMap));
