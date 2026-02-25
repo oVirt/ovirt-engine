@@ -39,8 +39,10 @@ import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ActionParametersBase;
+import org.ovirt.engine.core.common.action.ActionParametersBase.EndProcedure;
 import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
+import org.ovirt.engine.core.common.action.DeleteAllVmCheckpointsParameters;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.VmBackupParameters;
 import org.ovirt.engine.core.common.action.VolumeBitmapCommandParameters;
@@ -58,6 +60,8 @@ import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskBackupMode;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
+import org.ovirt.engine.core.common.businessentities.storage.Qcow2BitmapInfo;
+import org.ovirt.engine.core.common.businessentities.storage.QemuImageInfo;
 import org.ovirt.engine.core.common.businessentities.storage.VmBackupType;
 import org.ovirt.engine.core.common.errors.EngineException;
 import org.ovirt.engine.core.common.errors.EngineMessage;
@@ -264,6 +268,24 @@ public class StartVmBackupCommand<T extends VmBackupParameters> extends VmComman
         Guid vmBackupId = createVmBackup();
         log.info("Created VmBackup entity '{}'", vmBackupId);
 
+        // Set a VDS to be able to gather Qemu Image Info
+        if (getVds() == null) {
+            setHostForColdBackupOperation();
+        }
+        if (getVds().isQemuImageInfoBitmaps()) {
+            log.info("Checking VM checkpoint '{}' for VM '{}'", vmBackup.getFromCheckpointId(), vmBackup.getVmId());
+            if (!validateCheckpoint(vmBackup.getFromCheckpointId())) {
+                addCustomValue("backupId", vmBackupId.toString());
+                auditLogDirector.log(this, AuditLogType.VM_INCREMENTAL_BACKUP_FAILED_FULL_VM_BACKUP_NEEDED);
+                setCommandStatus(CommandStatus.FAILED);
+                return;
+            }
+            log.info("Previous VM checkpoint '{}' for VM '{}' is valid", vmBackup.getFromCheckpointId(), vmBackup.getVmId());
+        } else {
+            log.info("Could not check VM checkpoint '{}' for VM '{}' due to missing bitmap info support in vdsm",
+                     vmBackup.getFromCheckpointId(), vmBackup.getVmId());
+        }
+
         if (isLiveBackup()) {
             log.info("Redefine previous VM checkpoints for VM '{}'", vmBackup.getVmId());
             if (!redefineVmCheckpoints()) {
@@ -368,6 +390,45 @@ public class StartVmBackupCommand<T extends VmBackupParameters> extends VmComman
         return true;
     }
 
+    private boolean validateCheckpoint(Guid checkpointId) {
+        List<DiskImage> images = vmCheckpointDao.getDisksByCheckpointId(checkpointId);
+        /* Check if the checkpoint is still there on each volume/image */
+        for (DiskImage image : images) {
+            QemuImageInfo qcow2Info = imagesHandler.getQemuImageInfoFromVdsm(
+                            getStoragePoolId(),
+                            image.getStorageIds().get(0),
+                            image.getId(),
+                            image.getImageId(),
+                            getParameters().getVdsRunningOn(),
+                            !isLiveBackup());
+
+            boolean valid = false;
+            if (qcow2Info != null) {
+                List<Qcow2BitmapInfo> bitmaps = qcow2Info.getQcow2bitmaps();
+                if (bitmaps != null) {
+                    valid = bitmaps.stream().anyMatch(bitmap -> bitmap.getName().equals(checkpointId));
+                }
+            }
+            /* Bitmap did not exist on disk -> Remove checkpoints */
+            if (!valid) {
+                log.error("Checkpoint '{}' does not exist for disk '{}'. Removing checkpoints",
+                        checkpointId,
+                        image.getId());
+                /* Some checkpoint corruption, remove checkpoints */
+                DeleteAllVmCheckpointsParameters deleteAllVmCheckpointsParameters =
+                new DeleteAllVmCheckpointsParameters(getVmId(), List.of(image));
+                deleteAllVmCheckpointsParameters.setParentCommand(getActionType());
+                deleteAllVmCheckpointsParameters.setParentParameters(getParameters());
+                deleteAllVmCheckpointsParameters.setEndProcedure(EndProcedure.COMMAND_MANAGED);
+                deleteAllVmCheckpointsParameters.setForce(true);
+
+                runInternalAction(ActionType.DeleteAllVmCheckpoints, deleteAllVmCheckpointsParameters);
+                return false;
+            }
+        }
+        return true;
+    }
+
     private boolean redefineVmCheckpoints() {
         VmBackupParameters parameters = new VmBackupParameters(getParameters().getVmBackup());
         parameters.setParentCommand(getActionType());
@@ -380,8 +441,6 @@ public class StartVmBackupCommand<T extends VmBackupParameters> extends VmComman
     }
 
     private boolean startAddBitmapJobs() {
-        setHostForColdBackupOperation();
-
         VmBackup vmBackup = getParameters().getVmBackup();
         if (getParameters().getVdsRunningOn() == null) {
             log.error("Failed to find host to run cold backup operation for VM '{}'", vmBackup.getVmId());

@@ -87,3 +87,4 @@ SELECT fn_db_add_column_to_object_white_list('vds', 'backup_enabled');
 SELECT fn_db_add_column_to_object_white_list('vds', 'cold_backup_enabled');
 SELECT fn_db_add_column_to_object_white_list('vds', 'clear_bitmaps_enabled');
 SELECT fn_db_add_column_to_object_white_list('vds', 'cd_change_pdiv');
+SELECT fn_db_add_column_to_object_white_list('vds', 'qemu_image_info_bitmaps');

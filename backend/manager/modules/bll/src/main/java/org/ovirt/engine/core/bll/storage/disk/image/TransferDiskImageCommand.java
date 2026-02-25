@@ -32,9 +32,11 @@ import org.ovirt.engine.core.bll.validator.storage.StorageDomainValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ActionParametersBase;
+import org.ovirt.engine.core.common.action.ActionParametersBase.EndProcedure;
 import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AddDiskParameters;
+import org.ovirt.engine.core.common.action.DeleteAllVmCheckpointsParameters;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.RemoveDiskParameters;
 import org.ovirt.engine.core.common.action.TransferDiskImageParameters;
@@ -54,6 +56,8 @@ import org.ovirt.engine.core.common.businessentities.storage.ImageTicketInformat
 import org.ovirt.engine.core.common.businessentities.storage.ImageTransfer;
 import org.ovirt.engine.core.common.businessentities.storage.ImageTransferBackend;
 import org.ovirt.engine.core.common.businessentities.storage.ImageTransferPhase;
+import org.ovirt.engine.core.common.businessentities.storage.Qcow2BitmapInfo;
+import org.ovirt.engine.core.common.businessentities.storage.QemuImageInfo;
 import org.ovirt.engine.core.common.businessentities.storage.TimeoutPolicyType;
 import org.ovirt.engine.core.common.businessentities.storage.TransferType;
 import org.ovirt.engine.core.common.businessentities.storage.VmBackupType;
@@ -259,7 +263,46 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
                 getDiskImage().getImageId(), true);
     }
 
+    private boolean validateBitmap(DiskImage image, Guid checkpointId) {
+        QemuImageInfo qcow2Info = imagesHandler.getQemuImageInfoFromVdsm(
+                            getStoragePoolId(),
+                            image.getStorageIds().get(0),
+                            image.getId(),
+                            image.getImageId(),
+                            getVdsId(),
+                            !isLiveBackup());
+
+        boolean valid = false;
+        if (qcow2Info != null) {
+            List<Qcow2BitmapInfo> bitmaps = qcow2Info.getQcow2bitmaps();
+            if (bitmaps != null) {
+                valid = bitmaps.stream().anyMatch(bitmap -> bitmap.getName().equals(checkpointId));
+            }
+        }
+        /* Bitmap did not exist on disk -> Remove checkpoints */
+        if (!valid) {
+            log.error("Checkpoint '{}' does not exist for disk '{}'. Removing checkpoints",
+                    checkpointId,
+                    image.getId());
+            /* Some checkpoint corruption, remove checkpoints */
+            DeleteAllVmCheckpointsParameters deleteAllVmCheckpointsParameters =
+            new DeleteAllVmCheckpointsParameters(getVmId(), List.of(image));
+            deleteAllVmCheckpointsParameters.setParentCommand(getActionType());
+            deleteAllVmCheckpointsParameters.setParentParameters(getParameters());
+            deleteAllVmCheckpointsParameters.setEndProcedure(EndProcedure.COMMAND_MANAGED);
+            deleteAllVmCheckpointsParameters.setForce(true);
+
+            runInternalAction(ActionType.DeleteAllVmCheckpoints, deleteAllVmCheckpointsParameters);
+            return false;
+        }
+        return true;
+    }
+
     private Guid getBitmap() {
+        if (!validateBitmap(getDiskImage(), getBackup().getFromCheckpointId())) {
+            return null;
+        }
+
         if (isHybridBackup() && getDiskImage().getBackupMode() == DiskBackupMode.Incremental) {
             return getBackup().getFromCheckpointId();
         }
