@@ -87,8 +87,6 @@ public class ImportVmFromExternalProviderCommand<T extends ImportVmFromExternalP
     private static final Pattern DISK_ALIAS_ILLEGAL_CHARS_PATTERN =
             Pattern.compile("[^" + ValidationUtils.NO_SPECIAL_CHARACTER_CLASS_I18N + "]");
 
-    private static final String VDSM_COMPAT_VERSION_1_1 = "1.1";
-
     @Inject
     private DiskProfileHelper diskProfileHelper;
     @Inject
@@ -455,11 +453,6 @@ public class ImportVmFromExternalProviderCommand<T extends ImportVmFromExternalP
     }
 
     private String getCompatVersion() {
-        int version = Integer.parseInt(getStoragePool().getStoragePoolFormatType().getValue());
-        // compat version 1.1 supported from storage version 4
-        if (version >= 4 && getVm().getOrigin() != OriginType.KVM) {
-            return VDSM_COMPAT_VERSION_1_1;
-        }
         return null;
     }
 
