@@ -16,12 +16,15 @@ import org.ovirt.engine.core.bll.InternalCommandAttribute;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.storage.domain.PostDeleteActionHandler;
+import org.ovirt.engine.core.bll.storage.utils.VdsCommandsHelper;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.RemoveImageParameters;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskType;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
+import org.ovirt.engine.core.common.businessentities.VDS;
+import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
@@ -30,6 +33,7 @@ import org.ovirt.engine.core.common.businessentities.storage.ImageStorageDomainM
 import org.ovirt.engine.core.common.errors.EngineError;
 import org.ovirt.engine.core.common.errors.EngineException;
 import org.ovirt.engine.core.common.vdscommands.DeleteImageGroupVDSCommandParameters;
+import org.ovirt.engine.core.common.vdscommands.DeleteImageUnusedLinksVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.GetImagesListVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
@@ -42,6 +46,7 @@ import org.ovirt.engine.core.dao.DiskImageDynamicDao;
 import org.ovirt.engine.core.dao.ImageDao;
 import org.ovirt.engine.core.dao.ImageStorageDomainMapDao;
 import org.ovirt.engine.core.dao.SnapshotDao;
+import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.VmDeviceDao;
 import org.ovirt.engine.core.utils.ovf.OvfManager;
@@ -85,6 +90,10 @@ public class RemoveImageCommand<T extends RemoveImageParameters> extends BaseIma
     @Inject
     private VmDao vmDao;
 
+    @Inject
+    private VdsCommandsHelper vdsCommandsHelper;
+    @Inject
+    private VdsDao vdsDao;
 
     public RemoveImageCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
@@ -335,11 +344,48 @@ public class RemoveImageCommand<T extends RemoveImageParameters> extends BaseIma
                     ImageStatus.ILLEGAL,
                     getCompensationContext());
         }
-        return runVdsCommand(VDSCommandType.DeleteImageGroup,
+        final VDSReturnValue vdsReturnValue = runVdsCommand(VDSCommandType.DeleteImageGroup,
                 postDeleteActionHandler.fixParameters(
                         new DeleteImageGroupVDSCommandParameters(getDiskImage().getStoragePoolId(),
                                 getStorageDomainId(), getDiskImage().getId(),
                                 getDiskImage().isWipeAfterDelete(), getStorageDomain().getDiscardAfterDelete(),
                                 getParameters().isForceDelete())));
+
+        if (vdsReturnValue.getSucceeded()) {
+            performDeleteImageUnusedLinks();
+        }
+
+        return vdsReturnValue;
+    }
+
+    protected void performDeleteImageUnusedLinks() {
+        List<Guid> vdsForExecute = vdsDao.getAllForStoragePoolAndStatus(getDiskImage().getStoragePoolId(), VDSStatus.Up)
+                .stream()
+                .map(VDS::getId)
+                .collect(Collectors.toList());
+
+        log.info("Deleting unused image links on hosts: [{}].", vdsForExecute);
+
+        for (Guid vdsId : vdsForExecute) {
+            try {
+                log.info("Start deleting unused image links on host '{}'. Image '{}', storage domain '{}', "
+                                + "storage pool '{}'",
+                        vdsId, getDiskImage().getId(), getStorageDomainId(), getDiskImage().getStoragePoolId());
+
+                vdsCommandsHelper.runVdsCommandWithoutFailover(
+                        VDSCommandType.DeleteImageUnusedLinks,
+                        new DeleteImageUnusedLinksVDSCommandParameters(vdsId, getStorageDomainId(),
+                                getDiskImage().getStoragePoolId(), getDiskImage().getId()),
+                        getDiskImage().getStoragePoolId(), null);
+
+                log.info("Unused image links were successfully deleted on host '{}'. Image '{}', storage domain '{}', "
+                                + "storage pool '{}'",
+                        vdsId, getDiskImage().getId(), getStorageDomainId(), getDiskImage().getStoragePoolId());
+            } catch (EngineException e) {
+                log.error("Error while deleting unused image links on host '{}'. Image '{}', storage domain '{}', "
+                                + "storage pool '{}', exception = {}",
+                        vdsId, getDiskImage().getId(), getStorageDomainId(), getDiskImage().getStoragePoolId(), e);
+            }
+        }
     }
 }

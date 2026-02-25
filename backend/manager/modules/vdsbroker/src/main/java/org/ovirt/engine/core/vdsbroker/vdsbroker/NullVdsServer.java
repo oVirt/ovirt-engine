@@ -1109,4 +1109,9 @@ public class NullVdsServer implements IVdsServer {
     public ScreenshotInfoReturn createScreenshot(String vmId) {
         return null;
     }
+
+    @Override
+    public StatusOnlyReturn deleteImageUnusedLinks(String sdUUID, String spUUID, String imgUUID) {
+        return null;
+    }
 }
