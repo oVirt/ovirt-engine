@@ -19,6 +19,8 @@ import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.AddManagedBlockStorageDiskParameters;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
+import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMap;
 import org.ovirt.engine.core.common.businessentities.SubjectEntity;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
@@ -38,6 +40,8 @@ import org.ovirt.engine.core.dao.BaseDiskDao;
 import org.ovirt.engine.core.dao.CinderStorageDao;
 import org.ovirt.engine.core.dao.DiskVmElementDao;
 import org.ovirt.engine.core.dao.ImageDao;
+import org.ovirt.engine.core.dao.StorageDomainDao;
+import org.ovirt.engine.core.dao.StoragePoolIsoMapDao;
 import org.ovirt.engine.core.utils.JsonHelper;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
@@ -65,6 +69,12 @@ public class AddManagedBlockStorageDiskCommand<T extends AddManagedBlockStorageD
 
     @Inject
     private VmDeviceUtils vmDeviceUtils;
+
+    @Inject
+    private StorageDomainDao storageDomainDao;
+
+    @Inject
+    private StoragePoolIsoMapDao storagePoolIsoMapDao;
 
     public AddManagedBlockStorageDiskCommand(Guid commandId) {
         super(commandId);
@@ -157,6 +167,23 @@ public class AddManagedBlockStorageDiskCommand<T extends AddManagedBlockStorageD
         disk.setDiskDescription(getParameters().getDiskInfo().getDiskDescription());
         disk.setShareable(getParameters().getDiskInfo().isShareable());
         disk.setStorageIds(new ArrayList<>(Arrays.asList(getParameters().getStorageDomainId())));
+
+        Guid storagePoolId = null;
+        StorageDomain storageDomain =
+                storageDomainDao.get(getParameters().getStorageDomainId());
+        if (storageDomain != null) {
+            storagePoolId = storageDomain.getStoragePoolId();
+        }
+        if (storagePoolId == null) {
+            List<StoragePoolIsoMap> maps =
+                    storagePoolIsoMapDao.getAllForStorage(getParameters().getStorageDomainId());
+            if (!maps.isEmpty() && maps.get(0).getStoragePoolId() != null) {
+                storagePoolId = maps.get(0).getStoragePoolId();
+            }
+        }
+        if (storagePoolId != null) {
+            disk.setStoragePoolId(storagePoolId);
+        }
         disk.setVolumeType(VolumeType.Unassigned);
         disk.setVolumeFormat(VolumeFormat.RAW);
         disk.setImageStatus(ImageStatus.OK);
