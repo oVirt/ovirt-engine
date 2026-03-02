@@ -191,6 +191,15 @@ public class ImageInfoModel extends EntityModel<String> {
     }
 
     public boolean validate(StorageFormatType storageFormatType, long imageSize) {
+        return validate(storageFormatType, imageSize, false);
+    }
+
+    /**
+     * @param skipQcowCompatCheckForManagedBlock when true, do not reject qcow2 compat 1.1 for V1/V2/V3
+     *        (managed block storage uses V1 but backend handles compat separately).
+     */
+    public boolean validate(StorageFormatType storageFormatType, long imageSize,
+            boolean skipQcowCompatCheckForManagedBlock) {
         if (!fileLoaded) {
             getInvalidityReasons().add(constants.uploadImageCannotBeOpened());
             return false;
@@ -200,7 +209,7 @@ public class ImageInfoModel extends EntityModel<String> {
             return false;
         }
 
-        if (qcowCompat != null && qcowCompat != ImageInfoModel.QemuCompat.V2) {
+        if (!skipQcowCompatCheckForManagedBlock && qcowCompat != null && qcowCompat != ImageInfoModel.QemuCompat.V2) {
             switch (storageFormatType) {
                 case V1:
                 case V2:

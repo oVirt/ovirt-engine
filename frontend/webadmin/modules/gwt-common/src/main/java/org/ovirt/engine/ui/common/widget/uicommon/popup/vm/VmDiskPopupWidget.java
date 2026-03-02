@@ -280,6 +280,14 @@ public class VmDiskPopupWidget extends AbstractModelBoundPopupWidget<AbstractDis
             }
         });
 
+        // Show/hide disk profile row (e.g. for upload to IMAGE or managed block storage).
+        diskProfileEditor.setVisible(disk.getDiskProfile().getIsAvailable());
+        disk.getDiskProfile().getPropertyChangedEvent().addListener((ev, sender, args) -> {
+            if ("IsAvailable".equals(args.propertyName)) {
+                diskProfileEditor.setVisible(disk.getDiskProfile().getIsAvailable());
+            }
+        });
+
         disk.getIsVirtioScsiEnabled().getEntityChangedEvent().addListener((ev, sender, args) -> {
             if (disk.getVm() == null) {
                 // not relevant for floating disks
