@@ -12,6 +12,8 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.ovirt.engine.core.common.utils.Pair;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
@@ -24,6 +26,7 @@ import org.springframework.jdbc.core.simple.SimpleJdbcCall;
 public class SimpleJdbcCallsHandler {
 
     private static final String RETURN_VALUE_PARAMETER = "RETURN_VALUE";
+    private static final Logger log = LoggerFactory.getLogger(SimpleJdbcCallsHandler.class);
 
     private final ConcurrentMap<String, SimpleJdbcCall> callsMap = new ConcurrentHashMap<>();
     private final ConcurrentMap<String, Pair<String, Integer>> outParamsMap = new ConcurrentHashMap<>();
@@ -154,6 +157,8 @@ public class SimpleJdbcCallsHandler {
     private <T> Map<String, Object> executeImpl(String procedureName,
             MapSqlParameterSource paramsSource, CallCreator callCreator, RowMapper<T> mapper) {
         SimpleJdbcCall call = getCall(procedureName, callCreator, mapper);
+        log.debug("Executing stored procedure '{}'", procedureName);
+        log.debug("Parameters: {}", paramsSource);
         return call.execute(paramsSource);
     }
 
