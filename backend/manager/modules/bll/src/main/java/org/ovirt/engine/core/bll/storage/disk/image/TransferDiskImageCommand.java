@@ -35,6 +35,7 @@ import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AddDiskParameters;
+import org.ovirt.engine.core.common.action.ConnectManagedBlockStorageDeviceCommandParameters;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.RemoveDiskParameters;
 import org.ovirt.engine.core.common.action.TransferDiskImageParameters;
@@ -45,15 +46,19 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmBackup;
 import org.ovirt.engine.core.common.businessentities.VmBackupPhase;
+import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskBackupMode;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
+import org.ovirt.engine.core.common.businessentities.storage.ManagedBlockStorage;
+import org.ovirt.engine.core.common.businessentities.storage.ManagedBlockStorageDisk;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.storage.ImageTicket;
 import org.ovirt.engine.core.common.businessentities.storage.ImageTicketInformation;
 import org.ovirt.engine.core.common.businessentities.storage.ImageTransfer;
 import org.ovirt.engine.core.common.businessentities.storage.ImageTransferBackend;
 import org.ovirt.engine.core.common.businessentities.storage.ImageTransferPhase;
+import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.businessentities.storage.TimeoutPolicyType;
 import org.ovirt.engine.core.common.businessentities.storage.TransferType;
 import org.ovirt.engine.core.common.businessentities.storage.VmBackupType;
@@ -68,6 +73,9 @@ import org.ovirt.engine.core.common.locks.LockInfo;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.utils.SizeConverter;
+import org.ovirt.engine.core.common.utils.cinderlib.CinderlibCommandParameters;
+import org.ovirt.engine.core.common.utils.cinderlib.CinderlibExecutor;
+import org.ovirt.engine.core.common.vdscommands.AttachManagedBlockStorageVolumeVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.AddImageTicketVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.ExtendImageTicketVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.GetImageTicketVDSCommandParameters;
@@ -83,6 +91,7 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dao.DiskDao;
 import org.ovirt.engine.core.dao.ImageDao;
+import org.ovirt.engine.core.dao.CinderStorageDao;
 import org.ovirt.engine.core.dao.ImageTransferDao;
 import org.ovirt.engine.core.dao.SnapshotDao;
 import org.ovirt.engine.core.dao.StorageDomainDao;
@@ -90,6 +99,7 @@ import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.dao.VmBackupDao;
 import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.utils.EngineLocalConfig;
+import org.ovirt.engine.core.utils.JsonHelper;
 import org.ovirt.engine.core.utils.ReplacementUtils;
 import org.ovirt.engine.core.vdsbroker.ResourceManager;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.PrepareImageReturn;
@@ -134,6 +144,10 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
     private VdsCommandsHelper vdsCommandsHelper;
     @Inject
     private ResourceManager resourceManager;
+    @Inject
+    private CinderlibExecutor cinderlibExecutor;
+    @Inject
+    private CinderStorageDao cinderStorageDao;
 
     private ImageioClient proxyClient;
     private VmBackup backup;
@@ -184,9 +198,17 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
                     getParameters().getBackupId(), getDiskImage().getId());
         }
 
+        if (usingNbdServer()) {
+            StorageDomain sd = getStorageDomain();
+            if (sd != null && StorageType.MANAGED_BLOCK_STORAGE.equals(sd.getStorageType())) {
+                return null;
+            }
+        }
+
         VDSReturnValue vdsRetVal = runVdsCommand(VDSCommandType.PrepareImage,
                 getPrepareParameters(vdsId));
-        return FILE_URL_SCHEME + ((PrepareImageReturn) vdsRetVal.getReturnValue()).getImagePath();
+        String path = ((PrepareImageReturn) vdsRetVal.getReturnValue()).getImagePath();
+        return path != null ? FILE_URL_SCHEME + path : null;
     }
 
     protected boolean validateImageTransfer() {
@@ -925,6 +947,9 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
     }
 
     private boolean verifyImage(Guid transferingVdsId) {
+        if (isManagedBlockStorageForTransfer()) {
+            return true;
+        }
         ImageActionsVDSCommandParameters parameters =
                 new ImageActionsVDSCommandParameters(transferingVdsId, getStoragePool().getId(),
                         getStorageDomainId(),
@@ -1069,6 +1094,17 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
             return false;
         }
 
+        // When host does not return a path (e.g. managed block), NBD path will be set below
+        if (imagePath == null && !usingNbdServer()) {
+            log.error("Image prepare did not return a path for image transfer '{}' (storage may not support file path)", getCommandId());
+            setImageStatus(ImageStatus.OK);
+            setCommandStatus(CommandStatus.FAILED);
+            return false;
+        }
+        if (imagePath == null) {
+            imagePath = "";
+        }
+
         // From this point if an operation fails we have to perform cleanup
         Guid imagedTicketId = Guid.newGuid();
         ImageTransfer updates = new ImageTransfer();
@@ -1079,6 +1115,50 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
         updateEntity(updates);
 
         if (usingNbdServer()) {
+            if (isManagedBlockStorageForTransfer()) {
+                if (getVds().getConnectorInfo() == null) {
+                    log.error("Host '{}' has no connector info; cannot connect managed block volume for image transfer '{}'",
+                            getVds().getName(), getCommandId());
+                    updateEntityPhaseToStoppedBySystem(
+                            AuditLogType.TRANSFER_IMAGE_STOPPED_BY_SYSTEM_FAILED_TO_CREATE_TICKET);
+                    return false;
+                }
+                DiskImage disk = getDiskImage();
+                if (disk instanceof ManagedBlockStorageDisk) {
+                    ManagedBlockStorageDisk mbsDisk = (ManagedBlockStorageDisk) disk;
+                    Guid storageDomainId = mbsDisk.getStorageIds().isEmpty() ? getStorageDomainId() : mbsDisk.getStorageIds().get(0);
+                    ConnectManagedBlockStorageDeviceCommandParameters connectParams =
+                            new ConnectManagedBlockStorageDeviceCommandParameters(storageDomainId,
+                                    getVds().getConnectorInfo(),
+                                    mbsDisk.getImageId());
+                    ActionReturnValue connectResult = runInternalAction(ActionType.ConnectManagedBlockStorageDevice, connectParams);
+                    if (!connectResult.getSucceeded()) {
+                        log.error("Failed to connect managed block volume for image transfer '{}': {}",
+                                getCommandId(), connectResult.getFault());
+                        updateEntityPhaseToStoppedBySystem(
+                                AuditLogType.TRANSFER_IMAGE_STOPPED_BY_SYSTEM_FAILED_TO_CREATE_TICKET);
+                        return false;
+                    }
+                    // Attach the volume to the host so VDSM can expose it via NBD (StartNbdServer looks up
+                    // the storage domain on the host; without attach the domain is not present on the host).
+                    Map<String, Object> connectionInfo = connectResult.getActionReturnValue();
+                    if (connectionInfo != null) {
+                        AttachManagedBlockStorageVolumeVDSCommandParameters attachParams =
+                                new AttachManagedBlockStorageVolumeVDSCommandParameters(getVds(),
+                                        connectionInfo,
+                                        storageDomainId);
+                        attachParams.setVolumeId(mbsDisk.getImageId());
+                        VDSReturnValue attachResult = runVdsCommand(VDSCommandType.AttachManagedBlockStorageVolume, attachParams);
+                        if (!attachResult.getSucceeded()) {
+                            log.error("Failed to attach managed block volume to host for image transfer '{}': {}",
+                                    getCommandId(), attachResult.getVdsError());
+                            updateEntityPhaseToStoppedBySystem(
+                                    AuditLogType.TRANSFER_IMAGE_STOPPED_BY_SYSTEM_FAILED_TO_CREATE_TICKET);
+                            return false;
+                        }
+                    }
+                }
+            }
             try {
                 VDSReturnValue vdsReturnValue = runVdsCommand(VDSCommandType.StartNbdServer,
                         getStartNbdServerParameters(getVdsId()));
@@ -1135,7 +1215,14 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
 
     @Override
     protected VDS checkForActiveVds() {
+        StorageDomain storageDomain = getStorageDomain();
+        boolean isManagedBlockStorage = storageDomain != null
+                && StorageType.MANAGED_BLOCK_STORAGE.equals(storageDomain.getStorageType());
+
         Guid hostForExecution = vdsCommandsHelper.getHostForExecution(getStoragePoolId(), host -> {
+            if (isManagedBlockStorage) {
+                return true;
+            }
             var domainsData = resourceManager.getVdsManager(host.getId()).getDomains();
             if (domainsData == null) {
                 return false;
@@ -1261,6 +1348,11 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
         return !isLiveBackup() && getTransferBackend() == ImageTransferBackend.NBD;
     }
 
+    private boolean isManagedBlockStorageForTransfer() {
+        StorageDomain sd = getStorageDomain();
+        return sd != null && StorageType.MANAGED_BLOCK_STORAGE.equals(sd.getStorageType());
+    }
+
     private boolean addImageTicketToProxy(Guid imagedTicketId, String hostUri) {
         // ToDo: move formatting to an helper for reuse in ImageTransfer
         String url = String.format("%s%s/%s", hostUri, IMAGES_PATH, imagedTicketId);
@@ -1296,6 +1388,9 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
     }
 
     private boolean setVolumeLegalityInStorage(boolean legal) {
+        if (isManagedBlockStorageForTransfer()) {
+            return true;
+        }
         SetVolumeLegalityVDSCommandParameters parameters =
                 new SetVolumeLegalityVDSCommandParameters(getStoragePool().getId(),
                         getStorageDomainId(),
@@ -1401,11 +1496,88 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
         // Stopping NBD server if necessary
         if (usingNbdServer()) {
             stopNbdServer(entity.getVdsId());
+            // For managed block: detach volume from host, then disconnect from storage adapter
+            if (isManagedBlockStorageForTransfer() && entity.getDiskId() != null) {
+                detachManagedBlockVolumeFromHost(entity);
+                disconnectManagedBlockVolumeForTransfer(entity);
+            }
         }
 
         ImageTransfer updates = new ImageTransfer();
         updateEntity(updates, true);
         return true;
+    }
+
+    /**
+     * Detaches the managed block volume from the host (VDS DetachManagedBlockStorageVolume).
+     * Called when transfer ends, before disconnecting from the storage adapter.
+     */
+    private void detachManagedBlockVolumeFromHost(ImageTransfer imageTransfer) {
+        Disk disk = diskDao.get(imageTransfer.getDiskId());
+        if (!(disk instanceof ManagedBlockStorageDisk)) {
+            return;
+        }
+        ManagedBlockStorageDisk mbsDisk = (ManagedBlockStorageDisk) disk;
+        if (mbsDisk.getStorageIds() == null || mbsDisk.getStorageIds().isEmpty()) {
+            return;
+        }
+        VDS vds = vdsDao.get(imageTransfer.getVdsId());
+        if (vds == null) {
+            log.warn("Host '{}' not found for managed block volume detach", imageTransfer.getVdsId());
+            return;
+        }
+        AttachManagedBlockStorageVolumeVDSCommandParameters params =
+                new AttachManagedBlockStorageVolumeVDSCommandParameters(vds);
+        params.setVolumeId(mbsDisk.getImageId());
+        params.setStorageDomainId(mbsDisk.getStorageIds().get(0));
+        try {
+            VDSReturnValue result = runVdsCommand(VDSCommandType.DetachManagedBlockStorageVolume, params);
+            if (!result.getSucceeded()) {
+                log.warn("Host detach of managed block volume '{}' failed for transfer '{}': {}",
+                        mbsDisk.getImageId(), getCommandId(), result.getVdsError());
+            }
+        } catch (Exception e) {
+            log.error("Failed to detach managed block volume from host '{}' for transfer '{}': {}",
+                    imageTransfer.getVdsId(), getCommandId(), e);
+        }
+    }
+
+    /**
+     * Disconnects the managed block volume via the storage adapter (DISCONNECT_VOLUME).
+     * Called when transfer ends, after detaching from the host.
+     */
+    private void disconnectManagedBlockVolumeForTransfer(ImageTransfer imageTransfer) {
+        Disk disk = diskDao.get(imageTransfer.getDiskId());
+        if (!(disk instanceof ManagedBlockStorageDisk)) {
+            return;
+        }
+        ManagedBlockStorageDisk mbsDisk = (ManagedBlockStorageDisk) disk;
+        if (mbsDisk.getStorageIds() == null || mbsDisk.getStorageIds().isEmpty()) {
+            log.warn("Managed block disk '{}' has no storage domain for disconnect", imageTransfer.getDiskId());
+            return;
+        }
+        Guid storageDomainId = mbsDisk.getStorageIds().get(0);
+        ManagedBlockStorage managedBlockStorage = cinderStorageDao.get(storageDomainId);
+        if (managedBlockStorage == null) {
+            log.warn("Managed block storage domain '{}' not found for disconnect", storageDomainId);
+            return;
+        }
+        List<String> extraParams = new ArrayList<>();
+        extraParams.add(mbsDisk.getImageId().toString());
+        try {
+            CinderlibCommandParameters params = new CinderlibCommandParameters(
+                    JsonHelper.mapToJson(managedBlockStorage.getAllDriverOptions(), false),
+                    extraParams,
+                    getCorrelationId());
+            if (!cinderlibExecutor.runCommand(CinderlibExecutor.CinderlibCommand.DISCONNECT_VOLUME, params)
+                    .getSucceed()) {
+                log.warn("Storage adapter DISCONNECT_VOLUME failed for disk '{}' volume '{}'",
+                        imageTransfer.getDiskId(), mbsDisk.getImageId());
+            }
+        } catch (Exception e) {
+            log.error("Failed to disconnect managed block volume '{}' for transfer '{}': {}",
+                    mbsDisk.getImageId(), getCommandId(), e);
+        }
     }
 
     private boolean removeImageTicketFromDaemon(Guid imagedTicketId, Guid vdsId) {

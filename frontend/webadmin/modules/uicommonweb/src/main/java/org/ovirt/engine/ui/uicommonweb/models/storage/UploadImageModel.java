@@ -10,6 +10,7 @@ import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AddDiskParameters;
 import org.ovirt.engine.core.common.action.TransferDiskImageParameters;
 import org.ovirt.engine.core.common.action.TransferImageStatusParameters;
+import org.ovirt.engine.core.common.businessentities.profiles.DiskProfile;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageFormatType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
@@ -17,6 +18,7 @@ import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskContentType;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
+import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.businessentities.storage.ImageTransfer;
 import org.ovirt.engine.core.common.businessentities.storage.ImageTransferPhase;
 import org.ovirt.engine.core.common.businessentities.storage.TransferClientType;
@@ -28,6 +30,7 @@ import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.StringHelper;
+import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.ICommandTarget;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
@@ -173,6 +176,9 @@ public class UploadImageModel extends Model implements ICommandTarget {
                 public void initialize() {
                     super.initialize();
 
+                    // Show disk profile for upload (IMAGE and managed block storage domains).
+                    getDiskProfile().setIsAvailable(true);
+
                     getDataCenter().setIsChangeable(isChangeable);
                     if (!isChangeable) {
                         // Set the selected item on the storage domains and data centers lists.
@@ -187,6 +193,8 @@ public class UploadImageModel extends Model implements ICommandTarget {
                                         List<StorageDomain> availableDomains = new ArrayList<>();
                                         availableDomains.add(storageDomain);
                                         getStorageDomain().setItems(availableDomains);
+                                        getStorageDomain().setSelectedItem(storageDomain);
+                                        loadDiskProfilesForStorageDomain(storageDomain.getId());
                                         Guid dcId = storageDomain.getStoragePoolId();
                                         if (!Guid.isNullOrEmpty(dcId)) {
                                             // Set selected data center if the list of data centers is populated.
@@ -237,6 +245,22 @@ public class UploadImageModel extends Model implements ICommandTarget {
                     // Since we populate data centers asynchronously, we may have a situation when the needed
                     // data center is still not there. So, need to wait...
                     return false;
+                }
+
+                private void loadDiskProfilesForStorageDomain(Guid storageDomainId) {
+                    Frontend.getInstance().runQuery(
+                            QueryType.GetDiskProfilesByStorageDomainId,
+                            new IdQueryParameters(storageDomainId),
+                            new AsyncQuery<QueryReturnValue>(returnValue -> {
+                                List<DiskProfile> profiles = returnValue.getReturnValue();
+                                if (profiles != null && !profiles.isEmpty()) {
+                                    getDiskProfile().setItems(profiles);
+                                    getDiskProfile().setSelectedItem(profiles.get(0));
+                                } else {
+                                    getDiskProfile().setItems(new ArrayList<>());
+                                    getDiskProfile().setSelectedItem(null);
+                                }
+                            }));
                 }
             });
         } else {
@@ -410,8 +434,11 @@ public class UploadImageModel extends Model implements ICommandTarget {
                 return result;
             } });
 
-            StorageFormatType storageFormatType = getDiskModel().getStorageDomain().getSelectedItem().getStorageFormat();
-            uploadImageIsValid = getImagePath().getIsValid() && getImageInfoModel().validate(storageFormatType, imageInfoModel.getActualSize());
+            StorageDomain selectedSd = getDiskModel().getStorageDomain().getSelectedItem();
+            StorageFormatType storageFormatType = selectedSd.getStorageFormat();
+            boolean isManagedBlockDomain = selectedSd.getStorageType() == StorageType.MANAGED_BLOCK_STORAGE;
+            uploadImageIsValid = getImagePath().getIsValid()
+                    && getImageInfoModel().validate(storageFormatType, imageInfoModel.getActualSize(), isManagedBlockDomain);
 
             getInvalidityReasons().addAll(getImagePath().getInvalidityReasons());
             getInvalidityReasons().addAll(getImageInfoModel().getInvalidityReasons());
@@ -465,7 +492,14 @@ public class UploadImageModel extends Model implements ICommandTarget {
         AddDiskParameters diskParameters = new AddDiskParameters(newDisk);
 
         if (diskModel.getDiskStorageType().getEntity() == DiskStorageType.IMAGE) {
-            diskParameters.setStorageDomainId(getDiskModel().getStorageDomain().getSelectedItem().getId());
+            StorageDomain selectedSd = getDiskModel().getStorageDomain().getSelectedItem();
+            diskParameters.setStorageDomainId(selectedSd.getId());
+            if (selectedSd.getStorageType() == StorageType.MANAGED_BLOCK_STORAGE) {
+                log.info("UploadImageModel.createInitParams: upload target is Managed Block Storage domain id=" + selectedSd.getId() + " name=" + selectedSd.getName());
+                if (newDisk instanceof DiskImage) {
+                    ((DiskImage) newDisk).setDiskProfileId(null);
+                }
+            }
         }
 
         TransferDiskImageParameters parameters = new TransferDiskImageParameters(

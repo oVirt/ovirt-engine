@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.logging.Logger;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -61,6 +62,7 @@ import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
 import org.ovirt.engine.ui.uicompat.UIConstants;
 
 public abstract class AbstractDiskModel extends DiskModel {
+    private static final Logger log = Logger.getLogger(AbstractDiskModel.class.getName());
     protected static final UIConstants constants = ConstantsManager.getInstance().getConstants();
 
     private EntityModel<Boolean> isWipeAfterDelete;
@@ -373,13 +375,17 @@ public abstract class AbstractDiskModel extends DiskModel {
             switch (getDiskStorageType().getEntity()) {
                 case IMAGE:
                     domainByDiskType = d -> d.getStorageDomainType().isDataDomain()
-                        || d.getStorageDomainType().isKubevirtDomain();
+                        || d.getStorageDomainType().isKubevirtDomain()
+                        || d.getStorageType().isManagedBlockStorage();
+                    log.fine("AbstractDiskModel.updateStorageDomains: IMAGE disk type, including Data/KubeVirt/ManagedBlock domains");
                     break;
                 case MANAGED_BLOCK_STORAGE:
                     domainByDiskType = d -> d.getStorageType().isManagedBlockStorage();
+                    log.fine("AbstractDiskModel.updateStorageDomains: MANAGED_BLOCK_STORAGE disk type, MBS domains only");
                     break;
                 default:
                     domainByDiskType = s -> true;
+                    break;
             }
 
             List<StorageDomain> filteredStorageDomains =
@@ -389,6 +395,8 @@ public abstract class AbstractDiskModel extends DiskModel {
                             .sorted(new NameableComparator())
                             .collect(Collectors.toList());
 
+            long mbsCount = filteredStorageDomains.stream().filter(d -> d.getStorageType().isManagedBlockStorage()).count();
+            log.info("AbstractDiskModel.updateStorageDomains: dc=" + datacenter.getName() + ", total=" + filteredStorageDomains.size() + ", managedBlock=" + mbsCount);
 
             StorageDomain storage = Linq.firstOrNull(filteredStorageDomains);
             getStorageDomain().setItems(filteredStorageDomains, storage);
@@ -576,16 +584,17 @@ public abstract class AbstractDiskModel extends DiskModel {
     }
 
     private void setDiskProfilesList(List<DiskProfile> diskProfiles) {
-        // set disk profiles
-        if (diskProfiles != null && !diskProfiles.isEmpty()) {
-            getDiskProfile().setItems(diskProfiles);
-        }
+        List<DiskProfile> safeList = diskProfiles != null ? diskProfiles : new ArrayList<>();
+        getDiskProfile().setItems(safeList);
+
         // handle disk profile selected item
         Guid defaultProfileId =
-                (getDisk() != null && !getIsNew() && getDisk().getDiskStorageType() == DiskStorageType.IMAGE)
+                (getDisk() != null && !getIsNew()
+                        && (getDisk().getDiskStorageType() == DiskStorageType.IMAGE
+                                || getDisk().getDiskStorageType() == DiskStorageType.MANAGED_BLOCK_STORAGE))
                         ? ((DiskImage) getDisk()).getDiskProfileId() : null;
-        if (defaultProfileId != null) {
-            for (DiskProfile profile : diskProfiles) {
+        if (defaultProfileId != null && !safeList.isEmpty()) {
+            for (DiskProfile profile : safeList) {
                 if (profile.getId().equals(defaultProfileId)) {
                     getDiskProfile().setSelectedItem(profile);
                     return;
@@ -597,9 +606,15 @@ public abstract class AbstractDiskModel extends DiskModel {
             if (getDisk() != null) {
                 diskProfile.setName(getDiskImage().getDiskProfileName());
             }
-            diskProfiles.add(diskProfile);
-            getDiskProfile().setItems(diskProfiles);
+            safeList = new ArrayList<>(safeList);
+            safeList.add(diskProfile);
+            getDiskProfile().setItems(safeList);
             getDiskProfile().setSelectedItem(diskProfile);
+        } else if (safeList.isEmpty()) {
+            getDiskProfile().setSelectedItem(null);
+        } else {
+            // New storage domain selected with profiles; select first so selection is valid.
+            getDiskProfile().setSelectedItem(safeList.get(0));
         }
     }
 
@@ -667,7 +682,9 @@ public abstract class AbstractDiskModel extends DiskModel {
         getHost().setIsAvailable(isLunDisk);
         getStorageType().setIsAvailable(isLunDisk);
         getDataCenter().setIsAvailable(!isInVm);
-        getDiskProfile().setIsAvailable(isDiskImage);
+        StorageDomain sd = getStorageDomain().getSelectedItem();
+        boolean isManagedBlockDomain = sd != null && sd.getStorageType() == StorageType.MANAGED_BLOCK_STORAGE;
+        getDiskProfile().setIsAvailable((isDiskImage || isManagedBlockDisk) && !isManagedBlockDomain);
         getIsIncrementalBackup().setIsAvailable(isDiskImage);
 
         if (!isDiskImage) {
@@ -945,6 +962,11 @@ public abstract class AbstractDiskModel extends DiskModel {
         }
         updateQuota(getDataCenter().getSelectedItem());
         updateDiskProfiles(getDataCenter().getSelectedItem());
+        boolean isManagedBlockDomain = selectedStorage != null && selectedStorage.getStorageType() == StorageType.MANAGED_BLOCK_STORAGE;
+        boolean showDiskProfile = !isManagedBlockDomain
+                && (getDiskStorageType().getEntity() == DiskStorageType.IMAGE
+                        || getDiskStorageType().getEntity() == DiskStorageType.MANAGED_BLOCK_STORAGE);
+        getDiskProfile().setIsAvailable(showDiskProfile);
         updatePassDiscardAvailability();
         updatePassDiscardChangeability();
         updateWipeAfterDeleteChangeability();
@@ -1065,6 +1087,9 @@ public abstract class AbstractDiskModel extends DiskModel {
                 break;
             case MANAGED_BLOCK_STORAGE:
                 DiskImage managedBlockDisk = getManagedBlockDisk();
+                if (getDiskProfile().getSelectedItem() != null) {
+                    managedBlockDisk.setDiskProfileId(getDiskProfile().getSelectedItem().getId());
+                }
                 updateQuota(managedBlockDisk);
                 updateDiskSize(managedBlockDisk);
                 setDisk(managedBlockDisk);
