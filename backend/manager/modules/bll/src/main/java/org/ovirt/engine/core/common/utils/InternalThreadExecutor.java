@@ -15,6 +15,7 @@ import javax.management.Attribute;
 import javax.management.AttributeList;
 import javax.management.AttributeNotFoundException;
 import javax.management.DynamicMBean;
+import javax.management.InstanceAlreadyExistsException;
 import javax.management.InvalidAttributeValueException;
 import javax.management.MBeanAttributeInfo;
 import javax.management.MBeanException;
@@ -63,7 +64,13 @@ public class InternalThreadExecutor extends ThreadPoolExecutor implements Dynami
         MBeanServer mbs = ManagementFactory.getPlatformMBeanServer();
         String mbeanName = name + ":type=" + this.getClass().getName();
         try {
-            mbs.registerMBean(this, new ObjectName(mbeanName));
+            ObjectName objectName = new ObjectName(mbeanName);
+            try {
+                mbs.registerMBean(this, objectName);
+            } catch (InstanceAlreadyExistsException e) {
+                mbs.unregisterMBean(objectName);
+                mbs.registerMBean(this, objectName);
+            }
         } catch (Exception e) {
             log.info("Problem during registration of {} into JMX: {}",
                     name,
