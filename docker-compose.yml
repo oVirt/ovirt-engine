@@ -32,7 +32,7 @@ services:
       dockerfile: Dockerfile
       args:
         BASE_VERSION: "${BASE_VERSION:-10}"
-    hostname: ovirt-engine.dev
+    hostname: ovirt-engine.test
     depends_on:
       - postgres
     networks:
