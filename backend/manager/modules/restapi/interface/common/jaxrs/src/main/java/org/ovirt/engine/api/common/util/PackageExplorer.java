@@ -76,6 +76,7 @@ public class PackageExplorer {
 
     private static void walkJars(List<String> classNames, String packageName, List<JarInputStream> jars)
             throws IOException {
+        IOException firstException = null;
         for (JarInputStream jarFile : jars) {
             try {
                 JarEntry entry;
@@ -85,11 +86,28 @@ public class PackageExplorer {
                         classNames.add(trimClass(name));
                     }
                 }
+            } catch (IOException e) {
+                if (firstException == null) {
+                    firstException = e;
+                } else {
+                    firstException.addSuppressed(e);
+                }
             } finally {
-                if (jarFile != null) {
-                    jarFile.close();
+                try {
+                    if (jarFile != null) {
+                        jarFile.close();
+                    }
+                } catch (IOException e) {
+                    if (firstException == null) {
+                        firstException = e;
+                    } else {
+                        firstException.addSuppressed(e);
+                    }
                 }
             }
+        }
+        if (firstException != null) {
+            throw firstException;
         }
     }
 
