@@ -73,6 +73,10 @@ public class DiskProfileHelper {
                     diskProfilesList = diskProfileDao.getAllForStorageDomain(storageDomainId);
                     storageDiskProfilesMap.put(storageDomainId, diskProfilesList);
                 }
+                // No disk profiles for this domain (e.g. managed block storage) - leave diskProfileId null.
+                if (diskProfilesList.isEmpty()) {
+                    continue;
+                }
                 // Set Disk Profile according to permissions
                 if (!updateDiskProfileForBackwardCompatibility(diskImage,
                         diskProfilesList,
