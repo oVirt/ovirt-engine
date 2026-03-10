@@ -283,7 +283,7 @@ public class VmDiskPopupWidget extends AbstractModelBoundPopupWidget<AbstractDis
         // Show/hide disk profile row (e.g. for upload to IMAGE or managed block storage).
         diskProfileEditor.setVisible(disk.getDiskProfile().getIsAvailable());
         disk.getDiskProfile().getPropertyChangedEvent().addListener((ev, sender, args) -> {
-            if ("IsAvailable".equals(args.propertyName)) {
+            if ("IsAvailable".equals(args.propertyName)) { //$NON-NLS-1$
                 diskProfileEditor.setVisible(disk.getDiskProfile().getIsAvailable());
             }
         });

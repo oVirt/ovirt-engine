@@ -5,8 +5,8 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import java.util.logging.Logger;
 import java.util.function.Predicate;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
@@ -377,11 +377,11 @@ public abstract class AbstractDiskModel extends DiskModel {
                     domainByDiskType = d -> d.getStorageDomainType().isDataDomain()
                         || d.getStorageDomainType().isKubevirtDomain()
                         || d.getStorageType().isManagedBlockStorage();
-                    log.fine("AbstractDiskModel.updateStorageDomains: IMAGE disk type, including Data/KubeVirt/ManagedBlock domains");
+                    log.fine("AbstractDiskModel.updateStorageDomains: IMAGE disk type, including Data/KubeVirt/ManagedBlock domains"); //$NON-NLS-1$
                     break;
                 case MANAGED_BLOCK_STORAGE:
                     domainByDiskType = d -> d.getStorageType().isManagedBlockStorage();
-                    log.fine("AbstractDiskModel.updateStorageDomains: MANAGED_BLOCK_STORAGE disk type, MBS domains only");
+                    log.fine("AbstractDiskModel.updateStorageDomains: MANAGED_BLOCK_STORAGE disk type, MBS domains only"); //$NON-NLS-1$
                     break;
                 default:
                     domainByDiskType = s -> true;
@@ -396,7 +396,7 @@ public abstract class AbstractDiskModel extends DiskModel {
                             .collect(Collectors.toList());
 
             long mbsCount = filteredStorageDomains.stream().filter(d -> d.getStorageType().isManagedBlockStorage()).count();
-            log.info("AbstractDiskModel.updateStorageDomains: dc=" + datacenter.getName() + ", total=" + filteredStorageDomains.size() + ", managedBlock=" + mbsCount);
+            log.info("AbstractDiskModel.updateStorageDomains: dc=" + datacenter.getName() + ", total=" + filteredStorageDomains.size() + ", managedBlock=" + mbsCount); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 
             StorageDomain storage = Linq.firstOrNull(filteredStorageDomains);
             getStorageDomain().setItems(filteredStorageDomains, storage);
