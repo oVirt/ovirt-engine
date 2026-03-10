@@ -14,6 +14,7 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.backendcompat.CommandExecutionStatus;
 import org.ovirt.engine.core.dao.ImageDao;
+import org.ovirt.engine.core.dao.StorageDomainDao;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 @Typed(AddDiskCommandCallback.class)
@@ -24,6 +25,9 @@ public class AddDiskCommandCallback extends ConcurrentChildCommandsExecutionCall
 
     @Inject
     private ImageDao imageDao;
+
+    @Inject
+    private StorageDomainDao storageDomainDao;
 
     @Override
     protected void childCommandsExecutionEnded(CommandBase<?> command,
@@ -39,6 +43,13 @@ public class AddDiskCommandCallback extends ConcurrentChildCommandsExecutionCall
         }
 
         DiskImage diskImage = (DiskImage) addDiskCommand.getParameters().getDiskInfo();
+        // Skip VDSM volume-info path when storageIds is not set (e.g. MBS upload: disk created via
+        // AddManagedBlockStorageDisk while getChildActionType() is AddImageFromScratch due to IMAGE disk type).
+        if (diskImage.getStorageIds() == null || diskImage.getStorageIds().isEmpty()) {
+            super.childCommandsExecutionEnded(command, anyFailed, childCmdIds, status, completedChildren);
+            return;
+        }
+
         log.info("Getting volume info for image '{}/{}'", diskImage.getId(), diskImage.getImageId());
         try {
             DiskImage fromVdsm = imagesHandler.getVolumeInfoFromVdsm(diskImage.getStoragePoolId(),

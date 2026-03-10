@@ -22,11 +22,17 @@ public class TransferDiskImageParameters extends ImagesActionsParametersBase {
     private Integer clientInactivityTimeout;
     private TimeoutPolicyType timeoutPolicyType;
     private VolumeFormat volumeFormat;
+    private VolumeFormat sourceVolumeFormat;
     private Guid backupId;
     private TransferClientType transferClientType = TransferClientType.UNKNOWN;
 
     // Transfer only specified image data instead of entire image chain.
     private boolean shallow;
+
+    // For browser upload when source format != destination: copy task and new image/volume ids.
+    private Guid copyTaskId;
+    private Guid convertedImageId;
+    private Guid convertedVolumeId;
 
     public TransferDiskImageParameters() { }
 
@@ -123,6 +129,14 @@ public class TransferDiskImageParameters extends ImagesActionsParametersBase {
         this.volumeFormat = volumeFormat;
     }
 
+    public VolumeFormat getSourceVolumeFormat() {
+        return sourceVolumeFormat;
+    }
+
+    public void setSourceVolumeFormat(VolumeFormat sourceVolumeFormat) {
+        this.sourceVolumeFormat = sourceVolumeFormat;
+    }
+
     public Guid getBackupId() {
         return backupId;
     }
@@ -145,5 +159,29 @@ public class TransferDiskImageParameters extends ImagesActionsParametersBase {
 
     public void setShallow(boolean shallow) {
         this.shallow = shallow;
+    }
+
+    public Guid getCopyTaskId() {
+        return copyTaskId;
+    }
+
+    public void setCopyTaskId(Guid copyTaskId) {
+        this.copyTaskId = copyTaskId;
+    }
+
+    public Guid getConvertedImageId() {
+        return convertedImageId;
+    }
+
+    public void setConvertedImageId(Guid convertedImageId) {
+        this.convertedImageId = convertedImageId;
+    }
+
+    public Guid getConvertedVolumeId() {
+        return convertedVolumeId;
+    }
+
+    public void setConvertedVolumeId(Guid convertedVolumeId) {
+        this.convertedVolumeId = convertedVolumeId;
     }
 }

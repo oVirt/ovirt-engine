@@ -10,17 +10,17 @@ import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AddDiskParameters;
 import org.ovirt.engine.core.common.action.TransferDiskImageParameters;
 import org.ovirt.engine.core.common.action.TransferImageStatusParameters;
-import org.ovirt.engine.core.common.businessentities.profiles.DiskProfile;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageFormatType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
+import org.ovirt.engine.core.common.businessentities.profiles.DiskProfile;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskContentType;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
-import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.businessentities.storage.ImageTransfer;
 import org.ovirt.engine.core.common.businessentities.storage.ImageTransferPhase;
+import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.businessentities.storage.TransferClientType;
 import org.ovirt.engine.core.common.businessentities.storage.TransferType;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
@@ -440,6 +440,9 @@ public class UploadImageModel extends Model implements ICommandTarget {
             uploadImageIsValid = getImagePath().getIsValid()
                     && getImageInfoModel().validate(storageFormatType, imageInfoModel.getActualSize(), isManagedBlockDomain);
 
+            // Browser sends file bytes as-is; no client-side conversion. Both raw and qcow2 are supported for MBS:
+            // the file is written as-is to the volume (qcow2 stays qcow2, visible as such with qemu-img info).
+
             getInvalidityReasons().addAll(getImagePath().getInvalidityReasons());
             getInvalidityReasons().addAll(getImageInfoModel().getInvalidityReasons());
         } else {
@@ -495,9 +498,14 @@ public class UploadImageModel extends Model implements ICommandTarget {
             StorageDomain selectedSd = getDiskModel().getStorageDomain().getSelectedItem();
             diskParameters.setStorageDomainId(selectedSd.getId());
             if (selectedSd.getStorageType() == StorageType.MANAGED_BLOCK_STORAGE) {
-                log.info("UploadImageModel.createInitParams: upload target is Managed Block Storage domain id=" + selectedSd.getId() + " name=" + selectedSd.getName());
+                log.info("UploadImageModel.createInitParams: upload target is Managed Block Storage domain id=" + selectedSd.getId() + " name=" + selectedSd.getName()); //$NON-NLS-1$ //$NON-NLS-2$
                 if (newDisk instanceof DiskImage) {
-                    ((DiskImage) newDisk).setDiskProfileId(null);
+                    DiskImage diskImage = (DiskImage) newDisk;
+                    diskImage.setDiskProfileId(null);
+                    // Same as Ansible (format: cow): send COW + Sparse so checkImageConfiguration() passes;
+                    // format is then ignored for MBS (AddManagedBlockStorageDiskCommand overwrites to RAW when saving).
+                    diskImage.setVolumeFormat(VolumeFormat.COW);
+                    diskImage.setVolumeType(VolumeType.Sparse);
                 }
             }
         }
@@ -506,7 +514,37 @@ public class UploadImageModel extends Model implements ICommandTarget {
                 diskParameters.getStorageDomainId(),
                 diskParameters);
         parameters.setTransferSize(imageInfoModel.getActualSize());
-        parameters.setVolumeFormat(imageInfoModel.getFormat());
+        VolumeFormat sourceFormat = imageInfoModel.getFormat();
+        VolumeFormat destFormat;
+        if (diskModel.getDiskStorageType().getEntity() == DiskStorageType.IMAGE) {
+            StorageDomain selectedSd = getDiskModel().getStorageDomain().getSelectedItem();
+            if (selectedSd != null && selectedSd.getStorageType() == StorageType.MANAGED_BLOCK_STORAGE) {
+                // MBS: disk is always RAW (AddManagedBlockStorageDiskCommand overwrites). Use RAW so
+                // needsConversionAfterUpload() is correct: raw upload -> no conversion; qcow2 upload -> convert to raw.
+                destFormat = VolumeFormat.RAW;
+            } else {
+                destFormat = newDisk instanceof DiskImage
+                        ? ((DiskImage) newDisk).getVolumeFormat()
+                        : sourceFormat;
+            }
+        } else {
+            destFormat = newDisk instanceof DiskImage
+                    ? ((DiskImage) newDisk).getVolumeFormat()
+                    : sourceFormat;
+        }
+        parameters.setSourceVolumeFormat(sourceFormat);
+        parameters.setVolumeFormat(destFormat);
+        // When browser upload and source format != destination: create disk in source format (upload volume),
+        // then backend converts to destination format and replaces the volume.
+        if (diskModel.getDiskStorageType().getEntity() == DiskStorageType.IMAGE
+                && sourceFormat != null && destFormat != null && !sourceFormat.equals(destFormat)) {
+            StorageDomain sd = getDiskModel().getStorageDomain().getSelectedItem();
+            if (sd == null || sd.getStorageType() != StorageType.MANAGED_BLOCK_STORAGE) {
+                if (newDisk instanceof DiskImage) {
+                    ((DiskImage) newDisk).setVolumeFormat(sourceFormat);
+                }
+            }
+        }
         parameters.setVdsId(getDiskModel().getHost().getSelectedItem().getId());
         parameters.setTransferClientType(TransferClientType.TRANSFER_VIA_BROWSER);
 
