@@ -2658,6 +2658,21 @@ public class JsonRpcVdsServer implements IVdsServer {
     }
 
     @Override
+    public StatusOnlyReturn convertManagedBlockVolume(Guid sdId, Guid srcVolId, Guid dstVolId,
+            String srcFormat, String dstFormat) {
+        JsonRpcRequest request =
+                new RequestBuilder("ManagedVolume.convert_volume")
+                        .withParameter("sd_id", sdId.toString())
+                        .withParameter("src_vol_id", srcVolId.toString())
+                        .withParameter("dst_vol_id", dstVolId.toString())
+                        .withParameter("src_format", srcFormat)
+                        .withParameter("dst_format", dstFormat)
+                        .build();
+        Map<String, Object> response = new FutureMap(this.client, request);
+        return new StatusOnlyReturn(response);
+    }
+
+    @Override
     public VDSInfoReturn getLeaseStatus(String leaseUUID, String sdUUID) {
         Map<String, Object> leaseDict = new HashMap<>();
         leaseDict.put("lease_id", leaseUUID);

@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.bll.storage.disk.image;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -36,28 +37,39 @@ import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AddDiskParameters;
 import org.ovirt.engine.core.common.action.ConnectManagedBlockStorageDeviceCommandParameters;
+import org.ovirt.engine.core.common.action.DisconnectManagedBlockStorageDeviceParameters;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.RemoveDiskParameters;
+import org.ovirt.engine.core.common.action.RemoveImageParameters;
 import org.ovirt.engine.core.common.action.TransferDiskImageParameters;
 import org.ovirt.engine.core.common.action.TransferImageStatusParameters;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
+import org.ovirt.engine.core.common.businessentities.AsyncTaskStatus;
+import org.ovirt.engine.core.common.businessentities.AsyncTaskStatusEnum;
+import org.ovirt.engine.core.common.businessentities.Permission;
+import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmBackup;
 import org.ovirt.engine.core.common.businessentities.VmBackupPhase;
+import org.ovirt.engine.core.common.businessentities.VmDevice;
+import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskBackupMode;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
+import org.ovirt.engine.core.common.businessentities.storage.DiskImageDynamic;
+import org.ovirt.engine.core.common.businessentities.storage.DiskLunMap;
 import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
-import org.ovirt.engine.core.common.businessentities.storage.ManagedBlockStorage;
-import org.ovirt.engine.core.common.businessentities.storage.ManagedBlockStorageDisk;
+import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.storage.ImageTicket;
 import org.ovirt.engine.core.common.businessentities.storage.ImageTicketInformation;
 import org.ovirt.engine.core.common.businessentities.storage.ImageTransfer;
 import org.ovirt.engine.core.common.businessentities.storage.ImageTransferBackend;
 import org.ovirt.engine.core.common.businessentities.storage.ImageTransferPhase;
+import org.ovirt.engine.core.common.businessentities.storage.ManagedBlockStorage;
+import org.ovirt.engine.core.common.businessentities.storage.ManagedBlockStorageDisk;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.businessentities.storage.TimeoutPolicyType;
 import org.ovirt.engine.core.common.businessentities.storage.TransferType;
@@ -67,6 +79,7 @@ import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.constants.StorageConstants;
+import org.ovirt.engine.core.common.errors.EngineError;
 import org.ovirt.engine.core.common.errors.EngineException;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.locks.LockInfo;
@@ -75,10 +88,13 @@ import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.utils.SizeConverter;
 import org.ovirt.engine.core.common.utils.cinderlib.CinderlibCommandParameters;
 import org.ovirt.engine.core.common.utils.cinderlib.CinderlibExecutor;
-import org.ovirt.engine.core.common.vdscommands.AttachManagedBlockStorageVolumeVDSCommandParameters;
+import org.ovirt.engine.core.common.utils.cinderlib.CinderlibExecutor.CinderlibCommand;
 import org.ovirt.engine.core.common.vdscommands.AddImageTicketVDSCommandParameters;
+import org.ovirt.engine.core.common.vdscommands.AttachManagedBlockStorageVolumeVDSCommandParameters;
+import org.ovirt.engine.core.common.vdscommands.ConvertManagedBlockVolumeVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.ExtendImageTicketVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.GetImageTicketVDSCommandParameters;
+import org.ovirt.engine.core.common.vdscommands.HSMTaskGuidBaseVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.ImageActionsVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.NbdServerVDSParameters;
 import org.ovirt.engine.core.common.vdscommands.PrepareImageVDSCommandParameters;
@@ -89,15 +105,22 @@ import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.CommandStatus;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
-import org.ovirt.engine.core.dao.DiskDao;
-import org.ovirt.engine.core.dao.ImageDao;
+import org.ovirt.engine.core.dao.BaseDiskDao;
 import org.ovirt.engine.core.dao.CinderStorageDao;
+import org.ovirt.engine.core.dao.DiskDao;
+import org.ovirt.engine.core.dao.DiskImageDynamicDao;
+import org.ovirt.engine.core.dao.DiskLunMapDao;
+import org.ovirt.engine.core.dao.DiskVmElementDao;
+import org.ovirt.engine.core.dao.ImageDao;
+import org.ovirt.engine.core.dao.ImageStorageDomainMapDao;
 import org.ovirt.engine.core.dao.ImageTransferDao;
+import org.ovirt.engine.core.dao.PermissionDao;
 import org.ovirt.engine.core.dao.SnapshotDao;
 import org.ovirt.engine.core.dao.StorageDomainDao;
 import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.dao.VmBackupDao;
 import org.ovirt.engine.core.dao.VmDao;
+import org.ovirt.engine.core.dao.VmDeviceDao;
 import org.ovirt.engine.core.utils.EngineLocalConfig;
 import org.ovirt.engine.core.utils.JsonHelper;
 import org.ovirt.engine.core.utils.ReplacementUtils;
@@ -145,9 +168,23 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
     @Inject
     private ResourceManager resourceManager;
     @Inject
+    private CinderStorageDao cinderStorageDao;
+    @Inject
     private CinderlibExecutor cinderlibExecutor;
     @Inject
-    private CinderStorageDao cinderStorageDao;
+    private BaseDiskDao baseDiskDao;
+    @Inject
+    private DiskImageDynamicDao diskImageDynamicDao;
+    @Inject
+    private ImageStorageDomainMapDao imageStorageDomainMapDao;
+    @Inject
+    private VmDeviceDao vmDeviceDao;
+    @Inject
+    private DiskVmElementDao diskVmElementDao;
+    @Inject
+    private PermissionDao permissionDao;
+    @Inject
+    private DiskLunMapDao diskLunMapDao;
 
     private ImageioClient proxyClient;
     private VmBackup backup;
@@ -197,11 +234,22 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
             return vmBackupDao.getBackupUrlForDisk(
                     getParameters().getBackupId(), getDiskImage().getId());
         }
-
         if (usingNbdServer()) {
             StorageDomain sd = getStorageDomain();
             if (sd != null && StorageType.MANAGED_BLOCK_STORAGE.equals(sd.getStorageType())) {
                 return null;
+            }
+        }
+        // For MBS, VDSM does not have the domain in sdCache; connect and attach the volume on the host
+        // and use the path from the attach result instead of calling PrepareImageVDS.
+        if (isManagedBlockStorageForTransfer()) {
+            validateHostConnectorForMbs();
+            DiskImage disk = getDiskImage();
+            if (disk instanceof ManagedBlockStorageDisk) {
+                String path = connectAttachAndGetMbsVolumePath((ManagedBlockStorageDisk) disk);
+                if (path != null) {
+                    return path;
+                }
             }
         }
 
@@ -317,6 +365,68 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
         return nbdServerVDSParameters;
     }
 
+    /**
+     * For NBD-based transfer of an MBS disk: connect the volume and attach it to the host so VDSM can
+     * expose it via NBD. Returns false if the disk is MBS and connect/attach fails (caller should return false).
+     * Returns true if not MBS, or connect+attach succeeded.
+     */
+    private boolean connectAndAttachManagedBlockVolumeForTransfer() {
+        DiskImage disk = getDiskImage();
+        if (!(disk instanceof ManagedBlockStorageDisk)) {
+            return true;
+        }
+        ManagedBlockStorageDisk mbsDisk = (ManagedBlockStorageDisk) disk;
+        Guid storageDomainId = mbsDisk.getStorageIds().isEmpty() ? getStorageDomainId() : mbsDisk.getStorageIds().get(0);
+
+        ActionReturnValue connectResult = connectManagedBlockStorageDeviceForTransfer(mbsDisk, storageDomainId);
+        if (!connectResult.getSucceeded()) {
+            log.error("Failed to connect managed block volume for image transfer '{}': {}",
+                    getCommandId(), connectResult.getFault());
+            updateEntityPhaseToStoppedBySystem(
+                    AuditLogType.TRANSFER_IMAGE_STOPPED_BY_SYSTEM_FAILED_TO_CREATE_TICKET);
+            return false;
+        }
+
+        @SuppressWarnings("unchecked")
+        Map<String, Object> connectionInfo = (Map<String, Object>) connectResult.getActionReturnValue();
+        if (connectionInfo != null && !attachManagedBlockVolumeToHostForTransfer(mbsDisk, storageDomainId, connectionInfo)) {
+            return false;
+        }
+        return true;
+    }
+
+    private ActionReturnValue connectManagedBlockStorageDeviceForTransfer(ManagedBlockStorageDisk mbsDisk,
+            Guid storageDomainId) {
+        ConnectManagedBlockStorageDeviceCommandParameters connectParams =
+                new ConnectManagedBlockStorageDeviceCommandParameters(storageDomainId,
+                        getVds().getConnectorInfo(),
+                        mbsDisk.getImageId());
+        return runInternalAction(ActionType.ConnectManagedBlockStorageDevice, connectParams);
+    }
+
+    /**
+     * Attach the MBS volume to the host so VDSM can expose it via NBD. On failure logs and updates
+     * transfer phase; returns false.
+     */
+    private boolean attachManagedBlockVolumeToHostForTransfer(ManagedBlockStorageDisk mbsDisk,
+            Guid storageDomainId,
+            Map<String, Object> connectionInfo) {
+        AttachManagedBlockStorageVolumeVDSCommandParameters attachParams =
+                new AttachManagedBlockStorageVolumeVDSCommandParameters(getVds(),
+                        connectionInfo,
+                        storageDomainId);
+        attachParams.setVolumeId(mbsDisk.getImageId());
+        VDSReturnValue attachResult = runVdsCommand(VDSCommandType.AttachManagedBlockStorageVolume, attachParams);
+        if (!attachResult.getSucceeded()) {
+            log.error("Failed to attach managed block volume to host for image transfer '{}': {}",
+                    getCommandId(), attachResult.getVdsError());
+            updateEntityPhaseToStoppedBySystem(
+                    AuditLogType.TRANSFER_IMAGE_STOPPED_BY_SYSTEM_FAILED_TO_CREATE_TICKET);
+            return false;
+        }
+        return true;
+    }
+
     protected void tearDownImage(Guid vdsId, Guid backupId) {
         if (backupId != null) {
             // shouldn't teardown as prepare wasn't invoked
@@ -330,6 +440,16 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
         }
 
         boolean tearDownFailed = false;
+
+        // MBS: detach volume from host and disconnect (no TeardownImage; volume was attached for NBD transfer).
+        if (isManagedBlockStorageForTransfer()) {
+            ImageTransfer entity = imageTransferDao.get(getCommandId());
+            if (entity != null && entity.getDiskId() != null) {
+                detachManagedBlockVolumeFromHost(entity);
+                disconnectManagedBlockVolumeForTransfer(entity);
+            }
+            return;
+        }
 
         if (getTransferBackend() == ImageTransferBackend.FILE) {
             if (isTemplateBeingUsed(image)) {
@@ -391,6 +511,13 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
         diskParameters.setShouldRemainIllegalOnFailedExecution(true);
         diskParameters.setSkipDomainCheck(true);
         diskParameters.setEndProcedure(ActionParametersBase.EndProcedure.COMMAND_MANAGED);
+        // When conversion will run after upload: first volume must be in source (upload) format so VDSM
+        // receives the file as-is; we then create a second volume in destination format and convert.
+        if (needsConversionAfterUpload() && diskParameters.getDiskInfo() instanceof DiskImage) {
+            DiskImage diskInfo = (DiskImage) diskParameters.getDiskInfo();
+            diskInfo.setVolumeFormat(getParameters().getSourceVolumeFormat());
+            diskInfo.setActualSizeInBytes(getParameters().getTransferSize());
+        }
         return diskParameters;
     }
 
@@ -559,6 +686,10 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
     }
 
     private VolumeFormat getTransferImageFormat() {
+        // When browser upload with format conversion: transfer uses source format (upload volume).
+        if (getParameters().getSourceVolumeFormat() != null) {
+            return getParameters().getSourceVolumeFormat();
+        }
         if (getParameters().getVolumeFormat() != null) {
             return getParameters().getVolumeFormat();
         }
@@ -573,8 +704,39 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
             // Incremental backup uses NBD transfer backend
             return ImageTransferBackend.NBD;
         }
-        return getParameters().getVolumeFormat() == VolumeFormat.RAW ?
+        VolumeFormat formatForBackend = getParameters().getSourceVolumeFormat() != null
+                ? getParameters().getSourceVolumeFormat()
+                : getParameters().getVolumeFormat();
+        return formatForBackend == VolumeFormat.RAW ?
                 ImageTransferBackend.NBD : ImageTransferBackend.FILE;
+    }
+
+    /**
+     * True when upload needs format conversion: we upload to a volume in source format,
+     * then convert to destination format and replace.
+     * For MBS: also infer when sourceVolumeFormat is null (e.g. REST API sets only format=
+     * source; MBS destination is always RAW).
+     */
+    private boolean needsConversionAfterUpload() {
+        if (getParameters().getTransferType() != TransferType.Upload) {
+            log.debug("needsConversionAfterUpload: false (not upload)");
+            return false;
+        }
+        VolumeFormat srcFmt = getParameters().getSourceVolumeFormat();
+        VolumeFormat dstFmt = getParameters().getVolumeFormat();
+        boolean mbs = isManagedBlockStorageForTransfer();
+        log.debug("needsConversionAfterUpload: srcFmt={} dstFmt={} mbs={}", srcFmt, dstFmt, mbs);
+        if (srcFmt != null && dstFmt != null && !srcFmt.equals(dstFmt)) {
+            log.debug("needsConversionAfterUpload: true (src != dst)");
+            return true;
+        }
+        // MBS: REST API sets only volumeFormat (source format); dest is always RAW
+        if (mbs && srcFmt == null && VolumeFormat.COW.equals(dstFmt)) {
+            log.debug("needsConversionAfterUpload: true (MBS qcow2 upload)");
+            return true;  // qcow2 upload to MBS needs convert to raw
+        }
+        log.debug("needsConversionAfterUpload: false");
+        return false;
     }
 
     public void proceedCommandExecution(Guid childCmdId) {
@@ -636,6 +798,12 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
                 break;
             case FINISHED_CLEANUP:
                 handleFinishedCleanup();
+                break;
+            case CONVERTING:
+                handleConverting(context);
+                break;
+            default:
+                // UNKNOWN, FINISHED_SUCCESS, FINISHED_FAILURE - no action
                 break;
         }
     }
@@ -915,6 +1083,29 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
         if (stopImageTransferSession(context.entity)) {
             Guid transferingVdsId = context.entity.getVdsId();
 
+            // When browser upload and source format != destination: convert via qemu-img then replace volume.
+            if (getParameters().getTransferType() == TransferType.Upload) {
+                log.info("Upload transfer '{}': srcFmt={} destFmt={} browser={} needsConversion={}",
+                        getCommandId(), getParameters().getSourceVolumeFormat(), getParameters().getVolumeFormat(),
+                        getParameters().getTransferClientType().isBrowserTransfer(), needsConversionAfterUpload());
+            }
+            if (needsConversionAfterUpload()) {
+                log.info("Upload transfer '{}' requires format conversion: {} -> {}",
+                        getCommandId(), getParameters().getSourceVolumeFormat(), getParameters().getVolumeFormat());
+                if (isManagedBlockStorageForTransfer()) {
+                    boolean started = startMbsUploadConversion(context);
+                    if (started) {
+                        updateEntityPhase(ImageTransferPhase.CONVERTING);
+                    } else {
+                        nextImageStatus = ImageStatus.ILLEGAL;
+                        updateEntityPhase(ImageTransferPhase.FINALIZING_FAILURE);
+                        tearDownImage(context.entity.getVdsId(), context.entity.getBackupId());
+                        setImageStatus(nextImageStatus);
+                    }
+                    return;
+                }
+            }
+
             // Verify image is relevant only on upload
             if (getParameters().getTransferType() == TransferType.Download) {
                 setAuditLogTypeFromPhase(ImageTransferPhase.FINISHED_SUCCESS);
@@ -944,6 +1135,544 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
             // Moves Image status to OK or ILLEGAL
             setImageStatus(nextImageStatus);
         }
+    }
+
+    /**
+     * How far MBS upload conversion got before failure; drives orphan cleanup order.
+     */
+    private enum MbsConversionStartProgress {
+        VOLUME_CREATED,
+        CONNECTED_ON_HOST,
+        ATTACHED_ON_HOST
+    }
+
+    /**
+     * Start MBS conversion: create destination volume, connect and attach on host.
+     * Persists convertedVolumeId for handleConverting.
+     */
+    private boolean startMbsUploadConversion(StateContext context) {
+        Guid sdId = getStorageDomainId();
+        Guid dstVolId = Guid.newGuid();
+        ManagedBlockStorage managedBlockStorage = cinderStorageDao.get(sdId);
+        if (managedBlockStorage == null) {
+            log.error("Managed block storage domain '{}' not found for conversion", sdId);
+            return false;
+        }
+
+        log.debug("MBS upload conversion for transfer '{}': disk={} srcVol={} -> dstVol={}, srcFmt={} destFmt={}",
+                getCommandId(), getParameters().getImageGroupID(), getDiskImage().getImageId(), dstVolId,
+                getParameters().getSourceVolumeFormat(), getParameters().getVolumeFormat());
+
+        if (!mbsConversionCreateVolume(managedBlockStorage, dstVolId)) {
+            return false;
+        }
+
+        VDS vds = vdsDao.get(context.entity.getVdsId());
+        if (vds == null || vds.getConnectorInfo() == null) {
+            log.error("Host or connector info missing for MBS conversion");
+            cleanupOrphanMbsConversionVolume(managedBlockStorage, sdId, vds, dstVolId, null,
+                    MbsConversionStartProgress.VOLUME_CREATED);
+            return false;
+        }
+
+        ActionReturnValue connectResult = mbsConversionConnectVolume(vds, sdId, dstVolId);
+        if (!connectResult.getSucceeded()) {
+            log.error("Connect failed for MBS conversion: {}", connectResult.getFault());
+            cleanupOrphanMbsConversionVolume(managedBlockStorage, sdId, vds, dstVolId, null,
+                    MbsConversionStartProgress.VOLUME_CREATED);
+            return false;
+        }
+        Map<String, Object> connectionInfo = connectResult.getActionReturnValue();
+        if (connectionInfo == null) {
+            log.error("No connection info returned for MBS conversion");
+            cleanupOrphanMbsConversionVolume(managedBlockStorage, sdId, vds, dstVolId, null,
+                    MbsConversionStartProgress.VOLUME_CREATED);
+            return false;
+        }
+
+        if (!mbsConversionAttachVolume(vds, connectionInfo, sdId, dstVolId)) {
+            log.error("Attach failed for MBS conversion");
+            cleanupOrphanMbsConversionVolume(managedBlockStorage, sdId, vds, dstVolId, connectionInfo,
+                    MbsConversionStartProgress.CONNECTED_ON_HOST);
+            return false;
+        }
+
+        try {
+            getParameters().setConvertedVolumeId(dstVolId);
+            persistCommand(getParameters().getParentCommand(), true);
+            log.info("Started MBS upload conversion for transfer '{}': convertedVolumeId={}",
+                    getCommandId(), dstVolId);
+            return true;
+        } catch (Exception e) {
+            log.error("Failed to persist MBS upload conversion for transfer '{}': {}", getCommandId(), e);
+            cleanupOrphanMbsConversionVolume(managedBlockStorage, sdId, vds, dstVolId, connectionInfo,
+                    MbsConversionStartProgress.ATTACHED_ON_HOST);
+            return false;
+        }
+    }
+
+    private boolean mbsConversionCreateVolume(ManagedBlockStorage managedBlockStorage, Guid dstVolId) {
+        try {
+            long sizeGiB = SizeConverter.convert(getDiskImage().getSize(),
+                    SizeConverter.SizeUnit.BYTES, SizeConverter.SizeUnit.GiB).longValue();
+            List<String> extraParams = new ArrayList<>();
+            extraParams.add(dstVolId.toString());
+            extraParams.add(Long.toString(sizeGiB));
+            CinderlibCommandParameters params = new CinderlibCommandParameters(
+                    JsonHelper.mapToJson(managedBlockStorage.getAllDriverOptions(), false),
+                    extraParams, getCorrelationId());
+            if (!cinderlibExecutor.runCommand(CinderlibCommand.CREATE_VOLUME, params).getSucceed()) {
+                log.error("CREATE_VOLUME failed for transfer '{}'", getCommandId());
+                return false;
+            }
+            return true;
+        } catch (Exception e) {
+            log.error("CREATE_VOLUME raised for transfer '{}': {}", getCommandId(), e);
+            return false;
+        }
+    }
+
+    private ActionReturnValue mbsConversionConnectVolume(VDS vds, Guid sdId, Guid dstVolId) {
+        ConnectManagedBlockStorageDeviceCommandParameters connectParams =
+                new ConnectManagedBlockStorageDeviceCommandParameters(sdId, vds.getConnectorInfo(), dstVolId);
+        return runInternalAction(ActionType.ConnectManagedBlockStorageDevice, connectParams);
+    }
+
+    private boolean mbsConversionAttachVolume(VDS vds, Map<String, Object> connectionInfo, Guid sdId,
+            Guid dstVolId) {
+        AttachManagedBlockStorageVolumeVDSCommandParameters attachParams =
+                new AttachManagedBlockStorageVolumeVDSCommandParameters(vds, connectionInfo, sdId);
+        attachParams.setVolumeId(dstVolId);
+        try {
+            VDSReturnValue attachResult = runVdsCommand(VDSCommandType.AttachManagedBlockStorageVolume, attachParams);
+            if (!attachResult.getSucceeded()) {
+                log.error("Attach failed for MBS conversion: {}", attachResult.getVdsError());
+                return false;
+            }
+            return true;
+        } catch (Exception e) {
+            log.error("Attach raised for MBS conversion: {}", e);
+            return false;
+        }
+    }
+
+    /**
+     * Best-effort removal of a partially created conversion volume after startMbsUploadConversion fails.
+     */
+    private void cleanupOrphanMbsConversionVolume(ManagedBlockStorage managedBlockStorage, Guid sdId, VDS vds,
+            Guid volId, Map<String, Object> connectionInfo, MbsConversionStartProgress progress) {
+        if (managedBlockStorage == null) {
+            return;
+        }
+        log.warn("Cleaning up orphan MBS conversion volume '{}' for transfer '{}' (progress={})",
+                volId, getCommandId(), progress);
+        if (progress == MbsConversionStartProgress.ATTACHED_ON_HOST && vds != null) {
+            mbsConversionTryDetachVolume(vds, sdId, volId);
+        }
+        if (progress == MbsConversionStartProgress.CONNECTED_ON_HOST
+                || progress == MbsConversionStartProgress.ATTACHED_ON_HOST) {
+            if (vds != null && connectionInfo != null) {
+                mbsConversionTryDisconnectDevice(sdId, vds, volId, connectionInfo);
+            }
+            mbsConversionTryCinderDisconnect(managedBlockStorage, volId);
+        }
+        mbsConversionTryCinderDeleteVolume(managedBlockStorage, volId);
+    }
+
+    private void mbsConversionTryDetachVolume(VDS vds, Guid sdId, Guid volId) {
+        try {
+            AttachManagedBlockStorageVolumeVDSCommandParameters detachParams =
+                    new AttachManagedBlockStorageVolumeVDSCommandParameters(vds);
+            detachParams.setVolumeId(volId);
+            detachParams.setStorageDomainId(sdId);
+            runVdsCommand(VDSCommandType.DetachManagedBlockStorageVolume, detachParams);
+        } catch (Exception e) {
+            log.warn("Orphan cleanup: detach volume {} failed: {}", volId, e);
+        }
+    }
+
+    private void mbsConversionTryDisconnectDevice(Guid sdId, VDS vds, Guid volId,
+            Map<String, Object> connectionInfo) {
+        try {
+            DisconnectManagedBlockStorageDeviceParameters disconnectParams =
+                    new DisconnectManagedBlockStorageDeviceParameters(sdId, connectionInfo, volId, vds.getId());
+            runInternalAction(ActionType.DisconnectManagedBlockStorageDevice, disconnectParams);
+        } catch (Exception e) {
+            log.warn("Orphan cleanup: disconnect device for volume {} failed: {}", volId, e);
+        }
+    }
+
+    private void mbsConversionTryCinderDisconnect(ManagedBlockStorage managedBlockStorage, Guid volId) {
+        List<String> extraParams = Collections.singletonList(volId.toString());
+        try {
+            cinderlibExecutor.runCommand(CinderlibCommand.DISCONNECT_VOLUME,
+                    new CinderlibCommandParameters(
+                            JsonHelper.mapToJson(managedBlockStorage.getAllDriverOptions(), false),
+                            extraParams, getCorrelationId()));
+        } catch (Exception e) {
+            log.warn("Orphan cleanup: cinderlib DISCONNECT_VOLUME for {} failed: {}", volId, e);
+        }
+    }
+
+    private void mbsConversionTryCinderDeleteVolume(ManagedBlockStorage managedBlockStorage, Guid volId) {
+        List<String> extraParams = Collections.singletonList(volId.toString());
+        try {
+            cinderlibExecutor.runCommand(CinderlibCommand.DELETE_VOLUME,
+                    new CinderlibCommandParameters(
+                            JsonHelper.mapToJson(managedBlockStorage.getAllDriverOptions(), false),
+                            extraParams, getCorrelationId()));
+        } catch (Exception e) {
+            log.warn("Orphan cleanup: cinderlib DELETE_VOLUME for {} failed: {}", volId, e);
+        }
+    }
+
+    private void handleConverting(StateContext context) {
+        // MBS: synchronous convert (no copy task)
+        if (isManagedBlockStorageForTransfer() && getParameters().getConvertedVolumeId() != null) {
+            // Run convert (synchronous) on host
+            Guid sdId = getStorageDomainId();
+            Guid srcVolId = getDiskImage().getImageId();
+            Guid dstVolId = getParameters().getConvertedVolumeId();
+            VolumeFormat srcFmt = getParameters().getSourceVolumeFormat() != null
+                    ? getParameters().getSourceVolumeFormat()
+                    : getParameters().getVolumeFormat();  // REST API: volumeFormat = source
+            VolumeFormat dstFmt = getParameters().getSourceVolumeFormat() != null && getParameters().getVolumeFormat() != null
+                    ? getParameters().getVolumeFormat()
+                    : VolumeFormat.RAW;  // MBS dest is always RAW when inferred
+            String srcFormat = srcFmt == VolumeFormat.COW ? "qcow2" : "raw";
+            String dstFormat = dstFmt == VolumeFormat.COW ? "qcow2" : "raw";
+
+            VDS vds = vdsDao.get(context.entity.getVdsId());
+            if (vds == null) {
+                log.error("Host not found for MBS conversion");
+                updateEntityPhase(ImageTransferPhase.FINALIZING_FAILURE);
+                setCommandStatus(CommandStatus.FAILED);
+                return;
+            }
+            try {
+                ConvertManagedBlockVolumeVDSCommandParameters convertParams =
+                        new ConvertManagedBlockVolumeVDSCommandParameters(vds, sdId, srcVolId, dstVolId, srcFormat, dstFormat);
+                VDSReturnValue vdsReturnValue = runVdsCommand(VDSCommandType.ConvertManagedBlockVolume, convertParams);
+                if (!vdsReturnValue.getSucceeded()) {
+                    log.error("ConvertManagedBlockVolume failed for transfer '{}': {}", getCommandId(), vdsReturnValue.getVdsError());
+                    updateEntityPhase(ImageTransferPhase.FINALIZING_FAILURE);
+                    setCommandStatus(CommandStatus.FAILED);
+                    return;
+                }
+                log.info("MBS upload conversion completed for transfer '{}', finishing", getCommandId());
+                finishMbsUploadConversion(context);
+            } catch (Exception e) {
+                log.error("Failed MBS conversion for transfer '{}': {}", getCommandId(), e);
+                updateEntityPhase(ImageTransferPhase.FINALIZING_FAILURE);
+                setCommandStatus(CommandStatus.FAILED);
+            }
+            return;
+        }
+
+        Guid copyTaskId = getParameters().getCopyTaskId();
+        if (copyTaskId == null) {
+            log.error("Conversion phase but no copy task id for transfer '{}'", getCommandId());
+            updateEntityPhase(ImageTransferPhase.FINALIZING_FAILURE);
+            setCommandStatus(CommandStatus.FAILED);
+            return;
+        }
+        Guid spmId = getStoragePool().getSpmVdsId();
+        if (spmId == null || Guid.Empty.equals(spmId)) {
+            log.debug("Waiting for SPM for transfer '{}'", getCommandId());
+            return;
+        }
+        try {
+            VDSReturnValue vdsReturnValue = runVdsCommand(VDSCommandType.HSMGetTaskStatus,
+                    new HSMTaskGuidBaseVDSCommandParameters(spmId, copyTaskId));
+            if (!vdsReturnValue.getSucceeded()) {
+                log.debug("Could not get copy task status for transfer '{}'", getCommandId());
+                return;
+            }
+            AsyncTaskStatus taskStatus = (AsyncTaskStatus) vdsReturnValue.getReturnValue();
+            if (taskStatus.getStatus() == AsyncTaskStatusEnum.finished) {
+                log.info("Upload conversion copy task finished for transfer '{}', completing conversion", getCommandId());
+                finishUploadConversion(context);
+            } else if (taskStatus.getStatus() == AsyncTaskStatusEnum.unknown
+                    || taskStatus.getStatus() == AsyncTaskStatusEnum.aborting) {
+                log.error("Copy task failed for transfer '{}': {}", getCommandId(), taskStatus);
+                updateEntityPhase(ImageTransferPhase.FINALIZING_FAILURE);
+                setCommandStatus(CommandStatus.FAILED);
+            }
+        } catch (Exception e) {
+            log.debug("Polling copy task for transfer '{}': {}", getCommandId(), e.getMessage());
+        }
+    }
+
+    private void finishUploadConversion(StateContext context) {
+        Guid oldImageId = getDiskImage().getImageId();
+        Guid diskId = getParameters().getImageGroupID();
+        Guid newVolId = getParameters().getConvertedVolumeId();
+        DiskImage currentImage = getDiskImage();
+
+        log.info("Finishing upload conversion for transfer '{}': replacing oldVol={} with newVol={} (disk={})",
+                getCommandId(), oldImageId, newVolId, diskId);
+
+        DiskImage newImage = new DiskImage();
+        newImage.setId(diskId);
+        newImage.setImageId(newVolId);
+        newImage.setVolumeFormat(getParameters().getVolumeFormat());
+        newImage.setVolumeType(currentImage.getVolumeType());
+        newImage.setSize(currentImage.getSize());
+        newImage.setDiskAlias(currentImage.getDiskAlias());
+        newImage.setDiskDescription(currentImage.getDiskDescription());
+        newImage.setStorageIds(currentImage.getStorageIds());
+        newImage.setStoragePoolId(currentImage.getStoragePoolId());
+        newImage.setActive(true);
+        newImage.setParentId(Guid.Empty);
+        newImage.setImageTemplateId(Guid.Empty);
+        newImage.setQuotaId(currentImage.getQuotaId());
+        newImage.setDiskProfileId(currentImage.getDiskProfileId());
+        newImage.setWipeAfterDelete(currentImage.isWipeAfterDelete());
+        if (VolumeFormat.COW.equals(getParameters().getVolumeFormat())) {
+            newImage.setBackup(currentImage.getBackup());
+        }
+
+        imagesHandler.saveImage(newImage);
+        baseDiskDao.update(newImage);  // Disk already exists from AddDisk; update, don't insert
+        log.info("Upload conversion for transfer '{}': saved new image disk={} vol={}", getCommandId(), diskId, newVolId);
+
+        DiskImageDynamic diskDynamic = new DiskImageDynamic();
+        diskDynamic.setId(newVolId);
+        diskDynamic.setActualSize(currentImage.getActualSizeInBytes());
+        diskImageDynamicDao.save(diskDynamic);
+
+        log.info("Upload conversion for transfer '{}': removing old volume {}", getCommandId(), oldImageId);
+        runInternalAction(ActionType.RemoveImage, new RemoveImageParameters(oldImageId));
+
+        setImageId(newVolId);
+
+        setVolumeLegalityInStorage(LEGAL_IMAGE);
+        if (VolumeFormat.COW.equals(getParameters().getVolumeFormat())) {
+            setQcowCompat(getDiskImage().getImage(), getStoragePool().getId(), getDiskImage().getId(),
+                    getDiskImage().getImageId(), getStorageDomainId(), context.entity.getVdsId());
+            imageDao.update(getDiskImage().getImage());
+        }
+        setImageStatus(ImageStatus.OK);
+        tearDownImage(context.entity.getVdsId(), context.entity.getBackupId());
+        setAuditLogTypeFromPhase(ImageTransferPhase.FINISHED_SUCCESS);
+        setCommandStatus(CommandStatus.SUCCEEDED);
+    }
+
+    /**
+     * Finish MBS conversion: detach/delete source volume, save new image, detach new volume.
+     */
+    private void finishMbsUploadConversion(StateContext context) {
+        Guid oldImageId = getDiskImage().getImageId();
+        Guid diskId = getParameters().getImageGroupID();
+        Guid newVolId = getParameters().getConvertedVolumeId();
+        Guid sdId = getStorageDomainId();
+        DiskImage currentImage = getDiskImage();
+
+        VDS vds = vdsDao.get(context.entity.getVdsId());
+        if (vds == null) {
+            log.error("Host not found for MBS conversion finish");
+            setCommandStatus(CommandStatus.FAILED);
+            return;
+        }
+
+        log.info("Finishing MBS upload conversion for transfer '{}': replacing oldVol={} with newVol={} (disk={})",
+                getCommandId(), oldImageId, newVolId, diskId);
+
+        ManagedBlockStorage managedBlockStorage = cinderStorageDao.get(sdId);
+        detachAndDeleteMbsSourceVolume(vds, oldImageId, sdId, managedBlockStorage);
+        replaceSourceDiskWithDestinationMbsDisk(oldImageId, diskId, newVolId, currentImage);
+        getParameters().setImageGroupID(newVolId);
+        setImageId(newVolId);
+        setDiskImage(null);
+        setImage(null);
+        detachAndDisconnectMbsVolume(vds, newVolId, sdId, managedBlockStorage);
+        completeMbsConversionSuccess(context);
+    }
+
+    private void detachAndDeleteMbsSourceVolume(VDS vds, Guid oldImageId, Guid sdId,
+            ManagedBlockStorage managedBlockStorage) {
+        AttachManagedBlockStorageVolumeVDSCommandParameters detachParams =
+                new AttachManagedBlockStorageVolumeVDSCommandParameters(vds);
+        detachParams.setVolumeId(oldImageId);
+        detachParams.setStorageDomainId(sdId);
+        try {
+            runVdsCommand(VDSCommandType.DetachManagedBlockStorageVolume, detachParams);
+        } catch (Exception e) {
+            log.warn("Detach source volume failed for MBS conversion: {}", e);
+        }
+        if (managedBlockStorage != null) {
+            List<String> extraParams = new ArrayList<>();
+            extraParams.add(oldImageId.toString());
+            try {
+                cinderlibExecutor.runCommand(CinderlibCommand.DISCONNECT_VOLUME,
+                        new CinderlibCommandParameters(
+                                JsonHelper.mapToJson(managedBlockStorage.getAllDriverOptions(), false),
+                                extraParams, getCorrelationId()));
+            } catch (Exception e) {
+                log.warn("Disconnect source volume failed for MBS conversion: {}", e);
+            }
+            try {
+                cinderlibExecutor.runCommand(CinderlibCommand.DELETE_VOLUME,
+                        new CinderlibCommandParameters(
+                                JsonHelper.mapToJson(managedBlockStorage.getAllDriverOptions(), false),
+                                extraParams, getCorrelationId()));
+            } catch (Exception e) {
+                log.warn("Delete source volume failed for MBS conversion: {}", e);
+            }
+        }
+    }
+
+    /**
+     * Two-disk flow (like copy): create destination disk for new volume, repoint all references
+     * from source disk to destination, then remove source disk. No new DB procedures.
+     */
+    private void replaceSourceDiskWithDestinationMbsDisk(Guid oldImageId, Guid sourceDiskId, Guid newVolId,
+            DiskImage currentImage) {
+        imageStorageDomainMapDao.remove(oldImageId);
+        diskImageDynamicDao.remove(oldImageId);
+        imageDao.remove(oldImageId);
+
+        DiskImage destImage = buildNewMbsDiskImage(newVolId, currentImage);
+        imagesHandler.saveImage(destImage);
+        baseDiskDao.save(new ManagedBlockStorageDisk(destImage));
+
+        DiskImageDynamic diskDynamic = new DiskImageDynamic();
+        diskDynamic.setId(newVolId);
+        diskDynamic.setActualSize(currentImage.getActualSizeInBytes());
+        diskImageDynamicDao.save(diskDynamic);
+
+        repointReferencesFromSourceToDestination(sourceDiskId, newVolId);
+        baseDiskDao.remove(sourceDiskId);
+    }
+
+    /**
+     * Repoint all references from source disk id to destination disk id using existing DAOs
+     * (no new DB procedures). Order preserves FKs where applicable.
+     */
+    private void repointReferencesFromSourceToDestination(Guid sourceDiskId, Guid destDiskId) {
+        List<VmDevice> vmDevices = vmDeviceDao.getVmDevicesByDeviceId(sourceDiskId, null);
+        for (VmDevice device : vmDevices) {
+            vmDeviceDao.remove(device.getId());
+            VmDevice newDevice = new VmDevice();
+            newDevice.setId(new VmDeviceId(destDiskId, device.getVmId()));
+            newDevice.setDevice(device.getDevice());
+            newDevice.setType(device.getType());
+            newDevice.setAddress(device.getAddress());
+            newDevice.setSpecParams(device.getSpecParams());
+            newDevice.setManaged(device.isManaged());
+            newDevice.setPlugged(device.isPlugged());
+            newDevice.setReadOnly(device.getReadOnly());
+            newDevice.setSnapshotId(device.getSnapshotId());
+            newDevice.setAlias(device.getAlias());
+            newDevice.setCustomProperties(device.getCustomProperties());
+            newDevice.setLogicalName(device.getLogicalName());
+            newDevice.setHostDevice(device.getHostDevice());
+            vmDeviceDao.save(newDevice);
+        }
+
+        List<DiskVmElement> diskVmElements = diskVmElementDao.getAllDiskVmElementsByDiskId(sourceDiskId);
+        for (DiskVmElement dve : diskVmElements) {
+            diskVmElementDao.remove(dve.getId());
+            DiskVmElement newDve = new DiskVmElement(destDiskId, dve.getVmId());
+            newDve.setBoot(dve.isBoot());
+            newDve.setPassDiscard(dve.isPassDiscard());
+            newDve.setDiskInterface(dve.getDiskInterface());
+            newDve.setUsingScsiReservation(dve.isUsingScsiReservation());
+            diskVmElementDao.save(newDve);
+        }
+
+        ImageTransfer transfer = imageTransferDao.getByDiskId(sourceDiskId);
+        if (transfer != null) {
+            transfer.setDiskId(destDiskId);
+            imageTransferDao.update(transfer);
+        }
+
+        List<Permission> permissions = permissionDao.getAllForEntity(sourceDiskId);
+        for (Permission perm : permissions) {
+            perm.setObjectId(destDiskId);
+            permissionDao.update(perm);
+        }
+
+        DiskLunMap lunMap = diskLunMapDao.getDiskLunMapByDiskId(sourceDiskId);
+        if (lunMap != null) {
+            diskLunMapDao.remove(lunMap.getId());
+            DiskLunMap newMap = new DiskLunMap(destDiskId, lunMap.getLunId());
+            diskLunMapDao.save(newMap);
+        }
+
+        List<Snapshot> snapshotsWithMemory = snapshotDao.getSnapshotsByMemoryDiskId(sourceDiskId);
+        for (Snapshot snapshot : snapshotsWithMemory) {
+            if (sourceDiskId.equals(snapshot.getMemoryDiskId())) {
+                snapshot.setMemoryDiskId(destDiskId);
+            }
+            if (sourceDiskId.equals(snapshot.getMetadataDiskId())) {
+                snapshot.setMetadataDiskId(destDiskId);
+            }
+            snapshotDao.update(snapshot);
+        }
+    }
+
+    private DiskImage buildNewMbsDiskImage(Guid newVolId, DiskImage currentImage) {
+        VolumeFormat destFormat = getParameters().getVolumeFormat() != null && getParameters().getSourceVolumeFormat() != null
+                ? getParameters().getVolumeFormat()
+                : VolumeFormat.RAW;
+        DiskImage newImage = new DiskImage();
+        newImage.setId(newVolId);
+        newImage.setImageId(newVolId);
+        newImage.setVolumeFormat(destFormat);
+        newImage.setVolumeType(currentImage.getVolumeType());
+        newImage.setSize(currentImage.getSize());
+        newImage.setDiskAlias(currentImage.getDiskAlias());
+        newImage.setDiskDescription(currentImage.getDiskDescription());
+        newImage.setStorageIds(currentImage.getStorageIds());
+        newImage.setStoragePoolId(currentImage.getStoragePoolId());
+        newImage.setActive(true);
+        newImage.setParentId(Guid.Empty);
+        newImage.setImageTemplateId(Guid.Empty);
+        newImage.setQuotaId(currentImage.getQuotaId());
+        newImage.setDiskProfileId(currentImage.getDiskProfileId());
+        newImage.setWipeAfterDelete(currentImage.isWipeAfterDelete());
+        if (VolumeFormat.COW.equals(getParameters().getVolumeFormat())) {
+            newImage.setBackup(currentImage.getBackup());
+        }
+        return newImage;
+    }
+
+    private void detachAndDisconnectMbsVolume(VDS vds, Guid volId, Guid sdId,
+            ManagedBlockStorage managedBlockStorage) {
+        AttachManagedBlockStorageVolumeVDSCommandParameters detachParams =
+                new AttachManagedBlockStorageVolumeVDSCommandParameters(vds);
+        detachParams.setVolumeId(volId);
+        detachParams.setStorageDomainId(sdId);
+        try {
+            runVdsCommand(VDSCommandType.DetachManagedBlockStorageVolume, detachParams);
+        } catch (Exception e) {
+            log.warn("Detach volume failed for MBS conversion: {}", e);
+        }
+        if (managedBlockStorage != null) {
+            List<String> disconnectParams = new ArrayList<>();
+            disconnectParams.add(volId.toString());
+            try {
+                cinderlibExecutor.runCommand(CinderlibCommand.DISCONNECT_VOLUME,
+                        new CinderlibCommandParameters(
+                                JsonHelper.mapToJson(managedBlockStorage.getAllDriverOptions(), false),
+                                disconnectParams, getCorrelationId()));
+            } catch (Exception e) {
+                log.warn("Disconnect volume failed for MBS conversion: {}", e);
+            }
+        }
+    }
+
+    private void completeMbsConversionSuccess(StateContext context) {
+        setVolumeLegalityInStorage(LEGAL_IMAGE);
+        if (VolumeFormat.COW.equals(getParameters().getVolumeFormat()) && getDiskImage() != null) {
+            setQcowCompat(getDiskImage().getImage(), getStoragePool().getId(), getDiskImage().getId(),
+                    getDiskImage().getImageId(), getStorageDomainId(), context.entity.getVdsId());
+            imageDao.update(getDiskImage().getImage());
+        }
+        setImageStatus(ImageStatus.OK);
+        setAuditLogTypeFromPhase(ImageTransferPhase.FINISHED_SUCCESS);
+        setCommandStatus(CommandStatus.SUCCEEDED);
     }
 
     private boolean verifyImage(Guid transferingVdsId) {
@@ -1115,49 +1844,8 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
         updateEntity(updates);
 
         if (usingNbdServer()) {
-            if (isManagedBlockStorageForTransfer()) {
-                if (getVds().getConnectorInfo() == null) {
-                    log.error("Host '{}' has no connector info; cannot connect managed block volume for image transfer '{}'",
-                            getVds().getName(), getCommandId());
-                    updateEntityPhaseToStoppedBySystem(
-                            AuditLogType.TRANSFER_IMAGE_STOPPED_BY_SYSTEM_FAILED_TO_CREATE_TICKET);
-                    return false;
-                }
-                DiskImage disk = getDiskImage();
-                if (disk instanceof ManagedBlockStorageDisk) {
-                    ManagedBlockStorageDisk mbsDisk = (ManagedBlockStorageDisk) disk;
-                    Guid storageDomainId = mbsDisk.getStorageIds().isEmpty() ? getStorageDomainId() : mbsDisk.getStorageIds().get(0);
-                    ConnectManagedBlockStorageDeviceCommandParameters connectParams =
-                            new ConnectManagedBlockStorageDeviceCommandParameters(storageDomainId,
-                                    getVds().getConnectorInfo(),
-                                    mbsDisk.getImageId());
-                    ActionReturnValue connectResult = runInternalAction(ActionType.ConnectManagedBlockStorageDevice, connectParams);
-                    if (!connectResult.getSucceeded()) {
-                        log.error("Failed to connect managed block volume for image transfer '{}': {}",
-                                getCommandId(), connectResult.getFault());
-                        updateEntityPhaseToStoppedBySystem(
-                                AuditLogType.TRANSFER_IMAGE_STOPPED_BY_SYSTEM_FAILED_TO_CREATE_TICKET);
-                        return false;
-                    }
-                    // Attach the volume to the host so VDSM can expose it via NBD (StartNbdServer looks up
-                    // the storage domain on the host; without attach the domain is not present on the host).
-                    Map<String, Object> connectionInfo = connectResult.getActionReturnValue();
-                    if (connectionInfo != null) {
-                        AttachManagedBlockStorageVolumeVDSCommandParameters attachParams =
-                                new AttachManagedBlockStorageVolumeVDSCommandParameters(getVds(),
-                                        connectionInfo,
-                                        storageDomainId);
-                        attachParams.setVolumeId(mbsDisk.getImageId());
-                        VDSReturnValue attachResult = runVdsCommand(VDSCommandType.AttachManagedBlockStorageVolume, attachParams);
-                        if (!attachResult.getSucceeded()) {
-                            log.error("Failed to attach managed block volume to host for image transfer '{}': {}",
-                                    getCommandId(), attachResult.getVdsError());
-                            updateEntityPhaseToStoppedBySystem(
-                                    AuditLogType.TRANSFER_IMAGE_STOPPED_BY_SYSTEM_FAILED_TO_CREATE_TICKET);
-                            return false;
-                        }
-                    }
-                }
+            if (isManagedBlockStorageForTransfer() && !connectAndAttachManagedBlockVolumeForTransfer()) {
+                return false;
             }
             try {
                 VDSReturnValue vdsReturnValue = runVdsCommand(VDSCommandType.StartNbdServer,
@@ -1353,6 +2041,72 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
         return sd != null && StorageType.MANAGED_BLOCK_STORAGE.equals(sd.getStorageType());
     }
 
+    private void validateHostConnectorForMbs() {
+        if (getVds() == null || getVds().getConnectorInfo() == null) {
+            throw new EngineException(EngineError.StorageException,
+                    "Host has no connector info; cannot connect managed block volume for image transfer");
+        }
+    }
+
+    /**
+     * Connect and attach the MBS volume on the host, then return the file path for the transfer.
+     * @return file URL (e.g. file:///path) or null if connection info was missing
+     */
+    private String connectAttachAndGetMbsVolumePath(ManagedBlockStorageDisk mbsDisk) {
+        Guid storageDomainId = mbsDisk.getStorageIds().isEmpty()
+                ? getStorageDomainId()
+                : mbsDisk.getStorageIds().get(0);
+        Map<String, Object> connectionInfo = connectMbsVolume(storageDomainId, mbsDisk.getImageId());
+        if (connectionInfo == null) {
+            return null;
+        }
+        return attachMbsVolumeAndGetPath(storageDomainId, mbsDisk.getImageId(), connectionInfo);
+    }
+
+    private Map<String, Object> connectMbsVolume(Guid storageDomainId, Guid volumeId) {
+        ConnectManagedBlockStorageDeviceCommandParameters connectParams =
+                new ConnectManagedBlockStorageDeviceCommandParameters(storageDomainId,
+                        getVds().getConnectorInfo(),
+                        volumeId);
+        ActionReturnValue connectResult =
+                runInternalAction(ActionType.ConnectManagedBlockStorageDevice, connectParams);
+        if (!connectResult.getSucceeded()) {
+            throw new EngineException(EngineError.StorageException,
+                    connectResult.getFault() != null ? connectResult.getFault().getMessage() : "Failed to connect managed block volume");
+        }
+        return connectResult.getActionReturnValue();
+    }
+
+    private String attachMbsVolumeAndGetPath(Guid storageDomainId, Guid volumeId, Map<String, Object> connectionInfo) {
+        AttachManagedBlockStorageVolumeVDSCommandParameters attachParams =
+                new AttachManagedBlockStorageVolumeVDSCommandParameters(getVds(), connectionInfo, storageDomainId);
+        attachParams.setVolumeId(volumeId);
+        VDSReturnValue attachResult = runVdsCommand(VDSCommandType.AttachManagedBlockStorageVolume, attachParams);
+        if (!attachResult.getSucceeded()) {
+            throw new EngineException(EngineError.StorageException,
+                    attachResult.getVdsError() != null ? attachResult.getVdsError().getMessage() : "Failed to attach managed block volume");
+        }
+        String path = extractPathFromAttachResult(attachResult.getReturnValue());
+        if (path == null) {
+            throw new EngineException(EngineError.StorageException,
+                    "Attach managed block volume succeeded but did not return a path");
+        }
+        return FILE_URL_SCHEME + path;
+    }
+
+    @SuppressWarnings("unchecked")
+    private static String extractPathFromAttachResult(Object returnValue) {
+        if (!(returnValue instanceof Map)) {
+            return null;
+        }
+        Map<String, Object> resultMap = (Map<String, Object>) returnValue;
+        String path = (String) resultMap.get("path");
+        if (path == null) {
+            path = (String) resultMap.get("managed_path");
+        }
+        return path;
+    }
+
     private boolean addImageTicketToProxy(Guid imagedTicketId, String hostUri) {
         // ToDo: move formatting to an helper for reuse in ImageTransfer
         String url = String.format("%s%s/%s", hostUri, IMAGES_PATH, imagedTicketId);
@@ -1496,11 +2250,11 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
         // Stopping NBD server if necessary
         if (usingNbdServer()) {
             stopNbdServer(entity.getVdsId());
-            // For managed block: detach volume from host, then disconnect from storage adapter
-            if (isManagedBlockStorageForTransfer() && entity.getDiskId() != null) {
-                detachManagedBlockVolumeFromHost(entity);
-                disconnectManagedBlockVolumeForTransfer(entity);
-            }
+        }
+        // For managed block: detach volume from host when not doing conversion (conversion keeps it attached).
+        if (isManagedBlockStorageForTransfer() && !needsConversionAfterUpload() && entity.getDiskId() != null) {
+            detachManagedBlockVolumeFromHost(entity);
+            disconnectManagedBlockVolumeForTransfer(entity);
         }
 
         ImageTransfer updates = new ImageTransfer();
@@ -1569,7 +2323,7 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
                     JsonHelper.mapToJson(managedBlockStorage.getAllDriverOptions(), false),
                     extraParams,
                     getCorrelationId());
-            if (!cinderlibExecutor.runCommand(CinderlibExecutor.CinderlibCommand.DISCONNECT_VOLUME, params)
+            if (!cinderlibExecutor.runCommand(CinderlibCommand.DISCONNECT_VOLUME, params)
                     .getSucceed()) {
                 log.warn("Storage adapter DISCONNECT_VOLUME failed for disk '{}' volume '{}'",
                         imageTransfer.getDiskId(), mbsDisk.getImageId());
@@ -1771,3 +2525,4 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
         Guid childCmdId;
     }
 }
+// DE72501108006231412815
