@@ -260,8 +260,8 @@ GENERATED = \
 	packaging/sys-etc/logrotate.d/ovirt-engine \
 	packaging/sys-etc/logrotate.d/ovirt-engine-notifier \
 	packaging/sys-etc/logrotate.d/ovirt-engine-setup \
-	packaging/cinderlib/config.py \
-	packaging/cinderlib/cinderlib-client.py \
+	packaging/managedblock/config.py \
+	packaging/managedblock/cinderlib-client.py \
 	$(NULL)
 
 all: \
@@ -292,10 +292,9 @@ generated-files:	$(GENERATED)
 	chmod a+x packaging/services/ovirt-fence-kdump-listener/ovirt-fence-kdump-listener.sysv
 	chmod a+x packaging/services/ovirt-websocket-proxy/ovirt-websocket-proxy.py
 	chmod a+x packaging/services/ovirt-websocket-proxy/ovirt-websocket-proxy.sysv
-	chmod a+x packaging/cinderlib/cinderlib-client.py
 	chmod a+x packaging/setup/bin/ovirt-engine-health
 	chmod a+x packaging/setup/bin/ovirt-engine-upgrade-check
-	chmod a+x packaging/cinderlib/cinderlib-client.py
+	chmod a+x packaging/managedblock/cinderlib-client.py
 
 # ----------------------------------------------------------------------
 # install-setup-dev: regenerate templated files and copy ONLY the setup
@@ -507,7 +506,7 @@ install-packaging-files: \
 	$(MAKE) copy-recursive SOURCEDIR=packaging/sys-etc TARGETDIR="$(DESTDIR)$(SYSCONF_DIR)" EXCLUDE_GEN="$(GENERATED)"
 	$(MAKE) copy-recursive SOURCEDIR=packaging/etc TARGETDIR="$(DESTDIR)$(PKG_SYSCONF_DIR)" EXCLUDE_GEN="$(GENERATED)"
 	$(MAKE) copy-recursive SOURCEDIR=packaging/pki TARGETDIR="$(DESTDIR)$(PKG_PKI_DIR)" EXCLUDE_GEN="$(GENERATED)"
-	for d in bin conf files firewalld services cinderlib ansible-runner-service-project selinux; do \
+	for d in bin conf files firewalld services managedblock ansible-runner-service-project selinux; do \
 		$(MAKE) copy-recursive SOURCEDIR="packaging/$${d}" TARGETDIR="$(DESTDIR)$(DATA_DIR)/$${d}" EXCLUDE_GEN="$(GENERATED)" EXCLUDE="packaging/ansible-runner-service-project/env/.gitkeep"; \
 	done
 	$(MAKE) copy-recursive SOURCEDIR=packaging/doc TARGETDIR="$(DESTDIR)$(PKG_DOC_DIR)" EXCLUDE_GEN="$(GENERATED)"
@@ -647,7 +646,7 @@ install-dev:	\
 	install -d "$(DESTDIR)$(PKG_LOG_DIR)/dump"
 	install -d "$(DESTDIR)$(PKG_LOG_DIR)/ansible"
 	install -d "$(DESTDIR)$(PKG_LOG_DIR)/ova"
-	install -d "$(DESTDIR)$(PKG_LOG_DIR)/cinderlib"
+	install -d "$(DESTDIR)$(PKG_LOG_DIR)/managedblock"
 
 	touch "$(DESTDIR)$(PKG_STATE_DIR)/.ssh/config"
 

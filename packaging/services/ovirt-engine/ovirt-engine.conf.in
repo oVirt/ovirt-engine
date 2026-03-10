@@ -245,18 +245,18 @@ DWH_DB_DRIVER="org.postgresql.Driver"
 DWH_DB_URL="jdbc:postgresql://${DWH_DB_HOST}:${DWH_DB_PORT}/${DWH_DB_DATABASE}?sslfactory=org.postgresql.ssl.NonValidatingFactory"
 
 #
-# Cinderlib Database connection details
+# Managed Block Database connection details
 #
-SENSITIVE_KEYS="${SENSITIVE_KEYS},CINDERLIB_DB_PASSWORD"
-CINDERLIB_DB_HOST="localhost"
-CINDERLIB_DB_PORT="5432"
-CINDERLIB_DB_USER="ovirt_cinderlib"
-CINDERLIB_DB_PASSWORD=
-CINDERLIB_DB_DATABASE="ovirt_cinderlib"
-CINDERLIB_DB_SECURED="False"
-CINDERLIB_DB_SECURED_VALIDATION="False"
-CINDERLIB_DB_DRIVER=org.postgresql.Driver
-CINDERLIB_DB_URL="jdbc:postgresql://${CINDERLIB_DB_HOST}:${CINDERLIB_DB_PORT}/${CINDERLIB_DB_DATABASE}?sslfactory=org.postgresql.ssl.NonValidatingFactory"
+SENSITIVE_KEYS="${SENSITIVE_KEYS},MANAGEDBLOCK_DB_PASSWORD"
+MANAGEDBLOCK_DB_HOST="localhost"
+MANAGEDBLOCK_DB_PORT="5432"
+MANAGEDBLOCK_DB_USER="ovirt_managedblock"
+MANAGEDBLOCK_DB_PASSWORD=
+MANAGEDBLOCK_DB_DATABASE="ovirt_managedblock"
+MANAGEDBLOCK_DB_SECURED="False"
+MANAGEDBLOCK_DB_SECURED_VALIDATION="False"
+MANAGEDBLOCK_DB_DRIVER=org.postgresql.Driver
+MANAGEDBLOCK_DB_URL="jdbc:postgresql://${MANAGEDBLOCK_DB_HOST}:${MANAGEDBLOCK_DB_PORT}/${MANAGEDBLOCK_DB_DATABASE}?sslfactory=org.postgresql.ssl.NonValidatingFactory"
 
 #
 # Keycloak Database connection details

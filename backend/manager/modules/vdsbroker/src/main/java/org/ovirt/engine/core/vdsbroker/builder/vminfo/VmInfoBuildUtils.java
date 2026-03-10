@@ -70,12 +70,12 @@ import org.ovirt.engine.core.common.businessentities.network.VnicProfile;
 import org.ovirt.engine.core.common.businessentities.qos.StorageQos;
 import org.ovirt.engine.core.common.businessentities.storage.CinderConnectionInfo;
 import org.ovirt.engine.core.common.businessentities.storage.CinderDisk;
-import org.ovirt.engine.core.common.businessentities.storage.CinderVolumeDriver;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskInterface;
 import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
 import org.ovirt.engine.core.common.businessentities.storage.ManagedBlockStorageDisk;
+import org.ovirt.engine.core.common.businessentities.storage.ManagedVolumeDriver;
 import org.ovirt.engine.core.common.businessentities.storage.PropagateErrors;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
@@ -243,14 +243,14 @@ public class VmInfoBuildUtils {
     @SuppressWarnings("unchecked")
     public void buildCinderDisk(CinderDisk cinderDisk, Map<String, Object> struct) {
         CinderConnectionInfo connectionInfo = cinderDisk.getCinderConnectionInfo();
-        CinderVolumeDriver cinderVolumeDriver = CinderVolumeDriver.forValue(connectionInfo.getDriverVolumeType());
-        if (cinderVolumeDriver == null) {
+        ManagedVolumeDriver managedVolumeDriver = ManagedVolumeDriver.forValue(connectionInfo.getDriverVolumeType());
+        if (managedVolumeDriver == null) {
             log.error("Unsupported Cinder volume driver: '{}' (disk: '{}')",
                     connectionInfo.getDriverVolumeType(),
                     cinderDisk.getDiskAlias());
             return;
         }
-        switch (cinderVolumeDriver) {
+        switch (managedVolumeDriver) {
             case RBD:
                 Map<String, Object> connectionInfoData = cinderDisk.getCinderConnectionInfo().getData();
                 struct.put(VdsProperties.Path, connectionInfoData.get("name"));
@@ -1590,13 +1590,13 @@ public class VmInfoBuildUtils {
         return VgpuPlacement.forValue(vdsStaticDao.get(hostId).getVgpuPlacement());
     }
 
-    public void setCinderDriverType(ManagedBlockStorageDisk disk) {
+    public void setManagedDriverType(ManagedBlockStorageDisk disk) {
         Map<String, Object> conn_info = disk.getConnectionInfo();
 
-        if (CinderVolumeDriver.RBD.getName().equals(conn_info.get(ManagedBlockStorageDisk.DRIVER_VOLUME_TYPE))) {
-            disk.setCinderVolumeDriver(CinderVolumeDriver.RBD);
+        if (ManagedVolumeDriver.RBD.getName().equals(conn_info.get(ManagedBlockStorageDisk.DRIVER_VOLUME_TYPE))) {
+            disk.setManagedVolumeDriver(ManagedVolumeDriver.RBD);
         } else {
-            disk.setCinderVolumeDriver(CinderVolumeDriver.BLOCK);
+            disk.setManagedVolumeDriver(ManagedVolumeDriver.BLOCK);
         }
     }
 

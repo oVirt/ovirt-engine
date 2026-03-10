@@ -1494,7 +1494,7 @@ public enum ConfigValues {
     ManagedBlockDomainSupported,
 
     @TypeConverterAttribute(Long.class)
-    CinderlibCommandTimeoutInMinutes,
+    ManagedBlockCommandTimeoutInMinutes,
 
     /**
      * Timeout in seconds for the completion of calls to external network providers.

@@ -97,7 +97,7 @@ public class ManagedBlockStorageCommandUtil {
         saveAttachedHost(vmDevice, vds.getId(), isLiveMigration);
 
         disk.setDevice((Map<String, Object>) returnValue.getReturnValue());
-        vmInfoBuildUtils.setCinderDriverType(disk);
+        vmInfoBuildUtils.setManagedDriverType(disk);
 
         SaveManagedBlockStorageDiskDeviceCommandParameters parameters =
                 new SaveManagedBlockStorageDiskDeviceCommandParameters();
