@@ -2466,7 +2466,10 @@ public class LibvirtVmXmlBuilder {
                 } else if (managedBlockStorageDisk.getManagedVolumeDriver() == ManagedVolumeDriver.BLOCK) {
                     Map<String, Object> attachment =
                             (Map<String, Object>) managedBlockStorageDisk.getDevice().get(DeviceInfoReturn.ATTACHMENT);
-                    metadata.put("GUID", (String) attachment.get(DeviceInfoReturn.SCSI_WWN));
+                    String scsiWwn = (String) attachment.get(DeviceInfoReturn.SCSI_WWN);
+                    if (scsiWwn != null && !scsiWwn.isEmpty()) {
+                        metadata.put("GUID", scsiWwn);
+                    }
                 }
 
                 metadata.put("managed", "true");
