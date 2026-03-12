@@ -37,21 +37,21 @@ public class PackageExplorer {
         try {
             Enumeration<URL> resources = classLoader.getResources(toPath(packageName));
             List<File> dirs = new ArrayList<>();
-            List<URL> jarURLs = new ArrayList<>();
+            List<URL> jarUrls = new ArrayList<>();
             while (resources.hasMoreElements()) {
                 URL resource = resources.nextElement();
                 if (isJar(resource)) {
-                    jarURLss.add(resource);
+                    jarUrls.add(resource);
                 } else if (containsJar(resource)) {
-                    URL jarRootURL = getContainingResourceURL(classLoader, resource);
-                    if (jarRootURL != null) {
-                        jarURLs.add(jarRootURL);
+                    URL jarRootUrl = getContainingResourceURL(classLoader, resource);
+                    if (jarRootUrl != null) {
+                        jarUrls.add(jarRootUrl);
                     }
                 } else {
                     dirs.add(new File(URLDecoder.decode(resource.getFile(), "UTF-8")));
                 }
             }
-            IOException jarIssues = walkJars(classNames, packageName, jars);
+            IOException jarIssues = walkJars(classNames, packageName, jarUrls);
             walkDirs(classNames, packageName, dirs);
             if (jarIssues != null) {
                 log.error(
@@ -89,10 +89,9 @@ public class PackageExplorer {
         return (JarInputStream) jarUrl.openStream();
     }
 
-    private static IOException walkJars(List<String> classNames, String packageName, List<URL> jars)
-            throws IOException {
+    private static IOException walkJars(List<String> classNames, String packageName, List<URL> jarUrls) {
         IOException aggregate = null;
-        for (URL jarURL : jars) {
+        for (URL jarUrl : jarUrls) {
             try (JarInputStream jarFile = openJarStream(jarUrl)) {
                 JarEntry entry;
                 while ((entry = jarFile.getNextJarEntry()) != null) {
@@ -101,12 +100,12 @@ public class PackageExplorer {
                         classNames.add(trimClass(name));
                     }
                 }
-                } catch (IOException e) {
-                    if (aggregate == null) {
-                        aggregate = new IOException("Failed to scan one or more jars");
-                    }
-                    aggregate.addSuppressed(e);
+            } catch (IOException e) {
+                if (aggregate == null) {
+                    aggregate = new IOException("Failed to scan one or more jars");
                 }
+                aggregate.addSuppressed(e);
+            }
         }
         return aggregate;
     }
