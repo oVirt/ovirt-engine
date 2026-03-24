@@ -115,10 +115,15 @@ def convert_disks(ova_path):
 
 
 def write_disk_headers(ova_file, disks_info):
-    for disk_path, disk_size in disks_info.items():
+    for disk_path, disk_info in disks_info.items():
+        if isinstance(disk_info, dict):
+            disk_size = disk_info["size"]
+            disk_name = disk_info["name"]
+        else:
+            disk_size = disk_info
+            disk_name = os.path.basename(disk_path)
         pad_to_fs_block_size(ova_file)
         print("skipping disk: path=%s size=%d" % (disk_path, disk_size))
-        disk_name = os.path.basename(disk_path)
         tar_info = create_tar_info(disk_name, disk_size)
         # write tar info
         buf = tar_info.tobuf(format=tarfile.GNU_FORMAT)
