@@ -8,6 +8,7 @@ import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.action.VmExternalDataKind;
 import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
+import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.utils.SecretValue;
@@ -106,7 +107,10 @@ public abstract class OvfOvaWriter extends OvfWriter {
                 String.valueOf(image.isWipeAfterDelete()));
         _writer.writeAttributeString(OVF_PREFIX, getOvfUri(), "description",
                 StringUtils.defaultString(image.getDescription()));
-        _writer.writeAttributeString(OVF_PREFIX, getOvfUri(), "disk_storage_type", image.getDiskStorageType().name());
+        DiskStorageType effectiveStorageType = DiskStorageType.MANAGED_BLOCK_STORAGE.equals(image.getDiskStorageType())
+                ? DiskStorageType.IMAGE
+                : image.getDiskStorageType();
+        _writer.writeAttributeString(OVF_PREFIX, getOvfUri(), "disk_storage_type", effectiveStorageType.name());
         _writer.writeAttributeString(OVF_PREFIX, getOvfUri(), "cinder_volume_type",
                 StringUtils.defaultString(image.getCinderVolumeType()));
         _writer.writeAttributeString(OVF_PREFIX, getOvfUri(), "incremental-backup",
