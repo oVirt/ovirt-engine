@@ -28,7 +28,6 @@ from . import jboss
 from . import notifier
 from . import options
 from . import protocols
-from . import public_glance_repository
 from . import sso
 from . import storage
 from . import tools
@@ -51,7 +50,6 @@ def createPlugins(context):
     ca.Plugin(context=context)
     options.Plugin(context=context)
     tools.Plugin(context=context)
-    public_glance_repository.Plugin(context=context)
     storage.Plugin(context=context)
     sso.Plugin(context=context)
     notifier.Plugin(context=context)

@@ -383,8 +383,6 @@ class SystemEnv(object):
 @osetupattrsclass
 class ConfigEnv(object):
 
-    ADD_OVIRT_GLANCE_REPOSITORY = 'OVESETUP_CONFIG/addOvirtGlanceRepository'
-
     @osetupattrs(
         answerfile=True,
         summary=True,
