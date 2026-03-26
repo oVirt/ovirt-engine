@@ -4,6 +4,7 @@
 # mvn folders
 ###########################
 target
+repository/
 
 # build-time files
 ###########################
@@ -103,8 +104,8 @@ packaging/setup/ovirt_engine_setup/websocket_proxy/config.py
 packaging/sys-etc/logrotate.d/ovirt-engine
 packaging/sys-etc/logrotate.d/ovirt-engine-notifier
 packaging/sys-etc/logrotate.d/ovirt-engine-setup
-packaging/cinderlib/config.py
-packaging/cinderlib/cinderlib-client.py
+packaging/managedblock/config.py
+packaging/managedblock/cinderlib-client.py
 
 
 # dbscripts

@@ -49,7 +49,7 @@
 	endscript
 }
 
-"@ENGINE_LOG@/cinderlib/*.log" {
+"@ENGINE_LOG@/managedblock/*.log" {
 	monthly
 	missingok
 	compress
