@@ -46,7 +46,8 @@ public class ManagedBlockStorageDomainValidator {
                 ActionType.CopyImageGroup,
                 ActionType.CopyImageGroupWithData,
                 ActionType.CopyManagedBlockDisk,
-                ActionType.MoveOrCopyDisk
+                ActionType.MoveOrCopyDisk,
+                ActionType.TransferDiskImage
         ));
         EngineLocalConfig config = EngineLocalConfig.getInstance();
         isDataBaseInitialized = Boolean.parseBoolean(config.getProperty(CINDERLIB_DB_ENABLE));
