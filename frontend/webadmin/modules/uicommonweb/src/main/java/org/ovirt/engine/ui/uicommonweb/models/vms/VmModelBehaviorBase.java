@@ -1694,8 +1694,8 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
     }
 
     public void updateMemory() {
-        Integer memoryMb = getModel().getMemSize().getEntity();
         AsyncDataProvider.getMinMemoryForOs(new AsyncQuery<>(minMemory -> {
+            Integer memoryMb = getModel().getMemSize().getEntity();
             if (memoryMb == null || memoryMb < minMemory) {
                 getModel().getMemSize().setEntity(minMemory);
             }
@@ -1703,8 +1703,8 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
     }
 
     public void updateTotalCpuCores() {
-        int cpuCores = getTotalCpuCores();
         AsyncDataProvider.getMinCpus(new AsyncQuery<>(minCpus -> {
+            int cpuCores = getTotalCpuCores();
             if (cpuCores < minCpus) {
                 getModel().getTotalCPUCores().setEntity(Integer.toString(minCpus));
             }
