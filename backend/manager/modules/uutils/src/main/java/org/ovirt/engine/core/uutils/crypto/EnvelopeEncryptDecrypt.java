@@ -26,7 +26,7 @@ public class EnvelopeEncryptDecrypt {
 
     private static final String ARTIFACT = "EnvelopeEncryptDecrypt";
     private static final String VERSION = "1";
-    private static final String PUBKEY_DIGEST_ALGO = "SHA-1";
+    private static final String PUBKEY_DIGEST_ALGO = "SHA-256";
     private static final String PKEY_MODE_PADDING = "ECB/PKCS1Padding";
 
     private static final String CONTENT_KEY = "content";
