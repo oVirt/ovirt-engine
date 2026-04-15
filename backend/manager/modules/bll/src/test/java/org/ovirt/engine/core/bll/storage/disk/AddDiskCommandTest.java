@@ -40,6 +40,7 @@ import org.ovirt.engine.core.bll.validator.QuotaValidator;
 import org.ovirt.engine.core.bll.validator.storage.DiskValidator;
 import org.ovirt.engine.core.bll.validator.storage.DiskVmElementValidator;
 import org.ovirt.engine.core.bll.validator.storage.StorageDomainValidator;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AddDiskParameters;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
@@ -146,6 +147,22 @@ public class AddDiskCommandTest extends BaseCommandTest {
     @Spy
     @InjectMocks
     private AddDiskCommand<AddDiskParameters> command = new AddDiskCommand<>(createParameters(), null);
+
+    @Test
+    public void getChildActionTypeReturnsAddManagedBlockWhenImageDiskTargetsManagedBlockStorage() {
+        Guid storageId = Guid.newGuid();
+        initializeCommand(storageId);
+        mockStorageDomain(storageId, StorageType.MANAGED_BLOCK_STORAGE);
+        assertEquals(ActionType.AddManagedBlockStorageDisk, command.getChildActionType());
+    }
+
+    @Test
+    public void getChildActionTypeReturnsAddImageFromScratchWhenImageDiskTargetsBlockStorage() {
+        Guid storageId = Guid.newGuid();
+        initializeCommand(storageId);
+        mockStorageDomain(storageId, StorageType.ISCSI);
+        assertEquals(ActionType.AddImageFromScratch, command.getChildActionType());
+    }
 
     @Test
     public void validateSucceedsOnDiskDomainCheckWhenNoDisks() {
@@ -882,6 +899,7 @@ public class AddDiskCommandTest extends BaseCommandTest {
         command.getParameters().setVmId(Guid.Empty);
         command.getParameters().setPlugDiskToVm(false);
         command.getParameters().setStorageDomainId(storageId);
+        command.getParameters().setUsePassedImageId(true);
 
         doReturn(disk.getImage()).when(imageDao).get(imageId);
         ValidateTestUtils.runAndAssertValidateFailure(command, EngineMessage.ACTION_TYPE_FAILED_IMAGE_ALREADY_EXISTS);
