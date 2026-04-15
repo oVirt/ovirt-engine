@@ -67,9 +67,10 @@ public class ImportDiskData {
     }
 
     public StorageDomain getSelectedStorageDomain() {
-        if (selectedStorageDomain == null && !storageDomains.isEmpty()) {
-            selectedStorageDomain =
-                    Collections.max(storageDomains, Comparator.comparing(StorageDomain::getAvailableDiskSize));
+        if (selectedStorageDomain == null && storageDomains != null && !storageDomains.isEmpty()) {
+            selectedStorageDomain = Collections.max(storageDomains,
+                    Comparator.comparing(StorageDomain::getAvailableDiskSize,
+                            Comparator.nullsFirst(Comparator.naturalOrder())));
         }
 
         return selectedStorageDomain;
@@ -109,13 +110,15 @@ public class ImportDiskData {
     }
 
     public ArrayList<Quota> getQuotaList() {
-        if (storageQuotaList == null || allStorageDomains.isEmpty() || storageDomains.isEmpty()) {
+        if (storageQuotaList == null || allStorageDomains == null || allStorageDomains.isEmpty()
+                || storageDomains == null || storageDomains.isEmpty()) {
             return new ArrayList<>();
         }
         if (selectedStorageDomain == null) {
             selectedStorageDomain = storageDomains.get(0);
         }
-        return storageQuotaList.get(selectedStorageDomain.getId());
+        ArrayList<Quota> quotas = storageQuotaList.get(selectedStorageDomain.getId());
+        return quotas != null ? quotas : new ArrayList<>();
     }
 
     public void setSelectedQuotaString(String value) {

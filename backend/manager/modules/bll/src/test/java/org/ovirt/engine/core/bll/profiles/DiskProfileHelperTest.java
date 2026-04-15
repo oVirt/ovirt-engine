@@ -2,8 +2,11 @@ package org.ovirt.engine.core.bll.profiles;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
 import static org.ovirt.engine.core.bll.validator.ValidationResultMatchers.failsWith;
 
 import java.util.ArrayList;
@@ -22,13 +25,16 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
 import org.ovirt.engine.core.bll.ValidationResult;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.common.businessentities.profiles.DiskProfile;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
+import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.PermissionDao;
+import org.ovirt.engine.core.dao.StorageDomainDao;
 import org.ovirt.engine.core.dao.profiles.DiskProfileDao;
 import org.ovirt.engine.core.utils.RandomUtils;
 
@@ -38,6 +44,7 @@ public class DiskProfileHelperTest {
 
     private static final Guid STORAGE_DOMAIN_1 = Guid.newGuid();
     private static final Guid STORAGE_DOMAIN_2 = Guid.newGuid();
+    private static final Guid MBS_STORAGE_DOMAIN = Guid.newGuid();
     private static final Guid USER_ENTITY_ID = Guid.newGuid();
 
     @Mock
@@ -45,6 +52,9 @@ public class DiskProfileHelperTest {
 
     @Mock
     private PermissionDao permissionDao;
+
+    @Mock
+    private StorageDomainDao storageDomainDao;
 
     @Spy
     @InjectMocks
@@ -107,6 +117,21 @@ public class DiskProfileHelperTest {
         map.put(diskImage, STORAGE_DOMAIN_2);
         assertEquals(ValidationResult.VALID, diskProfileHelper.setAndValidateDiskProfiles(map, dbUser));
         map.clear();
+    }
+
+    @Test
+    public void skipsDiskProfilesForManagedBlockStorageDomainTest() {
+        StorageDomain mbsDomain = new StorageDomain();
+        mbsDomain.setId(MBS_STORAGE_DOMAIN);
+        mbsDomain.setStorageType(StorageType.MANAGED_BLOCK_STORAGE);
+        doReturn(mbsDomain).when(storageDomainDao).get(MBS_STORAGE_DOMAIN);
+
+        diskImage.setDiskProfileId(diskProfile_a.getId());
+        map.put(diskImage, MBS_STORAGE_DOMAIN);
+
+        assertEquals(ValidationResult.VALID, diskProfileHelper.setAndValidateDiskProfiles(map, dbUser));
+        assertNull(diskImage.getDiskProfileId());
+        verify(diskProfileDao, never()).getAllForStorageDomain(MBS_STORAGE_DOMAIN);
     }
 
     @Test

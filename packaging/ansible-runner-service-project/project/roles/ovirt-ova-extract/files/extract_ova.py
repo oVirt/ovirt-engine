@@ -89,7 +89,24 @@ def nti(s):
     return n
 
 
-def extract_disks(ova_path, image_paths_and_formats, image_mappings):
+def parse_disks_arg(data):
+    """
+    Engine JSON is either:
+      - Legacy: {"/path/to/disk": "raw"|"qcow2", ...}
+        (match via image id substring in path)
+      - Current: {"pathToFormat": {...},
+                  "pathToImageId": {"/path": "image-uuid", ...}}
+    Managed-block paths often contain a backend volume id that differs from
+    the engine image id used in OVF mappings; pathToImageId ties each path to
+    the mapping target id.
+    """
+    if isinstance(data, dict) and "pathToFormat" in data:
+        return data["pathToFormat"], data.get("pathToImageId") or {}
+    return data, {}
+
+
+def extract_disks(ova_path, disks_data, image_mappings):
+    path_to_format, path_to_image_id = parse_disks_arg(disks_data)
     try:
         fd = os.open(ova_path, os.O_RDONLY | os.O_DIRECT)
     except OSError:
@@ -120,15 +137,22 @@ def extract_disks(ova_path, image_paths_and_formats, image_mappings):
                 ova_file.seek(size, 1)
             else:
                 image_guid = image_mappings[name] if image_mappings else name
-                for image_path_and_format in \
-                        image_paths_and_formats.items():
-                    image_path = image_path_and_format[0]
-                    image_format = image_path_and_format[1]
-                    if image_guid in image_path:
+                matched = False
+                for image_path, image_format in path_to_format.items():
+                    path_id = path_to_image_id.get(image_path)
+                    if path_id == image_guid or image_guid in image_path:
                         extract_disk(ova_path, ova_file.tell(), image_path,
                                      image_format)
                         ova_file.seek(size, 1)
+                        matched = True
                         break
+                if not matched:
+                    print(
+                        "No target disk path for OVA member %r (image id %s); "
+                        "known paths: %s"
+                        % (name, image_guid, list(path_to_format.keys())),
+                        file=sys.stderr)
+                    sys.exit(1)
 
 
 if len(sys.argv) < 4:

@@ -106,7 +106,7 @@ public class ImportVmFromExportDomainModel extends ImportVmModel {
                                 // filter storage domains
                                 filteredStorageDomains = new ArrayList<>();
                                 for (StorageDomain domain : storageDomains) {
-                                    if (Linq.isDataActiveStorageDomain(domain)) {
+                                    if (isDestinationStorageDomainSelectable(domain)) {
                                         filteredStorageDomains.add(domain);
                                     }
                                 }
@@ -119,6 +119,10 @@ public class ImportVmFromExportDomainModel extends ImportVmModel {
                             }),
                     getStoragePool().getId());
         }), dataCenter.getId(), true, false);
+    }
+
+    protected boolean isDestinationStorageDomainSelectable(StorageDomain domain) {
+        return Linq.isDataActiveStorageDomain(domain);
     }
 
     private void initQuotaForStorageDomains() {
