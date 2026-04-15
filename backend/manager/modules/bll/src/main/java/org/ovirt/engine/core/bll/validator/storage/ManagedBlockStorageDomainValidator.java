@@ -19,6 +19,7 @@ public class ManagedBlockStorageDomainValidator {
         allowedStorageOperations = new HashSet<>();
         allowedStorageOperations.addAll(Arrays.asList(
                 ActionType.AddDisk,
+                ActionType.AddDiskToTemplate,
                 ActionType.AttachDiskToVm,
                 ActionType.DetachDiskFromVm,
                 ActionType.RemoveDisk,
@@ -46,7 +47,8 @@ public class ManagedBlockStorageDomainValidator {
                 ActionType.CopyImageGroup,
                 ActionType.CopyImageGroupWithData,
                 ActionType.CopyManagedBlockDisk,
-                ActionType.MoveOrCopyDisk
+                ActionType.MoveOrCopyDisk,
+                ActionType.ImportVmFromOva
         ));
         EngineLocalConfig config = EngineLocalConfig.getInstance();
         isDataBaseInitialized = Boolean.parseBoolean(config.getProperty(MANAGEDBLOCK_DB_ENABLE));

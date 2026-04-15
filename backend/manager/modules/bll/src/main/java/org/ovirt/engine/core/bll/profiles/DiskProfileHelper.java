@@ -16,6 +16,7 @@ import javax.inject.Singleton;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.common.businessentities.profiles.DiskProfile;
 import org.ovirt.engine.core.common.businessentities.storage.DiskContentType;
@@ -24,6 +25,7 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.PermissionDao;
+import org.ovirt.engine.core.dao.StorageDomainDao;
 import org.ovirt.engine.core.dao.profiles.DiskProfileDao;
 import org.ovirt.engine.core.di.Injector;
 import org.slf4j.Logger;
@@ -39,6 +41,9 @@ public class DiskProfileHelper {
 
     @Inject
     private PermissionDao permissionDao;
+
+    @Inject
+    private StorageDomainDao storageDomainDao;
 
     public DiskProfile createDiskProfile(Guid storageDomainId, String name) {
         DiskProfile profile = new DiskProfile();
@@ -65,6 +70,12 @@ public class DiskProfileHelper {
                 continue;
             }
             if (!shouldSetDiskProfileOnImage(diskImage)) {
+                continue;
+            }
+            if (storageDomainId != null && isManagedBlockStorageDomain(storageDomainId)) {
+                log.info("Skipping disk profile validation for managed block storage domain id '{}' (disk '{}')",
+                        storageDomainId, diskImage.getDiskAlias());
+                diskImage.setDiskProfileIds(new ArrayList<>());
                 continue;
             }
             if (diskImage.getDiskProfileId() == null && storageDomainId != null) {
@@ -157,5 +168,12 @@ public class DiskProfileHelper {
     private boolean shouldSetDiskProfileOnImage(DiskImage diskImage) {
         return !(diskImage.getContentType() == DiskContentType.MEMORY_DUMP_VOLUME
                 || diskImage.getContentType() == DiskContentType.MEMORY_METADATA_VOLUME);
+    }
+
+    private boolean isManagedBlockStorageDomain(Guid storageDomainId) {
+        StorageDomain storageDomain = storageDomainDao.get(storageDomainId);
+        return storageDomain != null
+                && storageDomain.getStorageType() != null
+                && storageDomain.getStorageType().isManagedBlockStorage();
     }
 }

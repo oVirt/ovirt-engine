@@ -8,6 +8,7 @@ import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.ImportVmFromOvaParameters;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.profiles.CpuProfile;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
@@ -15,6 +16,7 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.frontend.Frontend;
+import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.clusters.ClusterListModel;
 import org.ovirt.engine.ui.uicommonweb.models.quota.QuotaListModel;
@@ -40,6 +42,12 @@ public class ImportVmFromOvaModel extends ImportVmFromExternalProviderModel {
     @Override
     protected void setTargetArchitecture(List<VM> externalVms) {
         setTargetArchitecture(ArchitectureType.x86_64);
+    }
+
+    @Override
+    protected boolean isDestinationStorageDomainSelectable(StorageDomain domain) {
+        return super.isDestinationStorageDomainSelectable(domain)
+                || Linq.isManagedBlockActiveStorageDomain(domain);
     }
 
     public void setIsoName(String ovaPath) {

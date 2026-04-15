@@ -49,6 +49,7 @@ import org.ovirt.engine.core.common.asynctasks.EntityInfo;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.Permission;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMapId;
 import org.ovirt.engine.core.common.businessentities.VDS;
@@ -197,7 +198,12 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
 
         switch (getParameters().getDiskInfo().getDiskStorageType()) {
             case IMAGE:
+            case KUBERNETES:
                 if (!checkIfImageDiskCanBeAdded(vm, diskVmElementValidator)) {
+                    return false;
+                }
+                if (isDiskImageTargetingManagedBlockStorageDomain()
+                        && !isSupportedByManagedBlockStorageDomain(getStorageDomain())) {
                     return false;
                 }
                 return setAndValidateDiskProfiles() &&
@@ -302,9 +308,14 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
                 checkExceedingMaxBlockDiskSize() &&
                 canAddShareableDisk() &&
                 validate(diskVmElementValidator.isVirtIoScsiValid(vm)) &&
-                validate(diskVmElementValidator.isDiskInterfaceSupported(getVm())) &&
-                validateDiskImageNotExisting(((DiskImage) getParameters().getDiskInfo()).getImageId()) &&
-                validateDiskNotExisting(getParameters().getDiskInfo().getId());
+                validate(diskVmElementValidator.isDiskInterfaceSupported(getVm()));
+
+        if (returnValue && getParameters().isUsePassedImageId()) {
+            returnValue = validateDiskImageNotExisting(((DiskImage) getParameters().getDiskInfo()).getImageId());
+        }
+        if (returnValue && getParameters().isUsePassedDiskId()) {
+            returnValue = validateDiskNotExisting(getParameters().getDiskInfo().getId());
+        }
 
         if (returnValue && vm != null) {
             StoragePool sp = getStoragePool(); // Note this is done according to the VM's spId.
@@ -458,7 +469,11 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
         switch (getParameters().getDiskInfo().getDiskStorageType()) {
             case IMAGE:
             case KUBERNETES:
-                createDiskBasedOnImage();
+                if (isDiskImageTargetingManagedBlockStorageDomain()) {
+                    createManagedBlockStorageDisk();
+                } else {
+                    createDiskBasedOnImage();
+                }
                 break;
             case LUN:
                 createDiskBasedOnLun();
@@ -488,11 +503,21 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
         }
     }
 
+    private boolean shouldPlugManagedBlockDiskToVm() {
+        if (Guid.isNullOrEmpty(getVmId())) {
+            return false;
+        }
+        if (getVm() != null) {
+            return shouldDiskBePlugged();
+        }
+        return !Boolean.FALSE.equals(getParameters().getPlugDiskToVm());
+    }
+
     private ActionParametersBase buildManagedBlockParams() {
         AddManagedBlockStorageDiskParameters parameters =
                 new AddManagedBlockStorageDiskParameters(
                         getParameters().getDiskInfo(),
-                        getVm() != null && shouldDiskBePlugged());
+                        shouldPlugManagedBlockDiskToVm());
         parameters.setPlugDiskToVm(getParameters().getPlugDiskToVm());
         parameters.setStorageDomainId(getParameters().getStorageDomainId());
         parameters.setParentParameters(getParameters());
@@ -502,6 +527,10 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
         if (getVm() != null) {
             parameters.setVmSnapshotId(snapshotDao.getId(getVmId(), SnapshotType.ACTIVE));
             parameters.setVmId(getVmId());
+            parameters.setDiskVmElement(getDiskVmElement());
+        } else if (!Guid.isNullOrEmpty(getVmId())) {
+            parameters.setVmId(getVmId());
+            parameters.setVmSnapshotId(getParameters().getVmSnapshotId());
             parameters.setDiskVmElement(getDiskVmElement());
         }
 
@@ -564,8 +593,9 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
 
     protected boolean useCallback() {
         return getParameters().getDiskInfo().getDiskStorageType() == DiskStorageType.IMAGE
-                && (parentHasCallback() || !isExecutedAsChildCommand()) ||
-                getParameters().getDiskInfo().getDiskStorageType() == DiskStorageType.MANAGED_BLOCK_STORAGE;
+                && (parentHasCallback() || !isExecutedAsChildCommand())
+                || getParameters().getDiskInfo().getDiskStorageType() == DiskStorageType.MANAGED_BLOCK_STORAGE
+                || isDiskImageTargetingManagedBlockStorageDomain();
     }
 
     private void createDiskBasedOnImage() {
@@ -752,11 +782,23 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
         }
     }
 
+    protected boolean isDiskImageTargetingManagedBlockStorageDomain() {
+        DiskStorageType type = getParameters().getDiskInfo().getDiskStorageType();
+        if (type != DiskStorageType.IMAGE && type != DiskStorageType.KUBERNETES) {
+            return false;
+        }
+        StorageDomain sd = getStorageDomain();
+        return sd != null && sd.getStorageType() != null && sd.getStorageType().isManagedBlockStorage();
+    }
+
     @Override
     protected ActionType getChildActionType() {
         switch (getParameters().getDiskInfo().getDiskStorageType()) {
             case IMAGE:
             case KUBERNETES:
+                if (isDiskImageTargetingManagedBlockStorageDomain()) {
+                    return ActionType.AddManagedBlockStorageDisk;
+                }
                 return ActionType.AddImageFromScratch;
             case CINDER:
                 return ActionType.AddCinderDisk;

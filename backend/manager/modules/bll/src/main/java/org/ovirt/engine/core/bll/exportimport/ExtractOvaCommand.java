@@ -2,7 +2,8 @@ package org.ovirt.engine.core.bll.exportimport;
 
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.Collections;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -13,6 +14,7 @@ import javax.enterprise.inject.Instance;
 import javax.enterprise.inject.Typed;
 import javax.inject.Inject;
 
+import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.ConcurrentChildCommandsExecutionCallback;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
@@ -20,10 +22,16 @@ import org.ovirt.engine.core.bll.VmCommand;
 import org.ovirt.engine.core.bll.VmHandler;
 import org.ovirt.engine.core.bll.VmTemplateHandler;
 import org.ovirt.engine.core.bll.context.CommandContext;
+import org.ovirt.engine.core.bll.storage.disk.image.DisksFilter;
+import org.ovirt.engine.core.bll.storage.disk.managedblock.ManagedBlockStorageCommandUtil;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
 import org.ovirt.engine.core.common.action.ConvertOvaParameters;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
+import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VmEntityType;
+import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
+import org.ovirt.engine.core.common.businessentities.storage.ManagedBlockStorageDisk;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
 import org.ovirt.engine.core.common.errors.EngineError;
 import org.ovirt.engine.core.common.errors.EngineException;
@@ -37,8 +45,10 @@ import org.ovirt.engine.core.common.utils.ansible.AnsibleRunnerClient;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.CommandStatus;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.DiskDao;
 import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.utils.EngineLocalConfig;
+import org.ovirt.engine.core.vdsbroker.vdsbroker.DeviceInfoReturn;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.PrepareImageReturn;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -58,6 +68,10 @@ public class ExtractOvaCommand<T extends ConvertOvaParameters> extends VmCommand
     private VmTemplateHandler templateHandler;
     @Inject
     private VmDao vmDao;
+    @Inject
+    private DiskDao diskDao;
+    @Inject
+    private ManagedBlockStorageCommandUtil managedBlockStorageCommandUtil;
     @Inject
     @Typed(ConcurrentChildCommandsExecutionCallback.class)
     private Instance<ConcurrentChildCommandsExecutionCallback> callbackProvider;
@@ -83,6 +97,9 @@ public class ExtractOvaCommand<T extends ConvertOvaParameters> extends VmCommand
     protected void executeVmCommand() {
         try {
             updateDisksFromDb();
+            if (isManagedBlockStorage()) {
+                prepareManagedBlockDisksForAnsibleExtract();
+            }
             List<String> diskPaths = prepareImages();
             String diskPathToFormat = prepareDiskPathToFormat(getDiskList(), diskPaths);
             boolean succeeded = runAnsibleImportOvaPlaybook(diskPathToFormat);
@@ -102,16 +119,134 @@ public class ExtractOvaCommand<T extends ConvertOvaParameters> extends VmCommand
 
     private void updateDisksFromDb() {
         if (getParameters().getVmEntityType() == VmEntityType.TEMPLATE) {
-            templateHandler.updateDisksFromDb(getVmTemplate());
+            VmTemplate vmt = getVmTemplate();
+            if (vmt == null) {
+                throw new EngineException(EngineError.GeneralException, "OVA extract: template entity not found");
+            }
+            templateHandler.updateDisksFromDb(vmt);
+            if (vmt.getDiskList().isEmpty()) {
+                templateHandler.addTemplateDisksFromDiskIds(vmt, getParameters().getTemplateDiskIdsForExtract());
+            }
+            if (vmt.getDiskList().isEmpty()) {
+                int rawCount = diskDao.getAllForVm(vmt.getId()).size();
+                log.error(
+                        "OVA extract: no disks on template {} after reload (diskDao.getAllForVm returned {} row(s)); "
+                                + "cannot build target paths for extract_ova.py",
+                        vmt.getId(),
+                        rawCount);
+                throw new EngineException(
+                        EngineError.GeneralException,
+                        "OVA extract found no template disks in the engine database; check template id and disk attachment.");
+            }
         } else {
             vmHandler.updateDisksFromDb(getVm());
         }
     }
 
-    private Map<Guid, Guid> getImageMappings() {
-        return getParameters().getImageMappings() != null ?
-                getParameters().getImageMappings()
-                : Collections.emptyMap();
+    private boolean isManagedBlockStorage() {
+        Guid poolId = getStoragePoolId();
+        if (Guid.isNullOrEmpty(poolId)) {
+            return false;
+        }
+        Guid sdId = getParameters().getStorageDomainId();
+        if (!Guid.isNullOrEmpty(sdId)) {
+            StorageDomain sd = storageDomainDao.getForStoragePool(sdId, poolId);
+            if (sd != null && sd.getStorageType().isManagedBlockStorage()) {
+                return true;
+            }
+        }
+        for (DiskImage disk : getDiskList()) {
+            List<Guid> storageIds = disk.getStorageIds();
+            if (storageIds == null || storageIds.isEmpty()) {
+                continue;
+            }
+            Guid diskSdId = storageIds.get(0);
+            if (Guid.isNullOrEmpty(diskSdId)) {
+                continue;
+            }
+            StorageDomain sd = storageDomainDao.getForStoragePool(diskSdId, poolId);
+            if (sd != null && sd.getStorageType().isManagedBlockStorage()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private void prepareManagedBlockDisksForAnsibleExtract() {
+        Map<Guid, Map<String, Object>> fromParent = getParameters().getPreAttachedManagedBlockDevicesByDiskId();
+        if (fromParent != null) {
+            for (DiskImage disk : getDiskList()) {
+                if (disk instanceof ManagedBlockStorageDisk) {
+                    Map<String, Object> dev = fromParent.get(disk.getId());
+                    if (dev != null) {
+                        ((ManagedBlockStorageDisk) disk).setDevice(new HashMap<>(dev));
+                    }
+                }
+            }
+        }
+        List<ManagedBlockStorageDisk> mbsDisks =
+                DisksFilter.filterManagedBlockStorageDisks(getDiskList());
+        if (mbsDisks.isEmpty()) {
+            return;
+        }
+        if (mbsDisks.stream().noneMatch(d -> d.getDevice() == null)) {
+            return;
+        }
+        VDS host = getVds();
+        if (host == null) {
+            throw new EngineException(EngineError.GeneralException, "OVA extract requires a proxy host");
+        }
+        boolean parentSentDevices = fromParent != null && !fromParent.isEmpty();
+        if (parentSentDevices) {
+            throw new EngineException(
+                    EngineError.StorageException,
+                    "Managed-block import passed device metadata but disks still lack device after apply; "
+                            + "check disk id alignment with the parent import.");
+        }
+        if (!managedBlockStorageCommandUtil.attachManagedBlockStorageDisksOnHost(
+                mbsDisks,
+                host,
+                getParameters().getVmId())) {
+            throw new EngineException(
+                    EngineError.StorageException,
+                    "Failed to connect or attach managed-block volumes on the OVA extract host");
+        }
+    }
+
+    private String buildOvaImageMappingsYamlForAnsible() {
+        Map<Guid, Guid> byDiskId = getParameters().getOvaSourceImageIdByDiskId();
+        if (MapUtils.isNotEmpty(byDiskId)) {
+            Map<Guid, Guid> currentImageIdToSource = new LinkedHashMap<>();
+            for (DiskImage d : getDiskList()) {
+                Guid sourceImageId = byDiskId.get(d.getId());
+                if (sourceImageId != null) {
+                    currentImageIdToSource.put(d.getImageId(), sourceImageId);
+                }
+            }
+            if (!currentImageIdToSource.isEmpty()) {
+                return currentImageIdToSource.entrySet()
+                        .stream()
+                        .map(e -> String
+                                .format("\\\"%s\\\": \\\"%s\\\"", e.getValue().toString(), e.getKey().toString()))
+                        .collect(Collectors.joining(", ", "{", "}"));
+            }
+        }
+        Map<Guid, Guid> legacy = getParameters().getImageMappings();
+        if (MapUtils.isEmpty(legacy)) {
+            return "{}";
+        }
+        if (legacy.size() == 1 && getDiskList().size() == 1) {
+            Map.Entry<Guid, Guid> e = legacy.entrySet().iterator().next();
+            Guid sourceImageId = e.getValue();
+            Guid currentImageId = getDiskList().get(0).getImageId();
+            return "{" + String.format("\\\"%s\\\": \\\"%s\\\"",
+                    sourceImageId.toString(),
+                    currentImageId.toString()) + "}";
+        }
+        return legacy.entrySet()
+                .stream()
+                .map(e -> String.format("\\\"%s\\\": \\\"%s\\\"", e.getValue().toString(), e.getKey().toString()))
+                .collect(Collectors.joining(", ", "{", "}"));
     }
 
     private boolean runAnsibleImportOvaPlaybook(String disksPathToFormat) {
@@ -121,12 +256,7 @@ public class ExtractOvaCommand<T extends ConvertOvaParameters> extends VmCommand
                 .host(getVds())
                 .variable("ovirt_import_ova_path", getParameters().getOvaPath())
                 .variable("ovirt_import_ova_disks", disksPathToFormat)
-                .variable("ovirt_import_ova_image_mappings",
-                        getImageMappings().entrySet()
-                                .stream()
-                                .map(e -> String
-                                        .format("\\\"%s\\\": \\\"%s\\\"", e.getValue().toString(), e.getKey().toString()))
-                                .collect(Collectors.joining(", ", "{", "}")))
+                .variable("ovirt_import_ova_image_mappings", buildOvaImageMappingsYamlForAnsible())
                 .variable("ansible_timeout", timeout)
                 // /var/log/ovirt-engine/ova/ovirt-import-ova-ansible-{hostname}-{correlationid}-{timestamp}.log
                 .logFileDirectory(IMPORT_OVA_LOG_DIRECTORY)
@@ -182,8 +312,7 @@ public class ExtractOvaCommand<T extends ConvertOvaParameters> extends VmCommand
      */
     private List<String> prepareImages() {
         return getDiskList().stream()
-                .map(this::prepareImage)
-                .map(PrepareImageReturn::getImagePath)
+                .map(this::prepareImagePath)
                 .collect(Collectors.toList());
     }
 
@@ -195,9 +324,16 @@ public class ExtractOvaCommand<T extends ConvertOvaParameters> extends VmCommand
                 .boxed()
                 .collect(Collectors.toMap(i -> diskPaths.get(i),
                         i -> diskList.get(i).getVolumeFormat() == VolumeFormat.COW ? "qcow2" : "raw"));
+        Map<String, String> diskPathToImageId = IntStream.range(0, diskList.size())
+                .boxed()
+                .collect(Collectors.toMap(i -> diskPaths.get(i),
+                        i -> diskList.get(i).getImageId().toString()));
+        Map<String, Object> spec = new HashMap<>();
+        spec.put("pathToFormat", diskPathToFormat);
+        spec.put("pathToImageId", diskPathToImageId);
         String json;
         try {
-            json = new ObjectMapper().writeValueAsString(diskPathToFormat);
+            json = new ObjectMapper().writeValueAsString(spec);
         } catch (IOException e) {
             throw new RuntimeException("failed to serialize disk info");
         }
@@ -210,14 +346,37 @@ public class ExtractOvaCommand<T extends ConvertOvaParameters> extends VmCommand
                 : getVm().getDiskList();
     }
 
-    private PrepareImageReturn prepareImage(DiskImage image) {
+    private String prepareImagePath(DiskImage image) {
+        if (image instanceof ManagedBlockStorageDisk) {
+            return managedBlockImagePath((ManagedBlockStorageDisk) image);
+        }
         VDSReturnValue vdsRetVal = imagesHandler.prepareImage(
                 image.getStoragePoolId(),
                 image.getStorageIds().get(0),
                 image.getId(),
                 image.getImageId(),
                 getParameters().getProxyHostId());
-        return (PrepareImageReturn) vdsRetVal.getReturnValue();
+        return ((PrepareImageReturn) vdsRetVal.getReturnValue()).getImagePath();
+    }
+
+    private String managedBlockImagePath(ManagedBlockStorageDisk disk) {
+        Map<String, Object> device = disk.getDevice();
+        if (device == null) {
+            throw new EngineException(
+                    EngineError.StorageException,
+                    "Managed-block volume has no device on the proxy host; attach volumes before OVA extract.");
+        }
+
+        String path = (String) device.get(DeviceInfoReturn.MANAGED_PATH);
+        if (StringUtils.isEmpty(path)) {
+            path = (String) device.get(DeviceInfoReturn.PATH);
+        }
+        if (StringUtils.isEmpty(path)) {
+            throw new EngineException(
+                    EngineError.StorageException,
+                    "Managed-block device path missing in volume metadata after attach.");
+        }
+        return path;
     }
 
     private void teardownImages() {
@@ -225,6 +384,13 @@ public class ExtractOvaCommand<T extends ConvertOvaParameters> extends VmCommand
     }
 
     private void teardownImage(DiskImage image) {
+        if (image instanceof ManagedBlockStorageDisk) {
+            Guid proxy = getParameters().getProxyHostId();
+            if (proxy != null && !Guid.isNullOrEmpty(proxy)) {
+                managedBlockStorageCommandUtil.disconnectManagedBlockStorageDeviceFromHost(image, proxy);
+            }
+            return;
+        }
         imagesHandler.teardownImage(
                 image.getStoragePoolId(),
                 image.getStorageIds().get(0),
