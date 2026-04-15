@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.common.action;
 
+import java.util.List;
 import java.util.Map;
 
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
@@ -16,6 +17,8 @@ public class ImportVmTemplateFromOvaParameters extends ImportVmTemplateParameter
     private Guid proxyHostId;
     private Phase importPhase = Phase.CREATE_DISKS;
     private Map<Guid, Guid> imageMappings;
+
+    private List<Guid> templateDiskIdsForOvaExtract;
 
     public ImportVmTemplateFromOvaParameters() {
     }
@@ -54,5 +57,13 @@ public class ImportVmTemplateFromOvaParameters extends ImportVmTemplateParameter
 
     public void setDiskMappings(Map<Guid, Guid> imageMappings) {
         this.imageMappings = imageMappings;
+    }
+
+    public List<Guid> getTemplateDiskIdsForOvaExtract() {
+        return templateDiskIdsForOvaExtract;
+    }
+
+    public void setTemplateDiskIdsForOvaExtract(List<Guid> templateDiskIdsForOvaExtract) {
+        this.templateDiskIdsForOvaExtract = templateDiskIdsForOvaExtract;
     }
 }
