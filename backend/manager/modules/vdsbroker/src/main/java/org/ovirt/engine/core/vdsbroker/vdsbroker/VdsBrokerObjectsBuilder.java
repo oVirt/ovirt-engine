@@ -99,6 +99,8 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskInterface;
 import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
 import org.ovirt.engine.core.common.businessentities.storage.LUNs;
 import org.ovirt.engine.core.common.businessentities.storage.LeaseJobStatus;
+import org.ovirt.engine.core.common.businessentities.storage.Qcow2BitmapInfo;
+import org.ovirt.engine.core.common.businessentities.storage.Qcow2BitmapInfoFlags;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
@@ -1040,6 +1042,7 @@ public class VdsBrokerObjectsBuilder {
         vds.setCdChangePdiv(assignBoolValue(struct, VdsProperties.CD_CHANGE_PDIV));
         vds.setOvnConfigured(assignBoolValue(struct, VdsProperties.OVN_CONFIGURED));
         vds.setVdsmCpusAffinity(assignStringValueFromArray(struct, VdsProperties.vdsm_cpus_affinity));
+        vds.setQemuImageInfoBitmaps(assignBoolValue(struct, VdsProperties.QEMU_IMAGE_INFO_BITMAPS));
     }
 
     private void setDnsResolverConfigurationData(VDS vds, Map<String, Object> struct) {
@@ -2823,5 +2826,24 @@ public class VdsBrokerObjectsBuilder {
         }
 
         return leaseStatus;
+    }
+
+    public List<Qcow2BitmapInfo> buildQcow2Bitmaps(Object[] struct) {
+        ArrayList<Qcow2BitmapInfo> bitmaps = new ArrayList<>();
+
+        for (Map<String, Object> bitmap : (Map<String, Object>[]) struct) {
+            Qcow2BitmapInfo bitmapInfo = new Qcow2BitmapInfo();
+            bitmapInfo.setName(Guid.createGuidFromString(bitmap.get("name").toString()));
+            bitmapInfo.setGranularity((Long)bitmap.get("granularity"));
+
+            Object[] flags = (Object[]) bitmap.get("flags");
+            List<Qcow2BitmapInfoFlags> qcow2BitmapInfoFlags = Arrays.stream(flags)
+                .map(flag -> Qcow2BitmapInfoFlags.forValue(flag.toString())).collect(Collectors.toList());
+            bitmapInfo.setFlags(qcow2BitmapInfoFlags);
+
+            bitmaps.add(bitmapInfo);
+        }
+
+        return bitmaps;
     }
 }

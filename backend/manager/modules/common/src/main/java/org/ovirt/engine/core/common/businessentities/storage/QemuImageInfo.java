@@ -1,5 +1,7 @@
 package org.ovirt.engine.core.common.businessentities.storage;
 
+import java.util.List;
+
 import org.ovirt.engine.core.compat.Guid;
 
 public class QemuImageInfo {
@@ -13,6 +15,7 @@ public class QemuImageInfo {
     private long clusterSize;
     private String backingFile;
     private QcowCompat qcowCompat;
+    private List<Qcow2BitmapInfo> qcow2bitmaps;
 
     public Guid getImageId() {
         return imageId;
@@ -84,5 +87,13 @@ public class QemuImageInfo {
 
     public void setQcowCompat(QcowCompat qcowCompat) {
         this.qcowCompat = qcowCompat;
+    }
+
+    public List<Qcow2BitmapInfo> getQcow2bitmaps() {
+        return qcow2bitmaps;
+    }
+
+    public void setQcow2bitmaps(List<Qcow2BitmapInfo> qcow2bitmaps) {
+        this.qcow2bitmaps = qcow2bitmaps;
     }
 }
