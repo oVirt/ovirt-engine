@@ -455,4 +455,16 @@ public class FeatureSupported {
     public static boolean isVirtioVgaSupported(Version version) {
         return supportedInConfig(ConfigValues.VirtioVgaSupported, version);
     }
+
+    /**
+     * Check if 'discard-no-unref' is supported.
+     * This is the case when running on compatibility version 4.8 or higher
+     * and the 'EnableQemuDiscardNoUnref' is enabled in the configuration.
+     *
+     * @param version Compatibility version to check for.
+     * @return true if 'discard-no-unref' is supported
+     */
+    public static boolean isDiscardNoUnrefSupported(Version version) {
+        return Version.v4_8.lessOrEquals(version) && supportedInConfig(ConfigValues.EnableQemuDiscardNoUnref, version);
+    }
 }

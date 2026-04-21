@@ -2292,7 +2292,7 @@ public class LibvirtVmXmlBuilder {
         writer.writeAttributeString("name", "qemu");
         if (dve.isPassDiscard()) {
             writer.writeAttributeString("discard", "unmap");
-            if ((boolean) Config.getValue(ConfigValues.EnableQemuDiscardNoUnref, vm.getClusterCompatibilityVersion().toString())) {
+            if (FeatureSupported.isDiscardNoUnrefSupported(vm.getCompatibilityVersion())) {
                 writer.writeAttributeString("discard_no_unref", "on");
             }
         }
