@@ -86,9 +86,9 @@ import org.ovirt.engine.core.common.locks.LockInfo;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.utils.SizeConverter;
-import org.ovirt.engine.core.common.utils.cinderlib.CinderlibCommandParameters;
-import org.ovirt.engine.core.common.utils.cinderlib.CinderlibExecutor;
-import org.ovirt.engine.core.common.utils.cinderlib.CinderlibExecutor.CinderlibCommand;
+import org.ovirt.engine.core.common.utils.managedblock.ManagedBlockCommandParameters;
+import org.ovirt.engine.core.common.utils.managedblock.ManagedBlockExecutor;
+import org.ovirt.engine.core.common.utils.managedblock.ManagedBlockExecutor.ManagedBlockCommand;
 import org.ovirt.engine.core.common.vdscommands.AddImageTicketVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.AttachManagedBlockStorageVolumeVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.ConvertManagedBlockVolumeVDSCommandParameters;
@@ -106,7 +106,6 @@ import org.ovirt.engine.core.compat.CommandStatus;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dao.BaseDiskDao;
-import org.ovirt.engine.core.dao.CinderStorageDao;
 import org.ovirt.engine.core.dao.DiskDao;
 import org.ovirt.engine.core.dao.DiskImageDynamicDao;
 import org.ovirt.engine.core.dao.DiskLunMapDao;
@@ -114,6 +113,7 @@ import org.ovirt.engine.core.dao.DiskVmElementDao;
 import org.ovirt.engine.core.dao.ImageDao;
 import org.ovirt.engine.core.dao.ImageStorageDomainMapDao;
 import org.ovirt.engine.core.dao.ImageTransferDao;
+import org.ovirt.engine.core.dao.ManagedBlockStorageDao;
 import org.ovirt.engine.core.dao.PermissionDao;
 import org.ovirt.engine.core.dao.SnapshotDao;
 import org.ovirt.engine.core.dao.StorageDomainDao;
@@ -168,9 +168,9 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
     @Inject
     private ResourceManager resourceManager;
     @Inject
-    private CinderStorageDao cinderStorageDao;
+    private ManagedBlockStorageDao managedBlockStorageDao;
     @Inject
-    private CinderlibExecutor cinderlibExecutor;
+    private ManagedBlockExecutor managedBlockExecutor;
     @Inject
     private BaseDiskDao baseDiskDao;
     @Inject
@@ -1153,7 +1153,7 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
     private boolean startMbsUploadConversion(StateContext context) {
         Guid sdId = getStorageDomainId();
         Guid dstVolId = Guid.newGuid();
-        ManagedBlockStorage managedBlockStorage = cinderStorageDao.get(sdId);
+        ManagedBlockStorage managedBlockStorage = managedBlockStorageDao.get(sdId);
         if (managedBlockStorage == null) {
             log.error("Managed block storage domain '{}' not found for conversion", sdId);
             return false;
@@ -1218,10 +1218,10 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
             List<String> extraParams = new ArrayList<>();
             extraParams.add(dstVolId.toString());
             extraParams.add(Long.toString(sizeGiB));
-            CinderlibCommandParameters params = new CinderlibCommandParameters(
+            ManagedBlockCommandParameters params = new ManagedBlockCommandParameters(
                     JsonHelper.mapToJson(managedBlockStorage.getAllDriverOptions(), false),
                     extraParams, getCorrelationId());
-            if (!cinderlibExecutor.runCommand(CinderlibCommand.CREATE_VOLUME, params).getSucceed()) {
+            if (!managedBlockExecutor.runCommand(ManagedBlockCommand.CREATE_VOLUME, params).getSucceed()) {
                 log.error("CREATE_VOLUME failed for transfer '{}'", getCommandId());
                 return false;
             }
@@ -1305,8 +1305,8 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
     private void mbsConversionTryCinderDisconnect(ManagedBlockStorage managedBlockStorage, Guid volId) {
         List<String> extraParams = Collections.singletonList(volId.toString());
         try {
-            cinderlibExecutor.runCommand(CinderlibCommand.DISCONNECT_VOLUME,
-                    new CinderlibCommandParameters(
+            managedBlockExecutor.runCommand(ManagedBlockCommand.DISCONNECT_VOLUME,
+                    new ManagedBlockCommandParameters(
                             JsonHelper.mapToJson(managedBlockStorage.getAllDriverOptions(), false),
                             extraParams, getCorrelationId()));
         } catch (Exception e) {
@@ -1317,8 +1317,8 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
     private void mbsConversionTryCinderDeleteVolume(ManagedBlockStorage managedBlockStorage, Guid volId) {
         List<String> extraParams = Collections.singletonList(volId.toString());
         try {
-            cinderlibExecutor.runCommand(CinderlibCommand.DELETE_VOLUME,
-                    new CinderlibCommandParameters(
+            managedBlockExecutor.runCommand(ManagedBlockCommand.DELETE_VOLUME,
+                    new ManagedBlockCommandParameters(
                             JsonHelper.mapToJson(managedBlockStorage.getAllDriverOptions(), false),
                             extraParams, getCorrelationId()));
         } catch (Exception e) {
@@ -1478,7 +1478,7 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
         log.info("Finishing MBS upload conversion for transfer '{}': replacing oldVol={} with newVol={} (disk={})",
                 getCommandId(), oldImageId, newVolId, diskId);
 
-        ManagedBlockStorage managedBlockStorage = cinderStorageDao.get(sdId);
+        ManagedBlockStorage managedBlockStorage = managedBlockStorageDao.get(sdId);
         detachAndDeleteMbsSourceVolume(vds, oldImageId, sdId, managedBlockStorage);
         replaceSourceDiskWithDestinationMbsDisk(oldImageId, diskId, newVolId, currentImage);
         getParameters().setImageGroupID(newVolId);
@@ -1504,16 +1504,16 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
             List<String> extraParams = new ArrayList<>();
             extraParams.add(oldImageId.toString());
             try {
-                cinderlibExecutor.runCommand(CinderlibCommand.DISCONNECT_VOLUME,
-                        new CinderlibCommandParameters(
+                managedBlockExecutor.runCommand(ManagedBlockCommand.DISCONNECT_VOLUME,
+                        new ManagedBlockCommandParameters(
                                 JsonHelper.mapToJson(managedBlockStorage.getAllDriverOptions(), false),
                                 extraParams, getCorrelationId()));
             } catch (Exception e) {
                 log.warn("Disconnect source volume failed for MBS conversion: {}", e);
             }
             try {
-                cinderlibExecutor.runCommand(CinderlibCommand.DELETE_VOLUME,
-                        new CinderlibCommandParameters(
+                managedBlockExecutor.runCommand(ManagedBlockCommand.DELETE_VOLUME,
+                        new ManagedBlockCommandParameters(
                                 JsonHelper.mapToJson(managedBlockStorage.getAllDriverOptions(), false),
                                 extraParams, getCorrelationId()));
             } catch (Exception e) {
@@ -1653,8 +1653,8 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
             List<String> disconnectParams = new ArrayList<>();
             disconnectParams.add(volId.toString());
             try {
-                cinderlibExecutor.runCommand(CinderlibCommand.DISCONNECT_VOLUME,
-                        new CinderlibCommandParameters(
+                managedBlockExecutor.runCommand(ManagedBlockCommand.DISCONNECT_VOLUME,
+                        new ManagedBlockCommandParameters(
                                 JsonHelper.mapToJson(managedBlockStorage.getAllDriverOptions(), false),
                                 disconnectParams, getCorrelationId()));
             } catch (Exception e) {
@@ -2311,7 +2311,7 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
             return;
         }
         Guid storageDomainId = mbsDisk.getStorageIds().get(0);
-        ManagedBlockStorage managedBlockStorage = cinderStorageDao.get(storageDomainId);
+        ManagedBlockStorage managedBlockStorage = managedBlockStorageDao.get(storageDomainId);
         if (managedBlockStorage == null) {
             log.warn("Managed block storage domain '{}' not found for disconnect", storageDomainId);
             return;
@@ -2319,11 +2319,11 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
         List<String> extraParams = new ArrayList<>();
         extraParams.add(mbsDisk.getImageId().toString());
         try {
-            CinderlibCommandParameters params = new CinderlibCommandParameters(
+            ManagedBlockCommandParameters params = new ManagedBlockCommandParameters(
                     JsonHelper.mapToJson(managedBlockStorage.getAllDriverOptions(), false),
                     extraParams,
                     getCorrelationId());
-            if (!cinderlibExecutor.runCommand(CinderlibCommand.DISCONNECT_VOLUME, params)
+            if (!managedBlockExecutor.runCommand(ManagedBlockCommand.DISCONNECT_VOLUME, params)
                     .getSucceed()) {
                 log.warn("Storage adapter DISCONNECT_VOLUME failed for disk '{}' volume '{}'",
                         imageTransfer.getDiskId(), mbsDisk.getImageId());
