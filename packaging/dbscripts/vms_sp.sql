@@ -321,11 +321,11 @@ CREATE OR REPLACE FUNCTION InsertVmDynamic (
     v_guestos_type VARCHAR(255),
     v_guestos_version VARCHAR(255),
     v_guest_containers TEXT,
-    v_current_cpu_pinning VARCHAR(4000),
+    v_current_cpu_pinning TEXT,
     v_current_sockets INT,
     v_current_cores INT,
     v_current_threads INT,
-    v_current_numa_pinning VARCHAR(4000)
+    v_current_numa_pinning TEXT
     )
 RETURNS VOID AS $FUNCTION$
 BEGIN
@@ -504,11 +504,11 @@ CREATE OR REPLACE FUNCTION UpdateVmDynamic (
     v_guestos_type VARCHAR(255),
     v_guestos_version VARCHAR(255),
     v_guest_containers TEXT,
-    v_current_cpu_pinning VARCHAR(4000),
+    v_current_cpu_pinning TEXT,
     v_current_sockets INT,
     v_current_cores INT,
     v_current_threads INT,
-    v_current_numa_pinning VARCHAR(4000)
+    v_current_numa_pinning TEXT
     )
 RETURNS VOID
     --The [vm_dynamic] table doesn't have a timestamp column. Optimistic concurrency logic cannot be generated
@@ -597,7 +597,7 @@ BEGIN
 END;$FUNCTION$
 LANGUAGE plpgsql;
 
-CREATE OR REPLACE FUNCTION ClearMigratingToVdsAndSetDynamicPinning (v_vm_guid UUID, v_current_cpu_pinning VARCHAR(4000), v_current_numa_pinning VARCHAR(4000))
+CREATE OR REPLACE FUNCTION ClearMigratingToVdsAndSetDynamicPinning (v_vm_guid UUID, v_current_cpu_pinning TEXT, v_current_numa_pinning TEXT)
 RETURNS VOID AS $FUNCTION$
 BEGIN
     UPDATE vm_dynamic
@@ -706,7 +706,7 @@ CREATE OR REPLACE FUNCTION InsertVmStatic (
     v_userdefined_properties VARCHAR(4000),
     v_min_allocated_mem INT,
     v_quota_id UUID,
-    v_cpu_pinning VARCHAR(4000),
+    v_cpu_pinning TEXT,
     v_host_cpu_flags BOOLEAN,
     v_tunnel_migration BOOLEAN,
     v_vnc_keyboard_layout VARCHAR(16),
@@ -1080,7 +1080,7 @@ v_predefined_properties VARCHAR(4000),
 v_userdefined_properties VARCHAR(4000),
 v_min_allocated_mem INTEGER,
 v_quota_id UUID,
-v_cpu_pinning VARCHAR(4000),
+v_cpu_pinning TEXT,
 v_host_cpu_flags BOOLEAN,
 v_tunnel_migration BOOLEAN,
 v_vnc_keyboard_layout	VARCHAR(16),
