@@ -2967,7 +2967,7 @@ CREATE TABLE vm_static (
     template_status integer,
     quota_id uuid,
     allow_console_reconnect boolean DEFAULT false NOT NULL,
-    cpu_pinning character varying(4000) DEFAULT NULL::character varying,
+    cpu_pinning text DEFAULT NULL,
     is_smartcard_enabled boolean DEFAULT false,
     host_cpu_flags boolean DEFAULT false,
     db_generation bigint DEFAULT 1,
