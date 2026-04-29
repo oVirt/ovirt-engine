@@ -41,4 +41,12 @@ public class DeleteAllVmCheckpointsParameters extends VmOperationParameterBase {
     public void setCompletedDisksCount(int completedDisksCount) {
         this.completedDisksCount = completedDisksCount;
     }
+
+    public DiskImage getCurrentDisk() {
+        return diskImages.get(completedDisksCount);
+    }
+
+    public void advanceToNextDisk() {
+        completedDisksCount++;
+    }
 }
