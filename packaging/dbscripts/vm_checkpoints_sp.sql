@@ -181,3 +181,21 @@ BEGIN
            );
 END;$FUNCTION$
 LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION DeleteAllCheckpointsByDiskId (
+    v_disk_id UUID
+)
+RETURNS VOID AS $FUNCTION$
+BEGIN
+    DELETE
+    FROM vm_checkpoint_disk_map
+    WHERE disk_id = v_disk_id;
+
+    -- Delete checkpoints that no longer have any associated disks
+    DELETE FROM vm_checkpoints
+    WHERE checkpoint_id NOT IN (
+        SELECT DISTINCT checkpoint_id
+        FROM vm_checkpoint_disk_map
+    );
+END;$FUNCTION$
+LANGUAGE plpgsql;

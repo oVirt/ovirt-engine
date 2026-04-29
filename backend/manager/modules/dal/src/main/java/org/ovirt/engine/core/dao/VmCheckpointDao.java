@@ -51,6 +51,13 @@ public interface VmCheckpointDao extends GenericDao<VmCheckpoint, Guid> {
     void removeAllCheckpointsByVmId(Guid vmId);
 
     /**
+     * Remove all checkpoints of a disk
+     *
+     * @param diskId the disk id
+     */
+    void removeAllCheckpointsByDiskId(Guid diskId);
+
+    /**
      * Invalidate all checkpoints of a VM
      *
      * @param vmId the VM id
