@@ -910,7 +910,11 @@ public class StorageListModel extends ListWithSimpleDetailsModel<Void, StorageDo
             templateRegisterListModel.setIsAvailable(isRegisterSubtabsAvailable);
             diskImageRegisterListModel.setIsAvailable(isRegisterSubtabsAvailable);
             diskListModel.setIsAvailable(isDataStorage || isManagedBlockStorage);
-            snapshotListModel.setIsAvailable(isDataStorage);
+            // The disks sub-tab was widened to MBS earlier but the disk-snapshots
+            // sub-tab was missed. MBS-disk snapshot rows are written into the same
+            // images table with disk_snapshot=true, and GetAllDiskSnapshotsByStorageDomainId
+            // already returns them, so the tab works as soon as it is made visible.
+            snapshotListModel.setIsAvailable(isDataStorage || isManagedBlockStorage);
             diskProfileListModel.setIsAvailable(isDataStorage);
             drListModel.setIsAvailable(isGlusterStorage);
             leaseListModel.setIsAvailable(isDataStorage);
