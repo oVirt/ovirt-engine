@@ -3,7 +3,6 @@ package org.ovirt.engine.core.bll;
 import java.nio.file.FileSystems;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
@@ -48,17 +47,11 @@ import org.ovirt.engine.core.common.TimeZoneType;
 import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
-import org.ovirt.engine.core.common.action.AddManagedBlockStorageDomainParameters;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.NonOperationalReason;
-import org.ovirt.engine.core.common.businessentities.StorageDomain;
-import org.ovirt.engine.core.common.businessentities.StorageDomainDynamic;
-import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
-import org.ovirt.engine.core.common.businessentities.storage.ManagedBlockStorage;
-import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigCommon;
 import org.ovirt.engine.core.common.config.ConfigValues;
@@ -83,9 +76,6 @@ import org.ovirt.engine.core.dal.dbbroker.generic.DBConfigUtils;
 import org.ovirt.engine.core.dal.job.ExecutionMessageDirector;
 import org.ovirt.engine.core.dal.utils.CacheManager;
 import org.ovirt.engine.core.dao.ClusterDao;
-import org.ovirt.engine.core.dao.ManagedBlockStorageDao;
-import org.ovirt.engine.core.dao.StorageDomainDao;
-import org.ovirt.engine.core.dao.StorageDomainDynamicDao;
 import org.ovirt.engine.core.dao.VdcOptionDao;
 import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.dao.VdsDynamicDao;
@@ -169,15 +159,6 @@ public class Backend implements BackendInternal, BackendCommandObjectsHandler {
 
     @Inject
     private DBConfigUtils dbConfigUtils;
-
-    @Inject
-    private StorageDomainDao storageDomainDao;
-
-    @Inject
-    private StorageDomainDynamicDao storageDomainDynamicDao;
-
-    @Inject
-    private ManagedBlockStorageDao managedBlockStorageDao;
 
     private void initHandlers() {
         BaseConditionFieldAutoCompleter.tagsHandler = tagsDirector;
@@ -320,93 +301,7 @@ public class Backend implements BackendInternal, BackendCommandObjectsHandler {
         iconCleanup();
         EngineExtensionsManager.getInstance().engineInitialize();
         AuthenticationProfileRepository.getInstance();
-        refreshActiveMBSDomainsStats();
         AcctUtils.reportReason(Acct.ReportReason.STARTUP, "Starting up engine");
-    }
-
-    /**
-     * Refresh capacity stats for all Active Managed Block Storage domains.
-     * Without this, MBS domains show stale or [N/A] capacity in the UI after
-     * an engine restart, because the SPM-style storage monitor doesn't cover
-     * MBS domains. Failures here are non-fatal: the engine still starts.
-     */
-    private void refreshActiveMBSDomainsStats() {
-        try {
-            List<StorageDomain> domains = storageDomainDao.getAll();
-            if (domains == null) {
-                return;
-            }
-            for (StorageDomain domain : domains) {
-                if (domain.getStorageType() != StorageType.MANAGED_BLOCK_STORAGE) {
-                    continue;
-                }
-                if (domain.getStatus() != StorageDomainStatus.Active) {
-                    continue;
-                }
-                refreshOneMBSDomainStats(domain);
-            }
-        } catch (Exception e) {
-            log.warn("Could not refresh MBS domain stats at startup: {}", e.getMessage());
-        }
-    }
-
-    private void refreshOneMBSDomainStats(StorageDomain domain) {
-        try {
-            ManagedBlockStorage mbs = managedBlockStorageDao.get(domain.getId());
-            if (mbs == null) {
-                log.warn("MBS domain '{}' has no driver options row; skipping stats refresh",
-                        domain.getId());
-                return;
-            }
-            AddManagedBlockStorageDomainParameters params =
-                    new AddManagedBlockStorageDomainParameters();
-            params.setStorageDomainId(domain.getId());
-            params.setDriverOptions(mbs.getDriverOptions());
-            params.setSriverSensitiveOptions(mbs.getDriverSensitiveOptions());
-
-            ActionReturnValue rv = runInternalAction(
-                    ActionType.GetManagedBlockStorageStats, params);
-            if (rv == null || !rv.getSucceeded() || rv.getActionReturnValue() == null) {
-                log.warn("Could not retrieve stats for MBS domain '{}' at startup",
-                        domain.getId());
-                return;
-            }
-            Map<String, Object> stats = rv.getActionReturnValue();
-            Integer totalGb = mbsStatToInt(stats.get("total_capacity_gb"));
-            Integer freeGb = mbsStatToInt(stats.get("free_capacity_gb"));
-            if (totalGb == null || freeGb == null) {
-                log.warn("Stats for MBS domain '{}' missing capacity fields: {}",
-                        domain.getId(), stats);
-                return;
-            }
-            StorageDomainDynamic dynamic = storageDomainDynamicDao.get(domain.getId());
-            if (dynamic == null) {
-                dynamic = new StorageDomainDynamic();
-                dynamic.setId(domain.getId());
-            }
-            dynamic.setAvailableDiskSize(freeGb);
-            dynamic.setUsedDiskSize(totalGb - freeGb);
-            storageDomainDynamicDao.update(dynamic);
-            log.info("Refreshed capacity for MBS domain '{}': total={}GB free={}GB",
-                    domain.getId(), totalGb, freeGb);
-        } catch (Exception e) {
-            log.warn("Could not refresh stats for MBS domain '{}': {}",
-                    domain.getId(), e.getMessage());
-        }
-    }
-
-    private static Integer mbsStatToInt(Object v) {
-        if (v == null) {
-            return null;
-        }
-        if (v instanceof Number) {
-            return ((Number) v).intValue();
-        }
-        try {
-            return Integer.parseInt(v.toString());
-        } catch (NumberFormatException e) {
-            return null;
-        }
     }
 
     /**

@@ -8,6 +8,7 @@ import javax.inject.Inject;
 import org.ovirt.engine.core.bll.CommandBase;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.context.CommandContext;
+import org.ovirt.engine.core.bll.storage.domain.ManagedBlockStorageDomainStatsRefresher;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.action.ImagesContainterParametersBase;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
@@ -36,6 +37,9 @@ public class RemoveManagedBlockStorageSnapshotCommand<T extends ImagesContainter
 
     @Inject
     private ImageDao imageDao;
+
+    @Inject
+    private ManagedBlockStorageDomainStatsRefresher mbsStatsRefresher;
 
     public RemoveManagedBlockStorageSnapshotCommand(T parameters,
             CommandContext cmdContext) {
@@ -78,6 +82,7 @@ public class RemoveManagedBlockStorageSnapshotCommand<T extends ImagesContainter
         }
 
         removeSnapshotFromDB();
+        mbsStatsRefresher.refresh(getParameters().getStorageDomainId());
         setSucceeded(true);
     }
 

@@ -15,6 +15,7 @@ import org.ovirt.engine.core.bll.ConcurrentChildCommandsExecutionCallback;
 import org.ovirt.engine.core.bll.InternalCommandAttribute;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
+import org.ovirt.engine.core.bll.storage.domain.ManagedBlockStorageDomainStatsRefresher;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.VdcObjectType;
@@ -60,6 +61,8 @@ public class CloneSingleManagedBlockDiskCommand<T extends ImagesContainterParame
     @Inject
     private ImagesHandler imagesHandler;
     @Inject
+    private ManagedBlockStorageDomainStatsRefresher mbsStatsRefresher;
+    @Inject
     @Typed(ConcurrentChildCommandsExecutionCallback.class)
     private Instance<ConcurrentChildCommandsExecutionCallback> callbackProvider;
 
@@ -101,6 +104,7 @@ public class CloneSingleManagedBlockDiskCommand<T extends ImagesContainterParame
 
         unlockImage();
         getReturnValue().setActionReturnValue(clonedVolumeId);
+        mbsStatsRefresher.refresh(getParameters().getStorageDomainId());
         setSucceeded(true);
     }
 
