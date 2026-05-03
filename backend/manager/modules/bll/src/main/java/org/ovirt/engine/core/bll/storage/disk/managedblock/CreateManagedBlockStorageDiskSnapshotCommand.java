@@ -76,7 +76,6 @@ public class CreateManagedBlockStorageDiskSnapshotCommand<T extends CreateManage
         List<String> extraParams = new ArrayList<>();
         extraParams.add(getParameters().getVolumeId().toString());
         ManagedBlockReturnValue returnValue;
-        Guid snapshotId;
 
         try {
             ManagedBlockCommandParameters params =
@@ -87,13 +86,24 @@ public class CreateManagedBlockStorageDiskSnapshotCommand<T extends CreateManage
                             getCorrelationId());
             returnValue =
                     managedBlockExecutor.runCommand(ManagedBlockExecutor.ManagedBlockCommand.CREATE_SNAPSHOT, params);
-            snapshotId = Guid.createGuidFromString(returnValue.getOutput());
         } catch (Exception e) {
             log.error("Failed executing snapshot creation", e);
             return;
         }
 
         if (!returnValue.getSucceed()) {
+            log.error("Snapshot creation rejected by managed block adapter for volume '{}': {}",
+                    getParameters().getVolumeId(),
+                    returnValue.getOutput() == null ? "" : returnValue.getOutput().trim());
+            return;
+        }
+
+        Guid snapshotId;
+        try {
+            snapshotId = Guid.createGuidFromString(returnValue.getOutput());
+        } catch (IllegalArgumentException e) {
+            log.error("Managed block create_snapshot returned non-UUID output for volume '{}': '{}'",
+                    getParameters().getVolumeId(), returnValue.getOutput());
             return;
         }
 
