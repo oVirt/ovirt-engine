@@ -76,7 +76,6 @@ public class CreateManagedBlockStorageDiskSnapshotCommand<T extends CreateManage
         List<String> extraParams = new ArrayList<>();
         extraParams.add(getParameters().getVolumeId().toString());
         ManagedBlockReturnValue returnValue;
-        Guid snapshotId;
 
         try {
             ManagedBlockCommandParameters params =
@@ -87,13 +86,36 @@ public class CreateManagedBlockStorageDiskSnapshotCommand<T extends CreateManage
                             getCorrelationId());
             returnValue =
                     managedBlockExecutor.runCommand(ManagedBlockExecutor.ManagedBlockCommand.CREATE_SNAPSHOT, params);
-            snapshotId = Guid.createGuidFromString(returnValue.getOutput());
         } catch (Exception e) {
             log.error("Failed executing snapshot creation", e);
             return;
         }
 
+        // Check the adapter result before parsing its output. If we don't,
+        // a rejection (e.g. a backend that does not support snapshots)
+        // arrives in returnValue.getOutput() as the error text rather
+        // than a UUID; parsing throws IllegalArgumentException and the
+        // catch above logs the parse exception instead of the actual
+        // adapter error, which then never reaches the audit log.
         if (!returnValue.getSucceed()) {
+            // Adapter rejected the snapshot. The verbatim adapter message
+            // appears in engine.log immediately above this line; surfacing
+            // it to the user-visible audit log requires either a new
+            // AuditLogType (needs a frontend GWT rebuild to recognise the
+            // new code) or enriching an existing template -- left as a
+            // follow-up to keep this change minimal.
+            log.error("Snapshot creation rejected by managed block adapter for volume '{}': {}",
+                    getParameters().getVolumeId(),
+                    returnValue.getOutput() == null ? "" : returnValue.getOutput().trim());
+            return;
+        }
+
+        Guid snapshotId;
+        try {
+            snapshotId = Guid.createGuidFromString(returnValue.getOutput());
+        } catch (IllegalArgumentException e) {
+            log.error("Managed block create_snapshot returned non-UUID output for volume '{}': '{}'",
+                    getParameters().getVolumeId(), returnValue.getOutput());
             return;
         }
 
