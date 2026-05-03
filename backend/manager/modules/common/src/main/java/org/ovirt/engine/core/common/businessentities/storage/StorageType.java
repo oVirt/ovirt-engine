@@ -85,4 +85,28 @@ public enum StorageType implements Identifiable {
     public boolean isManagedBlockStorage() {
         return this == MANAGED_BLOCK_STORAGE;
     }
+
+    /**
+     * Returns true for any vendor-managed-block storage backend
+     * (Cinder, Managed Block Storage), where the volume lifecycle
+     * is owned by the storage backend rather than by the SPM. Both
+     * have one volume per disk with no qcow2 snapshot chain to
+     * aggregate, and both use vendor-side capacity accounting, which
+     * is why they take the same code path across the engine.
+     *
+     * Many places historically checked only {@code isCinderDomain()}
+     * and never got the parallel {@code isManagedBlockStorage()}
+     * added when MBS landed, causing MBS domains to fall through to
+     * SPM-style code paths that don't match their semantics. This
+     * helper names the combined case and replaces the partially-
+     * applied checks.
+     *
+     * When Cinder is fully removed (CentOS Stream 10 already dropped
+     * it) this helper collapses to {@code isManagedBlockStorage()}
+     * and the {@code isCinderDomain} machinery can be deleted as a
+     * single follow-up.
+     */
+    public boolean isVendorManagedBlock() {
+        return isCinderDomain() || isManagedBlockStorage();
+    }
 }

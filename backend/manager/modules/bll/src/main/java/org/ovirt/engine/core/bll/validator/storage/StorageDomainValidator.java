@@ -97,7 +97,7 @@ public class StorageDomainValidator {
     }
 
     public ValidationResult isDomainWithinThresholds() {
-        if (storageDomain.getStorageType().isCinderDomain()) {
+        if (storageDomain.getStorageType().isVendorManagedBlock()) {
             return ValidationResult.VALID;
         }
         StorageDomainDynamic dynamicData = storageDomain.getStorageDynamicData();
@@ -207,7 +207,7 @@ public class StorageDomainValidator {
      * Validate space for new, empty disks. Used for a new Active Image.
      */
     public ValidationResult hasSpaceForNewDisks(Collection<DiskImage> diskImages) {
-        if (storageDomain.getStorageType().isCinderDomain()) {
+        if (storageDomain.getStorageType().isVendorManagedBlock()) {
             return ValidationResult.VALID;
         }
         Long availableSize = storageDomain.getAvailableDiskSizeInBytes();
@@ -220,7 +220,7 @@ public class StorageDomainValidator {
      * Validate space for a cloned disk with the collapse option.
      */
     public ValidationResult hasSpaceForClonedDisks(Collection<DiskImage> diskImages) {
-        if (storageDomain.getStorageType().isCinderDomain()) {
+        if (storageDomain.getStorageType().isVendorManagedBlock()) {
             return ValidationResult.VALID;
         }
         Long availableSize = storageDomain.getAvailableDiskSizeInBytes();
@@ -230,7 +230,7 @@ public class StorageDomainValidator {
     }
 
     public ValidationResult hasSpaceForMerge(List<SubchainInfo> subchains, ActionType snapshotActionType) {
-        if (storageDomain.getStorageType().isCinderDomain() || storageDomain.getStorageType().isManagedBlockStorage()) {
+        if (storageDomain.getStorageType().isVendorManagedBlock()) {
             return ValidationResult.VALID;
         }
         Long availableSize = storageDomain.getAvailableDiskSizeInBytes();
@@ -243,7 +243,7 @@ public class StorageDomainValidator {
      * Validate space for cloned disks without the collapse option. Every snapshot will be cloned.
      */
     public ValidationResult hasSpaceForDisksWithSnapshots(Collection<DiskImage> diskImages) {
-        if (storageDomain.getStorageType().isCinderDomain()) {
+        if (storageDomain.getStorageType().isVendorManagedBlock()) {
             return ValidationResult.VALID;
         }
         Long availableSize = storageDomain.getAvailableDiskSizeInBytes();
@@ -259,7 +259,7 @@ public class StorageDomainValidator {
      * so there's no method for this.
      */
     public ValidationResult hasSpaceForAllDisks(Collection<DiskImage> newDiskImages, Collection<DiskImage> clonedDiskImages) {
-        if (storageDomain.getStorageType().isCinderDomain()) {
+        if (storageDomain.getStorageType().isVendorManagedBlock()) {
             return ValidationResult.VALID;
         }
         Long availableSize = storageDomain.getAvailableDiskSizeInBytes();

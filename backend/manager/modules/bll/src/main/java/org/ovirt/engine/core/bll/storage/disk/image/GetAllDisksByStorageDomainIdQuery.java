@@ -30,7 +30,11 @@ public class GetAllDisksByStorageDomainIdQuery<P extends IdQueryParameters> exte
     @Override
     protected void executeQueryCommand() {
         StorageDomain storageDomain = storageDomainDao.get(getParameters().getId());
-        if (storageDomain.getStorageType().isCinderDomain()) {
+        // Cinder and Managed Block Storage domains store one volume per disk
+        // with no qcow2 snapshot chain to aggregate, so they take the simple
+        // listing path. SPM-managed domains need the snapshot-aggregation
+        // pass to fold the snapshot chain into per-disk rows.
+        if (storageDomain.getStorageType().isVendorManagedBlock()) {
             List<DiskImage> diskImages = diskImageDao.getAllForStorageDomain(getParameters().getId());
             getQueryReturnValue().setReturnValue(diskImages);
         } else {
