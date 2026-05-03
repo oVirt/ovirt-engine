@@ -296,7 +296,9 @@ public class DiskListModel extends ListWithSimpleDetailsModel<Void, Disk> {
 
             vmListModel.setIsAvailable(!isTemplateDisk(disk));
             templateListModel.setIsAvailable(isTemplateDisk(disk));
-            storageListModel.setIsAvailable(disk.getDiskStorageType() == DiskStorageType.IMAGE);
+            storageListModel.setIsAvailable(disk.getDiskStorageType() == DiskStorageType.IMAGE
+                    || disk.getDiskStorageType() == DiskStorageType.MANAGED_BLOCK_STORAGE
+                    || disk.getDiskStorageType() == DiskStorageType.CINDER);
         }
     }
 
