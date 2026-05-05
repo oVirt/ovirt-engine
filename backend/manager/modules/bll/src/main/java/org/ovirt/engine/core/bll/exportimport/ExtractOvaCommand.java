@@ -8,13 +8,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 import javax.enterprise.inject.Instance;
 import javax.enterprise.inject.Typed;
 import javax.inject.Inject;
 
-import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.ConcurrentChildCommandsExecutionCallback;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
@@ -101,8 +99,8 @@ public class ExtractOvaCommand<T extends ConvertOvaParameters> extends VmCommand
                 prepareManagedBlockDisksForAnsibleExtract();
             }
             List<String> diskPaths = prepareImages();
-            String diskPathToFormat = prepareDiskPathToFormat(getDiskList(), diskPaths);
-            boolean succeeded = runAnsibleImportOvaPlaybook(diskPathToFormat);
+            String disksJson = prepareDisksJson(getDiskList(), diskPaths);
+            boolean succeeded = runAnsibleImportOvaPlaybook(disksJson);
             teardownImages();
             if (!succeeded) {
                 log.error("Failed to extract OVA file");
@@ -213,50 +211,13 @@ public class ExtractOvaCommand<T extends ConvertOvaParameters> extends VmCommand
         }
     }
 
-    private String buildOvaImageMappingsYamlForAnsible() {
-        Map<Guid, Guid> byDiskId = getParameters().getOvaSourceImageIdByDiskId();
-        if (MapUtils.isNotEmpty(byDiskId)) {
-            Map<Guid, Guid> currentImageIdToSource = new LinkedHashMap<>();
-            for (DiskImage d : getDiskList()) {
-                Guid sourceImageId = byDiskId.get(d.getId());
-                if (sourceImageId != null) {
-                    currentImageIdToSource.put(d.getImageId(), sourceImageId);
-                }
-            }
-            if (!currentImageIdToSource.isEmpty()) {
-                return currentImageIdToSource.entrySet()
-                        .stream()
-                        .map(e -> String
-                                .format("\\\"%s\\\": \\\"%s\\\"", e.getValue().toString(), e.getKey().toString()))
-                        .collect(Collectors.joining(", ", "{", "}"));
-            }
-        }
-        Map<Guid, Guid> legacy = getParameters().getImageMappings();
-        if (MapUtils.isEmpty(legacy)) {
-            return "{}";
-        }
-        if (legacy.size() == 1 && getDiskList().size() == 1) {
-            Map.Entry<Guid, Guid> e = legacy.entrySet().iterator().next();
-            Guid sourceImageId = e.getValue();
-            Guid currentImageId = getDiskList().get(0).getImageId();
-            return "{" + String.format("\\\"%s\\\": \\\"%s\\\"",
-                    sourceImageId.toString(),
-                    currentImageId.toString()) + "}";
-        }
-        return legacy.entrySet()
-                .stream()
-                .map(e -> String.format("\\\"%s\\\": \\\"%s\\\"", e.getValue().toString(), e.getKey().toString()))
-                .collect(Collectors.joining(", ", "{", "}"));
-    }
-
-    private boolean runAnsibleImportOvaPlaybook(String disksPathToFormat) {
+    private boolean runAnsibleImportOvaPlaybook(String disksJson) {
         long timeout = TimeUnit.MINUTES.toSeconds(
             EngineLocalConfig.getInstance().getInteger("ANSIBLE_PLAYBOOK_EXEC_DEFAULT_TIMEOUT"));
         AnsibleCommandConfig commandConfig = new AnsibleCommandConfig()
                 .host(getVds())
                 .variable("ovirt_import_ova_path", getParameters().getOvaPath())
-                .variable("ovirt_import_ova_disks", disksPathToFormat)
-                .variable("ovirt_import_ova_image_mappings", buildOvaImageMappingsYamlForAnsible())
+                .variable("ovirt_import_ova_disks", disksJson)
                 .variable("ansible_timeout", timeout)
                 // /var/log/ovirt-engine/ova/ovirt-import-ova-ansible-{hostname}-{correlationid}-{timestamp}.log
                 .logFileDirectory(IMPORT_OVA_LOG_DIRECTORY)
@@ -317,27 +278,27 @@ public class ExtractOvaCommand<T extends ConvertOvaParameters> extends VmCommand
     }
 
     /**
-     * @return a json with the corresponding mounted disks paths and formats
+     * @return JSON map keyed by OVA tar member name: {tarName: {path, format}}
      */
-    private String prepareDiskPathToFormat(List<DiskImage> diskList, List<String> diskPaths) {
-        Map<String, String> diskPathToFormat = IntStream.range(0, diskList.size())
-                .boxed()
-                .collect(Collectors.toMap(i -> diskPaths.get(i),
-                        i -> diskList.get(i).getVolumeFormat() == VolumeFormat.COW ? "qcow2" : "raw"));
-        Map<String, String> diskPathToImageId = IntStream.range(0, diskList.size())
-                .boxed()
-                .collect(Collectors.toMap(i -> diskPaths.get(i),
-                        i -> diskList.get(i).getImageId().toString()));
-        Map<String, Object> spec = new HashMap<>();
-        spec.put("pathToFormat", diskPathToFormat);
-        spec.put("pathToImageId", diskPathToImageId);
-        String json;
+    private String prepareDisksJson(List<DiskImage> diskList, List<String> diskPaths) {
+        List<String> tarNames = getParameters().getOvaTarNamesByIndex();
+        if (tarNames == null || tarNames.size() != diskList.size()) {
+            throw new EngineException(
+                    EngineError.GeneralException,
+                    "OVA extract: ovaTarNamesByIndex missing or size mismatch with disk list");
+        }
+        Map<String, Map<String, String>> entries = new LinkedHashMap<>();
+        for (int i = 0; i < diskList.size(); i++) {
+            Map<String, String> entry = new HashMap<>();
+            entry.put("path", diskPaths.get(i));
+            entry.put("format", diskList.get(i).getVolumeFormat() == VolumeFormat.COW ? "qcow2" : "raw");
+            entries.put(tarNames.get(i), entry);
+        }
         try {
-            json = new ObjectMapper().writeValueAsString(spec);
+            return encode(new ObjectMapper().writeValueAsString(entries));
         } catch (IOException e) {
             throw new RuntimeException("failed to serialize disk info");
         }
-        return encode(json);
     }
 
     private List<DiskImage> getDiskList() {
