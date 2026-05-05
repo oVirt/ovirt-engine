@@ -430,7 +430,8 @@ public class ImportTemplatesModel extends ListWithSimpleDetailsModel {
                 break;
             case OVA:
                 importFromOvaModel.init(templates, getDataCenters().getSelectedItem().getId());
-                importFromOvaModel.setIsoName(getOvaPath().getEntity());
+                String ovaPathEntity = getOvaPath().getEntity();
+                importFromOvaModel.setIsoName(ovaPathEntity == null ? null : ovaPathEntity.trim());
                 importFromOvaModel.setHostId(getHosts().getSelectedItem().getId());
                 importFromOvaModel.setTemplateNameToOva(getTemplateNameToOva());
                 selectedImportVmModel = importFromOvaModel;
