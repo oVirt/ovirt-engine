@@ -1,13 +1,12 @@
 package org.ovirt.engine.core.bll.exportimport;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
-import org.apache.commons.collections.CollectionUtils;
 import org.ovirt.engine.core.bll.CommandActionState;
 import org.ovirt.engine.core.bll.DisableInPrepareMode;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
@@ -123,52 +122,21 @@ public class ImportVmFromOvaCommand<T extends ImportVmFromOvaParameters> extends
                 getVmId());
     }
 
-    private Map<Guid, Guid> buildOvaImageMappingsForConversion() {
-        if (!getParameters().isImportAsNewEntity() || newDiskIdForDisk.isEmpty()) {
-            return getParameters().getImageMappings();
-        }
-        Map<Guid, Guid> imageMappings = new HashMap<>();
-        for (DiskImage disk : getDisks()) {
-            DiskImage old = newDiskIdForDisk.get(disk.getId());
-            if (old != null) {
-                imageMappings.put(disk.getImageId(), old.getImageId());
-            }
-        }
-        return imageMappings.isEmpty() ? getParameters().getImageMappings() : imageMappings;
-    }
-
-    private Map<Guid, Guid> buildOvaSourceImageIdByDiskId() {
-        if (!getParameters().isImportAsNewEntity() || newDiskIdForDisk.isEmpty()) {
-            return null;
-        }
-        return OvaImportManagedBlockSupport.ovaSourceImageIdByDiskId(
-                getDisks(),
-                diskId -> {
-                    DiskImage old = newDiskIdForDisk.get(diskId);
-                    return old != null ? old.getImageId() : null;
-                });
-    }
-
     @Override
     protected void processImages() {
-        List<Guid> ovfTarImageIdsInOrder = null;
-        if (CommandActionState.EXECUTE.equals(getActionState())
-                && !getParameters().isImportAsNewEntity()
-                && OvaImportManagedBlockSupport.isManagedBlockDestination(getStorageDomain())
-                && getVm().getOrigin() == OriginType.OVIRT) {
-            ovfTarImageIdsInOrder =
-                    getVm().getImages().stream().map(DiskImage::getImageId).collect(Collectors.toList());
-        }
+        // Capture OVF tar names (image.imageId == <File ovf:href>) before super.processImages
+        // mints fresh disk ids; persist via imageMappings (command is reloaded before convert()).
+        List<Guid> ovfTarImageIds = getVm().getImages().stream()
+                .map(DiskImage::getImageId)
+                .collect(Collectors.toList());
         super.processImages();
-        if (CollectionUtils.isNotEmpty(ovfTarImageIdsInOrder)) {
-            List<DiskImage> live = getDisks();
-            if (live.size() == ovfTarImageIdsInOrder.size()) {
-                Map<Guid, Guid> legacy = new HashMap<>();
-                for (int i = 0; i < live.size(); i++) {
-                    legacy.put(live.get(i).getImageId(), ovfTarImageIdsInOrder.get(i));
-                }
-                getParameters().setImageMappings(legacy);
+        List<DiskImage> live = getDisks();
+        if (live.size() == ovfTarImageIds.size()) {
+            Map<Guid, Guid> tarNameByDiskId = new LinkedHashMap<>();
+            for (int i = 0; i < live.size(); i++) {
+                tarNameByDiskId.put(live.get(i).getId(), ovfTarImageIds.get(i));
             }
+            getParameters().setImageMappings(tarNameByDiskId);
         }
     }
 
@@ -191,7 +159,6 @@ public class ImportVmFromOvaCommand<T extends ImportVmFromOvaParameters> extends
         parameters.setOvaPath(getParameters().getOvaPath());
         parameters.setVmName(getVmName());
         parameters.setDisks(getDisks());
-        parameters.setImageMappings(buildOvaImageMappingsForConversion());
         parameters.setStoragePoolId(getStoragePoolId());
         parameters.setStorageDomainId(getStorageDomainId());
         parameters.setProxyHostId(getParameters().getProxyHostId());
@@ -203,7 +170,7 @@ public class ImportVmFromOvaCommand<T extends ImportVmFromOvaParameters> extends
         parameters.setParentParameters(getParameters());
         parameters.setEndProcedure(EndProcedure.COMMAND_MANAGED);
         parameters.setPreAttachedManagedBlockDevicesByDiskId(preAttachedManagedBlockDeviceMapForOvaChildCommands());
-        parameters.setOvaSourceImageIdByDiskId(buildOvaSourceImageIdByDiskId());
+        parameters.setOvaTarNamesByIndex(buildOvaTarNamesByIndex());
         return parameters;
     }
 
@@ -212,7 +179,6 @@ public class ImportVmFromOvaCommand<T extends ImportVmFromOvaParameters> extends
         parameters.setOvaPath(getParameters().getOvaPath());
         parameters.setVmName(getVmName());
         parameters.setDisks(getDisks());
-        parameters.setImageMappings(buildOvaImageMappingsForConversion());
         parameters.setStoragePoolId(getStoragePoolId());
         parameters.setStorageDomainId(getStorageDomainId());
         parameters.setProxyHostId(getParameters().getProxyHostId());
@@ -221,8 +187,21 @@ public class ImportVmFromOvaCommand<T extends ImportVmFromOvaParameters> extends
         parameters.setParentParameters(getParameters());
         parameters.setEndProcedure(EndProcedure.COMMAND_MANAGED);
         parameters.setPreAttachedManagedBlockDevicesByDiskId(preAttachedManagedBlockDeviceMapForOvaChildCommands());
-        parameters.setOvaSourceImageIdByDiskId(buildOvaSourceImageIdByDiskId());
+        parameters.setOvaTarNamesByIndex(buildOvaTarNamesByIndex());
         return parameters;
+    }
+
+    private List<String> buildOvaTarNamesByIndex() {
+        Map<Guid, Guid> tarNameByDiskId = getParameters().getImageMappings();
+        if (tarNameByDiskId == null || tarNameByDiskId.isEmpty()) {
+            return null;
+        }
+        return getDisks().stream()
+                .map(d -> {
+                    Guid tarName = tarNameByDiskId.get(d.getId());
+                    return tarName != null ? tarName.toString() : null;
+                })
+                .collect(Collectors.toList());
     }
 
     private Map<Guid, Map<String, Object>> preAttachedManagedBlockDeviceMapForOvaChildCommands() {
