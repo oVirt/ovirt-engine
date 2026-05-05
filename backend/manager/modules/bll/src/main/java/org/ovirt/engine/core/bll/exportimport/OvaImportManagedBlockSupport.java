@@ -124,19 +124,6 @@ public final class OvaImportManagedBlockSupport {
         return out.isEmpty() ? null : out;
     }
 
-    public static Map<Guid, Guid> ovaSourceImageIdByDiskId(
-            Iterable<DiskImage> disks,
-            Function<Guid, Guid> currentDiskIdToOvaSourceImageId) {
-        Map<Guid, Guid> out = new HashMap<>();
-        for (DiskImage disk : disks) {
-            Guid sourceImageId = currentDiskIdToOvaSourceImageId.apply(disk.getId());
-            if (sourceImageId != null) {
-                out.put(disk.getId(), sourceImageId);
-            }
-        }
-        return out.isEmpty() ? null : out;
-    }
-
     @FunctionalInterface
     public interface InternalActionInvoker {
         void invoke(ActionType actionType, ActionParametersBase parameters, CommandContext commandContext);

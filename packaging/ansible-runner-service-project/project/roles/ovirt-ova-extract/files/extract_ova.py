@@ -6,14 +6,11 @@ import pwd
 import sys
 import time
 
-
 from contextlib import closing
 from subprocess import CalledProcessError
 from subprocess import call
 from subprocess import check_call
 from subprocess import check_output
-
-import yaml
 
 NUL = b"\0"
 TAR_BLOCK_SIZE = 512
@@ -55,10 +52,7 @@ def extract_disk(ova_path, offset, image_path, image_format):
 
 
 def nts(s, encoding, errors):
-    """
-    Convert a null-terminated bytes object to a string.
-    Taken from tarfile.py (python 3).
-    """
+    """Convert a null-terminated bytes object to a string."""
     p = s.find(NUL)
     if p != -1:
         s = s[:p]
@@ -66,98 +60,51 @@ def nts(s, encoding, errors):
 
 
 def nti(s):
-    """
-    Convert a number field to a python number.
-    Inspired by tarfile.py.
-    It is customized to support both python 2 and python 3
-    and the prefix 0o377 is ignored because we use this
-    function to parse only non-negative values.
-    """
+    """Convert a tar number field to a python number."""
     if s[0] != 0o200:
         try:
-            s = nts(s, "ascii", "strict")
-            n = int(s.strip() or "0", 8)
+            return int(nts(s, "ascii", "strict").strip() or "0", 8)
         except ValueError:
             print('invalid header')
             raise
-    else:
-        n = 0
-        r = range(len(s) - 1)
-        for i in r:
-            n <<= 8
-            n += s[i + 1]
+    n = 0
+    for i in range(len(s) - 1):
+        n = (n << 8) + s[i + 1]
     return n
 
 
-def parse_disks_arg(data):
-    """
-    Engine JSON is either:
-      - Legacy: {"/path/to/disk": "raw"|"qcow2", ...}
-        (match via image id substring in path)
-      - Current: {"pathToFormat": {...},
-                  "pathToImageId": {"/path": "image-uuid", ...}}
-    Managed-block paths often contain a backend volume id that differs from
-    the engine image id used in OVF mappings; pathToImageId ties each path to
-    the mapping target id.
-    """
-    if isinstance(data, dict) and "pathToFormat" in data:
-        return data["pathToFormat"], data.get("pathToImageId") or {}
-    return data, {}
+def extract_disks(ova_path, disks):
+    """Walk the OVA tar and extract each disk listed in `disks`.
 
-
-def extract_disks(ova_path, disks_data, image_mappings):
-    path_to_format, path_to_image_id = parse_disks_arg(disks_data)
+    `disks` is a map keyed by tar member name:
+        {tar_name: {"path": target_path, "format": "raw"|"qcow2"}, ...}
+    Tar members not in the map (vm.ovf, nvram.dat, pad alignment) are skipped.
+    """
     try:
         fd = os.open(ova_path, os.O_RDONLY | os.O_DIRECT)
     except OSError:
         fd = os.open(ova_path, os.O_RDONLY)
     buf = mmap.mmap(-1, TAR_BLOCK_SIZE)
-    with io.FileIO(fd, "r", closefd=True) as ova_file, \
-            closing(buf):
+    with io.FileIO(fd, "r", closefd=True) as ova_file, closing(buf):
         while True:
-            # read next tar info
             ova_file.readinto(buf)
-            info = buf.read(512)
-            # tar files end with NUL blocks
-            if info == NUL*512:
+            info = buf.read(TAR_BLOCK_SIZE)
+            if info == NUL * TAR_BLOCK_SIZE:
                 break
-            # preparation for the next iteration
             buf.seek(0)
-            # extract the next disk to the corresponding image
             name = nts(info[0:100], 'utf-8', 'surrogateescape')
             size = nti(info[124:136])
-            if name.lower().endswith('ovf') or name.lower().endswith('dat'):
-                jump = size
-                # ovf is typically not aligned to 512 bytes blocks
-                remainder = size % TAR_BLOCK_SIZE
-                if remainder:
-                    jump += TAR_BLOCK_SIZE - remainder
-                ova_file.seek(jump, 1)
-            elif name == 'pad':
-                ova_file.seek(size, 1)
-            else:
-                image_guid = image_mappings[name] if image_mappings else name
-                matched = False
-                for image_path, image_format in path_to_format.items():
-                    path_id = path_to_image_id.get(image_path)
-                    if path_id == image_guid or image_guid in image_path:
-                        extract_disk(ova_path, ova_file.tell(), image_path,
-                                     image_format)
-                        ova_file.seek(size, 1)
-                        matched = True
-                        break
-                if not matched:
-                    print(
-                        "No target disk path for OVA member %r (image id %s); "
-                        "known paths: %s"
-                        % (name, image_guid, list(path_to_format.keys())),
-                        file=sys.stderr)
-                    sys.exit(1)
+            target = disks.get(name)
+            if target is not None:
+                extract_disk(ova_path, ova_file.tell(),
+                             target["path"], target["format"])
+            # Skip past the entry's body, rounded up to the next 512-byte boundary.
+            aligned = (size + TAR_BLOCK_SIZE - 1) & ~(TAR_BLOCK_SIZE - 1)
+            ova_file.seek(aligned, 1)
 
 
-if len(sys.argv) < 4:
-    print("Usage: extract_ova.py ova_path disks_paths image_mappings")
+if len(sys.argv) < 3:
+    print("Usage: extract_ova.py ova_path disks_json")
     sys.exit(2)
 
-extract_disks(sys.argv[1], json.loads(sys.argv[2]),
-              yaml.load(sys.argv[3], Loader=yaml.SafeLoader))
+extract_disks(sys.argv[1], json.loads(sys.argv[2]))
