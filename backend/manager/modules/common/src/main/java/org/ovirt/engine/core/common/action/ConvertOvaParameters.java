@@ -10,10 +10,9 @@ public class ConvertOvaParameters extends ConvertVmParameters {
 
     private String ovaPath;
     private VmEntityType vmEntityType = VmEntityType.VM;
-    private Map<Guid, Guid> imageMappings;
     private Map<Guid, Map<String, Object>> preAttachedManagedBlockDevicesByDiskId;
-    private Map<Guid, Guid> ovaSourceImageIdByDiskId;
     private List<Guid> templateDiskIdsForExtract;
+    private List<String> ovaTarNamesByIndex;
 
     public ConvertOvaParameters() {
     }
@@ -38,14 +37,6 @@ public class ConvertOvaParameters extends ConvertVmParameters {
         this.vmEntityType = vmEntityType;
     }
 
-    public Map<Guid, Guid> getImageMappings() {
-        return imageMappings;
-    }
-
-    public void setImageMappings(Map<Guid, Guid> diskMappings) {
-        this.imageMappings = diskMappings;
-    }
-
     public Map<Guid, Map<String, Object>> getPreAttachedManagedBlockDevicesByDiskId() {
         return preAttachedManagedBlockDevicesByDiskId;
     }
@@ -55,19 +46,19 @@ public class ConvertOvaParameters extends ConvertVmParameters {
         this.preAttachedManagedBlockDevicesByDiskId = preAttachedManagedBlockDevicesByDiskId;
     }
 
-    public Map<Guid, Guid> getOvaSourceImageIdByDiskId() {
-        return ovaSourceImageIdByDiskId;
-    }
-
-    public void setOvaSourceImageIdByDiskId(Map<Guid, Guid> ovaSourceImageIdByDiskId) {
-        this.ovaSourceImageIdByDiskId = ovaSourceImageIdByDiskId;
-    }
-
     public List<Guid> getTemplateDiskIdsForExtract() {
         return templateDiskIdsForExtract;
     }
 
     public void setTemplateDiskIdsForExtract(List<Guid> templateDiskIdsForExtract) {
         this.templateDiskIdsForExtract = templateDiskIdsForExtract;
+    }
+
+    public List<String> getOvaTarNamesByIndex() {
+        return ovaTarNamesByIndex;
+    }
+
+    public void setOvaTarNamesByIndex(List<String> ovaTarNamesByIndex) {
+        this.ovaTarNamesByIndex = ovaTarNamesByIndex;
     }
 }
