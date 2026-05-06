@@ -50,6 +50,7 @@ public class LocationInfoHelper {
             infoMap.put("generation", info.getGeneration());
             infoMap.put("format", volumeFormatToString(info.getFormat()));
             infoMap.put("is_zero", info.isZeroed());
+            infoMap.put("create", false);
             infoMap.put("endpoint_type", "external");
 
             return infoMap;
