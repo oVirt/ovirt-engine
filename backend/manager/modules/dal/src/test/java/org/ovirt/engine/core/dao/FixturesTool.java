@@ -983,4 +983,10 @@ public class FixturesTool {
      * Predefined VM with mounted ISO
      */
     protected static final String VM_NAME_WITH_MOUNTED_ISO = "vm1-with-iso";
+
+    /**
+     * Predefined checkpoint ID that is linked to one disk
+     */
+    public static final Guid CHECKPOINT_ID_1 = new Guid("e28a8195-1659-42fc-a94c-59f744687124");
+
 }

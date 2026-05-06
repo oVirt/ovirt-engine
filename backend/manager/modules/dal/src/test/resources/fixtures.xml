@@ -999,4 +999,12 @@
 
   <provider_binding_host_id  vds_id="afce7a39-8e8c-4819-ba9c-796d316592e8" plugin_type="OVIRT_PROVIDER_OVN" binding_host_id="1ce-c01d-bee2-15-a5-900d-a5-11fe"/>
 
+  <vm_checkpoints vm_id="77296e00-0cad-4e5a-9299-008a7b6f4360" checkpoint_id="e28a8195-1659-42fc-a94c-59f744687124" _create_date="2026-05-05 12:12:42.806609" state="Created"/>
+
+  <vm_checkpoint_disk_map checkpoint_id="e28a8195-1659-42fc-a94c-59f744687124" disk_id="1b26a52b-b60f-44cb-9f46-3ef333b04a49"/>
+
+  <vm_checkpoints vm_id="77296e00-0cad-4e5a-9299-008a7b6f4362" checkpoint_id="b842d5c4-cb3b-426e-8255-3e7b070e0ef6" _create_date="2026-05-05 12:12:42.806609" state="Created"/>
+
+  <vm_checkpoint_disk_map checkpoint_id="b842d5c4-cb3b-426e-8255-3e7b070e0ef6" disk_id="1b26a52b-b60f-44cb-9f46-3ef333b04a47"/>
+
 </dataset>
