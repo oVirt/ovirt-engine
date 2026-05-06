@@ -17,6 +17,7 @@ EXTRA_BUILD_FLAGS="${EXTRA_BUILD_FLAGS} --no-transfer-progress"
 EXTRA_BUILD_FLAGS="${EXTRA_BUILD_FLAGS} -Dgwt.userAgent=gecko1_8,safari"
 EXTRA_BUILD_FLAGS="${EXTRA_BUILD_FLAGS} -Dgwt.compiler.localWorkers=1"
 EXTRA_BUILD_FLAGS="${EXTRA_BUILD_FLAGS} -Dgwt.jvmArgs='-Xms1G -Xmx3G'"
+[ "${GITHUB_ACTIONS:-}" = "true" ] && EXTRA_BUILD_FLAGS="${EXTRA_BUILD_FLAGS} -P enable-dao-tests"
 
 export MAVEN_OPTS="-Xms1G -Xmx2G"
 
