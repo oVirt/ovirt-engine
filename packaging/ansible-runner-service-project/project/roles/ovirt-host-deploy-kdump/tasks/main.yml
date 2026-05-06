@@ -2,7 +2,7 @@
 - name: Verify if crashkernel parameter is set
   ansible.builtin.lineinfile:
     dest: /proc/cmdline
-    regexp: crashkernel_regexp
+    regexp: "{{ crashkernel_regexp }}"
   check_mode: true
   register: crashkernel_param
   failed_when: crashkernel_param.changed
