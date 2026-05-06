@@ -182,12 +182,14 @@ public class CopyManagedBlockDiskCommand<T extends CopyImageGroupWithDataCommand
                         getParameters().getImageGroupID(),
                         getParameters().getImageId(),
                         getParameters().getSourcePath(),
-                        getParameters().getLeaseStorageId()),
+                        getParameters().getLeaseStorageId(),
+                        false),
                 buildEndpoint(getParameters().getDestDomain(),
                         getParameters().getDestImageGroupId(),
                         getParameters().getDestinationImageId(),
                         getParameters().getTargetPath(),
-                        getParameters().getLeaseStorageId()),
+                        getParameters().getLeaseStorageId(),
+                        true),
                 false);
         parameters.setStorageJobId(getJobId());
         parameters.setVdsId(getParameters().getVdsRunningOn());
@@ -293,7 +295,8 @@ public class CopyManagedBlockDiskCommand<T extends CopyImageGroupWithDataCommand
             Guid diskId,
             Guid imageId,
             String path,
-            Guid leaseStorageDomainId) {
+            Guid leaseStorageDomainId,
+            boolean isDestination) {
         if (storageDomainDao.get(storageDomainId).getStorageType() == StorageType.MANAGED_BLOCK_STORAGE) {
             Map<String, Object> lease = new HashMap<>();
             lease.put("lease_id", getJobId().toString());
@@ -302,7 +305,7 @@ public class CopyManagedBlockDiskCommand<T extends CopyImageGroupWithDataCommand
                     lease,
                     0,
                     VolumeFormat.RAW,
-                    false,
+                    isDestination,
                     getParameters().getDestDomain());
         }
         return new VdsmImageLocationInfo(storageDomainId, diskId, imageId, null);
