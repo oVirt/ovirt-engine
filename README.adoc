@@ -517,21 +517,34 @@ world, add `${PREFIX}/etc/ovirt-engine/engine.conf.d/20-setup-jmx-debug.conf` wi
 
 === DAO tests
 
-Create empty database for DAO tests refer to <<Database creation>>.
+In /etc/ovirt-engine/ a file named 'engine.conf' needs to be created with the following content:
 
-Provided user is `engine`, password is `engine` and database is
+```
+ENGINE_PKI_TRUST_STORE_TYPE=dummy
+ENGINE_PKI_TRUST_STORE=dummy
+ENGINE_PKI_TRUST_STORE_PASSWORD=
+ENGINE_PKI_ENGINE_STORE_TYPE=PKCS12
+ENGINE_PKI_ENGINE_STORE=/workspace/backend/manager/modules/dal/src/test/resources/key.p12
+ENGINE_PKI_ENGINE_STORE_PASSWORD=NoSoup4U
+ENGINE_PKI_ENGINE_STORE_ALIAS=1
+ENGINE_DB_CONNECTION_TIMEOUT=0
+ENGINE_DB_CHECK_INTERVAL=0
+```
+
+Create empty database for DAO tests:
+
+```
+  psql -h localhost -U postgres -c "CREATE DATABASE engine_dao_tests OWNER ovirt;"
+```
+
+Provided user is `ovirt`, password is `ovirt` and database is
 `engine_dao_tests`.
 
-  $ PGPASSWORD=engine \
-    ./packaging/dbscripts/schema.sh \
-      -c apply -u engine -d engine_dao_tests
+  $  PGPASSWORD='ovirt' ./packaging/dbscripts/schema.sh -d engine_dao_tests -u ovirt -s postgres -p 5432 -c apply
 
 Run build as:
 
-  $ make maven BUILD_GWT=0 BUILD_UT=1 EXTRA_BUILD_FLAGS="-P enable-dao-tests \
-    -D engine.db.username=engine \
-    -D engine.db.password=engine \
-    -D engine.db.url=jdbc:postgresql://localhost/engine_dao_tests"
+  $ make install-dev EXTRA_BUILD_FLAGS="-P enable-dao-tests"
 
 === VM console
 
