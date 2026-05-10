@@ -122,4 +122,26 @@ class PageFilterTest {
         assertThat(pager.getTotalItemsCount()).isEqualTo(5);
 
     }
+
+    @Test
+    void reload() {
+        PageFilter pager = PageFilter.create(2);
+        assertThat(pager.filter(fiveElem)).containsExactly(1, 2);
+        assertThat(pager.getTotalItemsCount()).isEqualTo(5);
+
+        pager.goForward();
+        assertThat(pager.filter(fiveElem)).containsExactly(3, 4);
+        assertThat(pager.getTotalItemsCount()).isEqualTo(5);
+        assertTrue(pager.canGoBack());
+
+        pager.reload(fourElem);
+        assertThat(pager.getTotalItemsCount()).isEqualTo(4);
+        assertFalse(pager.canGoBack());
+        assertTrue(pager.canGoForward());
+
+        assertThat(pager.filter(fourElem)).containsExactly(1, 2);
+        assertThat(pager.getTotalItemsCount()).isEqualTo(4);
+        assertThat(pager.getFirstItemOnPage()).isEqualTo(0);
+        assertThat(pager.getLastItemOnPage()).isEqualTo(1);
+    }
 }
