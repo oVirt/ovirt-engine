@@ -27,9 +27,13 @@ public class BackendNetworkResource extends AbstractBackendNetworkResource imple
         if (entity == null) {
             return notFound();
         }
+
         Network network = map(entity);
         network.setDisplay(null);
-        return addLinks(network, LinkHelper.NO_PARENT);
+        network = addLinks(network, LinkHelper.NO_PARENT);
+        removeRestrictedInfo(network);
+
+        return network;
     }
 
     @Override

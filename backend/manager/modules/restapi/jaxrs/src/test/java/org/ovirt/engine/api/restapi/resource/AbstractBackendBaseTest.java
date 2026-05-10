@@ -142,6 +142,7 @@ public abstract class AbstractBackendBaseTest {
         currentUser.setLastName(USER);
         currentUser.setDomain(DOMAIN);
         currentUser.setNamespace(NAMESPACE);
+        currentUser.setAdmin(true);
         currentUser.setId(GUIDS[0]);
 
         Current current = new Current();

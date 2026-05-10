@@ -26,7 +26,12 @@ public class BackendClusterNetworkResource
         if (entity == null) {
             return notFound();
         }
-        return addLinks(map(entity), Cluster.class);
+
+        Network network = map(entity);
+        network = addLinks(network, Cluster.class);
+        removeRestrictedInfo(network);
+
+        return network;
     }
 
     @Override
