@@ -140,6 +140,18 @@ public enum VmTestPairs {
             pair.getSecond().getVmDynamic().setStatus(VMStatus.WaitForLaunch);
             return pair;
         }
+    },
+    VM_MIGRATED_UP_EARLY("12") {
+        @Override
+        Pair<VM, VdsmVm> build() {
+            return createMigrationDoneEarly();
+        }
+    },
+    VM_MIGRATED_UP_EARLY_END("13") {
+        @Override
+        Pair<VM, VdsmVm> build() {
+            return createMigrationDoneEarlyEnd();
+        }
     };
     public static final Guid DST_HOST_ID = Guid.newGuid();
     public static final Guid SRC_HOST_ID = Guid.newGuid();
@@ -201,6 +213,23 @@ public enum VmTestPairs {
         pair.getSecond().getVmDynamic().setExitStatus(VmExitStatus.Normal);
         pair.getSecond().getVmDynamic().setExitReason(VmExitReason.MigrationSucceeded);
         setDstHost(pair);
+        return pair;
+    }
+
+    Pair<VM, VdsmVm> createMigrationDoneEarly() {
+        Pair<VM, VdsmVm> pair = createPair();
+        setPairStatuses(pair, VMStatus.MigratingTo, VMStatus.Up);
+        setDstHost(pair);
+        pair.getFirst().setRunOnVds(SRC_HOST_ID);
+        return pair;
+    }
+
+    Pair<VM, VdsmVm> createMigrationDoneEarlyEnd() {
+        Pair<VM, VdsmVm> pair = createPair();
+        setPairStatuses(pair, VMStatus.Up, VMStatus.Down);
+        pair.getFirst().setRunOnVds(DST_HOST_ID);
+        pair.getSecond().getVmDynamic().setExitStatus(VmExitStatus.Normal);
+        pair.getSecond().getVmDynamic().setExitReason(VmExitReason.MigrationSucceeded);
         return pair;
     }
 
