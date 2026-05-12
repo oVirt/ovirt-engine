@@ -58,9 +58,11 @@ public class StorageDomainValidatorFreeSpaceTest {
                         sd.setStorageType(storageType);
                         sd.setAvailableDiskSize(107); // GB
 
+                        boolean isValidForNew = storageType.isManagedBlockStorage()
+                                || volumeFormat == VolumeFormat.COW || volumeType == VolumeType.Sparse;
                         params.add(Arguments.of(disk, sd,
                                 volumeFormat == VolumeFormat.RAW && volumeType == VolumeType.Sparse,
-                                volumeFormat == VolumeFormat.COW || volumeType == VolumeType.Sparse,
+                                isValidForNew,
                                 volumeFormat == VolumeFormat.RAW && volumeType == VolumeType.Sparse
                         ));
                     }

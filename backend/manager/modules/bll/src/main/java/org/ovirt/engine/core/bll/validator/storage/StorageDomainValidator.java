@@ -97,7 +97,8 @@ public class StorageDomainValidator {
     }
 
     public ValidationResult isDomainWithinThresholds() {
-        if (storageDomain.getStorageType().isCinderDomain()) {
+        if (storageDomain.getStorageType().isCinderDomain()
+                || storageDomain.getStorageType().isManagedBlockStorage()) {
             return ValidationResult.VALID;
         }
         StorageDomainDynamic dynamicData = storageDomain.getStorageDynamicData();
@@ -207,7 +208,8 @@ public class StorageDomainValidator {
      * Validate space for new, empty disks. Used for a new Active Image.
      */
     public ValidationResult hasSpaceForNewDisks(Collection<DiskImage> diskImages) {
-        if (storageDomain.getStorageType().isCinderDomain()) {
+        if (storageDomain.getStorageType().isCinderDomain()
+                || storageDomain.getStorageType().isManagedBlockStorage()) {
             return ValidationResult.VALID;
         }
         Long availableSize = storageDomain.getAvailableDiskSizeInBytes();
@@ -263,7 +265,9 @@ public class StorageDomainValidator {
             return ValidationResult.VALID;
         }
         Long availableSize = storageDomain.getAvailableDiskSizeInBytes();
-        double totalSizeForNewDisks = getTotalSizeForNewDisks(newDiskImages);
+        double totalSizeForNewDisks = storageDomain.getStorageType().isManagedBlockStorage()
+                ? 0.0
+                : getTotalSizeForNewDisks(newDiskImages);
         double totalSizeForClonedDisks = getTotalSizeForClonedDisks(clonedDiskImages);
         double totalSizeForDisks = totalSizeForNewDisks + totalSizeForClonedDisks;
 

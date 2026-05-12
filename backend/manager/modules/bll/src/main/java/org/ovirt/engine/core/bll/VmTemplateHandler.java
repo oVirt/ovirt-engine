@@ -4,6 +4,7 @@ import static org.ovirt.engine.core.bll.storage.disk.image.DisksFilter.ONLY_ACTI
 
 import java.lang.reflect.Field;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -11,6 +12,7 @@ import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.ovirt.engine.core.bll.context.CompensationContext;
 import org.ovirt.engine.core.bll.storage.disk.image.DisksFilter;
 import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
@@ -106,15 +108,31 @@ public class VmTemplateHandler implements BackendService {
         vmt.getDiskList().clear();
         List<Disk> diskList = diskDao.getAllForVm(vmt.getId());
         for (Disk dit : diskList) {
-            DiskImage diskImage = (DiskImage) dit;
-            vmt.getDiskTemplateMap().put(dit.getId(), diskImage);
-            vmt.getDiskImageMap().put(dit.getId(), diskImage);
-
-            DiskVmElement dve = diskVmElementDao.get(new VmDeviceId(dit.getId(), vmt.getId()));
-            dit.setDiskVmElements(Collections.singletonList(dve));
-
-            vmt.getDiskList().add(diskImage);
+            attachDiskImageToTemplate(vmt, dit);
         }
+    }
+
+    public void addTemplateDisksFromDiskIds(VmTemplate vmt, Collection<Guid> diskIds) {
+        if (CollectionUtils.isEmpty(diskIds)) {
+            return;
+        }
+        for (Guid diskId : diskIds) {
+            Disk dit = diskDao.get(diskId);
+            if (!(dit instanceof DiskImage)) {
+                continue;
+            }
+            attachDiskImageToTemplate(vmt, dit);
+        }
+    }
+
+    private void attachDiskImageToTemplate(VmTemplate vmt, Disk dit) {
+        DiskImage diskImage = (DiskImage) dit;
+        Guid diskId = dit.getId();
+        vmt.getDiskTemplateMap().put(diskId, diskImage);
+        vmt.getDiskImageMap().put(diskId, diskImage);
+        DiskVmElement dve = diskVmElementDao.get(new VmDeviceId(diskId, vmt.getId()));
+        dit.setDiskVmElements(Collections.singletonList(dve));
+        vmt.getDiskList().add(diskImage);
     }
 
     /**
@@ -211,4 +229,3 @@ public class VmTemplateHandler implements BackendService {
         return ValidationResult.VALID;
     }
 }
-
