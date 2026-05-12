@@ -195,7 +195,7 @@ public class VmAnalyzer {
         }
         boolean migratingToThisVds = vdsmVm.getVmDynamic().getStatus() == VMStatus.MigratingTo
                 && vdsManager.getVdsId().equals(dbVm.getMigratingToVds());
-        if (!migratingToThisVds) {
+        if (!migratingToThisVds && vdsmVm.getVmDynamic().getStatus() != VMStatus.MigratingFrom) {
             logVmDetectedOnUnexpectedHost();
         }
         return false;
@@ -330,6 +330,18 @@ public class VmAnalyzer {
                 }
 
                 break;
+
+            case Up:
+                /*
+                 * VM was already set to Up by the VmAnalyzer job on the new VDS.
+                 * If the MigrationSucceeded (set by VDSM), then we can safely ignore this here
+                 * and not set the VM to down, otherwise we might end up with
+                 * the VM being set to down state while it is already up on the destination host.
+                 */
+                if (vdsmVm.getVmDynamic().getExitStatus() == VmExitStatus.Normal &&
+                        vdsmVm.getVmDynamic().getExitReason() == VmExitReason.MigrationSucceeded) {
+                    break;
+                }
 
             default:
                 switch (vdsmVm.getVmDynamic().getExitStatus()) {
