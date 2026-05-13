@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.common.action;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -23,6 +24,7 @@ public class CreateOvaParameters extends ActionParametersBase {
     private String name;
     private Phase phase = Phase.MEASURE;
     private Map<Guid, String> diskIdToPath;
+    private Map<Guid, Guid> mbsSnapshotImageToTempVolume = new HashMap<>();
 
     public List<DiskImage> getDisks() {
         return disks;
@@ -86,6 +88,14 @@ public class CreateOvaParameters extends ActionParametersBase {
 
     public void setDiskIdToPath(Map<Guid, String> diskIdToPath) {
         this.diskIdToPath = diskIdToPath;
+    }
+
+    public Map<Guid, Guid> getMbsSnapshotImageToTempVolume() {
+        return mbsSnapshotImageToTempVolume;
+    }
+
+    public void setMbsSnapshotImageToTempVolume(Map<Guid, Guid> mbsSnapshotImageToTempVolume) {
+        this.mbsSnapshotImageToTempVolume = mbsSnapshotImageToTempVolume;
     }
 
 }
