@@ -3,7 +3,7 @@
   ansible.builtin.file:
     dest: '/etc/pki/tls/spice.cnf'
     state: touch
-    mode: 0644
+    mode: "0644"
     owner: root
     group: root
 
@@ -11,7 +11,7 @@
   ansible.builtin.copy: # noqa template-instead-of-copy
     dest: '/etc/pki/tls/spice.cnf'
     backup: true
-    mode: 0644
+    mode: "0644"
     content: |
       CipherString = {{ host_deploy_spice_cipher_string }}
       Protocol = {{ host_deploy_spice_protocol }}

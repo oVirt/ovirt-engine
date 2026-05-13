@@ -1,9 +1,10 @@
-- hosts: all
+- name: Deploy oVirt host
+  hosts: all
   remote_user: root
 
   pre_tasks:
-    - name: set host_action var
-      set_fact:
+    - name: Set host_action var
+      ansible.builtin.set_fact:
         host_action: host_deploy
 
   roles:
@@ -20,22 +21,22 @@
 
   tasks:
     - name: Gather the rpm package facts
-      package_facts:
+      ansible.builtin.package_facts:
         manager: rpm
       delegate_to: localhost
 
     - name: Run metrics role if RPM package installed
-      include_role:
+      ansible.builtin.include_role:
         name: oVirt.metrics
-      when: "( 'ovirt-engine-metrics' in ansible_facts.packages ) or ( disable_metrics_rpm_check|d(false) )"
+      when: "('ovirt-engine-metrics' in ansible_facts.packages) or (disable_metrics_rpm_check | d(false))"
 
     - name: Check if post tasks file exists
-      stat:
+      ansible.builtin.stat:
         path: "{{ host_deploy_post_tasks }}"
       delegate_to: localhost
       register: stat_post_tasks
       when: "host_deploy_post_tasks is defined"
 
     - name: Executing post tasks defined by user
-      include_tasks: "{{ host_deploy_post_tasks }}"
+      ansible.builtin.include_tasks: "{{ host_deploy_post_tasks }}"
       when: "host_deploy_post_tasks is defined and stat_post_tasks.stat.exists"
