@@ -15,6 +15,7 @@ import org.ovirt.engine.core.bll.InternalCommandAttribute;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.storage.disk.managedblock.util.ManagedBlockStorageDiskUtil;
+import org.ovirt.engine.core.bll.storage.domain.ManagedBlockStorageDomainStatsRefresher;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.common.VdcObjectType;
@@ -66,6 +67,9 @@ public class AddManagedBlockStorageDiskCommand<T extends AddManagedBlockStorageD
     @Inject
     private VmDeviceUtils vmDeviceUtils;
 
+    @Inject
+    private ManagedBlockStorageDomainStatsRefresher mbsStatsRefresher;
+
     public AddManagedBlockStorageDiskCommand(Guid commandId) {
         super(commandId);
     }
@@ -107,6 +111,7 @@ public class AddManagedBlockStorageDiskCommand<T extends AddManagedBlockStorageD
 
         saveDisk(volumeId);
         getReturnValue().setActionReturnValue(volumeId);
+        mbsStatsRefresher.refresh(getParameters().getStorageDomainId());
         setSucceeded(true);
         persistCommandIfNeeded();
     }

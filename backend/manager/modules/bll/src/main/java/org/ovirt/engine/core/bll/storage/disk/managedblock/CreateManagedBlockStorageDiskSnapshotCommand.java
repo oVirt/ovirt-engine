@@ -11,6 +11,7 @@ import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
 import org.ovirt.engine.core.bll.storage.disk.managedblock.util.ManagedBlockStorageDiskUtil;
+import org.ovirt.engine.core.bll.storage.domain.ManagedBlockStorageDomainStatsRefresher;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionReturnValue;
@@ -55,6 +56,9 @@ public class CreateManagedBlockStorageDiskSnapshotCommand<T extends CreateManage
 
     @Inject
     private ManagedBlockStorageDiskUtil managedBlockStorageDiskUtil;
+
+    @Inject
+    private ManagedBlockStorageDomainStatsRefresher mbsStatsRefresher;
 
     public CreateManagedBlockStorageDiskSnapshotCommand(T parameters,
             CommandContext cmdContext) {
@@ -102,6 +106,7 @@ public class CreateManagedBlockStorageDiskSnapshotCommand<T extends CreateManage
         // To be used later when rolling back
         getParameters().setImageId(snapshotId);
 
+        mbsStatsRefresher.refresh(getParameters().getStorageDomainId());
         setSucceeded(true);
     }
 
