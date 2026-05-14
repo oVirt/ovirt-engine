@@ -291,6 +291,8 @@ public class UploadImageHandler {
 
                 case INITIALIZING:
                 case RESUMING:
+                case CONVERTING:
+                    // CONVERTING: MBS format conversion in progress; keep polling until FINISHED_SUCCESS/FAILURE
                     break;
 
                 case TRANSFERRING:
