@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll.storage.disk;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
@@ -38,7 +39,15 @@ public class GetAllDiskSnapshotsQuery<P extends DiskSnapshotsQueryParameters> ex
         // Unless 'include_active' flag requested - filter out the active snapshot
         Predicate<Disk> filter = getParameters().getIncludeActive() ?
                 DisksFilter.ONLY_DISK_SNAPSHOT.or(DisksFilter.ONLY_ACTIVE) : DisksFilter.ONLY_DISK_SNAPSHOT;
-        List<DiskImage> imagesToReturn = DisksFilter.filterImageDisks(allDiskSnapshots, filter);
+        // Include both IMAGE-typed (qcow2-chain SPM-managed) and
+        // MANAGED_BLOCK_STORAGE-typed disks. The latter were silently
+        // dropped because filterImageDisks() retains only the IMAGE
+        // type. The engine creates per-disk snapshot rows
+        // (disk_snapshot=true in the images table) for MBS disks just
+        // like it does for SPM-managed disks during a VM snapshot, so
+        // they should surface in the same UI sub-tab.
+        List<DiskImage> imagesToReturn = new ArrayList<>(DisksFilter.filterImageDisks(allDiskSnapshots, filter));
+        imagesToReturn.addAll(DisksFilter.filterManagedBlockStorageDisks(allDiskSnapshots, filter));
 
         // If the 'include_template' flag requested - check if one of the disk images' parents is a template disk,
         // fetch it and add to the result
