@@ -171,6 +171,7 @@ public class UpdateVmCommandTest extends BaseCommandTest {
         maxVmCpusMap.put("s390x", 384);
         maxVmCpusMap.put("x86", 512);
         maxVmCpusMap.put("ppc", 384);
+        maxVmCpusMap.put("aarch64", 384);
         return maxVmCpusMap;
     }
 
@@ -179,6 +180,7 @@ public class UpdateVmCommandTest extends BaseCommandTest {
         hotPlugMemoryMap.put("s390x", "false");
         hotPlugMemoryMap.put("x86", "true");
         hotPlugMemoryMap.put("ppc", "true");
+        hotPlugMemoryMap.put("aarch64", "true");
         return hotPlugMemoryMap;
     }
 
