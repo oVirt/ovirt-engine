@@ -58,10 +58,17 @@ public class StorageDomainValidatorFreeSpaceTest {
                         sd.setStorageType(storageType);
                         sd.setAvailableDiskSize(107); // GB
 
+                        boolean shortCircuitForVendorManaged = storageType.isManagedBlockStorage();
+                        boolean isValidForNew = shortCircuitForVendorManaged
+                                || volumeFormat == VolumeFormat.COW || volumeType == VolumeType.Sparse;
+                        boolean isValidForCloned = shortCircuitForVendorManaged
+                                || volumeFormat == VolumeFormat.RAW && volumeType == VolumeType.Sparse;
+                        boolean isValidForSnapshots = shortCircuitForVendorManaged
+                                || volumeFormat == VolumeFormat.RAW && volumeType == VolumeType.Sparse;
                         params.add(Arguments.of(disk, sd,
-                                volumeFormat == VolumeFormat.RAW && volumeType == VolumeType.Sparse,
-                                volumeFormat == VolumeFormat.COW || volumeType == VolumeType.Sparse,
-                                volumeFormat == VolumeFormat.RAW && volumeType == VolumeType.Sparse
+                                isValidForCloned,
+                                isValidForNew,
+                                isValidForSnapshots
                         ));
                     }
                 }
