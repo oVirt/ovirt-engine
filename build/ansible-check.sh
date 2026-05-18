@@ -9,4 +9,8 @@ if ! command -v ansible-lint > /dev/null 2>&1; then
 fi
 
 # Run ansible-lint
-ansible-lint -c ${ANSIBLE_LINT_CONF} packaging/ansible-runner-service-project/project/roles/*
+ansible-lint -c ${ANSIBLE_LINT_CONF} packaging/ansible-runner-service-project/project/roles/* \
+  packaging/ansible-runner-service-project/project/roles/hc-gluster-cgroups/**/*.yml \
+  packaging/ansible-runner-service-project/project/roles/ovirt-host-deploy-kdump/**/*.yml \
+  packaging/ansible-runner-service-project/project/roles/ovirt-host-deploy-spice-encryption/**/*.yml
+

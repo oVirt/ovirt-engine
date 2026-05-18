@@ -8,7 +8,7 @@
   failed_when: crashkernel_param.changed
 
 - name: Install kexec-tools package
-  ansible.builtin.yum:
+  ansible.builtin.package:
     name: kexec-tools
     state: present
 
