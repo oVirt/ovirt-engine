@@ -323,7 +323,7 @@ public class VmValidator {
 
         // this adds: monitors + 2 * (interfaces with type rtl_pv) + (all other
         // interfaces) + (all disks that are not IDE)
-        int pciInUse = monitorsNumber;
+        long pciInUse = monitorsNumber;
 
         // Balloon controller requires one PCI slot
         pciInUse += 1;

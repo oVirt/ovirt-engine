@@ -1700,7 +1700,7 @@ public class VmInfoBuildUtils {
      * - Confirmation that 48 MB may not be enough for really large VMs:
      *   https://bugzilla.redhat.com/show_bug.cgi?id=2074149#c28
      **/
-    public Integer tsegSizeMB(VM vm, MemoizingSupplier<Map<String, HostDevice>> hostDevicesSupplier) {
+    public Long tsegSizeMB(VM vm, MemoizingSupplier<Map<String, HostDevice>> hostDevicesSupplier) {
         // If UEFI is not used, we should be safe and use the default value.
         if (vm.getBiosType() == null || !vm.getBiosType().isOvmf()) {
             return null;
@@ -1717,7 +1717,7 @@ public class VmInfoBuildUtils {
         // and additional value per memory) for VMs with many vCPUs and 8 MB per each (even partial)
         // TB of RAM. This is probably a bit wasteful but it's better than risking the VM won't
         // start.
-        int size = DEFAULT_TSEG_SIZE_MB;
+        long size = DEFAULT_TSEG_SIZE_MB;
         if (maxNumberOfVcpus(vm) >= cpuLimit) {
             size += MANY_VCPUS_TSEG_SIZE_INCREASE_MB;
         }
