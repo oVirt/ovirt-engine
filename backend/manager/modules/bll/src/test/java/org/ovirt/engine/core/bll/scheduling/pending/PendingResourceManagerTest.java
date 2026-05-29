@@ -195,6 +195,6 @@ public class PendingResourceManagerTest {
         assertThat(memories)
                 .hasSize(1)
                 .extracting(PendingMemory::getSizeInMb)
-                .containsOnly(768L);
+                .containsOnly(768);
     }
 }

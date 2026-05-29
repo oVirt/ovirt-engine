@@ -779,7 +779,7 @@ public class LibvirtVmXmlBuilder {
         boolean acpiEnabled = vm.getAcpiEnable();
         boolean kaslrEnabled = vmInfoBuildUtils.isKASLRDumpEnabled(vm.getVmOsId());
         boolean secureBootEnabled = vm.getBiosType() == BiosType.Q35_SECURE_BOOT;
-        Integer tsegSize = vmInfoBuildUtils.tsegSizeMB(vm, hostDevicesSupplier);
+        Long tsegSize = vmInfoBuildUtils.tsegSizeMB(vm, hostDevicesSupplier);
         if (!acpiEnabled && !hypervEnabled && !kaslrEnabled && !secureBootEnabled && tsegSize == null) {
             return;
         }

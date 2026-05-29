@@ -12,12 +12,12 @@ import org.ovirt.engine.core.compat.Guid;
  */
 public class PendingOvercommitMemory extends PendingMemory {
     public PendingOvercommitMemory(VDS host,
-            VM vm, long sizeInMb) {
+            VM vm, int sizeInMb) {
         super(host, vm, sizeInMb);
     }
 
     public PendingOvercommitMemory(Guid host,
-            VM vm, long sizeInMb) {
+            VM vm, int sizeInMb) {
         super(host, vm, sizeInMb);
     }
 
