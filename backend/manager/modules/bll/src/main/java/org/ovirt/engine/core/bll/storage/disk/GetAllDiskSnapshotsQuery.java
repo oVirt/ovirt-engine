@@ -38,7 +38,9 @@ public class GetAllDiskSnapshotsQuery<P extends DiskSnapshotsQueryParameters> ex
         // Unless 'include_active' flag requested - filter out the active snapshot
         Predicate<Disk> filter = getParameters().getIncludeActive() ?
                 DisksFilter.ONLY_DISK_SNAPSHOT.or(DisksFilter.ONLY_ACTIVE) : DisksFilter.ONLY_DISK_SNAPSHOT;
+        // Include snapshots from all disk types
         List<DiskImage> imagesToReturn = DisksFilter.filterImageDisks(allDiskSnapshots, filter);
+        imagesToReturn.addAll(DisksFilter.filterManagedBlockStorageDisks(allDiskSnapshots, filter));
 
         // If the 'include_template' flag requested - check if one of the disk images' parents is a template disk,
         // fetch it and add to the result

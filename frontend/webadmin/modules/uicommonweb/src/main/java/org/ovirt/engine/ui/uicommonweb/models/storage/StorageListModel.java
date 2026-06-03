@@ -910,7 +910,7 @@ public class StorageListModel extends ListWithSimpleDetailsModel<Void, StorageDo
             templateRegisterListModel.setIsAvailable(isRegisterSubtabsAvailable);
             diskImageRegisterListModel.setIsAvailable(isRegisterSubtabsAvailable);
             diskListModel.setIsAvailable(isDataStorage || isManagedBlockStorage);
-            snapshotListModel.setIsAvailable(isDataStorage);
+            snapshotListModel.setIsAvailable(isDataStorage || isManagedBlockStorage);
             diskProfileListModel.setIsAvailable(isDataStorage);
             drListModel.setIsAvailable(isGlusterStorage);
             leaseListModel.setIsAvailable(isDataStorage);
