@@ -1,0 +1,52 @@
+---
+- name: Install nvme-cli package
+  ansible.builtin.package:
+    name: nvme-cli
+    state: present
+  when: nvmeof_setup_ensure_nvme_cli | bool
+
+- name: Create modules-load.d drop-in for NVMe-oF kernel modules
+  ansible.builtin.copy:
+    content: |
+      # NVMe-oF kernel modules required for NVMe/TCP storage domains
+      nvme
+      nvme-tcp
+      nvme-fabrics
+    dest: /etc/modules-load.d/ovirt-nvmeof.conf
+    owner: root
+    group: root
+    mode: "0644"
+  when: nvmeof_setup_ensure_modules_loaded | bool
+  register: nvmeof_modules_conf
+
+- name: Load NVMe-oF kernel modules
+  community.general.modprobe:
+    name: "{{ item }}"
+    state: present
+    persistent: present
+  loop:
+    - nvme
+    - nvme-tcp
+    - nvme-fabrics
+  when:
+    - nvmeof_setup_ensure_modules_loaded | bool
+    - nvmeof_modules_conf is changed
+
+- name: Generate NVMe host NQN if not present
+  ansible.builtin.command:
+    cmd: nvme gen-hostnqn
+    creates: /etc/nvme/hostnqn
+  when: nvmeof_setup_ensure_hostnqn | bool
+
+- name: Generate NVMe host ID if not present
+  ansible.builtin.command:
+    cmd: nvme gen-hostid
+    creates: /etc/nvme/hostid
+  when: nvmeof_setup_ensure_hostnqn | bool
+
+- name: Enable NVMe auto-connect service
+  ansible.builtin.systemd:
+    name: nvmf-autoconnect
+    enabled: true
+    daemon_reload: true
+  when: nvmeof_setup_ensure_autoconnect | bool

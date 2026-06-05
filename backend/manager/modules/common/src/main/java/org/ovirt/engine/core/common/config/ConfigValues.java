@@ -1493,6 +1493,9 @@ public enum ConfigValues {
     @TypeConverterAttribute(Boolean.class)
     ManagedBlockDomainSupported,
 
+    @TypeConverterAttribute(Boolean.class)
+    NVMeOfSupported,
+
     @TypeConverterAttribute(Long.class)
     ManagedBlockCommandTimeoutInMinutes,
 
