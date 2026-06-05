@@ -413,6 +413,8 @@ public class StorageListModel extends ListWithSimpleDetailsModel<Void, StorageDo
                 return new GlusterStorageModel();
             case MANAGED_BLOCK_STORAGE:
                 return new ManagedBlockStorageModel();
+            case NVMEOF:
+                return new NvmeOfStorageModel();
         }
         return null;
     }
@@ -958,6 +960,9 @@ public class StorageListModel extends ListWithSimpleDetailsModel<Void, StorageDo
 
         getEditCommand().setIsExecutionAllowed(items.size() == 1 && isEditAvailable(item));
 
+        getImportDomainCommand().setIsExecutionAllowed(
+                item == null || item.getStorageType() != StorageType.NVMEOF);
+
         getRemoveCommand().setIsExecutionAllowed(items.size() == 1
                 && !items.get(0).getStorageType().isOpenStackDomain()
                 && items.get(0).getStorageDomainSharedStatus() == StorageDomainSharedStatus.Unattached);
@@ -992,6 +997,9 @@ public class StorageListModel extends ListWithSimpleDetailsModel<Void, StorageDo
 
     private boolean isEditAvailable(StorageDomain storageDomain) {
         if (storageDomain == null) {
+            return false;
+        }
+        if (storageDomain.getStorageType() == StorageType.NVMEOF) {
             return false;
         }
 

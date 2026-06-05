@@ -2831,6 +2831,9 @@ public class AsyncDataProvider {
         FcpStorageModel fcpDataModel = new FcpStorageModel();
         models.add(fcpDataModel);
 
+        NvmeOfStorageModel nvmeofDataModel = new NvmeOfStorageModel();
+        models.add(nvmeofDataModel);
+
         addTypeToStorageModels(StorageDomainType.Data, models);
 
         return models;

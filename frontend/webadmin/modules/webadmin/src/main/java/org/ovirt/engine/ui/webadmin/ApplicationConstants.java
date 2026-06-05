@@ -1452,6 +1452,12 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     String nfsTimeoutGeneral();
 
+    String nqnStorageGeneral();
+
+    String transportStorageGeneral();
+
+    String hostNqnStorageGeneral();
+
     String uploadImageSourceLabel();
 
     String uploadImageSourceLocal();
