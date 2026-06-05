@@ -17,7 +17,8 @@ public enum StorageType implements Identifiable {
     GLANCE(8, Subtype.FILE),
     CINDER(9, Subtype.OPENSTACK),
     MANAGED_BLOCK_STORAGE(10, Subtype.OPENSTACK),
-    UNMANAGED(11, Subtype.KUBERNETES);
+    UNMANAGED(11, Subtype.KUBERNETES),
+    NVMEOF(12, Subtype.BLOCK);
 
     public enum Subtype { NONE, FILE, BLOCK, OPENSTACK, KUBERNETES }
 

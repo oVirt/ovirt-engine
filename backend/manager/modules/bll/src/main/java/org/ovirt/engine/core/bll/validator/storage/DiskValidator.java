@@ -101,6 +101,19 @@ public class DiskValidator {
                         }
                     }
                     break;
+                case NVMEOF:
+                    LUNs nvmeLuns = ((LunDisk) disk).getLun();
+                    if (nvmeLuns.getLunConnections() == null || nvmeLuns.getLunConnections().isEmpty()) {
+                        return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_DISK_LUN_ISCSI_MISSING_CONNECTION_PARAMS);
+                    }
+
+                    for (StorageServerConnections conn : nvmeLuns.getLunConnections()) {
+                        if (StringUtils.isEmpty(conn.getNqn()) || StringUtils.isEmpty(conn.getConnection())
+                                || StringUtils.isEmpty(conn.getTrsvcid())) {
+                            return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_DISK_LUN_ISCSI_MISSING_CONNECTION_PARAMS);
+                        }
+                    }
+                    break;
                 default:
                     break;
             }

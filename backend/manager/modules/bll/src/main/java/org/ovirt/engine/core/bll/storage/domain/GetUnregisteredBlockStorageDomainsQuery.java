@@ -51,8 +51,9 @@ public class GetUnregisteredBlockStorageDomainsQuery<P extends GetUnregisteredBl
         List<StorageDomain> storageDomains;
 
         try {
-            // iSCSI protocol requires targets connection (as opposed to FCP)
-            if (getParameters().getStorageType() == StorageType.ISCSI) {
+            // iSCSI and NVMe-oF protocols require targets connection (as opposed to FCP)
+            if (getParameters().getStorageType() == StorageType.ISCSI
+                    || getParameters().getStorageType() == StorageType.NVMEOF) {
                 connectedTargets = connectTargets();
             }
 
@@ -90,8 +91,9 @@ public class GetUnregisteredBlockStorageDomainsQuery<P extends GetUnregisteredBl
             if (returnValue.getSucceeded()) {
                 connectedTargets.add(storageConnection);
             } else {
-                log.error("Could not connect to target IQN '{}': {}",
-                        storageConnection.getIqn(), returnValue.getFault().getMessage());
+                log.error("Could not connect to target '{}': {}",
+                        storageConnection.getIqn() != null ? storageConnection.getIqn() : storageConnection.getNqn(),
+                        returnValue.getFault().getMessage());
             }
         }
 

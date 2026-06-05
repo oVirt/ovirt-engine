@@ -2071,7 +2071,12 @@ CREATE TABLE storage_server_connections (
     vfs_type character varying(128),
     nfs_version character varying(4),
     nfs_timeo smallint,
-    nfs_retrans smallint
+    nfs_retrans smallint,
+    nqn character varying(256),
+    transport character varying(16),
+    trsvcid character varying(50),
+    host_nqn character varying(256),
+    dhchap_key text
 );
 
 

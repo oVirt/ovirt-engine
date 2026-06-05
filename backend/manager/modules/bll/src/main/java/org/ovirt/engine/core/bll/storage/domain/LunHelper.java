@@ -47,6 +47,10 @@ public class LunHelper {
             return;
         }
 
+        if (storageType == StorageType.NVMEOF) {
+            // NVMe-oF connections are stored and mapped like iSCSI.
+        }
+
         for (StorageServerConnections connection : lun.getLunConnections()) {
             StorageServerConnections dbConnection = iscsiStorageHelper.findConnectionWithSameDetails(connection);
             if (dbConnection == null) {
