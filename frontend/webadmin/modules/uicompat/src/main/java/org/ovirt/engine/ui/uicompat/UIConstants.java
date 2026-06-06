@@ -2262,4 +2262,6 @@ public interface UIConstants extends Constants {
     String confirmBiosUpdateTitle();
 
     String confirmBiosUpdateMessage();
+
+    String nvmeofRestApiOnlyTooltip();
 }

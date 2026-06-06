@@ -241,6 +241,8 @@ public class VdsDynamic implements BusinessEntityWithStatus<Guid, VDSStatus> {
 
     private String vdsmCpusAffinity;
 
+    private String nvmeHostNqn;
+
     public VdsDynamic() {
         rpmVersion = new RpmVersion();
         libvirtVersion = new RpmVersion();
@@ -1026,6 +1028,14 @@ public class VdsDynamic implements BusinessEntityWithStatus<Guid, VDSStatus> {
 
     public String getVdsmCpusAffinity() {
         return vdsmCpusAffinity;
+    }
+
+    public String getNvmeHostNqn() {
+        return nvmeHostNqn;
+    }
+
+    public void setNvmeHostNqn(String nvmeHostNqn) {
+        this.nvmeHostNqn = nvmeHostNqn;
     }
 
 

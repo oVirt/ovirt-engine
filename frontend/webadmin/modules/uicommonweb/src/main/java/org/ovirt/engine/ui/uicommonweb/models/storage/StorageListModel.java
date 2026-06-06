@@ -959,9 +959,17 @@ public class StorageListModel extends ListWithSimpleDetailsModel<Void, StorageDo
         getNewDomainCommand().setIsAvailable(true);
 
         getEditCommand().setIsExecutionAllowed(items.size() == 1 && isEditAvailable(item));
+        if (!getEditCommand().getIsExecutionAllowed() && item != null && item.getStorageType() == StorageType.NVMEOF) {
+            getEditCommand().getExecuteProhibitionReasons().add(
+                    ConstantsManager.getInstance().getConstants().nvmeofRestApiOnlyTooltip());
+        }
 
         getImportDomainCommand().setIsExecutionAllowed(
                 item == null || item.getStorageType() != StorageType.NVMEOF);
+        if (!getImportDomainCommand().getIsExecutionAllowed() && item != null && item.getStorageType() == StorageType.NVMEOF) {
+            getImportDomainCommand().getExecuteProhibitionReasons().add(
+                    ConstantsManager.getInstance().getConstants().nvmeofRestApiOnlyTooltip());
+        }
 
         getRemoveCommand().setIsExecutionAllowed(items.size() == 1
                 && !items.get(0).getStorageType().isOpenStackDomain()

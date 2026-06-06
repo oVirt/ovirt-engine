@@ -1392,6 +1392,8 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     String updateOvfsForStorage();
 
+    String nvmeofRestApiOnlyTooltip();
+
     String destroyStorage();
 
     String scanDisksStorage();
