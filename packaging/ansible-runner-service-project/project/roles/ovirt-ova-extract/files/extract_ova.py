@@ -6,6 +6,7 @@ import pwd
 import sys
 import time
 
+
 from contextlib import closing
 from subprocess import CalledProcessError
 from subprocess import call
@@ -98,7 +99,8 @@ def extract_disks(ova_path, disks):
             if target is not None:
                 extract_disk(ova_path, ova_file.tell(),
                              target["path"], target["format"])
-            # Skip past the entry's body, rounded up to the next 512-byte boundary.
+            # Skip past the entry's body, rounded up to the next
+            # 512-byte boundary.
             aligned = (size + TAR_BLOCK_SIZE - 1) & ~(TAR_BLOCK_SIZE - 1)
             ova_file.seek(aligned, 1)
 
