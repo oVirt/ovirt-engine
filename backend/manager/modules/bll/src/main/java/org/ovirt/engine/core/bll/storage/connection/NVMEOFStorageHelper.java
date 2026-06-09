@@ -12,7 +12,6 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.ovirt.engine.core.common.businessentities.storage.LUNStorageServerConnectionMap;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.SyncLunsInfoForBlockStorageDomainParameters;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
@@ -170,7 +169,8 @@ public class NVMEOFStorageHelper extends StorageHelperBase {
             }
         }
         return result;
-    }
+}
+
 
     @Override
     protected List<StorageServerConnections> filterConnectionsUsedByOthers(
@@ -203,4 +203,16 @@ public class NVMEOFStorageHelper extends StorageHelperBase {
         }
         return (List<StorageServerConnections>) CollectionUtils.subtract(connections, toRemove);
     }
-}
+
+    public StorageServerConnections findConnectionWithSameDetails(StorageServerConnections connection) {
+        List<StorageServerConnections> connections = storageServerConnectionDao.getAllForStorage(connection.getConnection());
+        for (StorageServerConnections dbConnection : connections) {
+            if (dbConnection.getStorageType() == StorageType.NVMEOF
+                    && Objects.equals(dbConnection.getNqn(), connection.getNqn())
+                    && Objects.equals(dbConnection.getTrsvcid(), connection.getTrsvcid())
+                    && Objects.equals(dbConnection.getHostNqn(), connection.getHostNqn())) {
+                return dbConnection;
+            }
+        }
+        return null;
+    }

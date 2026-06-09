@@ -366,22 +366,16 @@ public class BackendStorageDomainsResource
         // Mapping the connection properties only in case it is a non-filtered session
         if (!isFiltered()) {
             switch (entity.getStorageType()) {
-                case ISCSI:
-                    mapVolumeGroupIscsi(model, entity);
-                    break;
-                case FCP:
-                    mapVolumeGroupFcp(model, entity);
-                    break;
+            case ISCSI:
+            case FCP:
+            case NVMEOF:
+                mapVolumeGroupIscsi(model, entity);
+                break;
             case NFS:
             case LOCALFS:
             case POSIXFS:
             case GLUSTERFS:
                 mapFileDomain(model, entity);
-                break;
-            case ISCSI:
-            case FCP:
-            case NVMEOF:
-                mapVolumeGroupIscsi(model, entity);
                 break;
             }
         }
