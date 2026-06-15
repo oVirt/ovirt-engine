@@ -66,7 +66,10 @@ public class ImportVmTemplateFromExternalUrlCommand<P extends ImportVmTemplateFr
                 new GetVmFromOvaQueryParameters(getParameters().getProxyHostId(), ovaPath)).getReturnValue();
         vmTemplate.setName(getVmTemplateName());
 
-        return runInternalAction(ActionType.ImportVmTemplateFromOva, buildImportVmParameters(vmTemplate));
+        ActionType actionType = OvaImportManagedBlockSupport.isManagedBlockDestination(getStorageDomain())
+                ? ActionType.MbsImportVmTemplateFromOva
+                : ActionType.ImportVmTemplateFromOva;
+        return runInternalAction(actionType, buildImportVmParameters(vmTemplate));
     }
 
     private ImportVmTemplateFromOvaParameters buildImportVmParameters(VmTemplate vmTemplate) {

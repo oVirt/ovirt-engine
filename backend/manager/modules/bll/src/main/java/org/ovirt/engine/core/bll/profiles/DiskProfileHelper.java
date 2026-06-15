@@ -9,6 +9,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.Predicate;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -16,7 +17,6 @@ import javax.inject.Singleton;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
-import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.common.businessentities.profiles.DiskProfile;
 import org.ovirt.engine.core.common.businessentities.storage.DiskContentType;
@@ -25,7 +25,6 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.PermissionDao;
-import org.ovirt.engine.core.dao.StorageDomainDao;
 import org.ovirt.engine.core.dao.profiles.DiskProfileDao;
 import org.ovirt.engine.core.di.Injector;
 import org.slf4j.Logger;
@@ -42,9 +41,6 @@ public class DiskProfileHelper {
     @Inject
     private PermissionDao permissionDao;
 
-    @Inject
-    private StorageDomainDao storageDomainDao;
-
     public DiskProfile createDiskProfile(Guid storageDomainId, String name) {
         DiskProfile profile = new DiskProfile();
         profile.setId(Guid.newGuid());
@@ -54,6 +50,12 @@ public class DiskProfileHelper {
     }
 
     public ValidationResult setAndValidateDiskProfiles(Map<DiskImage, Guid> map, DbUser user) {
+        return setAndValidateDiskProfiles(map, user, disk -> false);
+    }
+
+    public ValidationResult setAndValidateDiskProfiles(Map<DiskImage, Guid> map,
+            DbUser user,
+            Predicate<DiskImage> skipDiskProfileValidation) {
         if (map == null) {
             return ValidationResult.VALID;
         }
@@ -63,6 +65,10 @@ public class DiskProfileHelper {
         Set<Guid> permittedDiskProfilesIds = new HashSet<>();
         for (Entry<DiskImage, Guid> entry : map.entrySet()) {
             DiskImage diskImage = entry.getKey();
+            if (skipDiskProfileValidation.test(diskImage)) {
+                log.info("Skipping disk profile validation for disk '{}'", diskImage.getDiskAlias());
+                continue;
+            }
             Guid storageDomainId = entry.getValue();
             if (diskImage.getDiskStorageType() != DiskStorageType.IMAGE) {
                 log.info("Disk profiles is not supported for storage type '{}' (Disk '{}')",
@@ -70,12 +76,6 @@ public class DiskProfileHelper {
                 continue;
             }
             if (!shouldSetDiskProfileOnImage(diskImage)) {
-                continue;
-            }
-            if (storageDomainId != null && isManagedBlockStorageDomain(storageDomainId)) {
-                log.info("Skipping disk profile validation for managed block storage domain id '{}' (disk '{}')",
-                        storageDomainId, diskImage.getDiskAlias());
-                diskImage.setDiskProfileIds(new ArrayList<>());
                 continue;
             }
             if (diskImage.getDiskProfileId() == null && storageDomainId != null) {
@@ -168,12 +168,5 @@ public class DiskProfileHelper {
     private boolean shouldSetDiskProfileOnImage(DiskImage diskImage) {
         return !(diskImage.getContentType() == DiskContentType.MEMORY_DUMP_VOLUME
                 || diskImage.getContentType() == DiskContentType.MEMORY_METADATA_VOLUME);
-    }
-
-    private boolean isManagedBlockStorageDomain(Guid storageDomainId) {
-        StorageDomain storageDomain = storageDomainDao.get(storageDomainId);
-        return storageDomain != null
-                && storageDomain.getStorageType() != null
-                && storageDomain.getStorageType().isManagedBlockStorage();
     }
 }

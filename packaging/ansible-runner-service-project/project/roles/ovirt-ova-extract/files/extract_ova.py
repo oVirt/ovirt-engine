@@ -81,6 +81,7 @@ def extract_disks(ova_path, disks):
         {tar_name: {"path": target_path, "format": "raw"|"qcow2"}, ...}
     Tar members not in the map (vm.ovf, nvram.dat, pad alignment) are skipped.
     """
+    remaining = set(disks.keys())
     try:
         fd = os.open(ova_path, os.O_RDONLY | os.O_DIRECT)
     except OSError:
@@ -97,12 +98,17 @@ def extract_disks(ova_path, disks):
             size = nti(info[124:136])
             target = disks.get(name)
             if target is not None:
+                remaining.discard(name)
                 extract_disk(ova_path, ova_file.tell(),
                              target["path"], target["format"])
             # Skip past the entry's body, rounded up to the next
             # 512-byte boundary.
             aligned = (size + TAR_BLOCK_SIZE - 1) & ~(TAR_BLOCK_SIZE - 1)
             ova_file.seek(aligned, 1)
+    if remaining:
+        print("Unmatched OVA tar disk names (no member in archive): %s"
+              % ", ".join(sorted(remaining)))
+        sys.exit(1)
 
 
 if len(sys.argv) < 3:

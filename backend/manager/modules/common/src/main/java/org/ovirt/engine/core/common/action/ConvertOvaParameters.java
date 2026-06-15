@@ -12,7 +12,7 @@ public class ConvertOvaParameters extends ConvertVmParameters {
     private VmEntityType vmEntityType = VmEntityType.VM;
     private Map<Guid, Map<String, Object>> preAttachedManagedBlockDevicesByDiskId;
     private List<Guid> templateDiskIdsForExtract;
-    private List<String> ovaTarNamesByIndex;
+    private Map<Guid, String> diskIdToTarName;
 
     public ConvertOvaParameters() {
     }
@@ -54,11 +54,11 @@ public class ConvertOvaParameters extends ConvertVmParameters {
         this.templateDiskIdsForExtract = templateDiskIdsForExtract;
     }
 
-    public List<String> getOvaTarNamesByIndex() {
-        return ovaTarNamesByIndex;
+    public Map<Guid, String> getDiskIdToTarName() {
+        return diskIdToTarName;
     }
 
-    public void setOvaTarNamesByIndex(List<String> ovaTarNamesByIndex) {
-        this.ovaTarNamesByIndex = ovaTarNamesByIndex;
+    public void setDiskIdToTarName(Map<Guid, String> diskIdToTarName) {
+        this.diskIdToTarName = diskIdToTarName;
     }
 }
