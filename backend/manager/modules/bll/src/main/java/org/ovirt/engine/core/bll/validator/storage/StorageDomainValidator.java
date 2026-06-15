@@ -263,9 +263,7 @@ public class StorageDomainValidator {
             return ValidationResult.VALID;
         }
         Long availableSize = storageDomain.getAvailableDiskSizeInBytes();
-        double totalSizeForNewDisks = storageDomain.getStorageType().isManagedBlockStorage()
-                ? 0.0
-                : getTotalSizeForNewDisks(newDiskImages);
+        double totalSizeForNewDisks = getTotalSizeForNewDisks(newDiskImages);
         double totalSizeForClonedDisks = getTotalSizeForClonedDisks(clonedDiskImages);
         double totalSizeForDisks = totalSizeForNewDisks + totalSizeForClonedDisks;
 

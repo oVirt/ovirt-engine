@@ -58,6 +58,7 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskLunMap;
 import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
 import org.ovirt.engine.core.common.businessentities.storage.LUNs;
 import org.ovirt.engine.core.common.businessentities.storage.LunDisk;
+import org.ovirt.engine.core.common.businessentities.storage.ManagedBlockStorageDisk;
 import org.ovirt.engine.core.common.businessentities.storage.ScsiGenericIO;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
@@ -149,9 +150,12 @@ public class AddDiskCommandTest extends BaseCommandTest {
     private AddDiskCommand<AddDiskParameters> command = new AddDiskCommand<>(createParameters(), null);
 
     @Test
-    public void getChildActionTypeReturnsAddManagedBlockWhenImageDiskTargetsManagedBlockStorage() {
+    public void getChildActionTypeReturnsAddManagedBlockWhenDiskIsManagedBlockStorage() {
         Guid storageId = Guid.newGuid();
-        initializeCommand(storageId);
+        ManagedBlockStorageDisk disk = new ManagedBlockStorageDisk();
+        disk.setSize(1);
+        command.getParameters().setDiskInfo(disk);
+        command.getParameters().setStorageDomainId(storageId);
         mockStorageDomain(storageId, StorageType.MANAGED_BLOCK_STORAGE);
         assertEquals(ActionType.AddManagedBlockStorageDisk, command.getChildActionType());
     }

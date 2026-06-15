@@ -5,14 +5,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import javax.inject.Inject;
-
-import org.ovirt.engine.core.bll.CommandActionState;
 import org.ovirt.engine.core.bll.DisableInPrepareMode;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute.CommandCompensationPhase;
 import org.ovirt.engine.core.bll.context.CommandContext;
-import org.ovirt.engine.core.bll.storage.disk.managedblock.ManagedBlockStorageCommandUtil;
 import org.ovirt.engine.core.common.action.ActionParametersBase.EndProcedure;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AddDiskParameters;
@@ -20,29 +16,15 @@ import org.ovirt.engine.core.common.action.ConvertOvaParameters;
 import org.ovirt.engine.core.common.action.ImportVmFromOvaParameters;
 import org.ovirt.engine.core.common.businessentities.OriginType;
 import org.ovirt.engine.core.common.businessentities.VDS;
-import org.ovirt.engine.core.common.businessentities.storage.DiskBackup;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskInterface;
-import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
-import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.job.StepEnum;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.DiskDao;
-import org.ovirt.engine.core.dao.VdsDao;
 
 @DisableInPrepareMode
 @NonTransactiveCommandAttribute(forceCompensation = true, compensationPhase = CommandCompensationPhase.END_COMMAND)
 public class ImportVmFromOvaCommand<T extends ImportVmFromOvaParameters> extends ImportVmFromExternalProviderCommand<T> {
-
-    @Inject
-    private ManagedBlockStorageCommandUtil managedBlockStorageCommandUtil;
-
-    @Inject
-    private VdsDao vdsDao;
-
-    @Inject
-    private DiskDao diskDao;
 
     public ImportVmFromOvaCommand(Guid cmdId) {
         super(cmdId);
@@ -50,42 +32,6 @@ public class ImportVmFromOvaCommand<T extends ImportVmFromOvaParameters> extends
 
     public ImportVmFromOvaCommand(T parameters, CommandContext commandContext) {
         super(parameters, commandContext);
-    }
-
-    @Override
-    protected void init() {
-        super.init();
-        adjustOvaVirtV2vDisksForManagedBlockDestination();
-    }
-
-    private void adjustOvaVirtV2vDisksForManagedBlockDestination() {
-        if (CommandActionState.EXECUTE.equals(getActionState())
-                && OvaImportManagedBlockSupport.isManagedBlockDestination(getStorageDomain())) {
-            getVm().getImages().forEach(image -> {
-                image.setVolumeFormat(VolumeFormat.RAW);
-                image.setVolumeType(VolumeType.Preallocated);
-                image.setActualSizeInBytes(image.getSize());
-                image.setBackup(DiskBackup.None);
-            });
-            log.info(
-                    "OVA import to managed-block: target disk metadata set to RAW/preallocated for virt-v2v (VM '{}' {}).",
-                    getVm().getName(),
-                    getVm().getId());
-        }
-    }
-
-    @Override
-    protected void removeVmImages() {
-        OvaImportManagedBlockSupport.removeDisksAfterFailedOvaImport(
-                getVmId(),
-                diskDao.getAllForVm(getVmId()).stream().map(DiskImage.class::cast).collect(Collectors.toList()),
-                cloneContextAndDetachFromParent(),
-                image -> OvaImportManagedBlockSupport.buildRemoveManagedBlockDiskParameters(
-                        image,
-                        isExecutedAsChildCommand(),
-                        getActionType(),
-                        getParameters()),
-                (at, p, c) -> runInternalAction(at, p, c));
     }
 
     @Override
@@ -102,24 +48,8 @@ public class ImportVmFromOvaCommand<T extends ImportVmFromOvaParameters> extends
         return isVirtV2VUsed() ? super.isHostInSupportedClusterForProxyHost(host) : true;
     }
 
-    private boolean isVirtV2VUsed() {
+    protected boolean isVirtV2VUsed() {
         return getParameters().getVm().getOrigin() != OriginType.OVIRT;
-    }
-
-    private void attachManagedBlockVolumesToProxyHostForOvaConversion() {
-        if (!OvaImportManagedBlockSupport.isManagedBlockDestination(getStorageDomain())) {
-            return;
-        }
-        VDS host = OvaImportManagedBlockSupport.resolveOvaProxyHost(getParameters().getProxyHostId(), vdsDao);
-        if (host == null) {
-            return;
-        }
-        vmHandler.updateDisksFromDb(getVm());
-        OvaImportManagedBlockSupport.attachManagedBlockDisksOnProxy(
-                managedBlockStorageCommandUtil,
-                getVm().getDiskList(),
-                host,
-                getVmId());
     }
 
     @Override
@@ -142,19 +72,30 @@ public class ImportVmFromOvaCommand<T extends ImportVmFromOvaParameters> extends
 
     @Override
     protected void convert() {
-        attachManagedBlockVolumesToProxyHostForOvaConversion();
+        prepareForOvaConversion();
         if (isVirtV2VUsed()) {
-            runInternalAction(ActionType.ConvertOva,
+            runInternalAction(convertOvaActionType(),
                     buildConvertOvaParameters(),
                     createConversionStepContext(StepEnum.CONVERTING_OVA));
         } else {
-            runInternalAction(ActionType.ExtractOva,
+            runInternalAction(extractOvaActionType(),
                     buildExtractOvaParameters(),
                     createConversionStepContext(StepEnum.EXTRACTING_OVA));
         }
     }
 
-    private ConvertOvaParameters buildConvertOvaParameters() {
+    protected void prepareForOvaConversion() {
+    }
+
+    protected ActionType convertOvaActionType() {
+        return ActionType.ConvertOva;
+    }
+
+    protected ActionType extractOvaActionType() {
+        return ActionType.ExtractOva;
+    }
+
+    protected ConvertOvaParameters buildConvertOvaParameters() {
         ConvertOvaParameters parameters = new ConvertOvaParameters(getVmId());
         parameters.setOvaPath(getParameters().getOvaPath());
         parameters.setVmName(getVmName());
@@ -169,12 +110,12 @@ public class ImportVmFromOvaCommand<T extends ImportVmFromOvaParameters> extends
         parameters.setParentCommand(getActionType());
         parameters.setParentParameters(getParameters());
         parameters.setEndProcedure(EndProcedure.COMMAND_MANAGED);
-        parameters.setPreAttachedManagedBlockDevicesByDiskId(preAttachedManagedBlockDeviceMapForOvaChildCommands());
         parameters.setOvaTarNamesByIndex(buildOvaTarNamesByIndex());
+        enrichConvertOvaParameters(parameters);
         return parameters;
     }
 
-    private ConvertOvaParameters buildExtractOvaParameters() {
+    protected ConvertOvaParameters buildExtractOvaParameters() {
         ConvertOvaParameters parameters = new ConvertOvaParameters(getVmId());
         parameters.setOvaPath(getParameters().getOvaPath());
         parameters.setVmName(getVmName());
@@ -186,9 +127,15 @@ public class ImportVmFromOvaCommand<T extends ImportVmFromOvaParameters> extends
         parameters.setParentCommand(getActionType());
         parameters.setParentParameters(getParameters());
         parameters.setEndProcedure(EndProcedure.COMMAND_MANAGED);
-        parameters.setPreAttachedManagedBlockDevicesByDiskId(preAttachedManagedBlockDeviceMapForOvaChildCommands());
         parameters.setOvaTarNamesByIndex(buildOvaTarNamesByIndex());
+        enrichExtractOvaParameters(parameters);
         return parameters;
+    }
+
+    protected void enrichConvertOvaParameters(ConvertOvaParameters parameters) {
+    }
+
+    protected void enrichExtractOvaParameters(ConvertOvaParameters parameters) {
     }
 
     private List<String> buildOvaTarNamesByIndex() {
@@ -204,13 +151,6 @@ public class ImportVmFromOvaCommand<T extends ImportVmFromOvaParameters> extends
                 .collect(Collectors.toList());
     }
 
-    private Map<Guid, Map<String, Object>> preAttachedManagedBlockDeviceMapForOvaChildCommands() {
-        if (!OvaImportManagedBlockSupport.isManagedBlockDestination(getStorageDomain())) {
-            return null;
-        }
-        return OvaImportManagedBlockSupport.preAttachedManagedBlockDevicesByDiskId(getVm().getDiskMap().values());
-    }
-
     @Override
     protected AddDiskParameters buildAddDiskParameters(DiskImage image) {
         if (getParameters().getVm().getOrigin() != OriginType.OVIRT) {
@@ -221,12 +161,14 @@ public class ImportVmFromOvaCommand<T extends ImportVmFromOvaParameters> extends
         }
 
         AddDiskParameters parameters = super.buildAddDiskParameters(image);
-        if (OvaImportManagedBlockSupport.isManagedBlockDestination(getStorageDomain())
-                && !getParameters().isImportAsNewEntity()) {
-            return parameters;
+        if (shouldUsePassedDiskAndImageIdsForOvaDiskImport()) {
+            parameters.setUsePassedDiskId(true);
+            parameters.setUsePassedImageId(true);
         }
-        parameters.setUsePassedDiskId(true);
-        parameters.setUsePassedImageId(true);
         return parameters;
+    }
+
+    protected boolean shouldUsePassedDiskAndImageIdsForOvaDiskImport() {
+        return true;
     }
 }
