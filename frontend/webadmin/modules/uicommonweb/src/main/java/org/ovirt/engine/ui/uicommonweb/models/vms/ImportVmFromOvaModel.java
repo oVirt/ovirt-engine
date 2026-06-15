@@ -64,8 +64,11 @@ public class ImportVmFromOvaModel extends ImportVmFromExternalProviderModel {
 
     @Override
     public void executeImport(IFrontendMultipleActionAsyncCallback callback) {
+        ActionType actionType = Linq.isManagedBlockActiveStorageDomain(getStorage().getSelectedItem())
+                ? ActionType.MbsImportVmFromOva
+                : ActionType.ImportVmFromOva;
         Frontend.getInstance().runMultipleAction(
-                ActionType.ImportVmFromOva,
+                actionType,
                 buildImportVmFromOvaParameters(),
                 true,
                 callback,

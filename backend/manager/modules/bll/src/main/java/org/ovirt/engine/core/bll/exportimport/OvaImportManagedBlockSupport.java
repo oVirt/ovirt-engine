@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll.exportimport;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -69,14 +70,30 @@ public final class OvaImportManagedBlockSupport {
         return null;
     }
 
+    public static Guid resolveDestinationDomainId(
+            Guid diskId,
+            Function<Guid, Guid> currentDiskIdToKeyForDestMap,
+            Map<Guid, Guid> imageToDestinationDomainMap) {
+        if (imageToDestinationDomainMap == null || Guid.isNullOrEmpty(diskId)) {
+            return null;
+        }
+        Guid key = currentDiskIdToKeyForDestMap.apply(diskId);
+        if (key == null) {
+            return null;
+        }
+        return imageToDestinationDomainMap.get(key);
+    }
+
     public static boolean diskTargetsManagedBlockStorage(
             DiskImage image,
             Function<Guid, Guid> currentDiskIdToKeyForDestMap,
             Map<Guid, Guid> imageToDestinationDomainMap,
             Guid storagePoolId,
             StorageDomainDao storageDomainDao) {
-        Guid key = currentDiskIdToKeyForDestMap.apply(image.getId());
-        Guid destDomainId = imageToDestinationDomainMap.get(key);
+        Guid destDomainId = resolveDestinationDomainId(
+                image.getId(),
+                currentDiskIdToKeyForDestMap,
+                imageToDestinationDomainMap);
         if (destDomainId == null) {
             return false;
         }
@@ -112,6 +129,9 @@ public final class OvaImportManagedBlockSupport {
     }
 
     public static Map<Guid, Map<String, Object>> preAttachedManagedBlockDevicesByDiskId(Iterable<? extends Disk> disks) {
+        if (disks == null) {
+            return Collections.emptyMap();
+        }
         Map<Guid, Map<String, Object>> out = new HashMap<>();
         for (Disk d : disks) {
             if (d instanceof ManagedBlockStorageDisk) {
@@ -121,7 +141,7 @@ public final class OvaImportManagedBlockSupport {
                 }
             }
         }
-        return out.isEmpty() ? null : out;
+        return out;
     }
 
     @FunctionalInterface
