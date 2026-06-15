@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll.exportimport;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -112,6 +113,9 @@ public final class OvaImportManagedBlockSupport {
     }
 
     public static Map<Guid, Map<String, Object>> preAttachedManagedBlockDevicesByDiskId(Iterable<? extends Disk> disks) {
+        if (disks == null) {
+            return Collections.emptyMap();
+        }
         Map<Guid, Map<String, Object>> out = new HashMap<>();
         for (Disk d : disks) {
             if (d instanceof ManagedBlockStorageDisk) {
@@ -121,7 +125,7 @@ public final class OvaImportManagedBlockSupport {
                 }
             }
         }
-        return out.isEmpty() ? null : out;
+        return out;
     }
 
     @FunctionalInterface

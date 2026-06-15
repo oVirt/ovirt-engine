@@ -20,7 +20,6 @@ import org.ovirt.engine.core.bll.SerialChildCommandsExecutionCallback;
 import org.ovirt.engine.core.bll.SerialChildExecutingCommand;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.job.ExecutionContext;
-import org.ovirt.engine.core.bll.storage.disk.managedblock.ManagedBlockStorageCommandUtil;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ActionParametersBase.EndProcedure;
@@ -30,10 +29,10 @@ import org.ovirt.engine.core.common.action.AddDiskParameters;
 import org.ovirt.engine.core.common.action.ConvertOvaParameters;
 import org.ovirt.engine.core.common.action.ImportVmTemplateFromOvaParameters;
 import org.ovirt.engine.core.common.action.ImportVmTemplateFromOvaParameters.Phase;
+import org.ovirt.engine.core.common.action.RemoveAllVmImagesParameters;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VmEntityType;
-import org.ovirt.engine.core.common.businessentities.storage.DiskBackup;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
@@ -45,7 +44,6 @@ import org.ovirt.engine.core.common.job.Step;
 import org.ovirt.engine.core.common.job.StepEnum;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.job.ExecutionMessageDirector;
-import org.ovirt.engine.core.dao.DiskDao;
 import org.ovirt.engine.core.dao.VdsDao;
 
 @NonTransactiveCommandAttribute(forceCompensation = true, compensationPhase = CommandCompensationPhase.END_COMMAND)
@@ -54,10 +52,6 @@ public class ImportVmTemplateFromOvaCommand<T extends ImportVmTemplateFromOvaPar
 
     @Inject
     private VdsDao vdsDao;
-    @Inject
-    private DiskDao diskDao;
-    @Inject
-    private ManagedBlockStorageCommandUtil managedBlockStorageCommandUtil;
     @Inject
     @Typed(SerialChildCommandsExecutionCallback.class)
     private Instance<SerialChildCommandsExecutionCallback> callbackProvider;
@@ -170,16 +164,9 @@ public class ImportVmTemplateFromOvaCommand<T extends ImportVmTemplateFromOvaPar
     }
 
     protected void removeVmImages() {
-        OvaImportManagedBlockSupport.removeDisksAfterFailedOvaImport(
-                getVmTemplateId(),
-                diskDao.getAllForVm(getVmTemplateId()).stream().map(DiskImage.class::cast).collect(Collectors.toList()),
-                cloneContextAndDetachFromParent(),
-                image -> OvaImportManagedBlockSupport.buildRemoveManagedBlockDiskParameters(
-                        image,
-                        isExecutedAsChildCommand(),
-                        getActionType(),
-                        getParameters()),
-                (at, p, c) -> runInternalAction(at, p, c));
+        runInternalAction(ActionType.RemoveAllVmImages,
+                new RemoveAllVmImagesParameters(getVmTemplateId(), getVmTemplate().getDiskList()),
+                cloneContextAndDetachFromParent());
     }
 
     @Override
@@ -219,56 +206,22 @@ public class ImportVmTemplateFromOvaCommand<T extends ImportVmTemplateFromOvaPar
     }
 
     protected DiskImage adjustDisk(DiskImage image) {
-        if (OvaImportManagedBlockSupport.diskTargetsManagedBlockStorage(
-                image,
-                diskId -> {
-                    Guid k = getOriginalDiskIdMap(diskId);
-                    return k != null ? k : diskId;
-                },
-                getParameters().getImageToDestinationDomainMap(),
-                getStoragePoolId(),
-                storageDomainDao)) {
-            image.setVolumeFormat(VolumeFormat.RAW);
-            image.setVolumeType(VolumeType.Preallocated);
-            image.setActualSizeInBytes(image.getSize());
-            image.setBackup(DiskBackup.None);
-        } else {
-            image.setVolumeFormat(VolumeFormat.COW);
-            image.setVolumeType(VolumeType.Sparse);
-        }
+        image.setVolumeFormat(VolumeFormat.COW);
+        image.setVolumeType(VolumeType.Sparse);
         image.setDiskVmElements(image.getDiskVmElements().stream()
                 .map(dve -> DiskVmElement.copyOf(dve, image.getId(), getVmTemplateId()))
                 .collect(Collectors.toList()));
         return image;
     }
 
-    private void attachManagedBlockVolumesToProxyHostForOvaConversion() {
-        if (!OvaImportManagedBlockSupport.hasAnyManagedBlockDestination(
-                getParameters().getImageToDestinationDomainMap(),
-                getStoragePoolId(),
-                storageDomainDao)) {
-            return;
-        }
-        VDS host = OvaImportManagedBlockSupport.resolveOvaProxyHost(getParameters().getProxyHostId(), vdsDao);
-        if (host == null) {
-            return;
-        }
-        vmTemplateHandler.updateDisksFromDb(getVmTemplate());
-        OvaImportManagedBlockSupport.attachManagedBlockDisksOnProxy(
-                managedBlockStorageCommandUtil,
-                getVmTemplate().getDiskList(),
-                host,
-                getVmTemplateId());
+    protected void prepareForOvaConversion() {
     }
 
-    private Map<Guid, Map<String, Object>> preAttachedManagedBlockDeviceMapForOvaChildCommands() {
-        if (!OvaImportManagedBlockSupport.hasAnyManagedBlockDestination(
-                getParameters().getImageToDestinationDomainMap(),
-                getStoragePoolId(),
-                storageDomainDao)) {
-            return null;
-        }
-        return OvaImportManagedBlockSupport.preAttachedManagedBlockDevicesByDiskId(getVmTemplate().getDiskList());
+    protected ActionType extractOvaActionType() {
+        return ActionType.ExtractOva;
+    }
+
+    protected void enrichExtractOvaParameters(ConvertOvaParameters parameters) {
     }
 
     private List<String> buildOvaTarNamesByIndex() {
@@ -286,8 +239,8 @@ public class ImportVmTemplateFromOvaCommand<T extends ImportVmTemplateFromOvaPar
 
     private void convert() {
         vmTemplateHandler.updateDisksFromDb(getVmTemplate());
-        attachManagedBlockVolumesToProxyHostForOvaConversion();
-        ActionReturnValue extractRet = runInternalAction(ActionType.ExtractOva,
+        prepareForOvaConversion();
+        ActionReturnValue extractRet = runInternalAction(extractOvaActionType(),
                 buildExtractOvaParameters(),
                 createConversionStepContext(StepEnum.EXTRACTING_OVA));
         if (extractRet != null && !extractRet.getSucceeded()) {
@@ -304,26 +257,16 @@ public class ImportVmTemplateFromOvaCommand<T extends ImportVmTemplateFromOvaPar
         parameters.setVmName(getVmTemplateName());
         parameters.setDisks(getVmTemplate().getDiskList());
         parameters.setStoragePoolId(getStoragePoolId());
-        Guid extractStorageDomainId = getStorageDomainId();
-        if (Guid.isNullOrEmpty(extractStorageDomainId)) {
-            Guid mbsDest = OvaImportManagedBlockSupport.firstManagedBlockDestinationDomainId(
-                    getParameters().getImageToDestinationDomainMap(),
-                    getStoragePoolId(),
-                    storageDomainDao);
-            if (!Guid.isNullOrEmpty(mbsDest)) {
-                extractStorageDomainId = mbsDest;
-            }
-        }
-        parameters.setStorageDomainId(extractStorageDomainId);
+        parameters.setStorageDomainId(getStorageDomainId());
         parameters.setProxyHostId(getParameters().getProxyHostId());
         parameters.setClusterId(getClusterId());
         parameters.setParentCommand(getActionType());
         parameters.setParentParameters(getParameters());
         parameters.setEndProcedure(EndProcedure.COMMAND_MANAGED);
         parameters.setVmEntityType(VmEntityType.TEMPLATE);
-        parameters.setPreAttachedManagedBlockDevicesByDiskId(preAttachedManagedBlockDeviceMapForOvaChildCommands());
         parameters.setOvaTarNamesByIndex(buildOvaTarNamesByIndex());
         parameters.setTemplateDiskIdsForExtract(getParameters().getTemplateDiskIdsForOvaExtract());
+        enrichExtractOvaParameters(parameters);
         return parameters;
     }
 
