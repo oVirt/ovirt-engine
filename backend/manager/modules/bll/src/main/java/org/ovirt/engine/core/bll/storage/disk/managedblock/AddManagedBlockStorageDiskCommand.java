@@ -10,7 +10,6 @@ import java.util.Map;
 
 import javax.inject.Inject;
 
-import org.ovirt.engine.core.bll.CommandBase;
 import org.ovirt.engine.core.bll.InternalCommandAttribute;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.context.CommandContext;
@@ -43,7 +42,8 @@ import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 @NonTransactiveCommandAttribute
 @InternalCommandAttribute
-public class AddManagedBlockStorageDiskCommand<T extends AddManagedBlockStorageDiskParameters> extends CommandBase<T> {
+public class AddManagedBlockStorageDiskCommand<T extends AddManagedBlockStorageDiskParameters>
+        extends ManagedBlockStorageDiskCommandBase<T> {
 
     @Inject
     private ManagedBlockStorageDao managedBlockStorageDao;
@@ -107,6 +107,7 @@ public class AddManagedBlockStorageDiskCommand<T extends AddManagedBlockStorageD
 
         saveDisk(volumeId);
         getReturnValue().setActionReturnValue(volumeId);
+        refreshAffectedDomain(getParameters().getStorageDomainId());
         setSucceeded(true);
         persistCommandIfNeeded();
     }

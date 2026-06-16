@@ -19,6 +19,9 @@ public class AddManagedBlockStorageDomainCommand<T extends AddManagedBlockStorag
     @Inject
     private ManagedBlockStorageDao managedBlockStorageDao;
 
+    @Inject
+    private ManagedBlockStorageDomainStatsRefresher mbsStatsRefresher;
+
     public AddManagedBlockStorageDomainCommand(Guid commandId) {
         super(commandId);
     }
@@ -53,6 +56,7 @@ public class AddManagedBlockStorageDomainCommand<T extends AddManagedBlockStorag
         managedBlockStorage.setDriverOptions(parameters.getDriverOptions());
         managedBlockStorage.setDriverSensitiveOptions(parameters.getDriverSensitiveOptions());
         managedBlockStorageDao.save(managedBlockStorage);
+        mbsStatsRefresher.refresh(getStorageDomainId());
         setSucceeded(true);
     }
 

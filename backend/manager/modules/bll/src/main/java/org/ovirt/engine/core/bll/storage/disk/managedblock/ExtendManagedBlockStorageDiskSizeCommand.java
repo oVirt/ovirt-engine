@@ -14,6 +14,7 @@ import org.ovirt.engine.core.bll.ConcurrentChildCommandsExecutionCallback;
 import org.ovirt.engine.core.bll.InternalCommandAttribute;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.storage.disk.UpdateDiskCommand;
+import org.ovirt.engine.core.bll.storage.domain.ManagedBlockStorageDomainStatsRefresher;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ExtendManagedBlockStorageDiskSizeParameters;
@@ -41,6 +42,9 @@ public class ExtendManagedBlockStorageDiskSizeCommand<T extends ExtendManagedBlo
 
     @Inject
     private ImageDao imageDao;
+
+    @Inject
+    private ManagedBlockStorageDomainStatsRefresher mbsStatsRefresher;
 
     @Inject
     @Typed(ConcurrentChildCommandsExecutionCallback.class)
@@ -84,6 +88,7 @@ public class ExtendManagedBlockStorageDiskSizeCommand<T extends ExtendManagedBlo
         }
 
         updateDisk();
+        mbsStatsRefresher.refresh(getParameters().getStorageDomainId());
         setSucceeded(true);
     }
 

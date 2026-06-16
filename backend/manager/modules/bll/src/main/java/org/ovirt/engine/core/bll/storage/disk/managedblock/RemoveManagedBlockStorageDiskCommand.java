@@ -10,7 +10,6 @@ import javax.enterprise.inject.Instance;
 import javax.enterprise.inject.Typed;
 import javax.inject.Inject;
 
-import org.ovirt.engine.core.bll.CommandBase;
 import org.ovirt.engine.core.bll.ConcurrentChildCommandsExecutionCallback;
 import org.ovirt.engine.core.bll.InternalCommandAttribute;
 import org.ovirt.engine.core.bll.context.CommandContext;
@@ -36,7 +35,8 @@ import org.ovirt.engine.core.utils.JsonHelper;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 @InternalCommandAttribute
-public class RemoveManagedBlockStorageDiskCommand<T extends RemoveDiskParameters> extends CommandBase<T> {
+public class RemoveManagedBlockStorageDiskCommand<T extends RemoveDiskParameters>
+        extends ManagedBlockStorageDiskCommandBase<T> {
 
     @Inject
     private ImageDao imageDao;
@@ -106,6 +106,7 @@ public class RemoveManagedBlockStorageDiskCommand<T extends RemoveDiskParameters
 
         removeDiskFromDb();
         getReturnValue().setActionReturnValue(true);
+        refreshAffectedDomain(getParameters().getStorageDomainId());
         setSucceeded(true);
         persistCommandIfNeeded();
     }
