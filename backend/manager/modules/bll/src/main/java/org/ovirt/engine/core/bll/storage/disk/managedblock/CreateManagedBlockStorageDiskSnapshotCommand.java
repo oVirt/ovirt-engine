@@ -6,7 +6,6 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import org.ovirt.engine.core.bll.CommandBase;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
@@ -36,7 +35,7 @@ import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 @NonTransactiveCommandAttribute
 public class CreateManagedBlockStorageDiskSnapshotCommand<T extends CreateManagedBlockStorageDiskSnapshotParameters>
-        extends CommandBase<T> {
+        extends ManagedBlockStorageDiskCommandBase<T> {
 
     @Inject
     private ManagedBlockExecutor managedBlockExecutor;
@@ -112,6 +111,7 @@ public class CreateManagedBlockStorageDiskSnapshotCommand<T extends CreateManage
         // To be used later when rolling back
         getParameters().setImageId(snapshotId);
 
+        refreshAffectedDomain(getParameters().getStorageDomainId());
         setSucceeded(true);
     }
 

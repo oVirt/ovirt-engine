@@ -5,7 +5,6 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import org.ovirt.engine.core.bll.CommandBase;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
@@ -23,7 +22,8 @@ import org.ovirt.engine.core.utils.JsonHelper;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 @NonTransactiveCommandAttribute
-public class RemoveManagedBlockStorageSnapshotCommand<T extends ImagesContainterParametersBase> extends CommandBase<T> {
+public class RemoveManagedBlockStorageSnapshotCommand<T extends ImagesContainterParametersBase>
+        extends ManagedBlockStorageDiskCommandBase<T> {
 
     @Inject
     private ManagedBlockExecutor managedBlockExecutor;
@@ -78,6 +78,7 @@ public class RemoveManagedBlockStorageSnapshotCommand<T extends ImagesContainter
         }
 
         removeSnapshotFromDB();
+        refreshAffectedDomain(getParameters().getStorageDomainId());
         setSucceeded(true);
     }
 

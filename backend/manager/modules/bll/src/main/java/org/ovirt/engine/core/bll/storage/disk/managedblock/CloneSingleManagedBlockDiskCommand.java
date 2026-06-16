@@ -10,7 +10,6 @@ import javax.enterprise.inject.Instance;
 import javax.enterprise.inject.Typed;
 import javax.inject.Inject;
 
-import org.ovirt.engine.core.bll.CommandBase;
 import org.ovirt.engine.core.bll.ConcurrentChildCommandsExecutionCallback;
 import org.ovirt.engine.core.bll.InternalCommandAttribute;
 import org.ovirt.engine.core.bll.context.CommandContext;
@@ -42,7 +41,8 @@ import org.ovirt.engine.core.utils.JsonHelper;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 @InternalCommandAttribute
-public class CloneSingleManagedBlockDiskCommand<T extends ImagesContainterParametersBase> extends CommandBase<T> {
+public class CloneSingleManagedBlockDiskCommand<T extends ImagesContainterParametersBase>
+        extends ManagedBlockStorageDiskCommandBase<T> {
     @Inject
     private ManagedBlockStorageDao managedBlockStorageDao;
     @Inject
@@ -101,6 +101,7 @@ public class CloneSingleManagedBlockDiskCommand<T extends ImagesContainterParame
 
         unlockImage();
         getReturnValue().setActionReturnValue(clonedVolumeId);
+        refreshAffectedDomain(getParameters().getStorageDomainId());
         setSucceeded(true);
     }
 
@@ -178,6 +179,5 @@ public class CloneSingleManagedBlockDiskCommand<T extends ImagesContainterParame
     public CommandCallback getCallback() {
         return callbackProvider.get();
     }
-
 
 }

@@ -40,9 +40,17 @@ public class GetManagedBlockStorageStatsCommand<T extends AddManagedBlockStorage
 
     @Override
     protected void executeCommand() {
-        Map<String, Object> driverOptions = new HashMap<>(getParameters().getDriverOptions());
+        Map<String, Object> driverOptions = new HashMap<>();
+        if (getParameters().getDriverOptions() != null) {
+            driverOptions.putAll(getParameters().getDriverOptions());
+        }
         if (getParameters().getDriverSensitiveOptions() != null) {
             driverOptions.putAll(getParameters().getDriverSensitiveOptions());
+        }
+        if (driverOptions.isEmpty()) {
+            log.warn("No driver options for MBS domain '{}'; cannot fetch stats",
+                    getParameters().getStorageDomainId());
+            return;
         }
 
         ManagedBlockReturnValue returnValue = null;
