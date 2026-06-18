@@ -3179,6 +3179,11 @@ public class AsyncDataProvider {
                 ConfigValues.ManagedBlockDomainSupported, dataCenterVersion.getValue());
     }
 
+    public boolean isNvmeOfSupported(Version dataCenterVersion) {
+        return (Boolean) getConfigValuePreConverted(
+                ConfigValues.NVMeOfSupported, dataCenterVersion.getValue());
+    }
+
     public Boolean isCopyPreallocatedFileBasedDiskSupported(Version dataCenterVersion) {
         return (Boolean) getConfigValuePreConverted(
                 ConfigValues.CopyPreallocatedFileBasedDiskSupported, dataCenterVersion.getValue());
