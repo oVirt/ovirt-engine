@@ -87,6 +87,10 @@ public enum StorageType implements Identifiable {
         return this == MANAGED_BLOCK_STORAGE;
     }
 
+    public boolean isNvmeOfDomain() {
+        return this == NVMEOF;
+    }
+
     /**
      * Returns true for any vendor-managed-block storage backend
      * (Cinder, Managed Block Storage), where the volume lifecycle

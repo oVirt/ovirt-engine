@@ -12,9 +12,11 @@ import javax.inject.Inject;
 import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.validator.storage.StorageDomainValidator;
+import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.StorageDomainManagementParameter;
 import org.ovirt.engine.core.common.businessentities.storage.LUNs;
+import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
@@ -85,6 +87,11 @@ public class AddExistingBlockStorageDomainCommand<T extends StorageDomainManagem
             log.info("There are existing luns in the system which are part of VG id '{}'",
                     getStorageDomain().getStorage());
             return failValidation(EngineMessage.ACTION_TYPE_FAILED_IMPORT_STORAGE_DOMAIN_EXTERNAL_LUN_DISK_EXIST);
+        }
+
+        if (getStorageDomain().getStorageType().isNvmeOfDomain() &&
+                !FeatureSupported.isNvmeOfSupported(getVds().getClusterCompatibilityVersion())) {
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_NVMEOF_NOT_SUPPORTED);
         }
 
         return true;
