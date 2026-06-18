@@ -1123,7 +1123,8 @@ public class VdsDynamic implements BusinessEntityWithStatus<Guid, VDSStatus> {
                 cdChangePdiv,
                 ovnConfigured,
                 cpuTopology,
-                vdsmCpusAffinity
+                vdsmCpusAffinity,
+                nvmeHostNqn
         );
     }
 
@@ -1219,6 +1220,7 @@ public class VdsDynamic implements BusinessEntityWithStatus<Guid, VDSStatus> {
                 && cdChangePdiv == other.cdChangePdiv
                 && ovnConfigured == other.ovnConfigured
                 && Objects.equals(cpuTopology, other.cpuTopology)
-                && Objects.equals(vdsmCpusAffinity, other.vdsmCpusAffinity);
+                && Objects.equals(vdsmCpusAffinity, other.vdsmCpusAffinity)
+                && Objects.equals(nvmeHostNqn, other.nvmeHostNqn);
     }
 }
