@@ -19,8 +19,8 @@ import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.businessentities.storage.LUNStorageServerConnectionMap;
 import org.ovirt.engine.core.common.businessentities.storage.LUNs;
-import org.ovirt.engine.core.dao.StorageServerConnectionLunMapDao;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
+import org.ovirt.engine.core.dao.StorageServerConnectionLunMapDao;
 import org.ovirt.engine.core.common.errors.EngineFault;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.vdscommands.StorageServerConnectionManagementVDSParameters;
@@ -169,8 +169,7 @@ public class NVMEOFStorageHelper extends StorageHelperBase {
             }
         }
         return result;
-}
-
+    }
 
     @Override
     protected List<StorageServerConnections> filterConnectionsUsedByOthers(
