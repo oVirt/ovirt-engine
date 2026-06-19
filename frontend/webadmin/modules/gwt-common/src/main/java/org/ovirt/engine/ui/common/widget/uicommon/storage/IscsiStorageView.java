@@ -2,6 +2,7 @@ package org.ovirt.engine.ui.common.widget.uicommon.storage;
 
 import java.util.List;
 
+import org.gwtbootstrap3.client.ui.CheckBox;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.editor.UiCommonEditorDriver;
@@ -72,10 +73,17 @@ public class IscsiStorageView extends AbstractStorageView<IscsiStorageModel> imp
     @Ignore
     Label subLabel;
 
+    @UiField
+    @Ignore
+    CheckBox hideUsedLunsCheckBox;
+
     private double treeCollapsedHeight = 245;
     private double treeExpandedHeight = 355;
     private double lunsTreeHeight = 405;
     private double tabContentHeight = 100;
+
+    private LunFilter lunFilter;
+    private SanTargetFilter sanTargetFilter;
 
     private final Driver driver = GWT.create(Driver.class);
 
@@ -103,6 +111,7 @@ public class IscsiStorageView extends AbstractStorageView<IscsiStorageModel> imp
     void localize() {
         lunToTargetsTab.setLabel(constants.storageIscsiPopupLunToTargetsTabLabel());
         targetsToLunTab.setLabel(constants.storageIscsiPopupTargetsToLunTabLabel());
+        hideUsedLunsCheckBox.setHTML(SafeHtmlUtils.fromString(constants.hideUsedLunsForISCSILabel()));
     }
 
     @Override
@@ -170,12 +179,17 @@ public class IscsiStorageView extends AbstractStorageView<IscsiStorageModel> imp
                 warning.setVisible(!StringHelper.isNullOrEmpty(warningText));
             }
         });
+
+        initHideUsedLunsCheckBox(object);
     }
 
     void initLists(IscsiStorageModel object) {
+        lunFilter = new LunFilter(hideUsedLunsCheckBox.getValue());
+        sanTargetFilter = new SanTargetFilter(hideUsedLunsCheckBox.getValue());
         // Create discover panel and storage lists
-        iscsiTargetToLunView = new IscsiTargetToLunView(treeCollapsedHeight, treeExpandedHeight, false, multiSelection);
-        iscsiLunToTargetView = new IscsiLunToTargetView(lunsTreeHeight, multiSelection);
+        iscsiTargetToLunView = new IscsiTargetToLunView(treeCollapsedHeight, treeExpandedHeight, false, multiSelection,
+                sanTargetFilter, lunFilter);
+        iscsiLunToTargetView = new IscsiLunToTargetView(lunsTreeHeight, multiSelection, lunFilter);
 
         // Update Style
         dialogTabPanel.getElement().getStyle().setHeight(tabContentHeight, Unit.PCT);
@@ -241,6 +255,18 @@ public class IscsiStorageView extends AbstractStorageView<IscsiStorageModel> imp
 
     @Override
     public void focus() {
+    }
+
+    private void initHideUsedLunsCheckBox(IscsiStorageModel object) {
+        hideUsedLunsCheckBox.addValueChangeHandler(event -> {
+            if (lunFilter != null) {
+                lunFilter.setIsHideUsedLuns(event.getValue());
+            }
+            if (sanTargetFilter != null) {
+                sanTargetFilter.setIsHideUsedLuns(event.getValue());
+            }
+            updateListByGrouping(object);
+        });
     }
 
     interface WidgetStyle extends CssResource {

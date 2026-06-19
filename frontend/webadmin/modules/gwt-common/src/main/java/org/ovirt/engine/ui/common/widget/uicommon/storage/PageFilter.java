@@ -41,9 +41,9 @@ public class PageFilter implements PagingDataProvider {
         }
 
         if (currentSize != items.size() || !isCurrentPageValid()) {
-            currentSize = items.size();
             currentPage = 0;
         }
+        currentSize = items.size();
 
         return new ArrayList(items).subList(getFirstItemOnPage(), getLastItemOnPage() + 1);
     }
@@ -71,6 +71,12 @@ public class PageFilter implements PagingDataProvider {
     @Override
     public void refresh() {
 
+    }
+
+    @Override
+    public void reload(Collection items) {
+        currentSize = items.size();
+        currentPage = 0;
     }
 
     public boolean canGoForward() {
