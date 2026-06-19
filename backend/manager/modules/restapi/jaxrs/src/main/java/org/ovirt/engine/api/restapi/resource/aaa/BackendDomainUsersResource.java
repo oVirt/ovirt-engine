@@ -75,6 +75,7 @@ public class BackendDomainUsersResource
 
     @Override
     public Users list() {
+        checkAdminPermission();
         return mapUsers(getDomainUsers());
     }
 
