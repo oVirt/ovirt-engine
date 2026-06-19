@@ -295,7 +295,7 @@ public class LiveMigrateDiskCommand<T extends LiveMigrateDiskParameters> extends
             // at the end of CreateSnapshotForVm command called from the executeCommand() method.
             // Here the lock is acquired again and will be released when this command (LiveMigrateDisk)
             // finishes.
-            EngineLock removeSnapshotLock = createEngineLockForSnapshotRemove();
+            EngineLock removeSnapshotLock = getEngineLockForSnapshotRemove();
             if (!lockManager.acquireLock(removeSnapshotLock).isAcquired()) {
                 log.info("Failed to acquire VM lock, will retry on the next polling cycle");
                 return true;
@@ -376,6 +376,17 @@ public class LiveMigrateDiskCommand<T extends LiveMigrateDiskParameters> extends
         return new EngineLock(
                 getExclusiveLocksForSnapshotRemove(),
                 getSharedLocksForSnapshotRemove());
+    }
+
+    private EngineLock getEngineLockForSnapshotRemove() {
+        EngineLock lock = getLock();
+        if (lock != null && !lock.getExclusiveLocks().isEmpty()) {
+            // In the generic scenario, use the lock created by the MigrateDiskCommand
+            return lock;
+        }
+        // This happens when the engine was restarted during active live disk migration. Use special lock to clean up
+        // temporary VM snapshot created by the migration
+        return createEngineLockForSnapshotRemove();
     }
 
     private boolean isConsiderSuccessful() {
