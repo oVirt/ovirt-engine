@@ -203,6 +203,7 @@ import org.ovirt.engine.ui.uicommonweb.models.storage.IscsiStorageModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.LocalStorageModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.ManagedBlockStorageModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.NfsStorageModel;
+import org.ovirt.engine.ui.uicommonweb.models.storage.NvmeOfStorageModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.PosixStorageModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.NetworkFilterParameterModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
