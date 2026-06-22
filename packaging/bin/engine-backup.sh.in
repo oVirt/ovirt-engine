@@ -2026,43 +2026,47 @@ resetHAVMStatus() {
 		|| logdie "Failed resetting HA VM status"
 }
 
+restoreP12Backup() {
+	local file="$1"
+	local backup="$2"
+	local reason="$3"
+
+	output "  - Warning: ${reason}; restoring $(basename "${file}") from backup"
+	mv -f "${backup}" "${file}" || logdie "Failed to restore ${file}"
+}
+
 reencryptLegacyP12() {
 	local file="$1"
 	local pki_password="$2"
 	local timestamp="$3"
-	
-	log "Found legacy encryption in ${file}, re-encrypting."
-	
-	mv -f "${file}" "${file}.backup.${timestamp}" || logdie "Failed to backup ${file}"
-	
+	local backup="${file}.backup.${timestamp}"
 	local temp_key="${TEMP_FOLDER}/temp_key_${timestamp}_$$.pem"
 	local temp_certs="${TEMP_FOLDER}/temp_certs_${timestamp}_$$.pem"
-	local result=1
-	
-	openssl pkcs12 -in "${file}.backup.${timestamp}" -passin "pass:${pki_password}" -legacy \
-		-nocerts -out "${temp_key}" -passout "pass:${pki_password}" 2>> "${LOG}" && \
-	openssl pkcs12 -in "${file}.backup.${timestamp}" -passin "pass:${pki_password}" -legacy \
-		-nokeys -out "${temp_certs}" 2>> "${LOG}"
-	local extract_success=$?
-	
-	if [ ${extract_success} -eq 0 ]; then
-		openssl pkcs12 -export -in "${temp_certs}" -inkey "${temp_key}" \
+	local result=0
+
+	log "Found legacy encryption in ${file}, re-encrypting."
+
+	mv -f "${file}" "${backup}" || logdie "Failed to backup ${file}"
+
+	if ! { openssl pkcs12 -in "${backup}" -passin "pass:${pki_password}" -legacy \
+			-nocerts -out "${temp_key}" -passout "pass:${pki_password}" 2>> "${LOG}" && \
+		openssl pkcs12 -in "${backup}" -passin "pass:${pki_password}" -legacy \
+			-nokeys -out "${temp_certs}" 2>> "${LOG}"; }; then
+		restoreP12Backup "${file}" "${backup}" "Failed to extract key/cert from ${file}"
+		result=1
+	elif ! openssl pkcs12 -export -in "${temp_certs}" -inkey "${temp_key}" \
 			-passin "pass:${pki_password}" -passout "pass:${pki_password}" \
-			-out "${file}" 2>> "${LOG}"
-		local reencrypt_success=$?
-		
-		if [ ${reencrypt_success} -eq 0 ]; then
-			output "  - Successfully re-encrypted $(basename "${file}") (backup: $(basename "${file}").backup.${timestamp})"
-			result=0
-		else
-			log "Warning: Failed to re-encrypt ${file}, restoring from backup"
-			mv -f "${file}.backup.${timestamp}" "${file}" || logdie "Failed to restore ${file}"
-		fi
+			-out "${file}" 2>> "${LOG}"; then
+		restoreP12Backup "${file}" "${backup}" "Failed to re-encrypt ${file}"
+		result=1
+	elif ! { chown --reference="${backup}" "${file}" 2>> "${LOG}" && \
+		chmod --reference="${backup}" "${file}" 2>> "${LOG}"; }; then
+		restoreP12Backup "${file}" "${backup}" "Failed to restore ownership/permissions on ${file}"
+		result=1
 	else
-		log "Warning: Failed to extract key/cert from ${file}, restoring from backup"
-		mv -f "${file}.backup.${timestamp}" "${file}" || logdie "Failed to restore ${file}"
+		output "  - Successfully re-encrypted $(basename "${file}") (backup: $(basename "${backup}"))"
 	fi
-	
+
 	rm -f "${temp_key}" "${temp_certs}"
 	return ${result}
 }
