@@ -79,6 +79,11 @@ public abstract class StorageServerConnectionCommandBase<T extends StorageServer
         } else if (connection.getStorageType().isFileDomain()) {
             String connectionField = connection.getConnection();
             connections = storageServerConnectionDao.getAllForStorage(connectionField);
+        } else if (connection.getStorageType() == StorageType.NVMEOF) {
+            connections = storageServerConnectionDao.getStorageConnectionsByConnectionPortAndIqn(
+                    connection.getConnection(),
+                    connection.getTrsvcid(),
+                    connection.getNqn());
         } else {
             connections = iscsiStorageHelper.findConnectionsByAddressPortAndIqn(connection);
         }
@@ -112,7 +117,7 @@ public abstract class StorageServerConnectionCommandBase<T extends StorageServer
 
     private static String getFieldName(StorageServerConnections paramConnection) {
         String fieldName;
-        if (paramConnection.getStorageType().equals(StorageType.ISCSI)) {
+        if (paramConnection.getStorageType().equals(StorageType.ISCSI) || paramConnection.getStorageType().equals(StorageType.NVMEOF)) {
             fieldName = "address";
         } else if (paramConnection.getStorageType().isFileDomain()) {
             fieldName = "path";

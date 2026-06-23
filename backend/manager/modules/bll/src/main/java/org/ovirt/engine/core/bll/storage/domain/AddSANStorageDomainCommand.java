@@ -7,6 +7,7 @@ import javax.inject.Inject;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.validator.storage.StorageDomainValidator;
+import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.action.AddSANStorageDomainParameters;
 import org.ovirt.engine.core.common.businessentities.storage.LUNs;
 import org.ovirt.engine.core.common.errors.EngineMessage;
@@ -92,6 +93,10 @@ public class AddSANStorageDomainCommand<T extends AddSANStorageDomainParameters>
         }
         if (isLunsAlreadyInUse(getParameters().getLunIds())) {
             return false;
+        }
+        if (getStorageDomain().getStorageType().isNvmeOfDomain() &&
+                !FeatureSupported.isNvmeOfSupported(getVds().getClusterCompatibilityVersion())) {
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_NVMEOF_NOT_SUPPORTED);
         }
         return true;
     }
