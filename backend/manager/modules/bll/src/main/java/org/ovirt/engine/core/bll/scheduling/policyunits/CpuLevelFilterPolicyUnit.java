@@ -58,7 +58,8 @@ public class CpuLevelFilterPolicyUnit extends PolicyUnitImpl {
 
         // Migration checks for a VM with CPU passthrough.
         // In case of CPU passthrough enabled, the VM's CPU flags (the flags that the VM started running with)
-        // should be identical to target host's CPU flags for migration to be allowed
+        // must all be present on the target host for migration to be allowed; the target host may
+        // additionally expose more flags than required (per libvirt migration compatibility requirements).
         // TODO figure out how to handle hostModel
         if (vm.isUsingCpuPassthrough()
                 && Objects.nonNull(vm.getCpuName())) {
@@ -76,20 +77,15 @@ public class CpuLevelFilterPolicyUnit extends PolicyUnitImpl {
                     log.debug("Host {} provides flags: {}", host.getName(), formatFlags(providedFlags));
                 }
 
-                if (requiredFlags.equals(providedFlags)) {
+                if (providedFlags.containsAll(requiredFlags)) {
                     hostsToRunOn.add(host);
                 } else {
                     String missingFlags = formatFlags(requiredFlags, providedFlags);
-                    String additionalFlags = formatFlags(providedFlags, requiredFlags);
-                    log.debug("Host {} can't run the VM because it's CPU flags are not exactly identical to VM's required CPU flags."
-                                    + " It is missing flags: {}."
-                                    + " And it has additional flags: {}",
-                            host.getName(),
-                            missingFlags,
-                            additionalFlags);
-
+                    log.debug("Host {} can't run the VM because its CPU flags are missing some of the VM's required CPU flags."
+                                + " Missing flags: {}",
+                        host.getName(),
+                        missingFlags);
                     messages.addMessage(host.getId(), String.format("$missingFlags %1$s", missingFlags));
-                    messages.addMessage(host.getId(), String.format("$additionalFlags %1$s", additionalFlags));
                     messages.addMessage(host.getId(), EngineMessage.VAR__DETAIL__CPU_FLAGS_NOT_IDENTICAL.toString());
                 }
             }
