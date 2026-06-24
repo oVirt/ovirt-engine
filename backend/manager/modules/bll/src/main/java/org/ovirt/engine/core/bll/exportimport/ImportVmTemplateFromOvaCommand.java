@@ -3,6 +3,8 @@ package org.ovirt.engine.core.bll.exportimport;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -10,6 +12,8 @@ import javax.enterprise.inject.Instance;
 import javax.enterprise.inject.Typed;
 import javax.inject.Inject;
 
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute.CommandCompensationPhase;
 import org.ovirt.engine.core.bll.SerialChildCommandsExecutionCallback;
@@ -34,12 +38,12 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
 import org.ovirt.engine.core.common.errors.EngineException;
+import org.ovirt.engine.core.common.errors.EngineFault;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.job.Step;
 import org.ovirt.engine.core.common.job.StepEnum;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.job.ExecutionMessageDirector;
-import org.ovirt.engine.core.dao.DiskDao;
 import org.ovirt.engine.core.dao.VdsDao;
 
 @NonTransactiveCommandAttribute(forceCompensation = true, compensationPhase = CommandCompensationPhase.END_COMMAND)
@@ -48,8 +52,6 @@ public class ImportVmTemplateFromOvaCommand<T extends ImportVmTemplateFromOvaPar
 
     @Inject
     private VdsDao vdsDao;
-    @Inject
-    private DiskDao diskDao;
     @Inject
     @Typed(SerialChildCommandsExecutionCallback.class)
     private Instance<SerialChildCommandsExecutionCallback> callbackProvider;
@@ -89,6 +91,11 @@ public class ImportVmTemplateFromOvaCommand<T extends ImportVmTemplateFromOvaPar
                 buildAddDiskParameters(image));
 
         if (!actionReturnValue.getSucceeded()) {
+            log.error("AddDiskToTemplate failed importing template '{}' ({}), disk alias '{}': {}",
+                    getVmTemplateName(),
+                    getVmTemplateId(),
+                    image.getDiskAlias(),
+                    formatActionReturnFailure(actionReturnValue));
             throw new EngineException(actionReturnValue.getFault().getError(),
                     "Failed to create disk!");
         }
@@ -148,20 +155,18 @@ public class ImportVmTemplateFromOvaCommand<T extends ImportVmTemplateFromOvaPar
 
     @Override
     protected void endWithFailure() {
+        log.error("ImportVmTemplateFromOva failed for template '{}' ({}): {}",
+                getVmTemplateName(),
+                getVmTemplateId(),
+                formatActionReturnFailure(getReturnValue()));
         removeVmImages();
         setSucceeded(true);
     }
 
     protected void removeVmImages() {
         runInternalAction(ActionType.RemoveAllVmImages,
-                buildRemoveAllVmImagesParameters(),
+                new RemoveAllVmImagesParameters(getVmTemplateId(), getVmTemplate().getDiskList()),
                 cloneContextAndDetachFromParent());
-    }
-
-    private RemoveAllVmImagesParameters buildRemoveAllVmImagesParameters() {
-        return new RemoveAllVmImagesParameters(
-                getVmTemplateId(),
-                diskDao.getAllForVm(getVmTemplateId()).stream().map(DiskImage.class::cast).collect(Collectors.toList()));
     }
 
     @Override
@@ -180,8 +185,24 @@ public class ImportVmTemplateFromOvaCommand<T extends ImportVmTemplateFromOvaPar
 
     @Override
     protected void copyImagesToTargetDomain() {
-        getImages().stream().map(this::adjustDisk).forEach(this::createDisk);
-        getParameters().setDiskMappings(getImageMappings());
+        // OVF tar names per disk via originalDiskImageIdMap (populated by initImportClonedTemplateDisks
+        // for both Clone and !Clone); persist via diskMappings (command is reloaded before convert()).
+        List<Guid> ovfTarImageIds = getImages().stream()
+                .map(d -> {
+                    Guid orig = getOriginalDiskImageIdMap(d.getId());
+                    return orig != null ? orig : d.getImageId();
+                })
+                .collect(Collectors.toList());
+        List<Guid> createdDiskIds = new ArrayList<>();
+        getImages().stream().map(this::adjustDisk).forEach(img -> createdDiskIds.add(createDisk(img)));
+        getParameters().setTemplateDiskIdsForOvaExtract(createdDiskIds);
+        if (createdDiskIds.size() == ovfTarImageIds.size()) {
+            Map<Guid, Guid> tarNameByDiskId = new LinkedHashMap<>();
+            for (int i = 0; i < createdDiskIds.size(); i++) {
+                tarNameByDiskId.put(createdDiskIds.get(i), ovfTarImageIds.get(i));
+            }
+            getParameters().setDiskMappings(tarNameByDiskId);
+        }
     }
 
     protected DiskImage adjustDisk(DiskImage image) {
@@ -193,16 +214,41 @@ public class ImportVmTemplateFromOvaCommand<T extends ImportVmTemplateFromOvaPar
         return image;
     }
 
-    protected Map<Guid, Guid> getImageMappings() {
-        return getImages().stream().collect(Collectors.toMap(
-                DiskImage::getImageId,
-                d -> getOriginalDiskImageIdMap(d.getId())));
+    protected void prepareForOvaConversion() {
+    }
+
+    protected ActionType extractOvaActionType() {
+        return ActionType.ExtractOva;
+    }
+
+    protected void enrichExtractOvaParameters(ConvertOvaParameters parameters) {
+    }
+
+    private List<String> buildOvaTarNamesByIndex() {
+        Map<Guid, Guid> tarNameByDiskId = getParameters().getImageMappings();
+        if (tarNameByDiskId == null || tarNameByDiskId.isEmpty()) {
+            return null;
+        }
+        return getVmTemplate().getDiskList().stream()
+                .map(d -> {
+                    Guid tarName = tarNameByDiskId.get(d.getId());
+                    return tarName != null ? tarName.toString() : null;
+                })
+                .collect(Collectors.toList());
     }
 
     private void convert() {
-        runInternalAction(ActionType.ExtractOva,
+        vmTemplateHandler.updateDisksFromDb(getVmTemplate());
+        prepareForOvaConversion();
+        ActionReturnValue extractRet = runInternalAction(extractOvaActionType(),
                 buildExtractOvaParameters(),
                 createConversionStepContext(StepEnum.EXTRACTING_OVA));
+        if (extractRet != null && !extractRet.getSucceeded()) {
+            log.error("ExtractOva failed for template '{}' ({}): {}",
+                    getVmTemplateName(),
+                    getVmTemplateId(),
+                    formatActionReturnFailure(extractRet));
+        }
     }
 
     private ConvertOvaParameters buildExtractOvaParameters() {
@@ -210,7 +256,6 @@ public class ImportVmTemplateFromOvaCommand<T extends ImportVmTemplateFromOvaPar
         parameters.setOvaPath(getParameters().getOvaPath());
         parameters.setVmName(getVmTemplateName());
         parameters.setDisks(getVmTemplate().getDiskList());
-        parameters.setImageMappings(getParameters().getImageMappings());
         parameters.setStoragePoolId(getStoragePoolId());
         parameters.setStorageDomainId(getStorageDomainId());
         parameters.setProxyHostId(getParameters().getProxyHostId());
@@ -219,6 +264,9 @@ public class ImportVmTemplateFromOvaCommand<T extends ImportVmTemplateFromOvaPar
         parameters.setParentParameters(getParameters());
         parameters.setEndProcedure(EndProcedure.COMMAND_MANAGED);
         parameters.setVmEntityType(VmEntityType.TEMPLATE);
+        parameters.setOvaTarNamesByIndex(buildOvaTarNamesByIndex());
+        parameters.setTemplateDiskIdsForExtract(getParameters().getTemplateDiskIdsForOvaExtract());
+        enrichExtractOvaParameters(parameters);
         return parameters;
     }
 
@@ -241,9 +289,8 @@ public class ImportVmTemplateFromOvaCommand<T extends ImportVmTemplateFromOvaPar
             commandCtx = cloneContext().withoutCompensationContext().withExecutionContext(ctx).withoutLock();
 
         } catch (RuntimeException e) {
-            log.error("Failed to create command context of converting template '{}': {}",
-                    getVmTemplateName(), e.getMessage());
-            log.debug("Exception", e);
+            log.error("Failed to create command context for ExtractOva (template '{}' {})",
+                    getVmTemplateName(), getVmTemplateId(), e);
         }
 
         return commandCtx;
@@ -252,5 +299,57 @@ public class ImportVmTemplateFromOvaCommand<T extends ImportVmTemplateFromOvaPar
     @Override
     public CommandCallback getCallback() {
         return callbackProvider.get();
+    }
+
+    private static String formatActionReturnFailure(ActionReturnValue rv) {
+        if (rv == null) {
+            return "null ActionReturnValue";
+        }
+        StringBuilder sb = new StringBuilder();
+        EngineFault fault = rv.getFaultOrNull();
+        if (fault != null) {
+            sb.append(formatEngineFault(fault));
+        } else {
+            sb.append("(no fault set)");
+        }
+        appendNonEmpty(sb, "description", rv.getDescription());
+        appendNonEmptyList(sb, "executeFailedMessages", rv.getExecuteFailedMessages());
+        appendNonEmptyList(sb, "validationMessages", rv.getValidationMessages());
+        return sb.toString();
+    }
+
+    private static void appendNonEmpty(StringBuilder sb, String label, String value) {
+        if (StringUtils.isNotEmpty(value)) {
+            sb.append(", ").append(label).append('=').append(value);
+        }
+    }
+
+    private static void appendNonEmptyList(StringBuilder sb, String label, List<String> values) {
+        if (CollectionUtils.isNotEmpty(values)) {
+            sb.append(", ").append(label).append('=').append(values);
+        }
+    }
+
+    private static String formatEngineFault(EngineFault fault) {
+        if (fault == null) {
+            return "null";
+        }
+        StringBuilder sb = new StringBuilder();
+        if (fault.getError() != null) {
+            sb.append("error=").append(fault.getError());
+        }
+        if (fault.getMessage() != null) {
+            if (sb.length() > 0) {
+                sb.append(", ");
+            }
+            sb.append("message=").append(fault.getMessage());
+        }
+        if (fault.getDetails() != null && !fault.getDetails().isEmpty()) {
+            if (sb.length() > 0) {
+                sb.append(", ");
+            }
+            sb.append("details=").append(fault.getDetails());
+        }
+        return sb.length() > 0 ? sb.toString() : "(empty fault)";
     }
 }

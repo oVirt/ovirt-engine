@@ -2,12 +2,12 @@ package org.ovirt.engine.core.bll.exportimport;
 
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.Collections;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 import javax.enterprise.inject.Instance;
 import javax.enterprise.inject.Typed;
@@ -23,6 +23,7 @@ import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
 import org.ovirt.engine.core.common.action.ConvertOvaParameters;
 import org.ovirt.engine.core.common.businessentities.VmEntityType;
+import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
 import org.ovirt.engine.core.common.errors.EngineError;
@@ -36,7 +37,7 @@ import org.ovirt.engine.core.common.utils.ansible.AnsibleReturnValue;
 import org.ovirt.engine.core.common.utils.ansible.AnsibleRunnerClient;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.CommandStatus;
-import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.DiskDao;
 import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.utils.EngineLocalConfig;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.PrepareImageReturn;
@@ -58,6 +59,8 @@ public class ExtractOvaCommand<T extends ConvertOvaParameters> extends VmCommand
     private VmTemplateHandler templateHandler;
     @Inject
     private VmDao vmDao;
+    @Inject
+    private DiskDao diskDao;
     @Inject
     @Typed(ConcurrentChildCommandsExecutionCallback.class)
     private Instance<ConcurrentChildCommandsExecutionCallback> callbackProvider;
@@ -83,9 +86,10 @@ public class ExtractOvaCommand<T extends ConvertOvaParameters> extends VmCommand
     protected void executeVmCommand() {
         try {
             updateDisksFromDb();
+            prepareDisksBeforeExtract();
             List<String> diskPaths = prepareImages();
-            String diskPathToFormat = prepareDiskPathToFormat(getDiskList(), diskPaths);
-            boolean succeeded = runAnsibleImportOvaPlaybook(diskPathToFormat);
+            String disksJson = prepareDisksJson(getDiskList(), diskPaths);
+            boolean succeeded = runAnsibleImportOvaPlaybook(disksJson);
             teardownImages();
             if (!succeeded) {
                 log.error("Failed to extract OVA file");
@@ -100,33 +104,42 @@ public class ExtractOvaCommand<T extends ConvertOvaParameters> extends VmCommand
         }
     }
 
+    protected void prepareDisksBeforeExtract() {
+    }
+
     private void updateDisksFromDb() {
         if (getParameters().getVmEntityType() == VmEntityType.TEMPLATE) {
-            templateHandler.updateDisksFromDb(getVmTemplate());
+            VmTemplate vmt = getVmTemplate();
+            if (vmt == null) {
+                throw new EngineException(EngineError.GeneralException, "OVA extract: template entity not found");
+            }
+            templateHandler.updateDisksFromDb(vmt);
+            if (vmt.getDiskList().isEmpty()) {
+                templateHandler.addTemplateDisksFromDiskIds(vmt, getParameters().getTemplateDiskIdsForExtract());
+            }
+            if (vmt.getDiskList().isEmpty()) {
+                int rawCount = diskDao.getAllForVm(vmt.getId()).size();
+                log.error(
+                        "OVA extract: no disks on template {} after reload (diskDao.getAllForVm returned {} row(s)); "
+                                + "cannot build target paths for extract_ova.py",
+                        vmt.getId(),
+                        rawCount);
+                throw new EngineException(
+                        EngineError.GeneralException,
+                        "OVA extract found no template disks in the engine database; check template id and disk attachment.");
+            }
         } else {
             vmHandler.updateDisksFromDb(getVm());
         }
     }
 
-    private Map<Guid, Guid> getImageMappings() {
-        return getParameters().getImageMappings() != null ?
-                getParameters().getImageMappings()
-                : Collections.emptyMap();
-    }
-
-    private boolean runAnsibleImportOvaPlaybook(String disksPathToFormat) {
+    private boolean runAnsibleImportOvaPlaybook(String disksJson) {
         long timeout = TimeUnit.MINUTES.toSeconds(
             EngineLocalConfig.getInstance().getInteger("ANSIBLE_PLAYBOOK_EXEC_DEFAULT_TIMEOUT"));
         AnsibleCommandConfig commandConfig = new AnsibleCommandConfig()
                 .host(getVds())
                 .variable("ovirt_import_ova_path", getParameters().getOvaPath())
-                .variable("ovirt_import_ova_disks", disksPathToFormat)
-                .variable("ovirt_import_ova_image_mappings",
-                        getImageMappings().entrySet()
-                                .stream()
-                                .map(e -> String
-                                        .format("\\\"%s\\\": \\\"%s\\\"", e.getValue().toString(), e.getKey().toString()))
-                                .collect(Collectors.joining(", ", "{", "}")))
+                .variable("ovirt_import_ova_disks", disksJson)
                 .variable("ansible_timeout", timeout)
                 // /var/log/ovirt-engine/ova/ovirt-import-ova-ansible-{hostname}-{correlationid}-{timestamp}.log
                 .logFileDirectory(IMPORT_OVA_LOG_DIRECTORY)
@@ -182,49 +195,55 @@ public class ExtractOvaCommand<T extends ConvertOvaParameters> extends VmCommand
      */
     private List<String> prepareImages() {
         return getDiskList().stream()
-                .map(this::prepareImage)
-                .map(PrepareImageReturn::getImagePath)
+                .map(this::prepareImagePath)
                 .collect(Collectors.toList());
     }
 
     /**
-     * @return a json with the corresponding mounted disks paths and formats
+     * @return JSON map keyed by OVA tar member name: {tarName: {path, format}}
      */
-    private String prepareDiskPathToFormat(List<DiskImage> diskList, List<String> diskPaths) {
-        Map<String, String> diskPathToFormat = IntStream.range(0, diskList.size())
-                .boxed()
-                .collect(Collectors.toMap(i -> diskPaths.get(i),
-                        i -> diskList.get(i).getVolumeFormat() == VolumeFormat.COW ? "qcow2" : "raw"));
-        String json;
+    private String prepareDisksJson(List<DiskImage> diskList, List<String> diskPaths) {
+        List<String> tarNames = getParameters().getOvaTarNamesByIndex();
+        if (tarNames == null || tarNames.size() != diskList.size()) {
+            throw new EngineException(
+                    EngineError.GeneralException,
+                    "OVA extract: ovaTarNamesByIndex missing or size mismatch with disk list");
+        }
+        Map<String, Map<String, String>> entries = new LinkedHashMap<>();
+        for (int i = 0; i < diskList.size(); i++) {
+            Map<String, String> entry = new HashMap<>();
+            entry.put("path", diskPaths.get(i));
+            entry.put("format", diskList.get(i).getVolumeFormat() == VolumeFormat.COW ? "qcow2" : "raw");
+            entries.put(tarNames.get(i), entry);
+        }
         try {
-            json = new ObjectMapper().writeValueAsString(diskPathToFormat);
+            return encode(new ObjectMapper().writeValueAsString(entries));
         } catch (IOException e) {
             throw new RuntimeException("failed to serialize disk info");
         }
-        return encode(json);
     }
 
-    private List<DiskImage> getDiskList() {
+    protected List<DiskImage> getDiskList() {
         return getParameters().getVmEntityType() == VmEntityType.TEMPLATE ?
                 getVmTemplate().getDiskList()
                 : getVm().getDiskList();
     }
 
-    private PrepareImageReturn prepareImage(DiskImage image) {
+    protected String prepareImagePath(DiskImage image) {
         VDSReturnValue vdsRetVal = imagesHandler.prepareImage(
                 image.getStoragePoolId(),
                 image.getStorageIds().get(0),
                 image.getId(),
                 image.getImageId(),
                 getParameters().getProxyHostId());
-        return (PrepareImageReturn) vdsRetVal.getReturnValue();
+        return ((PrepareImageReturn) vdsRetVal.getReturnValue()).getImagePath();
     }
 
     private void teardownImages() {
         getDiskList().forEach(this::teardownImage);
     }
 
-    private void teardownImage(DiskImage image) {
+    protected void teardownImage(DiskImage image) {
         imagesHandler.teardownImage(
                 image.getStoragePoolId(),
                 image.getStorageIds().get(0),

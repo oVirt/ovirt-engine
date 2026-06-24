@@ -375,6 +375,10 @@ public enum ActionType {
     AddExternalLease(1051, QuotaDependency.NONE),
     RemoveExternalLease(1052, QuotaDependency.NONE),
     FenceLeaseJob(1053, QuotaDependency.NONE),
+    MbsExtractOva(1054, QuotaDependency.NONE),
+    MbsConvertOva(1055, QuotaDependency.NONE),
+    MbsImportVmFromOva(1056, ActionGroup.IMPORT_EXPORT_VM, QuotaDependency.STORAGE),
+    MbsImportVmTemplateFromOva(1057, ActionGroup.IMPORT_EXPORT_VM, QuotaDependency.STORAGE),
 
     // Sync luns
     SyncAllStorageDomainsLuns(1042, QuotaDependency.NONE),

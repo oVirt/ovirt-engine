@@ -1,5 +1,10 @@
 package org.ovirt.engine.core.bll.exportimport;
 
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
 import org.ovirt.engine.core.bll.DisableInPrepareMode;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute.CommandCompensationPhase;
@@ -43,24 +48,54 @@ public class ImportVmFromOvaCommand<T extends ImportVmFromOvaParameters> extends
         return isVirtV2VUsed() ? super.isHostInSupportedClusterForProxyHost(host) : true;
     }
 
-    private boolean isVirtV2VUsed() {
+    protected boolean isVirtV2VUsed() {
         return getParameters().getVm().getOrigin() != OriginType.OVIRT;
     }
 
     @Override
+    protected void processImages() {
+        // Capture OVF tar names (image.imageId == <File ovf:href>) before super.processImages
+        // mints fresh disk ids; persist via imageMappings (command is reloaded before convert()).
+        List<Guid> ovfTarImageIds = getVm().getImages().stream()
+                .map(DiskImage::getImageId)
+                .collect(Collectors.toList());
+        super.processImages();
+        List<DiskImage> live = getDisks();
+        if (live.size() == ovfTarImageIds.size()) {
+            Map<Guid, Guid> tarNameByDiskId = new LinkedHashMap<>();
+            for (int i = 0; i < live.size(); i++) {
+                tarNameByDiskId.put(live.get(i).getId(), ovfTarImageIds.get(i));
+            }
+            getParameters().setImageMappings(tarNameByDiskId);
+        }
+    }
+
+    @Override
     protected void convert() {
+        prepareForOvaConversion();
         if (isVirtV2VUsed()) {
-            runInternalAction(ActionType.ConvertOva,
+            runInternalAction(convertOvaActionType(),
                     buildConvertOvaParameters(),
                     createConversionStepContext(StepEnum.CONVERTING_OVA));
         } else {
-            runInternalAction(ActionType.ExtractOva,
+            runInternalAction(extractOvaActionType(),
                     buildExtractOvaParameters(),
                     createConversionStepContext(StepEnum.EXTRACTING_OVA));
         }
     }
 
-    private ConvertOvaParameters buildConvertOvaParameters() {
+    protected void prepareForOvaConversion() {
+    }
+
+    protected ActionType convertOvaActionType() {
+        return ActionType.ConvertOva;
+    }
+
+    protected ActionType extractOvaActionType() {
+        return ActionType.ExtractOva;
+    }
+
+    protected ConvertOvaParameters buildConvertOvaParameters() {
         ConvertOvaParameters parameters = new ConvertOvaParameters(getVmId());
         parameters.setOvaPath(getParameters().getOvaPath());
         parameters.setVmName(getVmName());
@@ -75,15 +110,16 @@ public class ImportVmFromOvaCommand<T extends ImportVmFromOvaParameters> extends
         parameters.setParentCommand(getActionType());
         parameters.setParentParameters(getParameters());
         parameters.setEndProcedure(EndProcedure.COMMAND_MANAGED);
+        parameters.setOvaTarNamesByIndex(buildOvaTarNamesByIndex());
+        enrichConvertOvaParameters(parameters);
         return parameters;
     }
 
-    private ConvertOvaParameters buildExtractOvaParameters() {
+    protected ConvertOvaParameters buildExtractOvaParameters() {
         ConvertOvaParameters parameters = new ConvertOvaParameters(getVmId());
         parameters.setOvaPath(getParameters().getOvaPath());
         parameters.setVmName(getVmName());
         parameters.setDisks(getDisks());
-        parameters.setImageMappings(getParameters().getImageMappings());
         parameters.setStoragePoolId(getStoragePoolId());
         parameters.setStorageDomainId(getStorageDomainId());
         parameters.setProxyHostId(getParameters().getProxyHostId());
@@ -91,7 +127,28 @@ public class ImportVmFromOvaCommand<T extends ImportVmFromOvaParameters> extends
         parameters.setParentCommand(getActionType());
         parameters.setParentParameters(getParameters());
         parameters.setEndProcedure(EndProcedure.COMMAND_MANAGED);
+        parameters.setOvaTarNamesByIndex(buildOvaTarNamesByIndex());
+        enrichExtractOvaParameters(parameters);
         return parameters;
+    }
+
+    protected void enrichConvertOvaParameters(ConvertOvaParameters parameters) {
+    }
+
+    protected void enrichExtractOvaParameters(ConvertOvaParameters parameters) {
+    }
+
+    private List<String> buildOvaTarNamesByIndex() {
+        Map<Guid, Guid> tarNameByDiskId = getParameters().getImageMappings();
+        if (tarNameByDiskId == null || tarNameByDiskId.isEmpty()) {
+            return null;
+        }
+        return getDisks().stream()
+                .map(d -> {
+                    Guid tarName = tarNameByDiskId.get(d.getId());
+                    return tarName != null ? tarName.toString() : null;
+                })
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -104,8 +161,14 @@ public class ImportVmFromOvaCommand<T extends ImportVmFromOvaParameters> extends
         }
 
         AddDiskParameters parameters = super.buildAddDiskParameters(image);
-        parameters.setUsePassedDiskId(true);
-        parameters.setUsePassedImageId(true);
+        if (shouldUsePassedDiskAndImageIdsForOvaDiskImport()) {
+            parameters.setUsePassedDiskId(true);
+            parameters.setUsePassedImageId(true);
+        }
         return parameters;
+    }
+
+    protected boolean shouldUsePassedDiskAndImageIdsForOvaDiskImport() {
+        return true;
     }
 }

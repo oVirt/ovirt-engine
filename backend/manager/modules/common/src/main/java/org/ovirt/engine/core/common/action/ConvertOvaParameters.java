@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.common.action;
 
+import java.util.List;
 import java.util.Map;
 
 import org.ovirt.engine.core.common.businessentities.VmEntityType;
@@ -9,7 +10,9 @@ public class ConvertOvaParameters extends ConvertVmParameters {
 
     private String ovaPath;
     private VmEntityType vmEntityType = VmEntityType.VM;
-    private Map<Guid, Guid> imageMappings;
+    private Map<Guid, Map<String, Object>> preAttachedManagedBlockDevicesByDiskId;
+    private List<Guid> templateDiskIdsForExtract;
+    private List<String> ovaTarNamesByIndex;
 
     public ConvertOvaParameters() {
     }
@@ -34,11 +37,28 @@ public class ConvertOvaParameters extends ConvertVmParameters {
         this.vmEntityType = vmEntityType;
     }
 
-    public Map<Guid, Guid> getImageMappings() {
-        return imageMappings;
+    public Map<Guid, Map<String, Object>> getPreAttachedManagedBlockDevicesByDiskId() {
+        return preAttachedManagedBlockDevicesByDiskId;
     }
 
-    public void setImageMappings(Map<Guid, Guid> diskMappings) {
-        this.imageMappings = diskMappings;
+    public void setPreAttachedManagedBlockDevicesByDiskId(
+            Map<Guid, Map<String, Object>> preAttachedManagedBlockDevicesByDiskId) {
+        this.preAttachedManagedBlockDevicesByDiskId = preAttachedManagedBlockDevicesByDiskId;
+    }
+
+    public List<Guid> getTemplateDiskIdsForExtract() {
+        return templateDiskIdsForExtract;
+    }
+
+    public void setTemplateDiskIdsForExtract(List<Guid> templateDiskIdsForExtract) {
+        this.templateDiskIdsForExtract = templateDiskIdsForExtract;
+    }
+
+    public List<String> getOvaTarNamesByIndex() {
+        return ovaTarNamesByIndex;
+    }
+
+    public void setOvaTarNamesByIndex(List<String> ovaTarNamesByIndex) {
+        this.ovaTarNamesByIndex = ovaTarNamesByIndex;
     }
 }
