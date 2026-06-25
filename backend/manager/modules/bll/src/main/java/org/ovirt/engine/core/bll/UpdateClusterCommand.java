@@ -655,7 +655,8 @@ public class UpdateClusterCommand<T extends ClusterOperationParameters> extends
         List<String> available = Config.getValue(ConfigValues.ClusterEmulatedMachines, version.getValue());
         return ClusterEmulatedMachines.build(
                 EmulatedMachineCommonUtils.getSupportedByChipset(ChipsetType.I440FX, supported, available),
-                EmulatedMachineCommonUtils.getSupportedByChipset(ChipsetType.Q35, supported, available));
+                EmulatedMachineCommonUtils.getSupportedByChipset(ChipsetType.Q35, supported, available),
+                EmulatedMachineCommonUtils.getSupportedByChipset(ChipsetType.VIRT, supported, available));
     }
 
     private void addOrUpdateAddtionalClusterFeatures() {
