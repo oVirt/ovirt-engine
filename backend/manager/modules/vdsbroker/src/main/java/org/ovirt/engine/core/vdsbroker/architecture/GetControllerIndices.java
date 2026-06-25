@@ -35,6 +35,16 @@ public class GetControllerIndices implements ArchCommand {
         runForX86_64();
     }
 
+    @Override
+    public void runForAARCH64() {
+        controllerIndexMap = new HashMap<>();
+
+        controllerIndexMap.put(DiskInterface.VirtIO_SCSI, 0);
+
+        controllerIndexMap.put(DiskInterface.SPAPR_VSCSI, -1);
+        // TODO, additional settings?
+    }
+
     public Map<DiskInterface, Integer> returnValue() {
         return controllerIndexMap;
     }

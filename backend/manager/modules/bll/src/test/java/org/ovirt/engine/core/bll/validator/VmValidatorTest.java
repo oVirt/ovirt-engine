@@ -71,6 +71,7 @@ public class VmValidatorTest extends BaseCommandTest {
         maxVmCpusMap.put("s390x", 384);
         maxVmCpusMap.put("x86", MAX_NUM_CPUS);
         maxVmCpusMap.put("ppc", 384);
+        maxVmCpusMap.put("aarch64", 384);
         return maxVmCpusMap;
     }
 

@@ -366,6 +366,10 @@
                 <level>3</level>
                 <architecture>PPC64</architecture>
             </cpu>
+            <cpu id="ARM64 v8">
+                <level>2</level>
+                <architecture>AARCH64</architecture>
+            </cpu>
         </cpus>
         <power_managers>
             <power_management type="apc">
@@ -545,6 +549,7 @@
             <os_type>ubuntu_13_04</os_type>
             <os_type>ubuntu_12_10</os_type>
             <os_type>windows_7x64</os_type>
+            <os_type>other_linux_aarch64</os_type>
         </os_types>
         <disk_formats>
             <disk_format>cow</disk_format>
@@ -1236,18 +1241,21 @@
                 <architectures>undefined</architectures>
                 <architectures>x86_64</architectures>
                 <architectures>ppc64</architectures>
+                <architectures>aarch64</architectures>
             </architecture_capability>
             <architecture_capability>
                 <name>memory snapshot</name>
                 <architectures>undefined</architectures>
                 <architectures>x86_64</architectures>
                 <architectures>ppc64</architectures>
+                <architectures>aarch64</architectures>
             </architecture_capability>
             <architecture_capability>
                 <name>suspend</name>
                 <architectures>undefined</architectures>
                 <architectures>x86_64</architectures>
                 <architectures>ppc64</architectures>
+                <architectures>aarch64</architectures>
             </architecture_capability>
         </architecture_capabilities>
         <serial_number_policies>
