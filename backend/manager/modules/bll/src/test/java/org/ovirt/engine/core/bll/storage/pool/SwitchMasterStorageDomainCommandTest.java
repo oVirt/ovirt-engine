@@ -1,12 +1,17 @@
 package org.ovirt.engine.core.bll.storage.pool;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.Callable;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -17,19 +22,28 @@ import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
 import org.ovirt.engine.core.bll.BaseCommandTest;
 import org.ovirt.engine.core.bll.ValidateTestUtils;
+import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
 import org.ovirt.engine.core.common.action.SwitchMasterStorageDomainCommandParameters;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMap;
+import org.ovirt.engine.core.common.businessentities.VDS;
+import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.errors.EngineMessage;
+import org.ovirt.engine.core.common.eventqueue.Event;
+import org.ovirt.engine.core.common.eventqueue.EventQueue;
+import org.ovirt.engine.core.common.eventqueue.EventResult;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dao.StorageDomainDao;
 import org.ovirt.engine.core.dao.StorageDomainStaticDao;
 import org.ovirt.engine.core.dao.StoragePoolDao;
 import org.ovirt.engine.core.dao.StoragePoolIsoMapDao;
+import org.ovirt.engine.core.dao.VdsDao;
+import org.ovirt.engine.core.vdsbroker.storage.StoragePoolDomainHelper;
 
 @MockitoSettings(strictness = Strictness.LENIENT)
 public class SwitchMasterStorageDomainCommandTest extends BaseCommandTest {
@@ -42,7 +56,16 @@ public class SwitchMasterStorageDomainCommandTest extends BaseCommandTest {
     private StorageDomainStaticDao storageDomainStaticDao;
     @Mock
     private StoragePoolIsoMapDao storagePoolIsoMapDao;
-
+    @Mock
+    private EventQueue eventQueue;
+    @Mock
+    private StoragePoolDomainHelper storagePoolDomainHelper;
+    @Mock
+    private VdsDao vdsDao;
+    @Mock
+    private AuditLogDirector auditLogDirector;
+    @Mock
+    private CommandCoordinatorUtil commandCoordinatorUtil;
     private static final int MASTER_VERSION = 100;
     private Guid storagePoolId = Guid.newGuid();
     private Guid currentMasterStorageDomainId = Guid.newGuid();
@@ -117,6 +140,46 @@ public class SwitchMasterStorageDomainCommandTest extends BaseCommandTest {
     @Test
     public void testValidateSuccess() {
         ValidateTestUtils.runAndAssertValidateSuccess(command);
+    }
+
+    @Test
+    public void testEndSuccessfullyNotifiesAllHosts() {
+        // updateStoragePoolOnDB() and removeAllCommandsInHierarchy() are not
+        // the focus here -- stub them out so the test stays unit-level.
+        doNothing().when(command).updateStoragePoolOnDB();
+        doNothing().when(command).notifyAllHostsOfNewMaster();
+
+        command.endSuccessfully();
+
+        verify(command).notifyAllHostsOfNewMaster();
+    }
+
+    @Test
+    public void testNotifyAllHostsRefreshesEachHost() {
+        VDS host1 = new VDS();
+        host1.setId(Guid.newGuid());
+        VDS host2 = new VDS();
+        host2.setId(Guid.newGuid());
+        List<VDS> hosts = Arrays.asList(host1, host2);
+        List<StoragePoolIsoMap> isoMaps = Arrays.asList(newMasterStorageDomain.getStoragePoolIsoMapData());
+
+        // eventQueue is auto-injected into the command via @InjectMocks; run the
+        // queued supplier inline so the fan-out actually executes.
+        when(eventQueue.submitEventSync(any(Event.class), any())).thenAnswer(inv -> {
+            inv.<Callable<EventResult>>getArgument(1).call();
+            return null;
+        });
+        doReturn(hosts).when(vdsDao).getAllForStoragePoolAndStatus(storagePoolId, VDSStatus.Up);
+        doReturn(isoMaps).when(storagePoolIsoMapDao).getAllForStoragePool(storagePoolId);
+
+        command.notifyAllHostsOfNewMaster();
+
+        verify(storagePoolDomainHelper).refreshHostPoolMetadata(eq(host1), eq(storagePool),
+                eq(newMasterStorageDomainId), eq(isoMaps));
+        verify(storagePoolDomainHelper).refreshHostPoolMetadata(eq(host2), eq(storagePool),
+                eq(newMasterStorageDomainId), eq(isoMaps));
+        verify(storagePoolDomainHelper, times(hosts.size())).refreshHostPoolMetadata(
+                any(VDS.class), any(StoragePool.class), any(Guid.class), any());
     }
 
     @Test
