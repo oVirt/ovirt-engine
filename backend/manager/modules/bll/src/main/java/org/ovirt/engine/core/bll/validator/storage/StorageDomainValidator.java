@@ -122,9 +122,10 @@ public class StorageDomainValidator {
      * according to the following table:
      *
      *      | File Domain                             | Block Domain
-     * -----|-----------------------------------------|-------------
-     * qcow | 1M (header size)                        | 1G
-     * -----|-----------------------------------------|-------------
+     * -----|-----------------------------------------|------------------------------------------
+     * qcow | preallocated: disk capacity (getSize()) | preallocated: disk capacity (getSize())
+     *      | sparse: 1M (header size)                | sparse: 1G
+     * -----|-----------------------------------------|------------------------------------------
      * raw  | preallocated: disk capacity (getSize()) | disk capacity
      *      | thin (sparse): 1M                       | (there is no raw sparse on
      *      |                                         | block domains)
@@ -132,17 +133,17 @@ public class StorageDomainValidator {
      */
     private double getTotalSizeForNewDisks(Collection<DiskImage> diskImages) {
         return getTotalSizeForDisksByMethod(diskImages, diskImage -> {
-            double sizeForDisk = diskImage.getSize();
             if (diskImage.getVolumeFormat() == VolumeFormat.COW) {
-                if (storageDomain.getStorageType().isFileDomain()) {
-                    sizeForDisk = EMPTY_QCOW_HEADER_SIZE;
-                } else {
-                    sizeForDisk = INITIAL_BLOCK_ALLOCATION_SIZE;
+                if (diskImage.getVolumeType() == VolumeType.Preallocated) {
+                    return diskImage.getSize();
                 }
-            } else if (diskImage.getVolumeType() == VolumeType.Sparse) {
-                sizeForDisk = EMPTY_QCOW_HEADER_SIZE;
+                return storageDomain.getStorageType().isFileDomain()
+                        ? EMPTY_QCOW_HEADER_SIZE
+                        : INITIAL_BLOCK_ALLOCATION_SIZE;
             }
-            return sizeForDisk;
+            return diskImage.getVolumeType() == VolumeType.Sparse
+                    ? EMPTY_QCOW_HEADER_SIZE
+                    : diskImage.getSize();
         });
     }
 

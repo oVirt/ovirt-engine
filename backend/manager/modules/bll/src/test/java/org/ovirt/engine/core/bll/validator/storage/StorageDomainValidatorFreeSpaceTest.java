@@ -52,7 +52,11 @@ public class StorageDomainValidatorFreeSpaceTest {
                         disk.setVolumeType(volumeType);
                         disk.setStorageIds(Collections.singletonList(Guid.newGuid()));
                         disk.setSizeInGigabytes(200);
-                        disk.setActualSize(100); // GB
+                        if (volumeType == VolumeType.Preallocated) {
+                            disk.setActualSize(200); // GB
+                        } else {
+                            disk.setActualSize(100); // GB
+                        }
 
                         StorageDomain sd = new StorageDomain();
                         sd.setStorageType(storageType);
@@ -60,7 +64,7 @@ public class StorageDomainValidatorFreeSpaceTest {
 
                         boolean shortCircuitForVendorManaged = storageType.isManagedBlockStorage();
                         boolean isValidForNew = shortCircuitForVendorManaged
-                                || volumeFormat == VolumeFormat.COW || volumeType == VolumeType.Sparse;
+                                || volumeType == VolumeType.Sparse;
                         boolean isValidForCloned = shortCircuitForVendorManaged
                                 || volumeFormat == VolumeFormat.RAW && volumeType == VolumeType.Sparse;
                         boolean isValidForSnapshots = shortCircuitForVendorManaged
@@ -131,5 +135,39 @@ public class StorageDomainValidatorFreeSpaceTest {
         assertEquals(isValidForCloned, sdValidator.hasSpaceForAllDisks(null, disksList).isValid(), assertData);
         assertEquals(isValidForNew && isValidForCloned, sdValidator.hasSpaceForAllDisks(disksList, disksList).isValid(),
                 assertData);
+    }
+
+    public static Stream<Arguments> createCowPreallocatedParams() {
+        return Stream.of(
+                // disk below threshold: valid
+                Arguments.of(50, 107, StorageType.NFS, true),
+                Arguments.of(50, 107, StorageType.ISCSI, true),
+                // exact boundary (disk == available): valid
+                Arguments.of(107, 107, StorageType.NFS, true),
+                Arguments.of(107, 107, StorageType.ISCSI, true),
+                // one GB over threshold: invalid
+                Arguments.of(108, 107, StorageType.NFS, false),
+                Arguments.of(108, 107, StorageType.ISCSI, false)
+        );
+    }
+
+    @MockedConfig("mockConfiguration")
+    @ParameterizedTest
+    @MethodSource("createCowPreallocatedParams")
+    public void testValidateNewCowPreallocatedDisk
+    (int diskSizeGb, int availableSizeGb, StorageType storageType, boolean expectedValid) {
+        DiskImage disk = new DiskImage();
+        disk.setVolumeFormat(VolumeFormat.COW);
+        disk.setVolumeType(VolumeType.Preallocated);
+        disk.setStorageIds(Collections.singletonList(Guid.newGuid()));
+        disk.setSizeInGigabytes(diskSizeGb);
+
+        StorageDomain sd = new StorageDomain();
+        sd.setStorageType(storageType);
+        sd.setAvailableDiskSize(availableSizeGb);
+
+        StorageDomainValidator sdValidator = new StorageDomainValidator(sd);
+        assertEquals(expectedValid, sdValidator.hasSpaceForNewDisk(disk).isValid(),
+                "COW Preallocated: " + diskSizeGb + "GB disk, " + availableSizeGb + "GB available, " + storageType);
     }
 }
