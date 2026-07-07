@@ -57,7 +57,7 @@ jobs:
       run: dnf -y install postgresql
 
     - name: Checkout sources
-      uses: ovirt/checkout-action@main
+      uses: actions/checkout@v7
 
     - name: Initialize test DB
       run: |
