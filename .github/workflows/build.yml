@@ -15,10 +15,8 @@ jobs:
         include:
           - name: centos-stream-9
             container-name: el9stream
-            pip-command: pip3
           - name: centos-stream-10
             container-name: el10stream
-            pip-command: pip3
 
     name: ${{ matrix.name }}
 
@@ -42,7 +40,7 @@ jobs:
 
     steps:
     - name: Install required PyPI packages
-      run: ${{ matrix.pip-command }} install ansible-lint pylint mock paramiko psycopg2-binary websockify websocket-client looseversion isort pycodestyle pyflakes
+      run: pip3 install ansible-lint pylint mock paramiko psycopg2-binary websockify websocket-client looseversion isort pycodestyle pyflakes
 
     - name: Ensure required packages are available for linting
       run: dnf -y install otopi python3-ovirt-setup-lib python3-daemon
