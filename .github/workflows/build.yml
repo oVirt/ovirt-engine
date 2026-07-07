@@ -13,9 +13,17 @@ jobs:
       fail-fast: false
       matrix:
         include:
+          - name: almalinux-9
+            shortcut: el9
+            container-name: almalinux9
+          - name: almalinux-10
+            shortcut: el10
+            container-name: almalinux10
           - name: centos-stream-9
+            shortcut: el9s
             container-name: el9stream
           - name: centos-stream-10
+            shortcut: el10s
             container-name: el10stream
 
     name: ${{ matrix.name }}
@@ -74,6 +82,15 @@ jobs:
         createrepo_c $ARTIFACTS_DIR
 
     - name: Upload artifacts
-      uses: ovirt/upload-rpms-action@main
+      uses: actions/upload-artifact@v7
       with:
-        directory: ${{ env.ARTIFACTS_DIR }}
+        name: rpm-${{ matrix.shortcut }}
+        path: ${{ env.ARTIFACTS_DIR }}
+
+  publish-rpms:
+    permissions:
+      artifact-metadata: read
+    needs: build
+    if: ${{ github.event_name == 'push' || github.event_name == 'workflow_dispatch' }}
+    uses: ovirt/ovirt-workflows/.github/workflows/publish-rpms.yml@main
+    secrets: inherit
