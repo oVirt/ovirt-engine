@@ -17,26 +17,20 @@
 #
 MILESTONE_IF_NEEDED=master
 
-# RPM_RELEASE_ON_RELEASE should be set to the rpm release to have on release (non-SNAPSHOT) builds.
-RPM_RELEASE_ON_RELEASE=1
-
 # MILESTONE is set to MILESTONE_IF_NEEDED on SNAPSHOT builds, empty otherwise.
 ifndef MILESTONE
 MILESTONE=$(shell cat pom.xml | head -n 20 | grep '<version>' | head -n 1 | sed -e 's/.*>\(.*\)<.*/\1/' | grep -q 'SNAPSHOT$$' && echo $(MILESTONE_IF_NEEDED))
 endif
 
-# RPM_VERSION is set to pom version without -SNAPSHOT
+# RPM_VERSION is set to pom version without -SNAPSHOT.
+# For release builds it is overridden by the CI environment from the tag.
 ifndef RPM_VERSION
 RPM_VERSION:=$(shell cat pom.xml | head -n 20 | grep '<version>' | head -n 1 | sed -e 's/.*>\(.*\)<.*/\1/' -e 's/-SNAPSHOT//')
 endif
 
-
-# RPM release should be automatic.
-# Set to 0.something on SNAPSHOT builds, and to RPM_RELEASE_ON_RELEASE otherwise.
-# If needed to be set manually:
-# For pre-release:
-# RPM_RELEASE=0.$(MILESTONE).$(shell date -u +%Y%m%d%H%M%S)
-#
+# Default RPM release for development builds.
+# For release builds, RPM_RELEASE is overridden by the CI environment from the tag.
+# A timestamp/git suffix is appended via the release_suffix RPM macro in CI.
 ifndef RPM_RELEASE
-RPM_RELEASE=$(shell if cat pom.xml | head -n 20 | grep '<version>' | head -n 1 | sed -e 's/.*>\(.*\)<.*/\1/' | grep -q 'SNAPSHOT$$'; then echo 0.$(MILESTONE).$$(date -u +%Y%m%d%H%M%S); else echo $(RPM_RELEASE_ON_RELEASE); fi)
+RPM_RELEASE=0.master
 endif
