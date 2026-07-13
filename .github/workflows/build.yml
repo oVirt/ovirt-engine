@@ -2,6 +2,7 @@ name: build
 on:
   push:
     branches: [master, ovirt-engine-4.5*]
+    tags: ['*']
   pull_request:
     branches: [master, ovirt-engine-4.5*]
   workflow_dispatch:
@@ -59,6 +60,24 @@ jobs:
     - name: Checkout sources
       uses: actions/checkout@v7
 
+    - name: Mark repository as safe
+      run: git config --global --add safe.directory "$(pwd)"
+
+    - name: Set build environment
+      run: |
+        TAG=$(git tag --points-at HEAD | head -1)
+        if [[ -n "$TAG" ]]; then
+          VERSION=$(echo "$TAG" | sed 's/^ovirt-engine-//' | sed 's/-[0-9]*$//')
+          echo "RPM_VERSION=${VERSION}" >> $GITHUB_ENV
+          if [[ "$TAG" =~ -([0-9]+)$ ]]; then
+            echo "RPM_RELEASE=${BASH_REMATCH[1]}" >> $GITHUB_ENV
+          else
+            echo "RPM_RELEASE=1" >> $GITHUB_ENV
+          fi
+        else
+          echo "RELEASE_SUFFIX=.$(date --utc +%Y%m%d%H%M%S).git$(git rev-parse --short HEAD)" >> $GITHUB_ENV
+        fi
+
     - name: Initialize test DB
       run: |
         # Initialize DB 
@@ -77,10 +96,6 @@ jobs:
       run: |
         .automation/build-rpm.sh $ARTIFACTS_DIR
 
-    - name: Create DNF repository
-      run: |
-        createrepo_c $ARTIFACTS_DIR
-
     - name: Upload artifacts
       uses: actions/upload-artifact@v7
       with:
@@ -91,6 +106,6 @@ jobs:
     permissions:
       artifact-metadata: read
     needs: build
-    if: ${{ github.event_name == 'push' || github.event_name == 'workflow_dispatch' }}
+    if: ${{ (github.event_name == 'push' || github.event_name == 'workflow_dispatch') && !startsWith(github.ref, 'refs/tags/ovirt-engine-4.5') }}
     uses: ovirt/ovirt-workflows/.github/workflows/publish-rpms.yml@main
     secrets: inherit
