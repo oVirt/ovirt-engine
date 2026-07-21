@@ -37,19 +37,29 @@ public class PackageExplorer {
         try {
             Enumeration<URL> resources = classLoader.getResources(toPath(packageName));
             List<File> dirs = new ArrayList<>();
-            List<JarInputStream> jars = new ArrayList<>();
+            List<URL> jarUrls = new ArrayList<>();
             while (resources.hasMoreElements()) {
                 URL resource = resources.nextElement();
                 if (isJar(resource)) {
-                    jars.add(new JarInputStream(new FileInputStream(URLDecoder.decode(getJarName(resource), "UTF-8"))));
+                    jarUrls.add(resource);
                 } else if (containsJar(resource)) {
-                    jars.add(getContainingResource(classLoader, resource));
+                    URL jarRootUrl = getContainingResourceURL(classLoader, resource);
+                    if (jarRootUrl != null) {
+                        jarUrls.add(jarRootUrl);
+                    }
                 } else {
                     dirs.add(new File(URLDecoder.decode(resource.getFile(), "UTF-8")));
                 }
             }
-            walkJars(classNames, packageName, jars);
+            IOException jarIssues = walkJars(classNames, packageName, jarUrls);
             walkDirs(classNames, packageName, dirs);
+            if (jarIssues != null) {
+                log.error(
+                    "One or more jars failed to scan for package \"{}\".",
+                    packageName,
+                    jarIssues
+                );
+            }
         } catch (IOException exception) {
             log.error(
                 "Error while trying to find scan classpath for package \"{}\".",
@@ -60,24 +70,29 @@ public class PackageExplorer {
         return classNames;
     }
 
-    private static JarInputStream getContainingResource(ClassLoader classLoader, URL resource)
+    private static URL getContainingResourceURL(ClassLoader classLoader, URL resource)
             throws IOException {
-        JarInputStream ret = null;
         Enumeration<URL> globals = classLoader.getResources("/");
         while (globals.hasMoreElements()) {
             URL global = globals.nextElement();
             if (resource.toString().startsWith(global.toString())) {
-                ret = (JarInputStream) global.openStream();
-                break;
+                return global;
             }
         }
-        return ret;
+        return null;
     }
 
-    private static void walkJars(List<String> classNames, String packageName, List<JarInputStream> jars)
-            throws IOException {
-        for (JarInputStream jarFile : jars) {
-            try {
+    private static JarInputStream openJarStream(URL jarUrl) throws IOException {
+        if (isJar(jarUrl)) {
+            return new JarInputStream(new FileInputStream(URLDecoder.decode(getJarName(jarUrl), "UTF-8")));
+        }
+        return (JarInputStream) jarUrl.openStream();
+    }
+
+    private static IOException walkJars(List<String> classNames, String packageName, List<URL> jarUrls) {
+        IOException aggregate = null;
+        for (URL jarUrl : jarUrls) {
+            try (JarInputStream jarFile = openJarStream(jarUrl)) {
                 JarEntry entry;
                 while ((entry = jarFile.getNextJarEntry()) != null) {
                     String name = toPackage(entry.getName());
@@ -85,12 +100,14 @@ public class PackageExplorer {
                         classNames.add(trimClass(name));
                     }
                 }
-            } finally {
-                if (jarFile != null) {
-                    jarFile.close();
+            } catch (IOException e) {
+                if (aggregate == null) {
+                    aggregate = new IOException("Failed to scan one or more jars");
                 }
+                aggregate.addSuppressed(e);
             }
         }
+        return aggregate;
     }
 
     private static void walkDirs(List<String> classNames, String packageName, List<File> dirs)
