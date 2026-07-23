@@ -14,7 +14,6 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.backendcompat.CommandExecutionStatus;
 import org.ovirt.engine.core.dao.ImageDao;
-import org.ovirt.engine.core.dao.StorageDomainDao;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 @Typed(AddDiskCommandCallback.class)
@@ -25,9 +24,6 @@ public class AddDiskCommandCallback extends ConcurrentChildCommandsExecutionCall
 
     @Inject
     private ImageDao imageDao;
-
-    @Inject
-    private StorageDomainDao storageDomainDao;
 
     @Override
     protected void childCommandsExecutionEnded(CommandBase<?> command,

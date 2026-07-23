@@ -33,6 +33,7 @@ import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.ICommandTarget;
+import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
@@ -454,8 +455,9 @@ public class UploadImageModel extends Model implements ICommandTarget {
     }
 
     private void initiateNewUpload() {
+        ActionType actionType = Linq.transferDiskImageActionType(getDiskModel().getStorageDomain().getSelectedItem());
         UploadImageManager.getInstance().startUpload(getImageFileUploadElement(), createInitParams(),
-                getProxyLocation());
+                getProxyLocation(), actionType);
 
         // Close dialog
         getCancelCommand().execute();

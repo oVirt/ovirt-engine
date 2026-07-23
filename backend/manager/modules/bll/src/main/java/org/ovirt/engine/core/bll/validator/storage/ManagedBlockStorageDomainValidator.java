@@ -47,7 +47,7 @@ public class ManagedBlockStorageDomainValidator {
                 ActionType.CopyImageGroupWithData,
                 ActionType.CopyManagedBlockDisk,
                 ActionType.MoveOrCopyDisk,
-                ActionType.TransferDiskImage
+                ActionType.MbsTransferDiskImage
         ));
         EngineLocalConfig config = EngineLocalConfig.getInstance();
         isDataBaseInitialized = Boolean.parseBoolean(config.getProperty(MANAGEDBLOCK_DB_ENABLE));

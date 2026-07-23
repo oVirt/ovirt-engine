@@ -234,8 +234,8 @@ public class UploadImageHandler {
      *            end offset
      */
     public void start(TransferDiskImageParameters transferDiskImageParameters,
-                      long startByte, long endByte) {
-        Frontend.getInstance().runAction(ActionType.TransferDiskImage, transferDiskImageParameters,
+                      long startByte, long endByte, ActionType actionType) {
+        Frontend.getInstance().runAction(actionType, transferDiskImageParameters,
                 result -> {
                     if (result.getReturnValue().getSucceeded()) {
                         setCommandId(result.getReturnValue().getActionReturnValue());

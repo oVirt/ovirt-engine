@@ -1,8 +1,8 @@
 package org.ovirt.engine.ui.uicommonweb.models.storage;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
-import java.util.stream.Collectors;
 
 import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
@@ -27,14 +27,17 @@ public class DownloadImageManager {
     public void startDownload(List<DiskImage> disks) {
         log.info("Start download for disks: " + Linq.getDiskAliases(disks)); //$NON-NLS-1$
 
-        List<ActionParametersBase> transferDiskImageParameters = disks.stream()
-                .map(DownloadImageHandler::createInitParams)
-                .collect(Collectors.toList());
-        Frontend.getInstance().runMultipleAction(ActionType.TransferDiskImage,
-                transferDiskImageParameters, callback(), true, true);
+        List<ActionParametersBase> transferDiskImageParameters = new ArrayList<>(disks.size());
+        for (DiskImage disk : disks) {
+            transferDiskImageParameters.add(DownloadImageHandler.createInitParams(disk));
+        }
+
+        ActionType actionType = Linq.transferDiskImageActionType(disks.get(0));
+        Frontend.getInstance().runMultipleAction(actionType, transferDiskImageParameters,
+                getDownloadCallback(), true, true);
     }
 
-    private IFrontendMultipleActionAsyncCallback callback() {
+    private IFrontendMultipleActionAsyncCallback getDownloadCallback() {
         return result -> result.getReturnValue()
                 .forEach(actionReturnValue -> {
                     if (actionReturnValue.getSucceeded()) {
@@ -43,4 +46,3 @@ public class DownloadImageManager {
                 });
     }
 }
-
