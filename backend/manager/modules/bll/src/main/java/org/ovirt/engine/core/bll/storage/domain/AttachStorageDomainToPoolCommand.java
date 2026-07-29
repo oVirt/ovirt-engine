@@ -326,6 +326,10 @@ public class AttachStorageDomainToPoolCommand<T extends AttachStorageDomainToPoo
                 !FeatureSupported.isManagedBlockDomainSupported(getStoragePool().getCompatibilityVersion())) {
             return failValidation(EngineMessage.ACTION_TYPE_FAILED_CANNOT_ACTIVATE_MANAGED_BLOCK_STORAGE_DOMAIN);
         }
+        if (getStorageDomain().getStorageType().isNvmeOfDomain() &&
+                !FeatureSupported.isNvmeOfSupported(getStoragePool().getCompatibilityVersion())) {
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_NVMEOF_NOT_SUPPORTED);
+        }
         if (!spValidator.isNotInStatus(StoragePoolStatus.Uninitialized).isValid()
                 && getStorageDomain().getStorageDomainType() != StorageDomainType.Data) {
             return failValidation(EngineMessage.ERROR_CANNOT_ADD_STORAGE_POOL_WITHOUT_DATA_DOMAIN);

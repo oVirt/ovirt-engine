@@ -168,7 +168,12 @@ public class StorageServerConnectionDaoImpl extends BaseDao implements
                 .addValue("nfs_version", (connection.getNfsVersion() != null) ? connection.getNfsVersion().getValue() : null)
                 .addValue("nfs_timeo", connection.getNfsTimeo())
                 .addValue("nfs_retrans", connection.getNfsRetrans())
-                .addValue("gluster_volume_id", connection.getGlusterVolumeId());
+                .addValue("gluster_volume_id", connection.getGlusterVolumeId())
+                .addValue("nqn", connection.getNqn())
+                .addValue("transport", connection.getTransport())
+                .addValue("trsvcid", connection.getTrsvcid())
+                .addValue("host_nqn", connection.getHostNqn())
+                .addValue("dhchap_key", connection.getDhchapKey());
     }
 
     private static final RowMapper<StorageServerConnections> mapper = (rs, rowNum) -> {
@@ -188,6 +193,11 @@ public class StorageServerConnectionDaoImpl extends BaseDao implements
         entity.setNfsRetrans(getShort(rs, "nfs_retrans"));
         entity.setNfsTimeo(getShort(rs, "nfs_timeo"));
         entity.setGlusterVolumeId(getGuid(rs, "gluster_volume_id"));
+        entity.setNqn(rs.getString("nqn"));
+        entity.setTransport(rs.getString("transport"));
+        entity.setTrsvcid(rs.getString("trsvcid"));
+        entity.setHostNqn(rs.getString("host_nqn"));
+        entity.setDhchapKey(rs.getString("dhchap_key"));
         return entity;
     };
 

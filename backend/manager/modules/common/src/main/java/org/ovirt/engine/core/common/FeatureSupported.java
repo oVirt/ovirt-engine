@@ -129,6 +129,14 @@ public class FeatureSupported {
     }
 
     /**
+     * @param version Compatibility version to check for.
+     * @return {@code true} if NVMe-oF storage domain is supported for this version.
+     */
+    public static boolean isNvmeOfSupported(Version version) {
+        return supportedInConfig(ConfigValues.NVMeOfSupported, version);
+    }
+
+    /**
      * Firewalld is supported for host if it supports cluster version 4.2.
      *
      * @param vds the host we are insterested in

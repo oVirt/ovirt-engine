@@ -8,6 +8,7 @@ import javax.inject.Singleton;
 import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.businessentities.storage.StorageServerConnectionExtension;
+import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.utils.ValidationUtils;
 import org.ovirt.engine.core.compat.Guid;
@@ -52,6 +53,15 @@ public class StorageConnectionHelper {
         }
         con.putIfNotEmpty("timeout", connection.getNfsTimeo());
         con.putIfNotEmpty("retrans", connection.getNfsRetrans());
+
+        if (connection.getStorageType() == StorageType.NVMEOF) {
+            con.put("port", connection.getTrsvcid(), StorageServerConnections.DEFAULT_NVME_PORT);
+            con.put("nqn", connection.getNqn(), "");
+            con.put("transport", connection.getTransport(), "tcp");
+            con.putIfNotEmpty("host_nqn", connection.getHostNqn());
+            con.putIfNotEmpty("dhchap_key", connection.getDhchapKey());
+        }
+
         return con;
     }
 

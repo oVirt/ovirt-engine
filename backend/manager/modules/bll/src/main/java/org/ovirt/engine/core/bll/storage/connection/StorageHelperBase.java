@@ -229,6 +229,8 @@ public abstract class StorageHelperBase implements IStorageHelper {
                 String desc = connection.getConnection();
                 if (connection.getIqn() != null) {
                     desc += " " + connection.getIqn();
+                } else if (connection.getNqn() != null) {
+                    desc += " " + connection.getNqn();
                 }
                 return desc;
             }

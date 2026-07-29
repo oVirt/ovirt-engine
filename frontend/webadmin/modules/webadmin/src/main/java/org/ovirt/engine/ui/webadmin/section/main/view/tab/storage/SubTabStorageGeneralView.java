@@ -85,6 +85,15 @@ public class SubTabStorageGeneralView extends AbstractSubTabFormView<StorageDoma
     @Path("timeout")
     StringValueLabel timeout = new StringValueLabel();
 
+    @Path("nqn")
+    StringValueLabel nqn = new StringValueLabel();
+
+    @Path("transport")
+    StringValueLabel transport = new StringValueLabel();
+
+    @Path("hostNqn")
+    StringValueLabel hostNqn = new StringValueLabel();
+
     @UiField(provided = true)
     @WithElementId
     GeneralFormPanel formPanel;
@@ -176,6 +185,24 @@ public class SubTabStorageGeneralView extends AbstractSubTabFormView<StorageDoma
 
         formBuilder.addFormItem(new FormItem(constants.warningLowSpaceIndicator(), warningLowSpaceIndicator, 14, 0), 2, 10);
         formBuilder.addFormItem(new FormItem(constants.criticalSpaceActionBlocker(), criticalSpaceActionBlocker, 15, 0), 2, 10);
+        formBuilder.addFormItem(new FormItem(constants.nqnStorageGeneral(), nqn, 8, 0) {
+            @Override
+            public boolean getIsAvailable() {
+                return getDetailModel().getIsNvmeof() && getDetailModel().getNqn() != null;
+            }
+        }, 2, 10);
+        formBuilder.addFormItem(new FormItem(constants.transportStorageGeneral(), transport, 9, 0) {
+            @Override
+            public boolean getIsAvailable() {
+                return getDetailModel().getIsNvmeof() && getDetailModel().getTransport() != null;
+            }
+        }, 2, 10);
+        formBuilder.addFormItem(new FormItem(constants.hostNqnStorageGeneral(), hostNqn, 10, 0) {
+            @Override
+            public boolean getIsAvailable() {
+                return getDetailModel().getIsNvmeof() && getDetailModel().getHostNqn() != null;
+            }
+        }, 2, 10);
     }
 
     @Override

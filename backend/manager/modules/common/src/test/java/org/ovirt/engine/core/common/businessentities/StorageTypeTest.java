@@ -13,6 +13,7 @@ public class StorageTypeTest {
     public void testIsFileDomain() {
         assertFalse(StorageType.FCP.isFileDomain());
         assertFalse(StorageType.ISCSI.isFileDomain());
+        assertFalse(StorageType.NVMEOF.isFileDomain());
         assertTrue(StorageType.NFS.isFileDomain());
         assertTrue(StorageType.LOCALFS.isFileDomain());
         assertTrue(StorageType.POSIXFS.isFileDomain());
@@ -26,6 +27,7 @@ public class StorageTypeTest {
     public void testIsBlockDomain() {
         assertTrue(StorageType.FCP.isBlockDomain());
         assertTrue(StorageType.ISCSI.isBlockDomain());
+        assertTrue(StorageType.NVMEOF.isBlockDomain());
         assertFalse(StorageType.NFS.isBlockDomain());
         assertFalse(StorageType.LOCALFS.isBlockDomain());
         assertFalse(StorageType.POSIXFS.isBlockDomain());
@@ -37,7 +39,7 @@ public class StorageTypeTest {
 
     @Test
     public void testNewStorageTypes() {
-        assertEquals(11, StorageType.values().length,
+        assertEquals(12, StorageType.values().length,
                 "A storage type was added/removed. Update this test, and the isFileDomain/isBlockDomain " +
                         "method accordingly");
     }

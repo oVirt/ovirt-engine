@@ -67,7 +67,7 @@ public class ImportHostedEngineStorageDomainCommand<T extends StorageDomainManag
     private StorageDomain heStorageDomain;
 
     static final StorageType[] SUPPORTED_DOMAIN_TYPES =
-        { StorageType.NFS, StorageType.FCP, StorageType.GLUSTERFS, StorageType.ISCSI };
+        { StorageType.NFS, StorageType.FCP, StorageType.GLUSTERFS, StorageType.ISCSI, StorageType.NVMEOF };
 
     public ImportHostedEngineStorageDomainCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
@@ -122,6 +122,7 @@ public class ImportHostedEngineStorageDomainCommand<T extends StorageDomainManag
                 addStorageServerConnection();
                 break;
             case ISCSI:
+            case NVMEOF:
                 discoverBlockConnectionDetails();
             case FCP:
                 actionType = ActionType.AddExistingBlockStorageDomain;
