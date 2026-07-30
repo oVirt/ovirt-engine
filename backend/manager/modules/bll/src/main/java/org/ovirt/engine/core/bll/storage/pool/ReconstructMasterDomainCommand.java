@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.bll.storage.pool;
 
 import java.util.ArrayList;
+import java.util.EnumSet;
 import java.util.List;
 import java.util.concurrent.Callable;
 
@@ -18,6 +19,7 @@ import org.ovirt.engine.core.common.businessentities.SpmStatus;
 import org.ovirt.engine.core.common.businessentities.SpmStatusResult;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
+import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMap;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
@@ -33,6 +35,8 @@ import org.ovirt.engine.core.common.vdscommands.SpmStatusVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogable;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableImpl;
 import org.ovirt.engine.core.dao.StoragePoolDao;
 import org.ovirt.engine.core.dao.StoragePoolIsoMapDao;
 import org.ovirt.engine.core.dao.VdsDao;
@@ -196,29 +200,187 @@ public class ReconstructMasterDomainCommand<T extends ReconstructMasterParameter
 
     protected boolean stopSpm() {
         boolean commandSucceeded = true;
-        if (getStoragePool().getSpmVdsId() != null) {
+        StoragePool pool = getStoragePool();
+        if (pool.getSpmVdsId() != null) {
             // if spm host id is different from selected host get the spm
             // in order to try and perform stop spm
             VDS spm;
-            if (getStoragePool().getSpmVdsId().equals(getVds().getId())) {
+            if (pool.getSpmVdsId().equals(getVds().getId())) {
                 spm = getVds();
             } else {
-                spm = vdsDao.get(getStoragePool().getSpmVdsId());
+                spm = vdsDao.get(pool.getSpmVdsId());
             }
             if (spm != null) {
-                ResetIrsVDSCommandParameters tempVar2 = new ResetIrsVDSCommandParameters(
-                        getStoragePool().getId(), spm.getId());
-                tempVar2.setIgnoreStopFailed(true);
-                commandSucceeded = runVdsCommand(VDSCommandType.ResetIrs, tempVar2).getSucceeded();
+                ResetIrsVDSCommandParameters resetIrsParams = new ResetIrsVDSCommandParameters(
+                        pool.getId(), spm.getId());
+                resetIrsParams.setIgnoreStopFailed(true);
+                commandSucceeded = runVdsCommand(VDSCommandType.ResetIrs, resetIrsParams).getSucceeded();
+                if (commandSucceeded) {
+                    commandSucceeded = verifyLeaseCleared(spm);
+                }
 
-                // if spm host is up switch to use it in the following logic
-                if (spm.getStatus() == VDSStatus.Up) {
+                if (commandSucceeded && spm.getStatus() == VDSStatus.Up) {
                     setVdsId(spm.getId());
                     setVds(spm);
                 }
             }
         }
         return commandSucceeded;
+    }
+
+    /**
+     * Verify the recorded SPM's on-disk lease is cleared before trusting the
+     * ResetIrs success (ignoreStopFailed can report success without the SPM
+     * actually stopping). Returns true if a replacement may be elected; logs
+     * and audits the refusal (HELD / UNVERIFIED) and returns false otherwise.
+     */
+    private boolean verifyLeaseCleared(VDS spm) {
+        SpmStatusResult lease = readRecordedSpmLease(getStoragePool().getId(), spm.getId());
+        RecordedSpmLeaseState leaseState = classifyLease(lease, spm.getVdsSpmId());
+        if (leaseState == RecordedSpmLeaseState.CLEARED) {
+            auditLeaseOwnedByOtherHost(spm, lease);
+            return true;
+        }
+        AuditLogable alb = createAuditLogableForHost(spm);
+        if (leaseState == RecordedSpmLeaseState.HELD) {
+            log.warn("Recorded SPM host '{}' (vdsSpmId={}) on-disk lease "
+                    + "still held during reconstruct (owner spmId={}); "
+                    + "refusing to elect a replacement SPM to avoid a dual-writer.",
+                    spm.getName(), spm.getVdsSpmId(), lease.getSpmId());
+            alb.addCustomValue("OwnerSpmId", String.valueOf(lease.getSpmId()));
+            auditLog(alb, AuditLogType.VDS_ALERT_SPM_RECONSTRUCT_REFUSED_LEASE_HELD);
+        } else {
+            log.warn("Recorded SPM host '{}' (vdsSpmId={}) on-disk lease "
+                    + "could not be confirmed cleared during reconstruct "
+                    + "(no reachable peer or inconclusive read); refusing "
+                    + "to elect a replacement SPM to avoid a dual-writer.",
+                    spm.getName(), spm.getVdsSpmId());
+            auditLog(alb, AuditLogType.VDS_ALERT_SPM_RECONSTRUCT_REFUSED_LEASE_UNVERIFIED);
+        }
+        return false;
+    }
+
+    /**
+     * When the classification is CLEARED only because the on-disk lease is
+     * owned by a different host than the recorded SPM (generation mismatch),
+     * proceeding is safe for this guard's purpose (the recorded SPM holds no
+     * lease), but the on-disk owner id is exactly the evidence an operator
+     * needs to spot a live rival SPM on the old master domain -- so log and
+     * audit it distinctly. A positively-free lease ({@code spmId == -1})
+     * stays silent.
+     */
+    private void auditLeaseOwnedByOtherHost(VDS spm, SpmStatusResult lease) {
+        if (lease == null || lease.getSpmId() <= 0) {
+            return;
+        }
+        log.info("Recorded SPM host '{}' (vdsSpmId={}) on-disk lease is owned "
+                + "by a different host (owner spmId={}) during reconstruct; "
+                + "the recorded SPM is not the lease holder, proceeding to "
+                + "elect a replacement SPM.",
+                spm.getName(), spm.getVdsSpmId(), lease.getSpmId());
+        AuditLogable alb = createAuditLogableForHost(spm);
+        alb.addCustomValue("OwnerSpmId", String.valueOf(lease.getSpmId()));
+        auditLog(alb, AuditLogType.VDS_SPM_RECONSTRUCT_LEASE_OWNED_BY_OTHER);
+    }
+
+    /**
+     * Best-effort on-disk SPM lease read via a reachable Up peer, excluding the
+     * host identified by {@code excludeHostId} (the recorded SPM under
+     * inspection -- whose own report is exactly what cannot be trusted right
+     * now). Returns the first successful read, or {@code null} if no peer is
+     * reachable or every read fails; callers must treat {@code null} as
+     * "no evidence either way", not as "free".
+     *
+     * <p>Only the on-disk {@code spmId} field of {@link SpmStatusResult} is
+     * authoritative. A peer's in-memory {@code spmStatus} is always
+     * {@code Free} (only the SPM host itself ever reports {@code SPM}) and
+     * must never be used to answer this question.
+     */
+    SpmStatusResult readRecordedSpmLease(Guid poolId, Guid excludeHostId) {
+        List<VDS> peers = vdsDao.getAllForStoragePoolAndStatuses(poolId, EnumSet.of(VDSStatus.Up));
+        for (VDS peer : peers) {
+            if (peer.getId().equals(excludeHostId)) {
+                continue;
+            }
+            try {
+                VDSReturnValue ret = resourceManager.runVdsCommand(
+                        VDSCommandType.SpmStatus,
+                        new SpmStatusVDSCommandParameters(peer.getId(), poolId));
+                if (ret != null && ret.getSucceeded()
+                        && ret.getReturnValue() instanceof SpmStatusResult) {
+                    return (SpmStatusResult) ret.getReturnValue();
+                }
+            } catch (Exception e) {
+                log.debug("SpmStatus on-disk read on peer '{}' failed: {}",
+                        peer.getName(), e.getMessage());
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Outcome of reading the recorded SPM's on-disk lease, used to decide
+     * whether a replacement SPM may be elected:
+     * <ul>
+     *   <li>{@link #CLEARED} -- positively free ({@code spmId == -1}), or the
+     *       on-disk lease is owned by a different host than the recorded SPM.
+     *       The mismatch case is still safe for this guard's purpose: the
+     *       dual-writer hazard it prevents is the recorded SPM specifically
+     *       (the host ResetIrs just failed to stop), and a lease owned by a
+     *       different positive id proves that host holds no lease to write
+     *       through. An owner that is itself a live rival SPM on the old
+     *       master domain would be a pre-existing split-brain that unpatched
+     *       reconstructs never guarded either; the owner id is audited
+     *       distinctly so operators can detect it (see
+     *       {@code verifyLeaseCleared});</li>
+     *   <li>{@link #HELD} -- owned by the recorded SPM, or by an unknown host
+     *       when the recorded id is itself unknown; a replacement must not be
+     *       elected;</li>
+     *   <li>{@link #UNVERIFIED} -- no peer could read the lease, or the read was
+     *       inconclusive (vdsm's {@code -5} sentinel, returned when the peer is
+     *       not connected to the pool's master domain); a replacement must not
+     *       be elected on the mere absence of evidence.</li>
+     * </ul>
+     */
+    enum RecordedSpmLeaseState {
+        CLEARED, HELD, UNVERIFIED
+    }
+
+    /**
+     * Classify the recorded SPM's on-disk lease read. A {@code null} lease
+     * (no reachable peer) is {@link RecordedSpmLeaseState#UNVERIFIED}.
+     */
+    static RecordedSpmLeaseState classifyLease(SpmStatusResult onDisk, Integer recordedSpmHostId) {
+        if (onDisk == null) {
+            return RecordedSpmLeaseState.UNVERIFIED;
+        }
+        int spmId = onDisk.getSpmId();
+        if (spmId == -1) {
+            return RecordedSpmLeaseState.CLEARED;
+        }
+        if (spmId <= 0) {
+            return RecordedSpmLeaseState.UNVERIFIED;
+        }
+        if (recordedSpmHostId != null && spmId != recordedSpmHostId) {
+            return RecordedSpmLeaseState.CLEARED;
+        }
+        return RecordedSpmLeaseState.HELD;
+    }
+
+    /**
+     * Like AuditLogableImpl.createHostEvent, but repeatable: the refusal and
+     * mismatch audits must be re-emitted on every reconstruct attempt that
+     * hits them, instead of being deduplicated, since each attempt is a
+     * fresh decision an operator may need to react to.
+     */
+    private AuditLogable createAuditLogableForHost(VDS vds) {
+        AuditLogable logable = new AuditLogableImpl();
+        logable.setVdsId(vds.getId());
+        logable.setVdsName(vds.getName());
+        logable.setClusterId(vds.getClusterId());
+        logable.setClusterName(vds.getClusterName());
+        logable.setRepeatable(true);
+        return logable;
     }
 
     private void setSpmFromVdsm() {
