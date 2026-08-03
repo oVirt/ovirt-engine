@@ -3,6 +3,8 @@ package org.ovirt.engine.api.restapi.util;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -18,8 +20,10 @@ import org.ovirt.engine.api.model.Link;
 import org.ovirt.engine.api.model.Nic;
 import org.ovirt.engine.api.model.Nics;
 import org.ovirt.engine.api.model.Vm;
+import org.ovirt.engine.api.model.Vms;
 import org.ovirt.engine.api.restapi.resource.BackendVmNicsResource;
 import org.ovirt.engine.api.restapi.resource.ResourceLocator;
+import org.ovirt.engine.api.restapi.resource.exception.IncorrectFollowLinkException;
 import org.ovirt.engine.api.restapi.resource.utils.LinkFollower;
 import org.ovirt.engine.api.restapi.resource.utils.LinksTreeNode;
 
@@ -38,7 +42,9 @@ public class LinkFollowerTest {
         linkFollower = new LinkFollower(resourceLocator) {
             //override fetch() since it requires a real environment and would crash tests.
             protected ActionableResource fetch(String href) {
-                if (href.equals("/ovirt-engine/api/vms/63978315-2d17-4e67-b393-2ea60a8aeacb/nics")) {
+                if (href == null) {
+                    return null;
+                } else if (href.equals("/ovirt-engine/api/vms/63978315-2d17-4e67-b393-2ea60a8aeacb/nics")) {
                     return createNics();
                 } else if (href.equals("/ovirt-engine/api/vms/63978315-2d17-4e67-b393-2ea60a8aeacb/diskattachments")) {
                     return createDiskAttachments();
@@ -73,6 +79,47 @@ public class LinkFollowerTest {
         assertNotNull(vm.getDiskAttachments().getDiskAttachments().get(0).getDisk());
         assertNotNull(vm.getDiskAttachments().getDiskAttachments().get(1).getDisk());
         assertNotNull(vm.getDiskAttachments().getDiskAttachments().get(2).getDisk());
+    }
+
+    @Test
+    public void testFollowLinksIfFollowIsIncorrect() {
+        LinksTreeNode linksTree = linkFollower.createLinksTree(Vm.class, "incorrect_nics");
+        Vm vm = createVm();
+        IncorrectFollowLinkException actualException = assertThrows(
+            IncorrectFollowLinkException.class,
+            () -> linkFollower.followLinks(vm, linksTree)
+        );
+        assertEquals("incorrect_nics", actualException.getLink());
+        assertEquals("Vm", actualException.getEntityName());
+    }
+
+    @Test
+    public void testFollowLinksForCollectionEntityIfFollowIsIncorrect() {
+        LinksTreeNode linksTree = linkFollower.createLinksTree(Vm.class, "incorrect_nics");
+        Vms vms = createVms();
+        IncorrectFollowLinkException actualException = assertThrows(
+            IncorrectFollowLinkException.class,
+            () -> linkFollower.followLinks(vms, linksTree)
+        );
+        assertEquals("incorrect_nics", actualException.getLink());
+        assertEquals("Vms", actualException.getEntityName());
+    }
+
+    @Test
+    public void testFollowLinksIfFollowedEntityIsNull() {
+        LinksTreeNode linksTree = linkFollower.createLinksTree(Vm.class, "template");
+        Vm vm = createVm();
+        linkFollower.followLinks(vm, linksTree);
+        assertNull(vm.getTemplate());
+        assertNull(vm.getNics());
+        assertNull(vm.getDiskAttachments());
+    }
+
+    private Vms createVms() {
+        Vms vms = new Vms();
+        vms.getVms().add(createVm());
+        vms.getVms().add(createVm());
+        return vms;
     }
 
     private Vm createVm() {

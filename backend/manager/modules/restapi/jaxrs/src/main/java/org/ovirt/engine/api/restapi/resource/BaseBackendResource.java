@@ -24,6 +24,7 @@ import org.ovirt.engine.api.restapi.invocation.Current;
 import org.ovirt.engine.api.restapi.invocation.CurrentManager;
 import org.ovirt.engine.api.restapi.logging.MessageBundle;
 import org.ovirt.engine.api.restapi.logging.Messages;
+import org.ovirt.engine.api.restapi.resource.exception.IncorrectFollowLinkException;
 import org.ovirt.engine.api.restapi.resource.utils.LinkFollower;
 import org.ovirt.engine.api.restapi.resource.utils.LinksTreeNode;
 import org.ovirt.engine.api.restapi.types.MappingLocator;
@@ -426,7 +427,13 @@ public class BaseBackendResource {
             ParametersHelper.removeParameter(MAX);
             LinksTreeNode linksTree = linkFollower.createLinksTree(entity.getClass(), followValue);
             follow(entity, linksTree);
-            linkFollower.followLinks(entity, linksTree);
+            try {
+                linkFollower.followLinks(entity, linksTree);
+            } catch (IncorrectFollowLinkException e) {
+                throw new WebFaultException(e,
+                    localize(Messages.INCORRECT_FOLLOW_LINK, e.getLink(), e.getEntityName()),
+                    Response.Status.BAD_REQUEST);
+            }
         }
     }
 
