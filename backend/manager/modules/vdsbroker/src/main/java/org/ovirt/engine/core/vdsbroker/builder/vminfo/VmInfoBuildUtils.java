@@ -888,6 +888,8 @@ public class VmInfoBuildUtils {
             case ppc64:
             case ppc64le:
                 return "pseries";
+            case aarch64:
+                return "virt";
             case x86_64:
             default:
                 return "pc";

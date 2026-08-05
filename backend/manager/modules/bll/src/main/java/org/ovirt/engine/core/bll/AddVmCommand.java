@@ -300,6 +300,12 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
                 parameters.getVmStaticData().setBiosType(vmDevicesSource.getClusterId() == null ? getCluster().getBiosType() : vmDevicesSource.getBiosType());
             }
 
+            // For aarch64, always use host cpu flags
+            if (getCluster().getArchitecture().getFamily() == ArchitectureType.aarch64) {
+                parameters.getVm().setUseHostCpuFlags(true);
+                parameters.getVmStaticData().setUseHostCpuFlags(true);
+            }
+
             imageTypeId = parameters.getVmStaticData().getImageTypeId();
             vmInterfacesSourceId = parameters.getVmStaticData().getVmtGuid();
             vmDisksSource = getVmTemplate();
