@@ -32,6 +32,7 @@ import org.ovirt.engine.api.resource.StorageDomainResource;
 import org.ovirt.engine.api.resource.StorageDomainServerConnectionsResource;
 import org.ovirt.engine.api.resource.StorageDomainTemplatesResource;
 import org.ovirt.engine.api.resource.StorageDomainVmsResource;
+import org.ovirt.engine.api.restapi.util.FieldCleaner;
 import org.ovirt.engine.api.restapi.util.ParametersHelper;
 import org.ovirt.engine.api.restapi.util.StorageDomainHelper;
 import org.ovirt.engine.core.common.VdcObjectType;
@@ -77,7 +78,16 @@ public class BackendStorageDomainResource
     @Override
     public StorageDomain get() {
         StorageDomain storageDomain = performGet(QueryType.GetStorageDomainById, new IdQueryParameters(guid));
-        return addLinks(storageDomain, getLinksToExclude(storageDomain));
+        storageDomain = addLinks(storageDomain, getLinksToExclude(storageDomain));
+        removeRestrictedInfo(storageDomain);
+        return storageDomain;
+    }
+
+    private void removeRestrictedInfo(StorageDomain storageDomain) {
+        // Filtered users are not allowed to view restricted information
+        if (!isAdmin()) {
+            nullifyRestrictedFields(storageDomain);
+        }
     }
 
     @Override
@@ -236,6 +246,15 @@ public class BackendStorageDomainResource
                         : isImageDomain(storageDomain) ? new String[] { "templates", "vms", "files", "disks",
                             "storageconnections" }
                                 : new String[] { "files", "images" };
+    }
+
+    public static void nullifyRestrictedFields(StorageDomain storageDomain) {
+        FieldCleaner.nullifyAllFieldsExcept(
+                storageDomain, "id", "name", "type", "permissions",
+                "storage", "available", "used", "status", "dataCenter", "links");
+        FieldCleaner.nullifyAllFieldsExcept(storageDomain.getStorage(), "type");
+        FieldCleaner.nullifyAllFieldsExcept(storageDomain.getDataCenter(), "id");
+        FieldCleaner.removeAllLinksExcept(storageDomain, "permissions");
     }
 
     /**

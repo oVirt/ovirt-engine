@@ -12,6 +12,7 @@ import org.ovirt.engine.api.model.HostedEngine;
 import org.ovirt.engine.api.model.Hosts;
 import org.ovirt.engine.api.resource.HostResource;
 import org.ovirt.engine.api.resource.HostsResource;
+import org.ovirt.engine.api.restapi.util.FieldCleaner;
 import org.ovirt.engine.api.restapi.util.ParametersHelper;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.VdsOperationActionParameters;
@@ -52,11 +53,16 @@ public class BackendHostsResource extends AbstractBackendCollectionResource<Host
     @Override
     public Hosts list() {
         ApplicationMode appMode = getCurrent().getApplicationMode();
+
+        Hosts hosts;
         if (appMode == ApplicationMode.GlusterOnly) {
-            return listGlusterOnly();
+            hosts = listGlusterOnly();
         } else {
-            return listAll();
+            hosts = listAll();
         }
+        removeRestrictedInfo(hosts);
+
+        return hosts;
     }
 
     private Hosts listGlusterOnly() {
@@ -98,6 +104,16 @@ public class BackendHostsResource extends AbstractBackendCollectionResource<Host
         }
 
         return mapCollection(getBackendCollection(SearchType.VDS));
+    }
+
+    private void removeRestrictedInfo(Hosts hosts) {
+        // Filtered users are not allowed to view restricted information
+        if (!isAdmin()) {
+            for (Host host : hosts.getHosts()) {
+                FieldCleaner.nullifyAllFieldsExcept(host, "id", "name", "address", "cluster");
+                FieldCleaner.nullifyAllFieldsExcept(host.getCluster(), "id");
+            }
+        }
     }
 
     @Override
