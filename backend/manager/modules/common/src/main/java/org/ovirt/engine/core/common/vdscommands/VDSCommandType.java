@@ -90,6 +90,7 @@ public enum VDSCommandType {
     GetStoragePoolInfo("org.ovirt.engine.core.vdsbroker.irsbroker"),
     DestroyStoragePool("org.ovirt.engine.core.vdsbroker.irsbroker"),
     DeleteImageGroup("org.ovirt.engine.core.vdsbroker.irsbroker"),
+    DeleteImageUnusedLinks("org.ovirt.engine.core.vdsbroker.vdsbroker"),
     MoveImageGroup("org.ovirt.engine.core.vdsbroker.irsbroker"),
     CloneImageGroupStructure("org.ovirt.engine.core.vdsbroker.irsbroker"),
     SyncImageGroupData("org.ovirt.engine.core.vdsbroker.irsbroker"),
