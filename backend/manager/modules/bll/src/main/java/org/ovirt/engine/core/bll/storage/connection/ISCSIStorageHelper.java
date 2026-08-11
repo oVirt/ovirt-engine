@@ -312,9 +312,22 @@ public class ISCSIStorageHelper extends StorageHelperBase {
 
     @Override
     public boolean syncDomainInfo(StorageDomain storageDomain, Guid vdsId) {
+        return syncDomainInfo(storageDomain, vdsId, false);
+    }
+
+    /**
+     * Synchronize LUN details comprising the storage domain with the DB.
+     *
+     * @param persistNewConnections when {@code true}, iSCSI paths reported by vdsm that have no
+     *         matching {@code storage_server_connections} row are persisted (created); when
+     *         {@code false} they are skipped, preserving the behavior of the activation/periodic
+     *         sync callers (the default).
+     */
+    public boolean syncDomainInfo(StorageDomain storageDomain, Guid vdsId, boolean persistNewConnections) {
         // Synchronize LUN details comprising the storage domain with the DB
         SyncLunsInfoForBlockStorageDomainParameters parameters = new SyncLunsInfoForBlockStorageDomainParameters(
                 storageDomain.getId(), vdsId);
+        parameters.setPersistNewConnections(persistNewConnections);
         return backend.runInternalAction(ActionType.SyncLunsInfoForBlockStorageDomain, parameters).getSucceeded();
     }
 }

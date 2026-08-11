@@ -381,6 +381,7 @@ public enum ActionType {
     SyncDirectLuns(1043, ActionGroup.CONFIGURE_VM_STORAGE, false, QuotaDependency.NONE),
     SyncAllUsedLuns(1044, QuotaDependency.NONE),
     SyncStorageDomainsLuns(1045, QuotaDependency.NONE),
+    SyncStorageConnectionsForDomain(1054, ActionGroup.EDIT_STORAGE_DOMAIN_CONFIGURATION, QuotaDependency.NONE),
 
     // Event Notification
     AddEventSubscription(1100, false, QuotaDependency.NONE),
