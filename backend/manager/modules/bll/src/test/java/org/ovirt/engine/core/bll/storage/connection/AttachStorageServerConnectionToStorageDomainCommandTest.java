@@ -1,11 +1,15 @@
 package org.ovirt.engine.core.bll.storage.connection;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Arrays;
+import java.util.Collections;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -15,7 +19,6 @@ import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
 import org.ovirt.engine.core.bll.BaseCommandTest;
-import org.ovirt.engine.core.bll.CommandAssertUtils;
 import org.ovirt.engine.core.bll.ValidateTestUtils;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.validator.storage.StorageConnectionValidator;
@@ -23,12 +26,13 @@ import org.ovirt.engine.core.common.action.AttachDetachStorageConnectionParamete
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
-import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
+import org.ovirt.engine.core.common.businessentities.storage.LUNStorageServerConnectionMap;
+import org.ovirt.engine.core.common.businessentities.storage.LUNStorageServerConnectionMapId;
+import org.ovirt.engine.core.common.businessentities.storage.LUNs;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.LunDao;
-import org.ovirt.engine.core.dao.StorageServerConnectionDao;
 import org.ovirt.engine.core.dao.StorageServerConnectionLunMapDao;
 
 @MockitoSettings(strictness = Strictness.LENIENT)
@@ -43,9 +47,6 @@ public class AttachStorageServerConnectionToStorageDomainCommandTest extends Bas
 
     @Mock
     LunDao lunDao;
-
-    @Mock
-    StorageServerConnectionDao connectionDao;
 
     @Mock
     StorageServerConnectionLunMapDao lunMapDao;
@@ -71,6 +72,9 @@ public class AttachStorageServerConnectionToStorageDomainCommandTest extends Bas
         domain.setStatus(StorageDomainStatus.Maintenance);
         domain.setStorageType(StorageType.ISCSI);
         doReturn(domain).when(command).getStorageDomain();
+        // A default storage domain is expected to have discovered LUNs; the dedicated test below
+        // overrides this to exercise the empty-LUN validation path.
+        when(lunDao.getAllForVolumeGroup(any())).thenReturn(Collections.singletonList(new LUNs()));
     }
 
     @Test
@@ -93,17 +97,38 @@ public class AttachStorageServerConnectionToStorageDomainCommandTest extends Bas
     }
 
     @Test
-    public void executeCommandFirstDummyLun() {
-        List<StorageServerConnections> connectionsForDomain = new ArrayList<>();
-        StorageServerConnections connection = new StorageServerConnections();
-        connection.setId(Guid.newGuid().toString());
-        connection.setStorageType(StorageType.ISCSI);
-        connection.setIqn("iqn.1.2.3.4.com");
-        connection.setConnection("123.345.266.255");
-        connectionsForDomain.add(connection);
-        when(connectionDao.getAllForDomain(domain.getId())).thenReturn(connectionsForDomain);
+    public void executeCommandMapsConnectionToRealLuns() {
+        LUNs lun1 = new LUNs();
+        lun1.setLUNId("lun1");
+        LUNs lun2 = new LUNs();
+        lun2.setLUNId("lun2");
+        when(lunDao.getAllForVolumeGroup(any())).thenReturn(Arrays.asList(lun1, lun2));
+
         command.executeCommand();
-        CommandAssertUtils.checkSucceeded(command, true);
+
+        verify(lunMapDao, times(2)).save(any(LUNStorageServerConnectionMap.class));
+    }
+
+    @Test
+    public void executeCommandSkipsLunsAlreadyMappedToConnection() {
+        LUNs lun1 = new LUNs();
+        lun1.setLUNId("lun1");
+        when(lunDao.getAllForVolumeGroup(any())).thenReturn(Collections.singletonList(lun1));
+        when(lunMapDao.get(any(LUNStorageServerConnectionMapId.class)))
+                .thenReturn(new LUNStorageServerConnectionMap());
+
+        command.executeCommand();
+
+        verify(lunMapDao, never()).save(any(LUNStorageServerConnectionMap.class));
+    }
+
+    @Test
+    public void validateFailsWhenDomainHasNoDiscoveredLuns() {
+        when(validator.isConnectionForISCSIDomainAttached(domain)).thenReturn(Boolean.FALSE);
+        when(lunDao.getAllForVolumeGroup(any())).thenReturn(Collections.emptyList());
+
+        ValidateTestUtils.runAndAssertValidateFailure(command,
+                EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_HAS_NO_LUNS);
     }
 
 }
