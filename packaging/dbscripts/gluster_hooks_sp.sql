@@ -124,9 +124,9 @@ LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetGlusterHook (
     v_cluster_id UUID,
-    v_gluster_command VARCHAR(1000),
-    v_stage VARCHAR(100),
-    v_name VARCHAR(1000),
+    v_gluster_command VARCHAR(128),
+    v_stage VARCHAR(50),
+    v_name VARCHAR(256),
     v_includeContent BOOLEAN = false
     )
 RETURNS SETOF gluster_hooks STABLE AS $FUNCTION$
@@ -168,9 +168,9 @@ LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION DeleteGlusterHook (
     v_cluster_id UUID,
-    v_gluster_command VARCHAR(1000),
-    v_stage VARCHAR(100),
-    v_name VARCHAR(1000)
+    v_gluster_command VARCHAR(128),
+    v_stage VARCHAR(50),
+    v_name VARCHAR(256)
     )
 RETURNS VOID AS $FUNCTION$
 BEGIN
@@ -219,7 +219,7 @@ LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION UpdateGlusterHookContentType (
     v_id UUID,
-    v_content_type VARCHAR(100)
+    v_content_type VARCHAR(50)
     )
 RETURNS VOID AS $FUNCTION$
 BEGIN
@@ -350,7 +350,7 @@ LANGUAGE plpgsql;
 CREATE OR REPLACE FUNCTION UpdateGlusterServerHookStatus (
     v_hook_id UUID,
     v_server_id UUID,
-    v_hook_status VARCHAR(100)
+    v_hook_status VARCHAR(50)
     )
 RETURNS VOID AS $FUNCTION$
 BEGIN
@@ -369,7 +369,7 @@ LANGUAGE plpgsql;
 CREATE OR REPLACE FUNCTION UpdateGlusterServerHookChecksum (
     v_hook_id UUID,
     v_server_id UUID,
-    v_checksum VARCHAR(100)
+    v_checksum VARCHAR(256)
     )
 RETURNS VOID AS $FUNCTION$
 BEGIN

@@ -124,7 +124,7 @@ LANGUAGE plpgsql;
 ----------------------------------------------------------------
 -- [dbo].[event_notification_hist] Table
 ----------------------------------------------------------------
-CREATE OR REPLACE FUNCTION Deleteevent_notification_hist (v_sent_at TIMESTAMP)
+CREATE OR REPLACE FUNCTION Deleteevent_notification_hist (v_sent_at TIMESTAMP WITH TIME ZONE)
 RETURNS VOID AS $FUNCTION$
 BEGIN
     DELETE

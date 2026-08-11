@@ -569,7 +569,7 @@ CREATE OR REPLACE FUNCTION Updatestorage_domain_static (
     v_storage_comment TEXT,
     v_storage_type INT,
     v_storage_domain_type INT,
-    v_storage_domain_format_type INT,
+    v_storage_domain_format_type VARCHAR(50),
     v_last_time_used_as_master BIGINT,
     v_wipe_after_delete BOOLEAN,
     v_discard_after_delete BOOLEAN,
@@ -822,7 +822,7 @@ BEGIN
 END;$FUNCTION$
 LANGUAGE plpgsql;
 
-CREATE OR REPLACE FUNCTION Getstorage_domains_By_connection (v_connection VARCHAR)
+CREATE OR REPLACE FUNCTION Getstorage_domains_By_connection (v_connection VARCHAR(250))
 RETURNS SETOF storage_domains STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
@@ -1214,7 +1214,7 @@ LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION Getstorage_domains_By_storage_pool_id_and_connection (
     v_storage_pool_id UUID,
-    v_connection VARCHAR
+    v_connection VARCHAR(250)
     )
 RETURNS SETOF storage_domains STABLE AS $FUNCTION$
 BEGIN

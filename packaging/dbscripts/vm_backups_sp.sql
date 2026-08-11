@@ -20,7 +20,7 @@ CREATE OR REPLACE FUNCTION InsertVmBackup (
     v_to_checkpoint_id UUID,
     v_vm_id UUID,
     v_host_id UUID,
-    v_phase TEXT,
+    v_phase VARCHAR(32),
     v__create_date TIMESTAMP WITH TIME ZONE,
     v__update_date TIMESTAMP WITH TIME ZONE,
     v_description VARCHAR(1024),
@@ -64,7 +64,7 @@ CREATE OR REPLACE FUNCTION UpdateVmBackup (
     v_to_checkpoint_id UUID,
     v_vm_id UUID,
     v_host_id UUID,
-    v_phase TEXT,
+    v_phase VARCHAR(32),
     v__update_date TIMESTAMP WITH TIME ZONE,
     v_description VARCHAR(1024),
     v_backup_type VARCHAR(50),
@@ -157,7 +157,7 @@ LANGUAGE plpgsql;
 CREATE OR REPLACE FUNCTION UpdateVmBackupDiskMap (
     v_backup_id UUID,
     v_disk_id UUID,
-    v_backup_url TEXT
+    v_backup_url VARCHAR
     )
 RETURNS VOID AS $FUNCTION$
 BEGIN
