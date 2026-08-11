@@ -1,11 +1,17 @@
 package org.ovirt.engine.core.bll.storage.domain;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.ovirt.engine.core.bll.ValidateTestUtils.runAndAssertValidateFailure;
 import static org.ovirt.engine.core.bll.ValidateTestUtils.runAndAssertValidateSuccess;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -21,12 +27,20 @@ import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
 import org.ovirt.engine.core.bll.BaseCommandTest;
 import org.ovirt.engine.core.bll.ValidationResult;
+import org.ovirt.engine.core.bll.storage.connection.ISCSIStorageHelper;
 import org.ovirt.engine.core.bll.storage.domain.SyncLunsInfoForBlockStorageDomainCommand.LunHandler;
 import org.ovirt.engine.core.bll.validator.HostValidator;
 import org.ovirt.engine.core.common.action.SyncLunsInfoForBlockStorageDomainParameters;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
+import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
+import org.ovirt.engine.core.common.businessentities.storage.LUNStorageServerConnectionMap;
 import org.ovirt.engine.core.common.businessentities.storage.LUNs;
+import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.LunDao;
+import org.ovirt.engine.core.dao.StorageServerConnectionDao;
+import org.ovirt.engine.core.dao.StorageServerConnectionLunMapDao;
 
 @MockitoSettings(strictness = Strictness.LENIENT)
 public class SyncLunsInfoForBlockStorageDomainCommandTest extends BaseCommandTest {
@@ -41,12 +55,30 @@ public class SyncLunsInfoForBlockStorageDomainCommandTest extends BaseCommandTes
     @Mock
     private HostValidator hostValidator;
 
+    @Mock
+    private LunDao lunDao;
+
+    @Mock
+    private ISCSIStorageHelper iscsiStorageHelper;
+
+    @Mock
+    private StorageServerConnectionLunMapDao storageServerConnectionLunMapDao;
+
+    @Mock
+    private StorageServerConnectionDao storageServerConnectionDao;
+
+    @Mock
+    private BlockStorageDomainHelper blockStorageDomainHelper;
+
     private LUNs lunFromVg;
     private LUNs lunFromDb;
 
     @BeforeEach
     public void setUp() {
         doReturn(hostValidator).when(command).getHostValidator();
+        StorageDomain domain = new StorageDomain();
+        domain.setStorage("vgId");
+        doReturn(domain).when(command).getStorageDomain();
         lunFromVg = new LUNs();
         lunFromDb = new LUNs();
     }
@@ -161,6 +193,108 @@ public class SyncLunsInfoForBlockStorageDomainCommandTest extends BaseCommandTes
         assertEquals(Stream.of(command.saveLunsHandler, command.removeLunsHandler).collect(Collectors.toSet()),
                 lunsToUpdateInDb.keySet());
         assertLunIdInList(lunsToRemoveFromDb, lunFromDbId);
+    }
+
+    @Test
+    public void refreshLunsConnectionsMapsAllPathsSharingTheSameIqn() {
+        LUNs lun = new LUNs();
+        lun.setLUNId("lun1");
+
+        StorageServerConnections c1 = createConnection("conn1", "1.1.1.1", "iqn.shared");
+        StorageServerConnections c2 = createConnection("conn2", "1.1.1.2", "iqn.shared");
+        StorageServerConnections c3 = createConnection("conn3", "1.1.1.3", "iqn.shared");
+        StorageServerConnections c4 = createConnection("conn4", "1.1.1.4", "iqn.shared");
+        lun.setLunConnections(Arrays.asList(c1, c2, c3, c4));
+
+        when(iscsiStorageHelper.findConnectionWithSameDetails(c1)).thenReturn(c1);
+        when(iscsiStorageHelper.findConnectionWithSameDetails(c2)).thenReturn(c2);
+        when(iscsiStorageHelper.findConnectionWithSameDetails(c3)).thenReturn(c3);
+        when(iscsiStorageHelper.findConnectionWithSameDetails(c4)).thenReturn(c4);
+        when(storageServerConnectionLunMapDao.get(any())).thenReturn(null);
+
+        command.refreshLunsConnections(Collections.singletonList(lun));
+
+        verify(storageServerConnectionLunMapDao, times(4)).save(any(LUNStorageServerConnectionMap.class));
+    }
+
+    @Test
+    public void refreshLunsConnectionsSkipsAndLogsUnmatchedPath() {
+        LUNs lun = new LUNs();
+        lun.setLUNId("lun1");
+        StorageServerConnections conn = createConnection("conn1", "1.1.1.1", "iqn.shared");
+        lun.setLunConnections(Collections.singletonList(conn));
+
+        when(iscsiStorageHelper.findConnectionWithSameDetails(conn)).thenReturn(null);
+
+        command.refreshLunsConnections(Collections.singletonList(lun));
+
+        // Flag defaults to false: the unmatched path is skipped, no row created and no map saved.
+        verify(storageServerConnectionDao, never()).save(any(StorageServerConnections.class));
+        verify(storageServerConnectionLunMapDao, never()).save(any(LUNStorageServerConnectionMap.class));
+    }
+
+    @Test
+    public void refreshLunsConnectionsPersistsNewConnectionsWhenFlagSet() {
+        parameters.setPersistNewConnections(true);
+        LUNs lun = new LUNs();
+        lun.setLUNId("lun1");
+        StorageServerConnections conn = createConnection(null, "1.1.1.1", "iqn.shared");
+        lun.setLunConnections(Collections.singletonList(conn));
+
+        when(iscsiStorageHelper.findConnectionWithSameDetails(conn)).thenReturn(null);
+        when(storageServerConnectionLunMapDao.get(any())).thenReturn(null);
+
+        command.refreshLunsConnections(Collections.singletonList(lun));
+
+        // The missing connection row is created (mirroring LunHelper#proceedLUNInDb) ...
+        verify(storageServerConnectionDao, times(1)).save(any(StorageServerConnections.class));
+        // ... assigned a fresh id ...
+        assertNotNull(conn.getId());
+        // ... and mapped to the LUN.
+        verify(storageServerConnectionLunMapDao, times(1)).save(any(LUNStorageServerConnectionMap.class));
+    }
+
+    @Test
+    public void refreshLunsConnectionsSkipsFcpDomains() {
+        command.getStorageDomain().setStorageType(StorageType.FCP);
+        LUNs lun = new LUNs();
+        lun.setLUNId("lun1");
+        StorageServerConnections conn = createConnection("conn1", "1.1.1.1", "iqn.shared");
+        lun.setLunConnections(Collections.singletonList(conn));
+
+        command.refreshLunsConnections(Collections.singletonList(lun));
+
+        verify(iscsiStorageHelper, never()).findConnectionWithSameDetails(any());
+        verify(storageServerConnectionDao, never()).save(any(StorageServerConnections.class));
+        verify(storageServerConnectionLunMapDao, never()).save(any(LUNStorageServerConnectionMap.class));
+    }
+
+    @Test
+    public void executeCommandRefreshesConnectionsEvenWhenLunsAreUpToDate() {
+        LUNs lun = new LUNs();
+        lun.setLUNId("lun1");
+        lun.setPhysicalVolumeId("pv1");
+        StorageServerConnections conn = createConnection("conn1", "1.1.1.1", "iqn.shared");
+        lun.setLunConnections(Collections.singletonList(conn));
+
+        doReturn(Collections.singletonList(lun)).when(command).getVgInfo();
+        when(lunDao.getAllForVolumeGroup(any())).thenReturn(Collections.singletonList(lun));
+        // The LUN reported by vdsm is identical to the one in the DB -> every LUN classifies as noOp,
+        // so dbShouldBeUpdated is false. The connection refresh must still run regardless.
+        when(iscsiStorageHelper.findConnectionWithSameDetails(conn)).thenReturn(conn);
+        when(storageServerConnectionLunMapDao.get(any())).thenReturn(null);
+
+        command.executeCommand();
+
+        verify(storageServerConnectionLunMapDao).save(any(LUNStorageServerConnectionMap.class));
+    }
+
+    private StorageServerConnections createConnection(String id, String address, String iqn) {
+        StorageServerConnections connection = new StorageServerConnections();
+        connection.setId(id);
+        connection.setConnection(address);
+        connection.setIqn(iqn);
+        return connection;
     }
 
     private SyncLunsInfoForBlockStorageDomainParameters createParameters() {

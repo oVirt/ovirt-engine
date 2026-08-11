@@ -16,6 +16,7 @@ import org.ovirt.engine.core.bll.InternalCommandAttribute;
 import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.context.CommandContext;
+import org.ovirt.engine.core.bll.storage.connection.ISCSIStorageHelper;
 import org.ovirt.engine.core.bll.storage.utils.BlockStorageDiscardFunctionalityHelper;
 import org.ovirt.engine.core.bll.validator.HostValidator;
 import org.ovirt.engine.core.common.action.LockProperties;
@@ -24,11 +25,13 @@ import org.ovirt.engine.core.common.action.SyncLunsInfoForBlockStorageDomainPara
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.businessentities.storage.LUNStorageServerConnectionMap;
 import org.ovirt.engine.core.common.businessentities.storage.LUNs;
+import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.vdscommands.GetVGInfoVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
+import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.LunDao;
 import org.ovirt.engine.core.dao.StorageDomainStaticDao;
 import org.ovirt.engine.core.dao.StorageServerConnectionDao;
@@ -46,9 +49,11 @@ public class SyncLunsInfoForBlockStorageDomainCommand<T extends SyncLunsInfoForB
     @Inject
     private BlockStorageDiscardFunctionalityHelper discardHelper;
     @Inject
-    private StorageServerConnectionDao storageServerConnectionDao;
+    private ISCSIStorageHelper iscsiStorageHelper;
     @Inject
     private StorageServerConnectionLunMapDao storageServerConnectionLunMapDao;
+    @Inject
+    private StorageServerConnectionDao storageServerConnectionDao;
     @Inject
     private LunDao lunDao;
     @Inject
@@ -84,17 +89,20 @@ public class SyncLunsInfoForBlockStorageDomainCommand<T extends SyncLunsInfoForB
         if (dbShouldBeUpdated) {
             TransactionSupport.executeInNewTransaction(() -> {
                 updateLunsInDb(lunsToUpdateInDb);
-                refreshLunsConnections(lunsFromVgInfo);
                 return null;
             });
         }
+        TransactionSupport.executeInNewTransaction(() -> {
+            refreshLunsConnections(lunsFromVgInfo);
+            return null;
+        });
 
         refreshMetadataDevicesInfoIfNeeded();
         setSucceeded(true);
     }
 
     @SuppressWarnings("unchecked")
-    private List<LUNs> getVgInfo() {
+    protected List<LUNs> getVgInfo() {
         if (getParameters().getVgInfo() != null) {
             log.debug("Using the virtual group's information from the command's parameters rather "
                     + "than calling getVgInfo and getting the information directly from vdsm.");
@@ -106,14 +114,33 @@ public class SyncLunsInfoForBlockStorageDomainCommand<T extends SyncLunsInfoForB
     }
 
     protected void refreshLunsConnections(List<LUNs> lunsFromVgInfo) {
+        if (getStorageDomain().getStorageType() == StorageType.FCP) {
+            // FCP storage doesn't utilize storage_server_connections; nothing to refresh.
+            return;
+        }
         for (LUNs lunFromVgInfo : lunsFromVgInfo) {
             // Update lun connections map
             for (StorageServerConnections connection : lunFromVgInfo.getLunConnections()) {
                 StorageServerConnections connectionFromDb =
-                        storageServerConnectionDao.getForIqn(connection.getIqn());
+                        iscsiStorageHelper.findConnectionWithSameDetails(connection);
                 if (connectionFromDb == null) {
-                    // Shouldn't happen
-                    continue;
+                    if (getParameters().isPersistNewConnections()) {
+                        // No existing row matches this path vdsm reported; persist it (mirrors
+                        // LunHelper#proceedLUNInDb) so ad-hoc logins survive reboot and become
+                        // cluster-visible. The password is encrypted on save by the DAO, like
+                        // every other connection-creation path.
+                        connection.setId(Guid.newGuid().toString());
+                        connection.setStorageType(getStorageDomain().getStorageType());
+                        storageServerConnectionDao.save(connection);
+                        connectionFromDb = connection;
+                    } else {
+                        // Shouldn't happen: every path vdsm reports should have a matching
+                        // storage_server_connections row (created when the domain was added).
+                        log.warn("No DB storage connection matches LUN '{}' path iqn='{}' connection='{}:{}' portal='{}'",
+                                lunFromVgInfo.getLUNId(), connection.getIqn(),
+                                connection.getConnection(), connection.getPort(), connection.getPortal());
+                        continue;
+                    }
                 }
 
                 LUNStorageServerConnectionMap lunConnection = new LUNStorageServerConnectionMap(

@@ -1140,6 +1140,8 @@ public enum AuditLogType {
             AuditLogTimeInterval.MINUTE.getValue()),
     USER_EXTENDED_STORAGE_DOMAIN(972),
     USER_EXTENDED_STORAGE_DOMAIN_FAILED(973, AuditLogSeverity.ERROR),
+    USER_SYNC_STORAGE_CONNECTIONS(15015),
+    USER_SYNC_STORAGE_CONNECTIONS_FAILED(15016, AuditLogSeverity.ERROR),
     @Deprecated
     USER_REMOVE_VG(974),
     @Deprecated
