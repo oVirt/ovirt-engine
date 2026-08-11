@@ -47,6 +47,9 @@ public class AttachStorageConnectionToStorageDomainCommand<T extends AttachDetac
         if (storageConnectionValidator.isConnectionForISCSIDomainAttached(getStorageDomain())) {
             return failValidation(EngineMessage.ACTION_TYPE_FAILED_STORAGE_CONNECTION_FOR_DOMAIN_ALREADY_EXISTS);
         }
+        if (lunDao.getAllForVolumeGroup(getStorageDomain().getStorage()).isEmpty()) {
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_HAS_NO_LUNS);
+        }
         return true;
     }
 
