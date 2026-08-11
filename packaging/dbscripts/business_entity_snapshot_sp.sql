@@ -1,13 +1,13 @@
 
 
 CREATE OR REPLACE FUNCTION insert_entity_snapshot (
-    v_id uuid,
-    v_command_id uuid,
-    v_command_type VARCHAR,
-    v_entity_id VARCHAR,
-    v_entity_type VARCHAR,
+    v_id UUID,
+    v_command_id UUID,
+    v_command_type VARCHAR(256),
+    v_entity_id VARCHAR(128),
+    v_entity_type VARCHAR(128),
     v_entity_snapshot TEXT,
-    v_snapshot_class VARCHAR,
+    v_snapshot_class VARCHAR(128),
     v_snapshot_type INT,
     v_insertion_order INT
     )
@@ -42,7 +42,7 @@ BEGIN
 END;$FUNCTION$
 LANGUAGE plpgsql;
 
-CREATE OR REPLACE FUNCTION get_entity_snapshot_by_id (v_id uuid)
+CREATE OR REPLACE FUNCTION get_entity_snapshot_by_id (v_id UUID)
 RETURNS SETOF business_entity_snapshot STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
@@ -53,7 +53,7 @@ BEGIN
 END;$FUNCTION$
 LANGUAGE plpgsql;
 
-CREATE OR REPLACE FUNCTION get_entity_snapshot_by_command_id (v_command_id uuid)
+CREATE OR REPLACE FUNCTION get_entity_snapshot_by_command_id (v_command_id UUID)
 RETURNS SETOF business_entity_snapshot STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
@@ -82,7 +82,7 @@ BEGIN
 END;$FUNCTION$
 LANGUAGE plpgsql;
 
-CREATE OR REPLACE FUNCTION delete_entity_snapshot_by_command_id (v_command_id uuid)
+CREATE OR REPLACE FUNCTION delete_entity_snapshot_by_command_id (v_command_id UUID)
 RETURNS void AS $FUNCTION$
 BEGIN
     BEGIN

@@ -4,16 +4,16 @@
 -- [engine_sessions] Table
 --
 CREATE OR REPLACE FUNCTION InsertEngineSession (
-    INOUT v_id INT,
+    INOUT v_id BIGINT,
     v_engine_session_id TEXT,
     v_user_id UUID,
     v_user_name VARCHAR(255),
     v_authz_name VARCHAR(255),
     v_source_ip VARCHAR(50),
-    v_group_ids VARCHAR(2048),
-    v_role_ids VARCHAR(2048)
+    v_group_ids TEXT,
+    v_role_ids TEXT
     )
-RETURNS INT AS $FUNCTION$
+RETURNS BIGINT AS $FUNCTION$
 BEGIN
     INSERT INTO engine_sessions (
         engine_session_id,
@@ -38,7 +38,7 @@ BEGIN
 END;$FUNCTION$
 LANGUAGE plpgsql;
 
-CREATE OR REPLACE FUNCTION GetEngineSession (v_id INT)
+CREATE OR REPLACE FUNCTION GetEngineSession (v_id BIGINT)
 RETURNS SETOF engine_sessions STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
@@ -60,7 +60,7 @@ BEGIN
 END;$FUNCTION$
 LANGUAGE plpgsql;
 
-CREATE OR REPLACE FUNCTION DeleteEngineSession (v_id INT)
+CREATE OR REPLACE FUNCTION DeleteEngineSession (v_id BIGINT)
 RETURNS INT AS $FUNCTION$
 DECLARE deleted_rows INT;
 

@@ -41,6 +41,8 @@ public class VmPool implements Queryable, BusinessEntity<Guid>, Nameable, Commen
 
     private Guid clusterId;
 
+    @Min(value = 0, message = "VALIDATION_VM_POOLS_NUMBER_OF_PRESTARTED_VMS_OUT_OF_RANGE")
+    @Max(value = Short.MAX_VALUE, message = "VALIDATION_VM_POOLS_NUMBER_OF_PRESTARTED_VMS_OUT_OF_RANGE")
     private int prestartedVms;
 
     private int defaultTimeInDays;

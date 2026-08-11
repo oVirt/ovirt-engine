@@ -19,7 +19,7 @@ CREATE OR REPLACE FUNCTION InsertVmCheckpoint (
     v_vm_id UUID,
     v_parent_id UUID,
     v__create_date TIMESTAMP WITH TIME ZONE,
-    v_state TEXT,
+    v_state VARCHAR(15),
     v_description VARCHAR(1024)
     )
 RETURNS VOID AS $FUNCTION$
@@ -47,7 +47,7 @@ CREATE OR REPLACE FUNCTION UpdateVmCheckpoint (
     v_checkpoint_id UUID,
     v_vm_id UUID,
     v_parent_id UUID,
-    v_state TEXT,
+    v_state VARCHAR(15),
     v_description VARCHAR(1024)
     )
 RETURNS VOID AS $FUNCTION$
@@ -122,7 +122,7 @@ LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION InvalidateAllCheckpointsByVmId (
     v_vm_id UUID,
-    v_state TEXT
+    v_state VARCHAR(15)
     )
 RETURNS VOID AS $FUNCTION$
 BEGIN

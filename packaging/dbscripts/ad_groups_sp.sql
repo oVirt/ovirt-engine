@@ -5,7 +5,7 @@
 --
 CREATE OR REPLACE FUNCTION InsertGroup (
     v_id UUID,
-    v_name VARCHAR(255),
+    v_name VARCHAR(256),
     v_domain VARCHAR(100),
     v_distinguishedname VARCHAR(4000),
     v_external_id TEXT,
@@ -34,7 +34,7 @@ LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION UpdateGroup (
     v_id UUID,
-    v_name VARCHAR(255),
+    v_name VARCHAR(256),
     v_domain VARCHAR(100),
     v_distinguishedname VARCHAR(4000),
     v_external_id TEXT,
