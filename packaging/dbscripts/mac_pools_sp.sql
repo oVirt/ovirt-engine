@@ -2,7 +2,7 @@
 
 CREATE OR REPLACE FUNCTION InsertMacPool (
     v_id UUID,
-    v_name VARCHAR(40),
+    v_name VARCHAR(255),
     v_allow_duplicate_mac_addresses BOOLEAN,
     v_description VARCHAR(4000)
     )
@@ -25,7 +25,7 @@ LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION UpdateMacPool (
     v_id UUID,
-    v_name VARCHAR(40),
+    v_name VARCHAR(255),
     v_allow_duplicate_mac_addresses BOOLEAN,
     v_description VARCHAR(4000)
     )

@@ -21,8 +21,8 @@ END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION Updatetags_vm_pool_map (
-    v_tag_id INT,
-    v_vm_pool_id INT
+    v_tag_id UUID,
+    v_vm_pool_id UUID
     )
 RETURNS VOID
     --The [tags_vm_pool_map] table doesn't have a timestamp column. Optimistic concurrency logic cannot be generated

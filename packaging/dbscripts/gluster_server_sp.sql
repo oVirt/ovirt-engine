@@ -6,7 +6,7 @@ Stored FUNCTIONs for database operations on gluster_server table
 CREATE OR REPLACE FUNCTION InsertGlusterServer (
     v_server_id UUID,
     v_gluster_server_uuid UUID,
-    v_peer_status VARCHAR(20)
+    v_peer_status VARCHAR(50)
     )
 RETURNS VOID AS $FUNCTION$
 BEGIN

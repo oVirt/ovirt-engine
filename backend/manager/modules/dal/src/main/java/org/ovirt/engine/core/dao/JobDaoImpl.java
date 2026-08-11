@@ -117,7 +117,7 @@ public class JobDaoImpl extends DefaultGenericDao<Job, Guid> implements JobDao {
     public void deleteJobOlderThanDateWithStatus(Date sinceDate, List<JobExecutionStatus> statusesList) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("end_time", sinceDate)
-                .addValue("status", StringUtils.join(statusesList, ","));
+                .addValue("states", StringUtils.join(statusesList, ","));
         getCallsHandler().executeModification("DeleteJobOlderThanDateWithStatus", parameterSource);
     }
 

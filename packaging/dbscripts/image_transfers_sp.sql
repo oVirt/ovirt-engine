@@ -82,7 +82,7 @@ CREATE OR REPLACE FUNCTION UpdateImageUploads(
     v_phase INTEGER,
     v_type INTEGER,
     v_active BOOLEAN,
-    v_last_updated TIMESTAMP,
+    v_last_updated TIMESTAMP WITH TIME ZONE,
     v_message VARCHAR,
     v_vds_id UUID,
     v_disk_id UUID,
@@ -96,7 +96,7 @@ CREATE OR REPLACE FUNCTION UpdateImageUploads(
     v_image_format INTEGER,
     v_backend INTEGER,
     v_backup_id UUID,
-    v_client_type INTEGER,
+    v_client_type SMALLINT,
     v_shallow BOOLEAN
     )
 RETURNS VOID
@@ -146,7 +146,7 @@ CREATE OR REPLACE FUNCTION InsertImageUploads(
     v_phase INTEGER,
     v_type INTEGER,
     v_active BOOLEAN,
-    v_last_updated TIMESTAMP,
+    v_last_updated TIMESTAMP WITH TIME ZONE,
     v_message VARCHAR,
     v_vds_id UUID,
     v_disk_id UUID,
@@ -160,7 +160,7 @@ CREATE OR REPLACE FUNCTION InsertImageUploads(
     v_image_format INTEGER,
     v_backend INTEGER,
     v_backup_id UUID,
-    v_client_type INTEGER,
+    v_client_type SMALLINT,
     v_shallow BOOLEAN
     )
 RETURNS VOID

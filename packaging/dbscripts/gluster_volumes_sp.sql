@@ -775,7 +775,7 @@ LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION UpdateGlusterBrickTaskByServerIdBrickDir (
     v_server_id UUID,
-    v_brick_dir VARCHAR(200),
+    v_brick_dir VARCHAR(4096),
     v_task_id UUID
     )
 RETURNS VOID AS $FUNCTION$

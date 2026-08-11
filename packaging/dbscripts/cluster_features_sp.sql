@@ -68,7 +68,7 @@ LANGUAGE plpgsql;
 -- 2 & 2 (0000 0010 & 0000 0010) = 0000 0010 = 2 > 0        Features with this category would be listed
 -- 255 & 2 (1111 1111 & 0000 0010) = 0000 0010 = 2 > 0      Features with this category would be listed
 CREATE OR REPLACE FUNCTION GetClusterFeaturesByVersionAndCategory (
-    v_version VARCHAR(256),
+    v_version VARCHAR(40),
     v_category INT
     )
 RETURNS SETOF cluster_features STABLE AS $FUNCTION$

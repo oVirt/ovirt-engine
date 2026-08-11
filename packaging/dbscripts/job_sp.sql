@@ -195,7 +195,7 @@ LANGUAGE plpgsql;
 --------------------------------------------
 CREATE OR REPLACE FUNCTION DeleteJobOlderThanDateWithStatus (
     v_end_time TIMESTAMP WITH TIME ZONE,
-    v_status TEXT
+    v_states TEXT
     )
 RETURNS VOID AS $FUNCTION$
 BEGIN
@@ -203,7 +203,7 @@ BEGIN
     FROM job
     WHERE is_auto_cleared
         AND end_time < v_end_time
-        AND status = ANY (string_to_array(v_status, ',')::VARCHAR []);
+        AND status = ANY (string_to_array(v_states, ',')::VARCHAR []);
 END;$FUNCTION$
 LANGUAGE plpgsql;
 
