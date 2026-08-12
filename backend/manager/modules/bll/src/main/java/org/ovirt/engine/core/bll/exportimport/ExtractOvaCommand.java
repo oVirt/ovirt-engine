@@ -3,9 +3,11 @@ package org.ovirt.engine.core.bll.exportimport;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
@@ -37,6 +39,7 @@ import org.ovirt.engine.core.common.utils.ansible.AnsibleReturnValue;
 import org.ovirt.engine.core.common.utils.ansible.AnsibleRunnerClient;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.CommandStatus;
+import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.DiskDao;
 import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.utils.EngineLocalConfig;
@@ -203,18 +206,36 @@ public class ExtractOvaCommand<T extends ConvertOvaParameters> extends VmCommand
      * @return JSON map keyed by OVA tar member name: {tarName: {path, format}}
      */
     private String prepareDisksJson(List<DiskImage> diskList, List<String> diskPaths) {
-        List<String> tarNames = getParameters().getOvaTarNamesByIndex();
-        if (tarNames == null || tarNames.size() != diskList.size()) {
+        Map<Guid, String> diskIdToTarName = getParameters().getDiskIdToTarName();
+        if (diskIdToTarName == null || diskIdToTarName.isEmpty()) {
             throw new EngineException(
                     EngineError.GeneralException,
-                    "OVA extract: ovaTarNamesByIndex missing or size mismatch with disk list");
+                    "OVA extract: diskIdToTarName missing");
+        }
+        if (diskList.size() != diskPaths.size()) {
+            throw new EngineException(
+                    EngineError.GeneralException,
+                    "OVA extract: disk list and path list size mismatch");
         }
         Map<String, Map<String, String>> entries = new LinkedHashMap<>();
+        Set<String> usedTarNames = new HashSet<>();
         for (int i = 0; i < diskList.size(); i++) {
+            DiskImage disk = diskList.get(i);
+            String tarName = diskIdToTarName.get(disk.getId());
+            if (tarName == null) {
+                throw new EngineException(
+                        EngineError.GeneralException,
+                        String.format("OVA extract: no tar name mapping for disk '%s'", disk.getId()));
+            }
+            if (!usedTarNames.add(tarName)) {
+                throw new EngineException(
+                        EngineError.GeneralException,
+                        String.format("OVA extract: duplicate tar name '%s'", tarName));
+            }
             Map<String, String> entry = new HashMap<>();
             entry.put("path", diskPaths.get(i));
-            entry.put("format", diskList.get(i).getVolumeFormat() == VolumeFormat.COW ? "qcow2" : "raw");
-            entries.put(tarNames.get(i), entry);
+            entry.put("format", disk.getVolumeFormat() == VolumeFormat.COW ? "qcow2" : "raw");
+            entries.put(tarName, entry);
         }
         try {
             return encode(new ObjectMapper().writeValueAsString(entries));

@@ -110,7 +110,7 @@ public class ImportVmFromOvaCommand<T extends ImportVmFromOvaParameters> extends
         parameters.setParentCommand(getActionType());
         parameters.setParentParameters(getParameters());
         parameters.setEndProcedure(EndProcedure.COMMAND_MANAGED);
-        parameters.setOvaTarNamesByIndex(buildOvaTarNamesByIndex());
+        parameters.setDiskIdToTarName(buildDiskIdToTarName());
         enrichConvertOvaParameters(parameters);
         return parameters;
     }
@@ -127,7 +127,7 @@ public class ImportVmFromOvaCommand<T extends ImportVmFromOvaParameters> extends
         parameters.setParentCommand(getActionType());
         parameters.setParentParameters(getParameters());
         parameters.setEndProcedure(EndProcedure.COMMAND_MANAGED);
-        parameters.setOvaTarNamesByIndex(buildOvaTarNamesByIndex());
+        parameters.setDiskIdToTarName(buildDiskIdToTarName());
         enrichExtractOvaParameters(parameters);
         return parameters;
     }
@@ -138,17 +138,18 @@ public class ImportVmFromOvaCommand<T extends ImportVmFromOvaParameters> extends
     protected void enrichExtractOvaParameters(ConvertOvaParameters parameters) {
     }
 
-    private List<String> buildOvaTarNamesByIndex() {
+    private Map<Guid, String> buildDiskIdToTarName() {
         Map<Guid, Guid> tarNameByDiskId = getParameters().getImageMappings();
         if (tarNameByDiskId == null || tarNameByDiskId.isEmpty()) {
             return null;
         }
-        return getDisks().stream()
-                .map(d -> {
-                    Guid tarName = tarNameByDiskId.get(d.getId());
-                    return tarName != null ? tarName.toString() : null;
-                })
-                .collect(Collectors.toList());
+        Map<Guid, String> result = new LinkedHashMap<>();
+        for (Map.Entry<Guid, Guid> entry : tarNameByDiskId.entrySet()) {
+            if (entry.getValue() != null) {
+                result.put(entry.getKey(), entry.getValue().toString());
+            }
+        }
+        return result.isEmpty() ? null : result;
     }
 
     @Override

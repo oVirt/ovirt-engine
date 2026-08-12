@@ -106,8 +106,7 @@ public class ImportVmTemplateFromOvaCommand<T extends ImportVmTemplateFromOvaPar
 
     protected AddDiskParameters buildAddDiskParameters(DiskImage image) {
         AddDiskParameters diskParameters = new AddDiskParameters(image.getDiskVmElementForVm(getVmTemplateId()), image);
-        Guid originalId = getOriginalDiskIdMap(image.getId());
-        diskParameters.setStorageDomainId(getParameters().getImageToDestinationDomainMap().get(originalId));
+        diskParameters.setStorageDomainId(getDestinationDomainIdForDisk(image.getId()));
         diskParameters.setParentCommand(getActionType());
         diskParameters.setParentParameters(getParameters());
         diskParameters.setShouldRemainIllegalOnFailedExecution(true);
@@ -173,7 +172,7 @@ public class ImportVmTemplateFromOvaCommand<T extends ImportVmTemplateFromOvaPar
     protected boolean validateSourceStorageDomain() {
         getParameters().setImages(getVmTemplate().getDiskList());
         getParameters().getImages().forEach(image -> image.setStorageIds(new ArrayList<>(
-                Collections.singleton(getParameters().getImageToDestinationDomainMap().get(image.getId())))));
+                Collections.singleton(getDestinationDomainIdForDisk(image.getId())))));
         return true;
     }
 
@@ -224,17 +223,18 @@ public class ImportVmTemplateFromOvaCommand<T extends ImportVmTemplateFromOvaPar
     protected void enrichExtractOvaParameters(ConvertOvaParameters parameters) {
     }
 
-    private List<String> buildOvaTarNamesByIndex() {
+    private Map<Guid, String> buildDiskIdToTarName() {
         Map<Guid, Guid> tarNameByDiskId = getParameters().getImageMappings();
         if (tarNameByDiskId == null || tarNameByDiskId.isEmpty()) {
             return null;
         }
-        return getVmTemplate().getDiskList().stream()
-                .map(d -> {
-                    Guid tarName = tarNameByDiskId.get(d.getId());
-                    return tarName != null ? tarName.toString() : null;
-                })
-                .collect(Collectors.toList());
+        Map<Guid, String> result = new LinkedHashMap<>();
+        for (Map.Entry<Guid, Guid> entry : tarNameByDiskId.entrySet()) {
+            if (entry.getValue() != null) {
+                result.put(entry.getKey(), entry.getValue().toString());
+            }
+        }
+        return result.isEmpty() ? null : result;
     }
 
     private void convert() {
@@ -264,7 +264,7 @@ public class ImportVmTemplateFromOvaCommand<T extends ImportVmTemplateFromOvaPar
         parameters.setParentParameters(getParameters());
         parameters.setEndProcedure(EndProcedure.COMMAND_MANAGED);
         parameters.setVmEntityType(VmEntityType.TEMPLATE);
-        parameters.setOvaTarNamesByIndex(buildOvaTarNamesByIndex());
+        parameters.setDiskIdToTarName(buildDiskIdToTarName());
         parameters.setTemplateDiskIdsForExtract(getParameters().getTemplateDiskIdsForOvaExtract());
         enrichExtractOvaParameters(parameters);
         return parameters;

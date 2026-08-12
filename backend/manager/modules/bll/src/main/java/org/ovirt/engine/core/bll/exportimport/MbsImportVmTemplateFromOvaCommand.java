@@ -46,21 +46,13 @@ public class MbsImportVmTemplateFromOvaCommand<T extends ImportVmTemplateFromOva
     }
 
     @Override
-    protected boolean setAndValidateDiskProfiles() {
-        return true;
+    protected boolean skipDiskProfileValidation(DiskImage diskImage) {
+        return diskTargetsManagedBlockStorage(diskImage);
     }
 
     @Override
     protected DiskImage adjustDisk(DiskImage image) {
-        boolean targetsManagedBlock = OvaImportManagedBlockSupport.diskTargetsManagedBlockStorage(
-                image,
-                diskId -> {
-                    Guid k = getOriginalDiskIdMap(diskId);
-                    return k != null ? k : diskId;
-                },
-                getParameters().getImageToDestinationDomainMap(),
-                getStoragePoolId(),
-                storageDomainDao);
+        boolean targetsManagedBlock = diskTargetsManagedBlockStorage(image);
         if (targetsManagedBlock) {
             image.setVolumeFormat(VolumeFormat.RAW);
             image.setVolumeType(VolumeType.Preallocated);
@@ -115,7 +107,7 @@ public class MbsImportVmTemplateFromOvaCommand<T extends ImportVmTemplateFromOva
         Guid extractStorageDomainId = parameters.getStorageDomainId();
         if (Guid.isNullOrEmpty(extractStorageDomainId)) {
             Guid mbsDest = OvaImportManagedBlockSupport.firstManagedBlockDestinationDomainId(
-                    getParameters().getImageToDestinationDomainMap(),
+                    getImageToDestinationDomainMap(),
                     getStoragePoolId(),
                     storageDomainDao);
             if (!Guid.isNullOrEmpty(mbsDest)) {

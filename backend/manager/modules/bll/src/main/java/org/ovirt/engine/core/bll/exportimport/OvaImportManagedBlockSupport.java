@@ -70,14 +70,30 @@ public final class OvaImportManagedBlockSupport {
         return null;
     }
 
+    public static Guid resolveDestinationDomainId(
+            Guid diskId,
+            Function<Guid, Guid> currentDiskIdToKeyForDestMap,
+            Map<Guid, Guid> imageToDestinationDomainMap) {
+        if (imageToDestinationDomainMap == null || Guid.isNullOrEmpty(diskId)) {
+            return null;
+        }
+        Guid key = currentDiskIdToKeyForDestMap.apply(diskId);
+        if (key == null) {
+            return null;
+        }
+        return imageToDestinationDomainMap.get(key);
+    }
+
     public static boolean diskTargetsManagedBlockStorage(
             DiskImage image,
             Function<Guid, Guid> currentDiskIdToKeyForDestMap,
             Map<Guid, Guid> imageToDestinationDomainMap,
             Guid storagePoolId,
             StorageDomainDao storageDomainDao) {
-        Guid key = currentDiskIdToKeyForDestMap.apply(image.getId());
-        Guid destDomainId = imageToDestinationDomainMap.get(key);
+        Guid destDomainId = resolveDestinationDomainId(
+                image.getId(),
+                currentDiskIdToKeyForDestMap,
+                imageToDestinationDomainMap);
         if (destDomainId == null) {
             return false;
         }
