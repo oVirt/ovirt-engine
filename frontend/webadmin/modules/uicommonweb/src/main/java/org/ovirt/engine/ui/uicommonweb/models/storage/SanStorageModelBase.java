@@ -291,6 +291,8 @@ public abstract class SanStorageModelBase extends SearchableListModel implements
 
         if (ev.matchesDefinition(SanTargetModel.loggedInEventDefinition)) {
             sanTargetModel_LoggedIn(sender);
+        } else if (ev.matchesDefinition(SanTargetModel.disconnectedEventDefinition)) {
+            sanTargetModel_Disconnected(sender);
         } else if (ev.matchesDefinition(entityChangedEventDefinition)) {
             updateUserAuthFields();
         }
@@ -366,6 +368,50 @@ public abstract class SanStorageModelBase extends SearchableListModel implements
         connectTargets();
     }
 
+    private void sanTargetModel_Disconnected(Object sender) {
+        disconnectTarget((SanTargetModel) sender);
+    }
+
+    private void disconnectTarget(SanTargetModel model) {
+        VDS host = getContainer().getHost().getSelectedItem();
+        if (host == null) {
+            // Defensive: the host selection drives target discovery, so this is only reachable in a race
+            setMessage(constants.storageIscsiPopupDisconnectNoHostMsg());
+            return;
+        }
+
+        StorageServerConnections connection = new StorageServerConnections();
+        connection.setStorageType(StorageType.ISCSI);
+        connection.setIqn(model.getName());
+        connection.setConnection(model.getAddress());
+        connection.setPort(model.getPort());
+        connection.setPortal(model.getPortal());
+        // Send transport identity only: iscsiadm logout tears down a session
+        // by id and needs no credentials. vdsm matches the session by portal,
+        // port, tpgt, iqn and iface; sending stale or empty CHAP credentials
+        // here would only prevent the match (see vdsm IscsiConnection._match).
+
+        Frontend.getInstance().runAction(ActionType.DisconnectStorageServerConnection,
+                new StorageServerConnectionParametersBase(connection, host.getId(), false),
+                result -> {
+                    if (result.getReturnValue() != null && result.getReturnValue().getSucceeded()) {
+                        // Drop the disconnected target right away. updateInternal()
+                        // below rebuilds the target table by merging fresh
+                        // GetDeviceList data into the existing items, which only
+                        // adds or updates targets. Without removing this one the
+                        // row would linger with a stale "logged in" flag and LUN
+                        // list until the dialog is closed and reopened.
+                        Linq.TargetPredicate predicate = new Linq.TargetPredicate(model);
+                        lastDiscoveredTargets.removeIf(predicate);
+                        if (getItems() != null) {
+                            ((List<SanTargetModel>) getItems()).removeIf(predicate);
+                        }
+                    }
+                    updateInternal();
+                },
+                this);
+    }
+
     protected void login() {
         loginAll();
     }
@@ -417,6 +463,7 @@ public abstract class SanStorageModelBase extends SearchableListModel implements
             model.setName(a.getIqn());
             model.setLuns(new ObservableCollection<>());
             model.getLoggedInEvent().addListener(this);
+            model.getDisconnectedEvent().addListener(this);
 
             newItems.add(model);
         }
@@ -507,8 +554,8 @@ public abstract class SanStorageModelBase extends SearchableListModel implements
             if (response.getSucceeded()) {
                 setValuesForMaintenance(model);
 
-                model.applyData((ArrayList<LUNs>) response.getReturnValue(), false, prevSelected,
-                        isInMaintenance, metadata);
+                ArrayList<LUNs> luns = (ArrayList<LUNs>) response.getReturnValue();
+                model.applyData(luns, false, prevSelected, isInMaintenance, metadata);
                 model.initLunSelection();
                 model.setGetLUNsFailure(""); //$NON-NLS-1$
                 model.stopProgress();
@@ -718,8 +765,10 @@ public abstract class SanStorageModelBase extends SearchableListModel implements
                 model.setName(b.getIqn());
                 model.setIsSelected(true);
                 model.setIsLoggedIn(true);
+                model.setIsPersisted(b.getId() != null);
                 model.setLuns(new ObservableCollection<>());
                 model.getLoginCommand().setIsExecutionAllowed(false);
+                model.getDisconnectedEvent().addListener(this);
 
                 targetModelList.add(model);
             }
@@ -841,6 +890,9 @@ public abstract class SanStorageModelBase extends SearchableListModel implements
                 if (item == null) {
                     item = target;
                     targets.add(item);
+                } else {
+                    // Update persistence state from refreshed LUN data
+                    item.setIsPersisted(target.getIsPersisted());
                 }
 
                 LunModel currLun = Linq.firstOrNull(item.getLuns(), new Linq.LunPredicate(lun));

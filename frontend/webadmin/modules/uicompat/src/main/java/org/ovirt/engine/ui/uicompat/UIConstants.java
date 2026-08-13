@@ -805,6 +805,8 @@ public interface UIConstants extends Constants {
 
     String noNewDevicesWereFoundMsg();
 
+    String storageIscsiPopupDisconnectNoHostMsg();
+
     String noStorageDomainAvailableMsg();
 
     String noExternalImageProviderHasBeenConfiguredMsg();

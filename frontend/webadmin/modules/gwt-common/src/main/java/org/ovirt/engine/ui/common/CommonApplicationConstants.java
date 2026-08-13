@@ -1105,6 +1105,10 @@ public interface CommonApplicationConstants extends Constants {
 
     String storageIscsiPopupLoginButtonLabel();
 
+    String storageIscsiPopupDisconnectButtonLabel();
+
+    String storageIscsiLoginAllPersistenceHint();
+
     String storageIscsiSelectStorageLabel();
 
     String storageIscsiRemoveLUNsLabel();
