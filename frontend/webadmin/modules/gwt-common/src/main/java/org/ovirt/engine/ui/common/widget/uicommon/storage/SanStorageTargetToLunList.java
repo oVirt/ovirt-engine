@@ -145,6 +145,23 @@ public class SanStorageTargetToLunList extends AbstractSanStorageList<SanTargetM
         panel.setCellWidth(loginButton, "35px"); //$NON-NLS-1$
     }
 
+    private void addDisconnectButton(HorizontalPanel panel, SanTargetModel rootModel) {
+        final UiCommandButton disconnectButton = new UiCommandButton();
+        disconnectButton.setCommand(rootModel.getDisconnectCommand());
+        disconnectButton.setTitle(constants.storageIscsiPopupDisconnectButtonLabel());
+        disconnectButton.setIcon(IconType.SIGN_OUT);
+        disconnectButton.addClickHandler(event -> {
+            treeScrollPosition = treeContainer.getVerticalScrollPosition();
+            disconnectButton.getCommand().execute();
+        });
+        disconnectButton.getElement().getStyle().setFloat(Float.RIGHT);
+        disconnectButton.getElement().getStyle().setMarginRight(6, Unit.PX);
+
+        panel.add(disconnectButton);
+        panel.setCellVerticalAlignment(disconnectButton, HasVerticalAlignment.ALIGN_MIDDLE);
+        panel.setCellWidth(disconnectButton, "35px"); //$NON-NLS-1$
+    }
+
     private void additemToRootNodePanel(HorizontalPanel panel,
             StringValueLabel item,
             String text,
@@ -166,6 +183,9 @@ public class SanStorageTargetToLunList extends AbstractSanStorageList<SanTargetM
         additemToRootNodePanel(panel, new StringValueLabel(), rootModel.getAddress(), "210px", TextAlignment.LEFT); //$NON-NLS-1$
         additemToRootNodePanel(panel, new StringValueLabel(), rootModel.getPort(), "60px", TextAlignment.LEFT); //$NON-NLS-1$
         addLoginButton(panel, rootModel);
+        if (rootModel.getIsLoggedIn() && !rootModel.getIsPersisted()) {
+            addDisconnectButton(panel, rootModel);
+        }
 
         panel.setSpacing(1);
         panel.setWidth("100%"); //$NON-NLS-1$

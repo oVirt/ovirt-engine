@@ -26,6 +26,17 @@ public class SanTargetModel extends EntityModel<StorageServerConnections> {
         loggedInEvent = value;
     }
 
+    public static final EventDefinition disconnectedEventDefinition;
+    private Event<EventArgs> disconnectedEvent;
+
+    public Event<EventArgs> getDisconnectedEvent() {
+        return disconnectedEvent;
+    }
+
+    private void setDisconnectedEvent(Event<EventArgs> value) {
+        disconnectedEvent = value;
+    }
+
     private UICommand loginCommand;
 
     public UICommand getLoginCommand() {
@@ -34,6 +45,16 @@ public class SanTargetModel extends EntityModel<StorageServerConnections> {
 
     public void setLoginCommand(UICommand value) {
         loginCommand = value;
+    }
+
+    private UICommand disconnectCommand;
+
+    public UICommand getDisconnectCommand() {
+        return disconnectCommand;
+    }
+
+    public void setDisconnectCommand(UICommand value) {
+        disconnectCommand = value;
     }
 
     private String address;
@@ -101,6 +122,19 @@ public class SanTargetModel extends EntityModel<StorageServerConnections> {
         }
     }
 
+    private boolean isPersisted;
+
+    public boolean getIsPersisted() {
+        return isPersisted;
+    }
+
+    public void setIsPersisted(boolean value) {
+        if (isPersisted != value) {
+            isPersisted = value;
+            onPropertyChanged(new PropertyChangedEventArgs("IsPersisted")); //$NON-NLS-1$
+        }
+    }
+
     private List<LunModel> luns;
 
     public List<LunModel> getLuns() {
@@ -130,16 +164,23 @@ public class SanTargetModel extends EntityModel<StorageServerConnections> {
 
     static {
         loggedInEventDefinition = new EventDefinition("LoggedIn", SanTargetModel.class); //$NON-NLS-1$
+        disconnectedEventDefinition = new EventDefinition("Disconnected", SanTargetModel.class); //$NON-NLS-1$
     }
 
     public SanTargetModel() {
         setLoggedInEvent(new Event<>(loggedInEventDefinition));
+        setDisconnectedEvent(new Event<>(disconnectedEventDefinition));
         setLoginCommand(new UICommand("", this)); //$NON-NLS-1$
+        setDisconnectCommand(new UICommand("", this)); //$NON-NLS-1$
         setLunsList(new ListModel<LunModel>());
     }
 
     private void login() {
         getLoggedInEvent().raise(this, EventArgs.EMPTY);
+    }
+
+    private void disconnect() {
+        getDisconnectedEvent().raise(this, EventArgs.EMPTY);
     }
 
     @Override
@@ -148,6 +189,8 @@ public class SanTargetModel extends EntityModel<StorageServerConnections> {
 
         if (command == getLoginCommand()) {
             login();
+        } else if (command == getDisconnectCommand()) {
+            disconnect();
         }
     }
 }

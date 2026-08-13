@@ -22,6 +22,7 @@ import org.ovirt.engine.core.common.action.StorageDomainManagementParameter;
 import org.ovirt.engine.core.common.action.StorageDomainParametersBase;
 import org.ovirt.engine.core.common.action.StorageServerConnectionParametersBase;
 import org.ovirt.engine.core.common.action.SwitchMasterStorageDomainCommandParameters;
+import org.ovirt.engine.core.common.action.SyncLunsInfoForBlockStorageDomainParameters;
 import org.ovirt.engine.core.common.businessentities.NfsVersion;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainSharedStatus;
@@ -1696,6 +1697,40 @@ public class StorageListModel extends ListWithSimpleDetailsModel<Void, StorageDo
                                     new ReduceSANStorageDomainDevicesCommandParameters(storageDomain1.getId(),
                                             new ArrayList<>(lunsToRemoveIds)),
                                     null, this);
+                        }
+                    }
+                    boolean hasSanChanges =
+                            !lunIds.isEmpty()
+                                    || !lunToRefreshIds.isEmpty()
+                                    || storageDomain1.getStatus() == StorageDomainStatus.Maintenance
+                                            && !sanStorageModelBase.getLunsToRemove().isEmpty();
+                    if (storageDomain1.getStorageType() == StorageType.ISCSI && !hasSanChanges) {
+                        // Sync LUN connections only on a plain edit (no LUNs
+                        // added, refreshed or removed). The extend path already
+                        // calls GetVGInfo and proceedLUNInDb for every VG LUN,
+                        // persisting all connections including multipath paths,
+                        // so running this sync concurrently would only contend
+                        // for the storage lock and fail.
+                        VDS host = storageModel.getHost().getSelectedItem();
+                        if (host != null) {
+                            // Finish the dialog only once the sync returns, so a failure
+                            // surfaces in the dialog instead of only in the audit log.
+                            Frontend.getInstance().runAction(ActionType.SyncStorageConnectionsForDomain,
+                                    new SyncLunsInfoForBlockStorageDomainParameters(storageDomain1.getId(), host.getId()),
+                                    syncResult -> {
+                                        StorageListModel syncListModel = (StorageListModel) syncResult.getState();
+                                        ActionReturnValue returnValue = syncResult.getReturnValue();
+                                        boolean syncSucceeded = returnValue != null && returnValue.getSucceeded();
+                                        String message = null;
+                                        if (!syncSucceeded && returnValue != null
+                                                && returnValue.getValidationMessages() != null) {
+                                            message = String.join("\n", returnValue.getValidationMessages()); //$NON-NLS-1$
+                                        }
+                                        syncListModel.onFinish(syncListModel.context, syncSucceeded,
+                                                syncListModel.storageModel, message);
+                                    },
+                                    this);
+                            return;
                         }
                     }
                     storageListModel.onFinish(storageListModel.context, true, storageListModel.storageModel);

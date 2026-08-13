@@ -301,7 +301,8 @@ public final class Linq {
         public boolean test(SanTargetModel source) {
             return Objects.equals(source.getName(), target.getName())
                     && Objects.equals(source.getAddress(), target.getAddress())
-                    && Objects.equals(source.getPort(), target.getPort());
+                    && Objects.equals(source.getPort(), target.getPort())
+                    && Objects.equals(source.getPortal(), target.getPortal());
         }
     }
 

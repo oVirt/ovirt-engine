@@ -198,6 +198,7 @@ public class IscsiDiscoverTargetsView extends FocusComposite implements HasEdito
         loginButton.addClickHandler(event -> loginButton.getCommand().execute());
 
         loginButton.setLabel(object.getLoginButtonLabel());
+        loginButton.setTitle(constants.storageIscsiLoginAllPersistenceHint());
     }
 
     public void setEnabled(boolean enabled) {
