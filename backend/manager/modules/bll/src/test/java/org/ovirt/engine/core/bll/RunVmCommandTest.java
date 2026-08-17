@@ -35,6 +35,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.EnumSource;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
@@ -44,6 +45,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
 import org.ovirt.engine.core.bll.context.CommandContext;
+import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.bll.network.host.NetworkDeviceHelper;
 import org.ovirt.engine.core.bll.network.host.VfScheduler;
 import org.ovirt.engine.core.bll.scheduling.SchedulingManager;
@@ -70,6 +72,8 @@ import org.ovirt.engine.core.common.businessentities.storage.LunDisk;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineException;
+import org.ovirt.engine.core.common.errors.EngineMessage;
+import org.ovirt.engine.core.common.interfaces.ErrorTranslator;
 import org.ovirt.engine.core.common.interfaces.VDSBrokerFrontend;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
@@ -78,6 +82,7 @@ import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dao.DiskImageDao;
 import org.ovirt.engine.core.dao.SnapshotDao;
 import org.ovirt.engine.core.dao.StorageServerConnectionDao;
@@ -158,6 +163,12 @@ public class RunVmCommandTest extends BaseCommandTest {
 
     @Mock
     private ResourceManager resourceManager;
+
+    @Mock
+    private BackendInternal backend;
+
+    @Mock
+    private AuditLogDirector auditLogDirector;
 
     private static final String ACTIVE_ISO_PREFIX =
             "/rhev/data-center/mnt/some_computer/f6bccab4-e2f5-4e02-bba0-5748a7bc07b6/images/11111111-1111-1111-1111-111111111111";
@@ -376,6 +387,7 @@ public class RunVmCommandTest extends BaseCommandTest {
         doNothing().when(command).initParametersForExternalNetworks(null, false);
         doReturn(Collections.emptyMap()).when(command).flushPassthroughVnicToVfMap();
         doReturn(vmManager).when(command).getVmManager();
+        when(backend.getErrorsTranslator()).thenReturn(mock(ErrorTranslator.class));
         mockBackend();
     }
 
@@ -398,6 +410,52 @@ public class RunVmCommandTest extends BaseCommandTest {
         Cluster cluster = new Cluster();
         cluster.setArchitecture(ArchitectureType.x86_64);
         cluster.setCompatibilityVersion(Version.getLast());
+        command.setCluster(cluster);
+        ValidateTestUtils.runAndAssertValidateSuccess(command);
+    }
+
+    @Test
+    @MockedConfig("mockConfiguration")
+    public void testValidateFailsOnOlderCustomCompatibilityVersionWhenVmDown() {
+        final VM vm = new VM();
+        vm.setStatus(VMStatus.Down);
+        vm.setCustomCompatibilityVersion(new Version(4, 7));
+        command.setVm(vm);
+        StoragePool storagePool = new StoragePool();
+        storagePool.setCompatibilityVersion(new Version(4, 8));
+        command.setStoragePool(storagePool);
+        doReturn(true).when(command).checkRngDeviceClusterCompatibility();
+        doReturn(true).when(command).checkPayload(any());
+        doReturn(ValidationResult.VALID).when(command).checkDisksInBackupStorage();
+        doReturn(false).when(command).isVmDuringBackup();
+        doNothing().when(command).checkVmLeaseStorageDomain();
+        Cluster cluster = new Cluster();
+        cluster.setArchitecture(ArchitectureType.x86_64);
+        cluster.setCompatibilityVersion(new Version(4, 8));
+        command.setCluster(cluster);
+        ValidateTestUtils.runAndAssertValidateFailure(command,
+                EngineMessage.ACTION_TYPE_FAILED_VM_COMPATIBILITY_VERSION_NOT_SUPPORTED);
+    }
+
+    @ParameterizedTest
+    @EnumSource(value = VMStatus.class, names = {"Suspended", "Paused"})
+    @MockedConfig("mockConfiguration")
+    public void testValidateSucceedsOnOlderCustomCompatibilityVersionWhenVmSuspendedOrPaused(VMStatus vmStatus) {
+        final VM vm = new VM();
+        vm.setStatus(vmStatus);
+        vm.setCustomCompatibilityVersion(new Version(4, 7));
+        command.setVm(vm);
+        StoragePool storagePool = new StoragePool();
+        storagePool.setCompatibilityVersion(new Version(4, 8));
+        command.setStoragePool(storagePool);
+        doReturn(true).when(command).checkRngDeviceClusterCompatibility();
+        doReturn(true).when(command).checkPayload(any());
+        doReturn(ValidationResult.VALID).when(command).checkDisksInBackupStorage();
+        doReturn(false).when(command).isVmDuringBackup();
+        doNothing().when(command).checkVmLeaseStorageDomain();
+        Cluster cluster = new Cluster();
+        cluster.setArchitecture(ArchitectureType.x86_64);
+        cluster.setCompatibilityVersion(new Version(4, 8));
         command.setCluster(cluster);
         ValidateTestUtils.runAndAssertValidateSuccess(command);
     }
