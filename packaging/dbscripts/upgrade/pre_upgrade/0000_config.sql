@@ -190,8 +190,6 @@ select fn_db_add_config_value_for_versions_up_to('ManagedBlockDomainSupported', 
 
 -- migration support per architecture
 select fn_db_add_config_value_for_versions_up_to('IsMigrationSupported','{"undefined": "true", "x86": "true", "ppc" : "true", "s390x" : "true"}','4.8');
--- snapshot support per architecture
-select fn_db_add_config_value_for_versions_up_to('IsMemorySnapshotSupported','{"undefined": "true", "x86": "true", "ppc" : "true", "s390x" : "true"}','4.8');
 -- suspend support per architecture
 select fn_db_add_config_value_for_versions_up_to('IsSuspendSupported','{"undefined": "true", "x86": "true", "ppc" : "true", "s390x" : "true"}','4.8');
 select fn_db_add_config_value('OsRepositoryConfDir','/osinfo.conf.d','general');
@@ -918,7 +916,6 @@ select fn_db_add_config_value('DBPagingType', 'Range', 'general');
 select fn_db_add_config_value('DBSearchTemplate',
                               'SELECT * FROM (SELECT *, ROW_NUMBER() OVER(%1$s) as RowNum FROM (%2$s)) as T1 ) as T2 %3$s',
                               'general');
-select fn_db_add_config_value('DnsResolverConfigurationSupported', 'true', 'general');
 select fn_db_add_config_value('EnableAutomaticHostPowerManagement', 'false', 'general');
 select fn_db_add_config_value('ExternalNetworkProviderConnectionTimeout', '20', 'general');
 select fn_db_add_config_value('ExternalNetworkProviderTimeout', '30', 'general');
@@ -969,8 +966,6 @@ select fn_db_add_config_value('EnableKASLRDump','true','general');
 select fn_db_add_config_value('GuestNicNamesBlacklist','lo[0-9]*,Loopback.*,tun[0-9]*,veth[0-9a-f]*','general');
 select fn_db_add_config_value_for_versions_up_to('HyperVSynicStimerSupported', 'false', '4.2');
 select fn_db_add_config_value_for_versions_up_to('HyperVSynicStimerSupported', 'true', '4.8');
-select fn_db_add_config_value_for_versions_up_to('IsDeferringFileVolumePreallocationSupported', 'false', '4.2');
-select fn_db_add_config_value_for_versions_up_to('IsDeferringFileVolumePreallocationSupported', 'true', '4.8');
 select fn_db_add_config_value_for_versions_up_to('IsPortIsolationSupported', 'false', '4.4');
 select fn_db_add_config_value_for_versions_up_to('IsPortIsolationSupported', 'true', '4.8');
 select fn_db_add_config_value_for_versions_up_to('TpmDeviceSupported', '{"x86":"false","ppc":"false","s390x":"false"}', '4.5');
@@ -1171,7 +1166,6 @@ select fn_db_update_config_value('AllowEditingHostedEngine','true','general');
 
 -- enable migration, memory snapshot and suspend in the ppc64 architecture
 select fn_db_update_config_value('IsMigrationSupported','{"undefined": "true", "x86": "true", "ppc" : "true", "s390x" : "true"}','4.2');
-select fn_db_update_config_value('IsMemorySnapshotSupported','{"undefined": "true", "x86": "true", "ppc" : "true", "s390x" : "true"}','4.2');
 select fn_db_update_config_value('IsSuspendSupported','{"undefined": "true", "x86": "true", "ppc" : "true", "s390x" : "true"}','4.2');
 
 -- s390x architecture support

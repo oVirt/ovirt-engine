@@ -1,0 +1,3 @@
+SELECT fn_db_delete_config_value_all_versions('IsMemorySnapshotSupported');
+SELECT fn_db_delete_config_value_all_versions('DnsResolverConfigurationSupported');
+SELECT fn_db_delete_config_value_all_versions('IsDeferringFileVolumePreallocationSupported');
