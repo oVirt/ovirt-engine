@@ -1078,8 +1078,13 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
             return false;
         }
 
-        if (getVm().getCustomCompatibilityVersion() != null &&
-                vm.getCustomCompatibilityVersion().less(getStoragePool().getCompatibilityVersion())) {
+        // Skip the compatibility version check when resuming a Paused or Suspended VM,
+        // since the VM was already running with its custom compatibility version before
+        // the data center was upgraded and is only being resumed, not started fresh.
+        if (vm.getCustomCompatibilityVersion() != null &&
+                vm.getCustomCompatibilityVersion().less(getStoragePool().getCompatibilityVersion()) &&
+                vm.getStatus() != VMStatus.Paused &&
+                vm.getStatus() != VMStatus.Suspended) {
             return failValidation(EngineMessage.ACTION_TYPE_FAILED_VM_COMPATIBILITY_VERSION_NOT_SUPPORTED,
                     String.format("$VmName %1$s", getVm().getName()),
                     String.format("$VmVersion %1$s", getVm().getCustomCompatibilityVersion().toString()),
