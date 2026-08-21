@@ -27,7 +27,6 @@ import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.validator.storage.DiskImagesValidator;
 import org.ovirt.engine.core.bll.validator.storage.DiskValidator;
-import org.ovirt.engine.core.bll.validator.storage.ManagedBlockStorageDomainValidator;
 import org.ovirt.engine.core.bll.validator.storage.StorageDomainValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
@@ -37,9 +36,12 @@ import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AddDiskParameters;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.RemoveDiskParameters;
+import org.ovirt.engine.core.common.action.RemoveImageParameters;
 import org.ovirt.engine.core.common.action.TransferDiskImageParameters;
 import org.ovirt.engine.core.common.action.TransferImageStatusParameters;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
+import org.ovirt.engine.core.common.businessentities.AsyncTaskStatus;
+import org.ovirt.engine.core.common.businessentities.AsyncTaskStatusEnum;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -47,6 +49,7 @@ import org.ovirt.engine.core.common.businessentities.VmBackup;
 import org.ovirt.engine.core.common.businessentities.VmBackupPhase;
 import org.ovirt.engine.core.common.businessentities.storage.DiskBackupMode;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
+import org.ovirt.engine.core.common.businessentities.storage.DiskImageDynamic;
 import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.storage.ImageTicket;
@@ -71,6 +74,7 @@ import org.ovirt.engine.core.common.utils.SizeConverter;
 import org.ovirt.engine.core.common.vdscommands.AddImageTicketVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.ExtendImageTicketVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.GetImageTicketVDSCommandParameters;
+import org.ovirt.engine.core.common.vdscommands.HSMTaskGuidBaseVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.ImageActionsVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.NbdServerVDSParameters;
 import org.ovirt.engine.core.common.vdscommands.PrepareImageVDSCommandParameters;
@@ -81,8 +85,11 @@ import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.CommandStatus;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
+import org.ovirt.engine.core.dao.BaseDiskDao;
 import org.ovirt.engine.core.dao.DiskDao;
+import org.ovirt.engine.core.dao.DiskImageDynamicDao;
 import org.ovirt.engine.core.dao.ImageDao;
+import org.ovirt.engine.core.dao.ImageStorageDomainMapDao;
 import org.ovirt.engine.core.dao.ImageTransferDao;
 import org.ovirt.engine.core.dao.SnapshotDao;
 import org.ovirt.engine.core.dao.StorageDomainDao;
@@ -102,29 +109,29 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
     private static final int PROXY_CONTROL_PORT = 54324;
     private static final String HTTPS_SCHEME = "https://";
     private static final String IMAGES_PATH = "/images";
-    private static final String FILE_URL_SCHEME = "file://";
+    protected static final String FILE_URL_SCHEME = "file://";
     private static final String IMAGE_TYPE = "disk";
 
     @Inject
-    private ImageTransferDao imageTransferDao;
+    protected ImageTransferDao imageTransferDao;
     @Inject
     private AuditLogDirector auditLogDirector;
     @Inject
-    private DiskDao diskDao;
+    protected DiskDao diskDao;
     @Inject
-    private StorageDomainDao storageDomainDao;
+    protected StorageDomainDao storageDomainDao;
     @Inject
     private VmDao vmDao;
     @Inject
     private ImageTransferUpdater imageTransferUpdater;
     @Inject
-    private ImageDao imageDao;
+    protected ImageDao imageDao;
     @Inject
-    private VdsDao vdsDao;
+    protected VdsDao vdsDao;
     @Inject
     private VmBackupDao vmBackupDao;
     @Inject
-    private SnapshotDao snapshotDao;
+    protected SnapshotDao snapshotDao;
     @Inject
     private CommandCoordinatorUtil commandCoordinatorUtil;
     @Inject
@@ -134,6 +141,12 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
     private VdsCommandsHelper vdsCommandsHelper;
     @Inject
     private ResourceManager resourceManager;
+    @Inject
+    protected BaseDiskDao baseDiskDao;
+    @Inject
+    protected DiskImageDynamicDao diskImageDynamicDao;
+    @Inject
+    protected ImageStorageDomainMapDao imageStorageDomainMapDao;
 
     private ImageioClient proxyClient;
     private VmBackup backup;
@@ -186,7 +199,8 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
 
         VDSReturnValue vdsRetVal = runVdsCommand(VDSCommandType.PrepareImage,
                 getPrepareParameters(vdsId));
-        return FILE_URL_SCHEME + ((PrepareImageReturn) vdsRetVal.getReturnValue()).getImagePath();
+        String path = ((PrepareImageReturn) vdsRetVal.getReturnValue()).getImagePath();
+        return path != null ? FILE_URL_SCHEME + path : null;
     }
 
     protected boolean validateImageTransfer() {
@@ -201,7 +215,7 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
                 && validate(storageDomainValidator.isDomainExistAndActive());
 
         if (diskImage.getDiskStorageType() == DiskStorageType.MANAGED_BLOCK_STORAGE) {
-            return validate(ManagedBlockStorageDomainValidator.isOperationSupportedByManagedBlockStorage(getActionType()));
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_UNSUPPORTED_ACTION_FOR_MANAGED_BLOCK_STORAGE_TYPE);
         }
 
         if (isBackup()) {
@@ -217,11 +231,11 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
                 && validate(diskImagesValidator.diskImagesNotLocked());
     }
 
-    private boolean validateActiveDiskPluggedToAnyNonDownVm(DiskImage diskImage, DiskValidator diskValidator) {
+    protected boolean validateActiveDiskPluggedToAnyNonDownVm(DiskImage diskImage, DiskValidator diskValidator) {
         return diskImage.isDiskSnapshot() || validate(diskValidator.isDiskPluggedToAnyNonDownVm(false));
     }
 
-    private ValidationResult isVmBackupReady() {
+    protected ValidationResult isVmBackupReady() {
         if (getBackup() == null) {
             return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_VM_BACKUP_NOT_EXIST);
         }
@@ -232,7 +246,7 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
         return ValidationResult.VALID;
     }
 
-    private ValidationResult isFormatApplicableForBackup() {
+    protected ValidationResult isFormatApplicableForBackup() {
         if (getParameters().getVolumeFormat() == VolumeFormat.COW) {
             return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_FORMAT_NOT_APPLICABLE_FOR_BACKUP);
         }
@@ -369,6 +383,13 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
         diskParameters.setShouldRemainIllegalOnFailedExecution(true);
         diskParameters.setSkipDomainCheck(true);
         diskParameters.setEndProcedure(ActionParametersBase.EndProcedure.COMMAND_MANAGED);
+        // When conversion will run after upload: first volume must be in source (upload) format so VDSM
+        // receives the file as-is; we then create a second volume in destination format and convert.
+        if (needsConversionAfterUpload() && diskParameters.getDiskInfo() instanceof DiskImage) {
+            DiskImage diskInfo = (DiskImage) diskParameters.getDiskInfo();
+            diskInfo.setVolumeFormat(getParameters().getSourceVolumeFormat());
+            diskInfo.setActualSizeInBytes(getParameters().getTransferSize());
+        }
         return diskParameters;
     }
 
@@ -402,7 +423,7 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
         return diskImage;
     }
 
-    private VmBackup getBackup() {
+    protected VmBackup getBackup() {
         if (backup == null) {
             backup = vmBackupDao.get(getParameters().getBackupId());
         }
@@ -537,6 +558,10 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
     }
 
     private VolumeFormat getTransferImageFormat() {
+        // When browser upload with format conversion: transfer uses source format (upload volume).
+        if (getParameters().getSourceVolumeFormat() != null) {
+            return getParameters().getSourceVolumeFormat();
+        }
         if (getParameters().getVolumeFormat() != null) {
             return getParameters().getVolumeFormat();
         }
@@ -551,8 +576,31 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
             // Incremental backup uses NBD transfer backend
             return ImageTransferBackend.NBD;
         }
-        return getParameters().getVolumeFormat() == VolumeFormat.RAW ?
+        VolumeFormat formatForBackend = getParameters().getSourceVolumeFormat() != null
+                ? getParameters().getSourceVolumeFormat()
+                : getParameters().getVolumeFormat();
+        return formatForBackend == VolumeFormat.RAW ?
                 ImageTransferBackend.NBD : ImageTransferBackend.FILE;
+    }
+
+    /**
+     * True when upload needs format conversion: we upload to a volume in source format,
+     * then convert to destination format and replace.
+     */
+    protected boolean needsConversionAfterUpload() {
+        if (getParameters().getTransferType() != TransferType.Upload) {
+            log.debug("needsConversionAfterUpload: false (not upload)");
+            return false;
+        }
+        VolumeFormat srcFmt = getParameters().getSourceVolumeFormat();
+        VolumeFormat dstFmt = getParameters().getVolumeFormat();
+        log.debug("needsConversionAfterUpload: srcFmt={} dstFmt={}", srcFmt, dstFmt);
+        if (srcFmt != null && dstFmt != null && !srcFmt.equals(dstFmt)) {
+            log.debug("needsConversionAfterUpload: true (src != dst)");
+            return true;
+        }
+        log.debug("needsConversionAfterUpload: false");
+        return false;
     }
 
     public void proceedCommandExecution(Guid childCmdId) {
@@ -614,6 +662,12 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
                 break;
             case FINISHED_CLEANUP:
                 handleFinishedCleanup();
+                break;
+            case CONVERTING:
+                handleConverting(context);
+                break;
+            default:
+                // UNKNOWN, FINISHED_SUCCESS, FINISHED_FAILURE - no action
                 break;
         }
     }
@@ -893,6 +947,29 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
         if (stopImageTransferSession(context.entity)) {
             Guid transferingVdsId = context.entity.getVdsId();
 
+            // When browser upload and source format != destination: convert via qemu-img then replace volume.
+            if (getParameters().getTransferType() == TransferType.Upload) {
+                log.info("Upload transfer '{}': srcFmt={} destFmt={} browser={} needsConversion={}",
+                        getCommandId(), getParameters().getSourceVolumeFormat(), getParameters().getVolumeFormat(),
+                        getParameters().getTransferClientType().isBrowserTransfer(), needsConversionAfterUpload());
+            }
+            if (needsConversionAfterUpload()) {
+                log.info("Upload transfer '{}' requires format conversion: {} -> {}",
+                        getCommandId(), getParameters().getSourceVolumeFormat(), getParameters().getVolumeFormat());
+                ManagedBlockUploadConversionResult mbsResult = startManagedBlockUploadConversion(context);
+                if (mbsResult != ManagedBlockUploadConversionResult.NOT_APPLICABLE) {
+                    if (mbsResult == ManagedBlockUploadConversionResult.STARTED) {
+                        updateEntityPhase(ImageTransferPhase.CONVERTING);
+                    } else {
+                        nextImageStatus = ImageStatus.ILLEGAL;
+                        updateEntityPhase(ImageTransferPhase.FINALIZING_FAILURE);
+                        tearDownImage(context.entity.getVdsId(), context.entity.getBackupId());
+                        setImageStatus(nextImageStatus);
+                    }
+                    return;
+                }
+            }
+
             // Verify image is relevant only on upload
             if (getParameters().getTransferType() == TransferType.Download) {
                 setAuditLogTypeFromPhase(ImageTransferPhase.FINISHED_SUCCESS);
@@ -924,7 +1001,126 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
         }
     }
 
-    private boolean verifyImage(Guid transferingVdsId) {
+    protected enum ManagedBlockUploadConversionResult {
+        NOT_APPLICABLE,
+        STARTED,
+        FAILED
+    }
+
+    protected ManagedBlockUploadConversionResult startManagedBlockUploadConversion(StateContext context) {
+        return ManagedBlockUploadConversionResult.NOT_APPLICABLE;
+    }
+
+    protected boolean handleManagedBlockConverting(StateContext context) {
+        return false;
+    }
+
+    protected boolean hostSelectionIgnoresDomainCache() {
+        return false;
+    }
+
+    protected boolean connectManagedBlockVolumeBeforeNbd() {
+        return true;
+    }
+
+    protected void detachManagedBlockVolumeWhenSessionStops(ImageTransfer entity) {
+    }
+
+    private void handleConverting(StateContext context) {
+        if (handleManagedBlockConverting(context)) {
+            return;
+        }
+
+        Guid copyTaskId = getParameters().getCopyTaskId();
+        if (copyTaskId == null) {
+            log.error("Conversion phase but no copy task id for transfer '{}'", getCommandId());
+            updateEntityPhase(ImageTransferPhase.FINALIZING_FAILURE);
+            setCommandStatus(CommandStatus.FAILED);
+            return;
+        }
+        Guid spmId = getStoragePool().getSpmVdsId();
+        if (spmId == null || Guid.Empty.equals(spmId)) {
+            log.debug("Waiting for SPM for transfer '{}'", getCommandId());
+            return;
+        }
+        try {
+            VDSReturnValue vdsReturnValue = runVdsCommand(VDSCommandType.HSMGetTaskStatus,
+                    new HSMTaskGuidBaseVDSCommandParameters(spmId, copyTaskId));
+            if (!vdsReturnValue.getSucceeded()) {
+                log.debug("Could not get copy task status for transfer '{}'", getCommandId());
+                return;
+            }
+            AsyncTaskStatus taskStatus = (AsyncTaskStatus) vdsReturnValue.getReturnValue();
+            if (taskStatus.getStatus() == AsyncTaskStatusEnum.finished) {
+                log.info("Upload conversion copy task finished for transfer '{}', completing conversion", getCommandId());
+                finishUploadConversion(context);
+            } else if (taskStatus.getStatus() == AsyncTaskStatusEnum.unknown
+                    || taskStatus.getStatus() == AsyncTaskStatusEnum.aborting) {
+                log.error("Copy task failed for transfer '{}': {}", getCommandId(), taskStatus);
+                updateEntityPhase(ImageTransferPhase.FINALIZING_FAILURE);
+                setCommandStatus(CommandStatus.FAILED);
+            }
+        } catch (Exception e) {
+            log.debug("Polling copy task for transfer '{}': {}", getCommandId(), e.getMessage());
+        }
+    }
+
+    private void finishUploadConversion(StateContext context) {
+        Guid oldImageId = getDiskImage().getImageId();
+        Guid diskId = getParameters().getImageGroupID();
+        Guid newVolId = getParameters().getConvertedVolumeId();
+        DiskImage currentImage = getDiskImage();
+
+        log.info("Finishing upload conversion for transfer '{}': replacing oldVol={} with newVol={} (disk={})",
+                getCommandId(), oldImageId, newVolId, diskId);
+
+        DiskImage newImage = new DiskImage();
+        newImage.setId(diskId);
+        newImage.setImageId(newVolId);
+        newImage.setVolumeFormat(getParameters().getVolumeFormat());
+        newImage.setVolumeType(currentImage.getVolumeType());
+        newImage.setSize(currentImage.getSize());
+        newImage.setDiskAlias(currentImage.getDiskAlias());
+        newImage.setDiskDescription(currentImage.getDiskDescription());
+        newImage.setStorageIds(currentImage.getStorageIds());
+        newImage.setStoragePoolId(currentImage.getStoragePoolId());
+        newImage.setActive(true);
+        newImage.setParentId(Guid.Empty);
+        newImage.setImageTemplateId(Guid.Empty);
+        newImage.setQuotaId(currentImage.getQuotaId());
+        newImage.setDiskProfileId(currentImage.getDiskProfileId());
+        newImage.setWipeAfterDelete(currentImage.isWipeAfterDelete());
+        if (VolumeFormat.COW.equals(getParameters().getVolumeFormat())) {
+            newImage.setBackup(currentImage.getBackup());
+        }
+
+        imagesHandler.saveImage(newImage);
+        baseDiskDao.update(newImage);  // Disk already exists from AddDisk; update, don't insert
+        log.info("Upload conversion for transfer '{}': saved new image disk={} vol={}", getCommandId(), diskId, newVolId);
+
+        DiskImageDynamic diskDynamic = new DiskImageDynamic();
+        diskDynamic.setId(newVolId);
+        diskDynamic.setActualSize(currentImage.getActualSizeInBytes());
+        diskImageDynamicDao.save(diskDynamic);
+
+        log.info("Upload conversion for transfer '{}': removing old volume {}", getCommandId(), oldImageId);
+        runInternalAction(ActionType.RemoveImage, new RemoveImageParameters(oldImageId));
+
+        setImageId(newVolId);
+
+        setVolumeLegalityInStorage(LEGAL_IMAGE);
+        if (VolumeFormat.COW.equals(getParameters().getVolumeFormat())) {
+            setQcowCompat(getDiskImage().getImage(), getStoragePool().getId(), getDiskImage().getId(),
+                    getDiskImage().getImageId(), getStorageDomainId(), context.entity.getVdsId());
+            imageDao.update(getDiskImage().getImage());
+        }
+        setImageStatus(ImageStatus.OK);
+        tearDownImage(context.entity.getVdsId(), context.entity.getBackupId());
+        setAuditLogTypeFromPhase(ImageTransferPhase.FINISHED_SUCCESS);
+        setCommandStatus(CommandStatus.SUCCEEDED);
+    }
+
+    protected boolean verifyImage(Guid transferingVdsId) {
         ImageActionsVDSCommandParameters parameters =
                 new ImageActionsVDSCommandParameters(transferingVdsId, getStoragePool().getId(),
                         getStorageDomainId(),
@@ -1069,6 +1265,17 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
             return false;
         }
 
+        // When host does not return a path (e.g. managed block), NBD path will be set below
+        if (imagePath == null && !usingNbdServer()) {
+            log.error("Image prepare did not return a path for image transfer '{}' (storage may not support file path)", getCommandId());
+            setImageStatus(ImageStatus.OK);
+            setCommandStatus(CommandStatus.FAILED);
+            return false;
+        }
+        if (imagePath == null) {
+            imagePath = "";
+        }
+
         // From this point if an operation fails we have to perform cleanup
         Guid imagedTicketId = Guid.newGuid();
         ImageTransfer updates = new ImageTransfer();
@@ -1079,6 +1286,9 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
         updateEntity(updates);
 
         if (usingNbdServer()) {
+            if (!connectManagedBlockVolumeBeforeNbd()) {
+                return false;
+            }
             try {
                 VDSReturnValue vdsReturnValue = runVdsCommand(VDSCommandType.StartNbdServer,
                         getStartNbdServerParameters(getVdsId()));
@@ -1136,6 +1346,9 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
     @Override
     protected VDS checkForActiveVds() {
         Guid hostForExecution = vdsCommandsHelper.getHostForExecution(getStoragePoolId(), host -> {
+            if (hostSelectionIgnoresDomainCache()) {
+                return true;
+            }
             var domainsData = resourceManager.getVdsManager(host.getId()).getDomains();
             if (domainsData == null) {
                 return false;
@@ -1235,15 +1448,15 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
                 getStorageDomain().getStorageType().isFileDomain();
     }
 
-    private boolean isBackup() {
+    protected boolean isBackup() {
         return getParameters().getBackupId() != null;
     }
 
-    private boolean isLiveBackup() {
+    protected boolean isLiveBackup() {
         return isBackup() && getBackup().getBackupType() == VmBackupType.Live;
     }
 
-    private boolean isHybridBackup() {
+    protected boolean isHybridBackup() {
         return isBackup() && getBackup().getBackupType() == VmBackupType.Hybrid;
     }
 
@@ -1295,7 +1508,7 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
         return ticket;
     }
 
-    private boolean setVolumeLegalityInStorage(boolean legal) {
+    protected boolean setVolumeLegalityInStorage(boolean legal) {
         SetVolumeLegalityVDSCommandParameters parameters =
                 new SetVolumeLegalityVDSCommandParameters(getStoragePool().getId(),
                         getStorageDomainId(),
@@ -1402,6 +1615,7 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
         if (usingNbdServer()) {
             stopNbdServer(entity.getVdsId());
         }
+        detachManagedBlockVolumeWhenSessionStops(entity);
 
         ImageTransfer updates = new ImageTransfer();
         updateEntity(updates, true);
@@ -1448,13 +1662,13 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
         setAuditLogTypeFromPhase(phase);
     }
 
-    private void updateEntityPhase(ImageTransferPhase phase) {
+    protected void updateEntityPhase(ImageTransferPhase phase) {
         ImageTransfer updates = new ImageTransfer(getCommandId());
         updates.setPhase(phase);
         updateEntity(updates);
     }
 
-    private void updateEntityPhaseToStoppedBySystem(AuditLogType stoppedBySystemReason) {
+    protected void updateEntityPhaseToStoppedBySystem(AuditLogType stoppedBySystemReason) {
         auditLog(this, stoppedBySystemReason);
         if (getParameters().getTransferType() == TransferType.Upload) {
             updateEntityPhase(ImageTransferPhase.PAUSED_SYSTEM);
@@ -1505,7 +1719,7 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
         return HTTPS_SCHEME + daemonHostname + ":" + port;
     }
 
-    private void setAuditLogTypeFromPhase(ImageTransferPhase phase) {
+    protected void setAuditLogTypeFromPhase(ImageTransferPhase phase) {
         if (getParameters().getAuditLogType() != null) {
             // Some flows, e.g. cancellation, may set the log type more than once.
             // In this case, the first type is the most accurate.
@@ -1593,9 +1807,9 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
     }
 
     // Container for context needed by state machine handlers
-    class StateContext {
-        ImageTransfer entity;
-        long iterationTimestamp;
-        Guid childCmdId;
+    protected static class StateContext {
+        public ImageTransfer entity;
+        public long iterationTimestamp;
+        public Guid childCmdId;
     }
 }

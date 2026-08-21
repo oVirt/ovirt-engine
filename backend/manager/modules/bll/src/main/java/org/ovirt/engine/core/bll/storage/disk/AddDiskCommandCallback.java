@@ -39,6 +39,13 @@ public class AddDiskCommandCallback extends ConcurrentChildCommandsExecutionCall
         }
 
         DiskImage diskImage = (DiskImage) addDiskCommand.getParameters().getDiskInfo();
+        // Skip VDSM volume-info path when storageIds is not set (e.g. MBS upload: disk created via
+        // AddManagedBlockStorageDisk while getChildActionType() is AddImageFromScratch due to IMAGE disk type).
+        if (diskImage.getStorageIds() == null || diskImage.getStorageIds().isEmpty()) {
+            super.childCommandsExecutionEnded(command, anyFailed, childCmdIds, status, completedChildren);
+            return;
+        }
+
         log.info("Getting volume info for image '{}/{}'", diskImage.getId(), diskImage.getImageId());
         try {
             DiskImage fromVdsm = imagesHandler.getVolumeInfoFromVdsm(diskImage.getStoragePoolId(),
