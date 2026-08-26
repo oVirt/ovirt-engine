@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.common.widget.uicommon.storage;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
 
@@ -45,6 +46,8 @@ public class SanStorageTargetToLunList extends AbstractSanStorageList<SanTargetM
     private LunModel selectedLunModel;
     protected int treeScrollPosition;
 
+    private ModelFilter<LunModel> leafLunFilter;
+
     public SanStorageTargetToLunList(SanStoragePartialModel model) {
         super(model);
     }
@@ -55,6 +58,12 @@ public class SanStorageTargetToLunList extends AbstractSanStorageList<SanTargetM
 
     public SanStorageTargetToLunList(SanStoragePartialModel model, boolean hideLeaf, boolean multiSelection) {
         super(model, hideLeaf, multiSelection);
+    }
+
+    public SanStorageTargetToLunList(SanStoragePartialModel model, boolean hideLeaf, boolean multiSelection,
+                                     ModelFilter<LunModel> leafLunFilter) {
+        super(model, hideLeaf, multiSelection);
+        this.leafLunFilter = leafLunFilter;
     }
 
     @Override
@@ -179,7 +188,7 @@ public class SanStorageTargetToLunList extends AbstractSanStorageList<SanTargetM
     protected TreeItem createLeafNode(ListModel leafModel) {
         final TreeItem item = new TreeItem();
 
-        List<LunModel> items = (List<LunModel>) leafModel.getItems();
+        List<LunModel> items = (List<LunModel>) applyLeafFilter((List<LunModel>) leafModel.getItems());
 
         if (hideLeaf || items.isEmpty()) {
             item.setUserObject(Boolean.TRUE);
@@ -345,5 +354,12 @@ public class SanStorageTargetToLunList extends AbstractSanStorageList<SanTargetM
         };
         actionsColumn.makeSortable();
         table.addColumn(actionsColumn, headerString, "95px"); //$NON-NLS-1$
+    }
+
+    protected Collection<LunModel> applyLeafFilter(Collection<LunModel> items) {
+        if (leafLunFilter == null) {
+            return items;
+        }
+        return leafLunFilter.filter(items);
     }
 }

@@ -30,12 +30,19 @@ public class IscsiLunToTargetView extends Composite implements HasEditorDriver<S
     private final double treeHeight;
     private final boolean multiSelection;
 
+    private LunFilter lunFilter;
+
     public IscsiLunToTargetView(double treeHeight, boolean multiSelection) {
         this.treeHeight = treeHeight;
         this.multiSelection = multiSelection;
 
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         driver.initialize(this);
+    }
+
+    public IscsiLunToTargetView(double treeHeight, boolean multiSelection, LunFilter lunFilter) {
+        this(treeHeight, multiSelection);
+        this.lunFilter = lunFilter;
     }
 
     @Override
@@ -45,7 +52,8 @@ public class IscsiLunToTargetView extends Composite implements HasEditorDriver<S
     }
 
     void initLists(SanStorageModelBase object) {
-        sanStorageLunToTargetList = new SanStorageLunToTargetList(object, false, multiSelection);
+        sanStorageLunToTargetList = new SanStorageLunToTargetList(FilteredProxyModel.create(lunFilter, object),
+                false, multiSelection);
         sanStorageLunToTargetList.setTreeContainerHeight(treeHeight);
         lunsListPanel.add(sanStorageLunToTargetList);
     }

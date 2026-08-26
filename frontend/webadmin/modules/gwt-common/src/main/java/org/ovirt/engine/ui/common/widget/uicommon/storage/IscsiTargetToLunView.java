@@ -36,6 +36,9 @@ public class IscsiTargetToLunView extends Composite implements HasEditorDriver<S
     private boolean hideLeaf;
     private boolean multiSelection;
 
+    private SanTargetFilter sanTargetFilter;
+    private LunFilter leafLunFilter;
+
     private final Driver driver = GWT.create(Driver.class);
 
     public IscsiTargetToLunView(double treeCollapsedHeight, double treeExpandedHeight) {
@@ -51,6 +54,14 @@ public class IscsiTargetToLunView extends Composite implements HasEditorDriver<S
 
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         driver.initialize(this);
+    }
+
+    public IscsiTargetToLunView(double treeCollapsedHeight, double treeExpandedHeight,
+                                boolean hideLeaf, boolean multiSelection, SanTargetFilter sanTargetFilter,
+                                LunFilter leafLunFilter) {
+        this(treeCollapsedHeight, treeExpandedHeight, hideLeaf, multiSelection);
+        this.sanTargetFilter = sanTargetFilter;
+        this.leafLunFilter = leafLunFilter;
     }
 
     @Override
@@ -88,7 +99,8 @@ public class IscsiTargetToLunView extends Composite implements HasEditorDriver<S
     void initLists(SanStorageModelBase object) {
         // Create discover panel and storage lists
         iscsiDiscoverTargetsView = new IscsiDiscoverTargetsView();
-        sanStorageTargetToLunList = new SanStorageTargetToLunList(object, hideLeaf, multiSelection);
+        sanStorageTargetToLunList = new SanStorageTargetToLunList(FilteredProxyModel.create(sanTargetFilter, object),
+                hideLeaf, multiSelection, leafLunFilter);
 
         // Add view widgets to panel
         targetsToLunsDiscoverPanel.add(iscsiDiscoverTargetsView);
