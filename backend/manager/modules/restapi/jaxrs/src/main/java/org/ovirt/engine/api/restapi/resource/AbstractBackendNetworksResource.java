@@ -1,5 +1,7 @@
 package org.ovirt.engine.api.restapi.resource;
 
+import static org.ovirt.engine.api.restapi.resource.AbstractBackendNetworkResource.nullifyRestrictedFields;
+
 import java.util.List;
 
 import org.ovirt.engine.api.model.BaseResource;
@@ -29,6 +31,15 @@ public abstract class AbstractBackendNetworksResource
 
     public Networks list() {
         return mapCollection(getBackendCollection(queryType, getQueryParameters()));
+    }
+
+    protected void removeRestrictedInfo(Networks networks) {
+        // Filtered users are not allowed to view restricted information
+        if (!isAdmin()) {
+            for (Network network : networks.getNetworks()) {
+                nullifyRestrictedFields(network);
+            }
+        }
     }
 
     protected Networks mapCollection(List<org.ovirt.engine.core.common.businessentities.network.Network> entities) {

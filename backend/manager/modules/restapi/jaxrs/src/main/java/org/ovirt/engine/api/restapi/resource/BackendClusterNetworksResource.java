@@ -31,8 +31,10 @@ public class BackendClusterNetworksResource
 
     @Override
     public Networks list() {
-        return mapCollection(getBackendCollection(queryType, getQueryParameters()),
+        Networks networks = mapCollection(getBackendCollection(queryType, getQueryParameters()),
                 org.ovirt.engine.api.model.Cluster.class);
+        removeRestrictedInfo(networks);
+        return networks;
     }
 
     @Override
