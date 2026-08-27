@@ -254,7 +254,7 @@ public class CopyImageGroupWithDataCommand<T extends CopyImageGroupWithDataComma
                     sourceImage.getImageId(),
                     destFormat.getValue());
             parameters.setParentCommand(getActionType());
-            parameters.setEndProcedure(EndProcedure.PARENT_MANAGED);
+            parameters.setEndProcedure(EndProcedure.COMMAND_MANAGED);
             parameters.setVdsRunningOn(hostId);
             parameters.setCorrelationId(getCorrelationId());
             ActionReturnValue actionReturnValue =
