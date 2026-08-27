@@ -302,6 +302,12 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
         }
 
         DiskImage image = getDiskImage();
+        if (image == null) {
+            // Disk was removed (e.g. via RemoveDisk while the transfer was paused),
+            // so there is nothing left to tear down.
+            log.info("Skipping teardown for image transfer '{}': disk no longer exists", getCommandId());
+            return;
+        }
         if (image.isDiskSnapshot() && !isDiskSnapshotPluggedToDownVmsOnly(image)) {
             // shouldn't teardown snapshot disk that attached to a running VM
             return;
@@ -381,9 +387,11 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
     }
 
     protected String getImageAlias() {
-        return getParameters().getAddDiskParameters() != null ?
-                getParameters().getAddDiskParameters().getDiskInfo().getDiskAlias() :
-                getDiskImage().getDiskAlias();
+        if (getParameters().getAddDiskParameters() != null) {
+            return getParameters().getAddDiskParameters().getDiskInfo().getDiskAlias();
+        }
+        DiskImage diskImage = getDiskImage();
+        return diskImage != null ? diskImage.getDiskAlias() : "";
     }
 
     protected DiskImage getDiskImage() {
@@ -1534,12 +1542,16 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
     // Return a string describing the transfer, safe for use before the new image
     // is successfully created; e.g. "disk 'NewDisk' (id '<uuid>')".
     private String getTransferDescription() {
+        DiskImage diskImage = getDiskImage();
+        // The disk may have been removed mid-transfer, so fall back to the ids from the parameters.
+        Guid diskId = diskImage != null ? diskImage.getId() : getParameters().getImageGroupID();
+        Guid imageId = diskImage != null ? diskImage.getImageId() : getParameters().getImageId();
         return String.format("%s %s '%s' (disk id: '%s', image id: '%s')",
                 getParameters().getTransferType().name(),
                 IMAGE_TYPE,
                 getImageAlias(),
-                getDiskImage().getId(),
-                getDiskImage().getImageId());
+                diskId,
+                imageId);
     }
 
     private ImageioClient getProxyClient() {
@@ -1575,8 +1587,15 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
     protected void endWithFailure() {
         log.error("Failed to transfer disk '{}' for image transfer '{}'", getParameters().getImageId(), getCommandId());
         if (getParameters().getTransferType() == TransferType.Upload) {
-            // Do rollback only for upload - i.e. remove the disk added in 'createImage()'
-            runInternalAction(ActionType.RemoveDisk, new RemoveDiskParameters(getParameters().getImageGroupID()));
+            if (getDiskImage() != null) {
+                // Do rollback only for upload - i.e. remove the disk added in 'createImage()'
+                runInternalAction(ActionType.RemoveDisk, new RemoveDiskParameters(getParameters().getImageGroupID()));
+            } else {
+                // Disk was already removed (e.g. via RemoveDisk while the transfer was paused),
+                // so there is nothing to roll back.
+                log.warn("Skipping disk removal rollback for image transfer '{}': disk no longer exists",
+                        getCommandId());
+            }
         }
         updateEntityFinalPhase(ImageTransferPhase.FINISHED_FAILURE);
         setSucceeded(true);
