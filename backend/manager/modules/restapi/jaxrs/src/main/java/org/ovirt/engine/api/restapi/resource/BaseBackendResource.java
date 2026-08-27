@@ -414,6 +414,27 @@ public class BaseBackendResource {
     }
 
     /**
+     * @return true if current user has admin permission, otherwise false.
+     */
+    protected boolean isAdmin() {
+        DbUser user = getCurrent().getUser();
+        return user.isAdmin();
+    }
+
+    /**
+     * This method will raise an WebFaultException if current user does not have admin permissions.
+     */
+    protected void checkAdminPermission() {
+        if (!isAdmin()) {
+            throw new WebFaultException(null,
+                    localize(Messages.PERMISSION_DENIED_REASON),
+                    localize(Messages.PERMISSION_DENIED_DETAIL),
+                    Status.FORBIDDEN);
+        }
+    }
+
+
+    /**
      * Follows links in the entity according to value of "follow" URL query parameter.
      * A valid value of'follow' is a comma separated list of strings, which represent
      * internal links to be followed. Links may have several 'levels' denoted by periods.
