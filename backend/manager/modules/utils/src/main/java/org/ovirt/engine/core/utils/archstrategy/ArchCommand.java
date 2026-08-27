@@ -6,4 +6,6 @@ public interface ArchCommand {
     void runForPPC64();
 
     void runForS390X();
+
+    void runForAARCH64();
 }

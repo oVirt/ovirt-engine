@@ -148,6 +148,9 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
         policies.add(0, null);
         getModel().getMigrationPolicies().setItems(policies);
         initializeBiosType();
+        if (clusterHasAarch64Architecture()) {
+            updateHostCpuAndMigrationForAarch64();
+        }
     }
 
     protected void initializeBiosType() {
@@ -244,14 +247,15 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
         if (isLocalSD) {
             getModel().getIsAutoAssign().setEntity(false);
             getModel().getMigrationMode().setSelectedItem(MigrationSupport.PINNED_TO_HOST);
+        } else {
+            getModel().getIsAutoAssign().setIsChangeable(!isLocalSD);
+            getModel().getMigrationMode().setIsChangeable(!isLocalSD);
+            getModel().getDefaultHost().setIsChangeable(!isLocalSD);
         }
-        getModel().getIsAutoAssign().setIsChangeable(!isLocalSD);
-        getModel().getMigrationMode().setIsChangeable(!isLocalSD);
-        getModel().getDefaultHost().setIsChangeable(!isLocalSD);
     }
 
     protected void buildModel(VmBase vmBase,
-                              BuilderExecutor.BuilderExecutionFinished<VmBase, UnitVmModel> callback) {
+            BuilderExecutor.BuilderExecutionFinished<VmBase, UnitVmModel> callback) {
     }
 
     public void templateWithVersion_SelectedItemChanged() {
@@ -268,6 +272,9 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
         updateVirtioScsiAvailability();
         updateMemoryBalloon();
         updateCustomPropertySheet();
+        if (clusterHasAarch64Architecture()) {
+            updateHostCpuAndMigrationForAarch64();
+        }
     }
 
     public abstract void defaultHost_SelectedItemChanged();
@@ -948,14 +955,35 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
         }
 
         if (clusterSupportsHostCpu && !clusterHasPpcArchitecture()
+                && !clusterHasAarch64Architecture()
                 && (Boolean.FALSE.equals(isAutoAssign) && numOfPinnedHosts > 0
                 || getModel().getVmType().getSelectedItem() == VmType.HighPerformance)) {
             getModel().getHostCpu().setIsChangeable(true);
+        } else if (clusterHasAarch64Architecture()) {
+            updateHostCpuAndMigrationForAarch64();
         } else {
             getModel().getHostCpu().setEntity(false);
             getModel().getHostCpu().setIsChangeable(false);
             getModel().getHostCpu().setChangeProhibitionReason(constants.hosCPUUnavailable());
         }
+    }
+
+    public void updateHostCpuAndMigrationForAarch64() {
+        // For aarch64 VM, hostpassthroygh is enabled by default
+        // Also, Hosts to run VM on  is set to specific hosss
+        // And Migration mode is et to Automatic and manual migrations
+
+        getModel().getIsAutoAssign().setEntity(true);
+        getModel().getIsAutoAssign().setIsChangeable(false);
+        getModel().getIsAutoAssign().setIsSelected(true);
+        getModel().getDefaultHost().setIsChangeable(false);
+        getModel().getDefaultHost().setIsSelected(false);
+        getModel().getHostCpu().setEntity(true);
+        getModel().getHostCpu().setIsSelected(true);
+        getModel().getHostCpu().setIsChangeable(false);
+        getModel().getHostCpu().setChangeProhibitionReason(constants.hosCPUUnavailable());
+        //getModel().getMigrationMode().setSelectedItem(MigrationSupport.MIGRATABLE);
+        getModel().getMigrationMode().setIsChangeable(true);
     }
 
     protected boolean clusterHasPpcArchitecture() {
@@ -964,6 +992,14 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
         return cluster != null
                 && cluster.getArchitecture() != null
                 && ArchitectureType.ppc == cluster.getArchitecture().getFamily();
+    }
+
+    protected boolean clusterHasAarch64Architecture() {
+        Cluster cluster = getModel().getSelectedCluster();
+
+        return cluster != null
+                && cluster.getArchitecture() != null
+                && ArchitectureType.aarch64 == cluster.getArchitecture().getFamily();
     }
 
     public void updateCpuSharesAmountChangeability() {

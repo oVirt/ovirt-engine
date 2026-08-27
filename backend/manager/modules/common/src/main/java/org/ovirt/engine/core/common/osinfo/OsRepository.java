@@ -23,6 +23,7 @@ public interface OsRepository {
     int DEFAULT_X86_OS = 0;
     int DEFAULT_PPC_OS = 1001;
     int DEFAULT_S390_OS = 2001;
+    int DEFAULT_AARCH64_OS = 3001;
 
     /*
      * This value is used to enable the auto selection of an appropriate OS when

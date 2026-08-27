@@ -13,7 +13,9 @@ public enum BiosType implements Identifiable {
     I440FX_SEA_BIOS(1, ChipsetType.I440FX, false),
     Q35_SEA_BIOS(2, ChipsetType.Q35, false),
     Q35_OVMF(3, ChipsetType.Q35, true),
-    Q35_SECURE_BOOT(4, ChipsetType.Q35, true);
+    Q35_SECURE_BOOT(4, ChipsetType.Q35, true),
+    AMPERE(5, ChipsetType.VIRT, false),
+    AMPERE_OVMF(6, ChipsetType.VIRT, true);
 
     private int value;
     private ChipsetType chipsetType;
