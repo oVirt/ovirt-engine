@@ -125,6 +125,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
     private boolean needsHostDevices = false;
     private InitializationType initializationType;
     protected VmPayload vmPayload;
+    private boolean vmIsBeingUpdated;
 
     public static final String ISO_PREFIX = "iso://";
     public static final String STATELESS_SNAPSHOT_DESCRIPTION = "stateless snapshot";
@@ -172,6 +173,8 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
     private ManagedBlockStorageCommandUtil managedBlockStorageCommandUtil;
     @Inject
     private HaAutoStartVmsRunner haAutoStartVmsRunner;
+    @Inject
+    private NextRunConfigurationApplier nextRunConfigurationApplier;
 
     protected RunVmCommand(Guid commandId) {
         super(commandId);
@@ -188,6 +191,10 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
             return;
         }
 
+        if (!applyPendingNextRunConfiguration()) {
+            return;
+        }
+
         super.init();
         setStoragePoolId(getVm().getStoragePoolId());
         loadPayload();
@@ -196,6 +203,37 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
         fetchVmDisksFromDb();
         getVm().setBootSequence(getVm().getDefaultBootSequence());
         getVm().setRunOnce(false);
+    }
+
+    /**
+     * Applies the Next Run configuration that is still pending, e.g. because the VM was locked by another operation
+     * when it went down.
+     *
+     * @return false if the VM cannot be started at the moment
+     */
+    private boolean applyPendingNextRunConfiguration() {
+        if (getVm().getStatus() != VMStatus.Down) {
+            // the VM is resumed rather than started, its configuration must not be changed
+            return true;
+        }
+
+        if (getLock() != null) {
+            // the caller holds the VM lock, the nested UpdateVm would not be able to acquire it
+            return true;
+        }
+
+        switch (nextRunConfigurationApplier.apply(getVm())) {
+            case TEMPLATE_VERSION_CHANGED:
+                // the VM is being re-created from a newer template version, it cannot be started now
+                vmIsBeingUpdated = true;
+                return false;
+            case APPLIED:
+                // reload the VM, its configuration has just been changed
+                setVm(null);
+                return getVm() != null;
+            default:
+                return true;
+        }
     }
 
     @Override
@@ -1068,6 +1106,10 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
 
         if (vm == null) {
             return failValidation(EngineMessage.ACTION_TYPE_FAILED_VM_NOT_FOUND);
+        }
+
+        if (vmIsBeingUpdated) {
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_VM_IS_BEING_UPDATED);
         }
 
         if (!validateObject(vm.getStaticData())) {
