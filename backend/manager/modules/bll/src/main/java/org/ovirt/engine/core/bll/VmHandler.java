@@ -1593,6 +1593,11 @@ public class VmHandler implements BackendService {
         newVm.setStaticData(newVmStatic);
         newVm.setClusterBiosType(existingVm.getClusterBiosType());
         newVm.setClusterArch(existingVm.getClusterArch());
+        // The original template fields are not editable, so they are not part of the update
+        // parameters; carry them over from the existing VM, otherwise they would be missing
+        // from the snapshot configuration and fail the validation when it is applied.
+        newVm.getStaticData().setOriginalTemplateName(existingVm.getOriginalTemplateName());
+        newVm.getStaticData().setOriginalTemplateGuid(existingVm.getOriginalTemplateGuid());
 
         Set<String> changedFields = getChangedFieldsForStatus(
                 existingVm.getStaticData(),
