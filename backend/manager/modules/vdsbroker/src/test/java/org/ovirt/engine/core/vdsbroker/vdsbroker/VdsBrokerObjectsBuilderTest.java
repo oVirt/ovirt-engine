@@ -25,6 +25,8 @@ import org.ovirt.engine.core.common.businessentities.VmStatistics;
 import org.ovirt.engine.core.common.businessentities.network.VmInterfaceType;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImageDynamic;
+import org.ovirt.engine.core.common.businessentities.storage.Qcow2BitmapInfo;
+import org.ovirt.engine.core.common.businessentities.storage.Qcow2BitmapInfoFlags;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.utils.serialization.json.JsonObjectDeserializer;
 
@@ -480,5 +482,69 @@ public class VdsBrokerObjectsBuilderTest {
         struct.put(VdsProperties.cpu_topology,
                 new Object[] { cpuCapability1, cpuCapability2, cpuCapability3, cpuCapability4 });
         return struct;
+    }
+
+    private static Map<String, Object> getBitmapAsMap(String name, Object granularity, String... flags) {
+        Map<String, Object> bitmap = new HashMap<>();
+        bitmap.put("name", name);
+        bitmap.put("granularity", granularity);
+        bitmap.put("flags", flags);
+        return bitmap;
+    }
+
+    @Test
+    public void testBuildQcow2Bitmaps() {
+        Object[] bitmaps = new Object[] {
+                getBitmapAsMap("6c152a41-6979-4a34-9a44-d62dcdd22b15", 65536, "auto"),
+                // granularity may arrive as an Integer or a Long depending on the transport
+                getBitmapAsMap("8f5f1a25-1d6a-4f3d-9a1e-6f5b1cdb2f11", 65536L, "in-use", "auto"),
+                getBitmapAsMap("a0e91d33-6b8e-4a3b-9d55-1c2f4b6a7e90", 65536L, "auto", "some-future-flag")
+        };
+
+        List<Qcow2BitmapInfo> info = VdsBrokerObjectsBuilder.buildQcow2Bitmaps(bitmaps);
+
+        assertEquals(3, info.size());
+        assertEquals("6c152a41-6979-4a34-9a44-d62dcdd22b15", info.get(0).getName());
+        assertEquals(65536L, info.get(0).getGranularity());
+        assertEquals(List.of(Qcow2BitmapInfoFlags.AUTO), info.get(0).getFlags());
+        assertTrue(info.get(0).isValid());
+
+        // 'in-use' means the bitmap was not flushed by the last qemu process, it cannot be trusted
+        assertFalse(info.get(1).isValid());
+
+        // unknown flags are ignored instead of failing the whole query
+        assertEquals(List.of(Qcow2BitmapInfoFlags.AUTO), info.get(2).getFlags());
+        assertTrue(info.get(2).isValid());
+    }
+
+    @Test
+    public void testBuildQcow2BitmapsFromLegacyArrayFormatSkipped() {
+        // Unpatched vdsm serializes the Qcow2BitmapInfo namedtuple as-is, which the
+        // json encoder turns into [name, granularity, flags] arrays that don't match
+        // the schema. The parser must skip those entries instead of throwing or
+        // misinterpreting them.
+        Object[] bitmaps = new Object[] {
+            new Object[] { "6c152a41-6979-4a34-9a44-d62dcdd22b15", 65536, new Object[] { "auto" } },
+            getBitmapAsMap("8f5f1a25-1d6a-4f3d-9a1e-6f5b1cdb2f11", 65536L, "auto")
+        };
+
+        List<Qcow2BitmapInfo> info = VdsBrokerObjectsBuilder.buildQcow2Bitmaps(bitmaps);
+
+        // Only the schema-conforming entry is parsed, the legacy one is skipped
+        assertEquals(1, info.size());
+        assertEquals("8f5f1a25-1d6a-4f3d-9a1e-6f5b1cdb2f11", info.get(0).getName());
+        assertTrue(info.get(0).isValid());
+    }
+
+    @Test
+    public void testBuildQcow2BitmapsWithoutFlags() {
+        Map<String, Object> bitmap = new HashMap<>();
+        bitmap.put("name", "6c152a41-6979-4a34-9a44-d62dcdd22b15");
+
+        List<Qcow2BitmapInfo> info = VdsBrokerObjectsBuilder.buildQcow2Bitmaps(new Object[] { bitmap });
+
+        assertEquals(1, info.size());
+        // a bitmap without the 'auto' flag is disabled and may be missing writes
+        assertFalse(info.get(0).isValid());
     }
 }
