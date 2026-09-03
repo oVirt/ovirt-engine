@@ -12,6 +12,7 @@ public class RunAsyncActionParameters extends ActionParametersBase {
     public RunAsyncActionParameters(ActionType action, ActionParametersBase actionParams) {
         this.action = action;
         this.actionParameters = actionParams;
+        setCorrelationId(actionParams.getCorrelationId());
     }
 
     public ActionType getAction() {
