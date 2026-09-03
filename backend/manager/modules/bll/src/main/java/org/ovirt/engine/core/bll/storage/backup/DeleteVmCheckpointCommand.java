@@ -195,6 +195,8 @@ public class DeleteVmCheckpointCommand<T extends VmCheckpointParameters> extends
         VmBackupParameters vmBackupParameters = new VmBackupParameters(vmBackup);
         vmBackupParameters.setParentCommand(getActionType());
         vmBackupParameters.setParentParameters(getParameters());
+        // The bitmaps doesn't need to be valid, as we will delete anyway
+        vmBackupParameters.setValidateCheckpoints(false);
         vmBackupParameters.setEndProcedure(ActionParametersBase.EndProcedure.PARENT_MANAGED);
 
         log.info("Redefine VM checkpoint '{}' for VM '{}'", vmCheckpoint.getId(), getVmId());
