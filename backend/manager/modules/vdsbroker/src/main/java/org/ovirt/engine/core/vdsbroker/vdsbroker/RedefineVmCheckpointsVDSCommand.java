@@ -19,7 +19,9 @@ public class RedefineVmCheckpointsVDSCommand<P extends VmBackupVDSParameters> ex
     @Override
     protected void executeVdsBrokerCommand() {
         vmCheckpointIds = getBroker().redefineVmCheckpoints(
-                getParameters().getVmBackup().getVmId().toString(), createCheckpointsMap());
+                getParameters().getVmBackup().getVmId().toString(),
+                createCheckpointsMap(),
+                getParameters().isValidateCheckpoints());
         proceedProxyReturnValue();
 
         setReturnValue(vmCheckpointIds);

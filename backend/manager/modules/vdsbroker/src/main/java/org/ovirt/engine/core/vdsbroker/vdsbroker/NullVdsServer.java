@@ -971,7 +971,7 @@ public class NullVdsServer implements IVdsServer {
         return null;
     }
 
-    @Override public VmCheckpointIds redefineVmCheckpoints(String vmId, Collection<Map<String, Object>> checkpoints) {
+    @Override public VmCheckpointIds redefineVmCheckpoints(String vmId, Collection<Map<String, Object>> checkpoints, boolean validate) {
         return null;
     }
 

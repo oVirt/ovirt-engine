@@ -14,6 +14,10 @@ public class VmBackupVDSParameters extends VdsIdVDSCommandParametersBase {
     // Map between the backed-up disk ID to the created scratch disk image
     // and the path to it after the scratch disk was prepared.
     private Map<Guid, ScratchDiskInfo> scratchDisksMap;
+    // Whether the redefine of the checkpoints should validate them against
+    // qemu's live state. False is used to redefine a checkpoint with a broken
+    // bitmap, so it can be deleted afterwards (the delete removes the bitmap).
+    private boolean validateCheckpoints = true;
 
     public VmBackupVDSParameters() {
     }
@@ -50,6 +54,14 @@ public class VmBackupVDSParameters extends VdsIdVDSCommandParametersBase {
 
     public void setScratchDisksMap(Map<Guid, ScratchDiskInfo> scratchDisksMap) {
         this.scratchDisksMap = scratchDisksMap;
+    }
+
+    public boolean isValidateCheckpoints() {
+        return validateCheckpoints;
+    }
+
+    public void setValidateCheckpoints(boolean validateCheckpoints) {
+        this.validateCheckpoints = validateCheckpoints;
     }
 
     @Override

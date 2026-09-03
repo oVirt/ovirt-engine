@@ -1043,6 +1043,7 @@ public class VdsBrokerObjectsBuilder {
         vds.setOvnConfigured(assignBoolValue(struct, VdsProperties.OVN_CONFIGURED));
         vds.setVdsmCpusAffinity(assignStringValueFromArray(struct, VdsProperties.vdsm_cpus_affinity));
         vds.setQemuImageInfoBitmaps(assignBoolValue(struct, VdsProperties.QEMU_IMAGE_INFO_BITMAPS));
+        vds.setRedefineCheckpointValidate(assignBoolValue(struct, VdsProperties.REDEFINE_CHECKPOINT_VALIDATE));
     }
 
     private void setDnsResolverConfigurationData(VDS vds, Map<String, Object> struct) {

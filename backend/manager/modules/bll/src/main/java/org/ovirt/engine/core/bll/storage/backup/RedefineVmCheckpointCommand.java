@@ -197,7 +197,9 @@ public class RedefineVmCheckpointCommand<T extends VmBackupParameters> extends V
         vmBackup.setFromCheckpointId(checkpoint.getParentId());
         vmBackup.setCreationDate(checkpoint.getCreationDate());
 
-        return new VmBackupVDSParameters(getVdsId(), vmBackup);
+        VmBackupVDSParameters params = new VmBackupVDSParameters(getVdsId(), vmBackup);
+        params.setValidateCheckpoints(getParameters().isValidateCheckpoints());
+        return params;
     }
 
     private VDSReturnValue performVmCheckpointsOperation(VDSCommandType vdsCommandType,
