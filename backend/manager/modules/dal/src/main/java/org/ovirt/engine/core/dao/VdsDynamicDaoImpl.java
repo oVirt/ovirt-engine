@@ -142,6 +142,8 @@ public class VdsDynamicDaoImpl extends MassOperationsGenericDao<VdsDynamic, Guid
         entity.setOvnConfigured(rs.getBoolean("ovn_configured"));
         entity.setCpuTopology(SerializationFactory.getDeserializer().deserialize(rs.getString("cpu_topology"), ArrayList.class));
         entity.setVdsmCpusAffinity(rs.getString("vdsm_cpus_affinity"));
+        entity.setQemuImageInfoBitmaps(rs.getBoolean("qemu_image_info_bitmaps"));
+        entity.setRedefineCheckpointValidate(rs.getBoolean("redefine_checkpoint_validate"));
 
         return entity;
     };
@@ -352,7 +354,9 @@ public class VdsDynamicDaoImpl extends MassOperationsGenericDao<VdsDynamic, Guid
                 .addValue("cd_change_pdiv", vds.isCdChangePdiv())
                 .addValue("ovn_configured", vds.isOvnConfigured())
                 .addValue("cpu_topology", SerializationFactory.getSerializer().serialize(vds.getCpuTopology()))
-                .addValue("vdsm_cpus_affinity", vds.getVdsmCpusAffinity());
+                .addValue("vdsm_cpus_affinity", vds.getVdsmCpusAffinity())
+                .addValue("qemu_image_info_bitmaps", vds.isQemuImageInfoBitmaps())
+                .addValue("redefine_checkpoint_validate", vds.isRedefineCheckpointValidate());
     }
 
     @Override

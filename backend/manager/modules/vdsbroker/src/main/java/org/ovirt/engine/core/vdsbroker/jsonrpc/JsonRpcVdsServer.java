@@ -2294,11 +2294,12 @@ public class JsonRpcVdsServer implements IVdsServer {
     }
 
     @Override
-    public VmCheckpointIds redefineVmCheckpoints(String vmId, Collection<Map<String, Object>> checkpoints) {
+    public VmCheckpointIds redefineVmCheckpoints(String vmId, Collection<Map<String, Object>> checkpoints, boolean validate) {
         JsonRpcRequest request =
                 new RequestBuilder("VM.redefine_checkpoints")
                         .withParameter("vmID", vmId)
                         .withParameter("checkpoints", checkpoints)
+                        .withParameter("validate", validate)
                         .build();
         Map<String, Object> response = new FutureMap(this.client, request).withIgnoreResponseKey();
         return new VmCheckpointIds(response);
