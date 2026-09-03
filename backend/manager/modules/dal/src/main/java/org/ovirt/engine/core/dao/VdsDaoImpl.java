@@ -422,6 +422,7 @@ public class VdsDaoImpl extends BaseDao implements VdsDao {
         entity.setCpuTopology(SerializationFactory.getDeserializer().deserialize(rs.getString("cpu_topology"), ArrayList.class));
         entity.setVdsmCpusAffinity(rs.getString("vdsm_cpus_affinity"));
         entity.setQemuImageInfoBitmaps(rs.getBoolean("qemu_image_info_bitmaps"));
+        entity.setRedefineCheckpointValidate(rs.getBoolean("redefine_checkpoint_validate"));
         return entity;
     };
 }
