@@ -11,6 +11,7 @@ import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.ProcessDownVmParameters;
 import org.ovirt.engine.core.common.action.VdsActionParameters;
+import org.ovirt.engine.core.common.action.VmOperationParameterBase;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
@@ -68,6 +69,13 @@ public class ClearNonResponsiveVdsVmsCommand<T extends VdsActionParameters> exte
             }
 
             runInternalActionWithTasksContext(ActionType.ProcessDownVm, new ProcessDownVmParameters(vm.getId(), true, getVdsId()));
+
+            // The VM went down uncleanly - its bitmaps were never flushed by qemu and the
+            // checkpoint metadata in libvirt died with the domain. Reconcile the checkpoints
+            // with the bitmaps on the disks while everything is offline, so the next backup
+            // doesn't fail on a broken bitmap and take the whole checkpoints chain down.
+            runInternalActionWithTasksContext(ActionType.ReconcileVmCheckpoints,
+                    new VmOperationParameterBase(vm.getId()));
         }
 
         runVdsCommand(VDSCommandType.UpdateVdsVMsCleared,
