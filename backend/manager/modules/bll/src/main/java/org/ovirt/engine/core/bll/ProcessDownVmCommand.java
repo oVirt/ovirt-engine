@@ -27,6 +27,7 @@ import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
+import org.ovirt.engine.core.common.businessentities.VmExitStatus;
 import org.ovirt.engine.core.common.businessentities.VmNumaNode;
 import org.ovirt.engine.core.common.businessentities.VmPayload;
 import org.ovirt.engine.core.common.businessentities.VmPool;
@@ -162,6 +163,14 @@ public class ProcessDownVmCommand<T extends ProcessDownVmParameters> extends Com
             if (vdsManager != null) {
                 vdsManager.unpinVmCpus(getVm().getId());
             }
+        }
+
+        if (getVm().getExitStatus() == VmExitStatus.Error) {
+            // The VM went down uncleanly - its bitmaps were never flushed by qemu. Reconcile the
+            // checkpoints with the bitmaps on the disks while they are still offline, so the next
+            // backup doesn't fail on a broken bitmap and take the whole checkpoints chain down.
+            runInternalActionWithTasksContext(ActionType.ReconcileVmCheckpoints,
+                    new VmOperationParameterBase(getVmId()));
         }
 
         managedBlockStorageCommandUtil.disconnectManagedBlockStorageDisks(getVm(), vmHandler);
