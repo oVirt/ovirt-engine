@@ -141,6 +141,7 @@ public class VmInfoBuildUtils {
     private static final Base64 BASE_64 = new Base64(0, null);
     private static final int DEFAULT_HUGEPAGESIZE_X86_64 = 2048;
     private static final int DEFAULT_HUGEPAGESIZE_PPC64LE = 16384;
+    private static final int DEFAULT_HUGEPAGESIZE_AARCH64 = 2048;
     private static final List<String> SCSI_HOST_DEV_WITH_PREDETERMINED_ADDRESS;
 
     public static final String VDSM_LIBGF_CAP_NAME = "libgfapi_supported";
@@ -1530,6 +1531,8 @@ public class VmInfoBuildUtils {
 
     public int getDefaultHugepageSize(VM vm) {
         switch (vm.getClusterArch().getFamily()) {
+            case aarch64:
+                return DEFAULT_HUGEPAGESIZE_AARCH64;
             case ppc:
                 return DEFAULT_HUGEPAGESIZE_PPC64LE;
             default:

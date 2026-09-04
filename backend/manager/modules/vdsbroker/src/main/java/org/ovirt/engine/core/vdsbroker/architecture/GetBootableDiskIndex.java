@@ -36,6 +36,15 @@ public class GetBootableDiskIndex implements ArchCommand {
         diskIndex = 0;
     }
 
+    /**
+     *  AARCH64
+     */
+    @Override
+    public void runForAARCH64() {
+        // TODO, additional settings required?
+        diskIndex = 0;
+    }
+
     public int returnValue() {
         return diskIndex;
     }
