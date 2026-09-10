@@ -132,39 +132,33 @@ public class AddPermissionCommand<T extends PermissionsOperationsParameters> ext
         // then they need to be added to the database now, before the permission:
         DbUser user = parameters.getUser();
         if (user != null) {
-            Guid id = user.getId();
-            String directory = user.getDomain();
-            String externalId = user.getExternalId();
-            DbUser existing = externalSsoEnabled ?
-                    dbUserDao.getByUsernameAndDomain(user.getLoginName(), directory) :
-                    dbUserDao.getByIdOrExternalId(id, directory, externalId);
-            if (existing != null) {
-                user = existing;
-            } else {
-                user = addUser(user);
-                if (user == null) {
-                    setSucceeded(false);
-                    return;
-                }
+            DbUser resolved = resolveUser(user, externalSsoEnabled);
+            if (resolved == null) {
+                resolved = addUser(user);
             }
+            if (resolved == null) {
+                log.error("Cannot add permission for user '{}' (id '{}', domain '{}'): the user is not present in the"
+                                + " database and could not be resolved in a directory",
+                        user.getLoginName(), user.getId(), user.getDomain());
+                setSucceeded(false);
+                return;
+            }
+            user = resolved;
         }
         DbGroup group = parameters.getGroup();
         if (group != null) {
-            Guid id = group.getId();
-            String directory = group.getDomain();
-            String externalId = group.getExternalId();
-            DbGroup existing = externalSsoEnabled ?
-                    dbGroupDao.getByNameAndDomain(group.getName(), directory) :
-                    dbGroupDao.getByIdOrExternalId(id, directory, externalId);
-            if (existing != null) {
-                group = existing;
-            } else {
-                group = addGroup(group);
-                if (group == null) {
-                    setSucceeded(false);
-                    return;
-                }
+            DbGroup resolved = resolveGroup(group, externalSsoEnabled);
+            if (resolved == null) {
+                resolved = addGroup(group);
             }
+            if (resolved == null) {
+                log.error("Cannot add permission for group '{}' (id '{}', domain '{}'): the group is not present in"
+                                + " the database and could not be resolved in a directory",
+                        group.getName(), group.getId(), group.getDomain());
+                setSucceeded(false);
+                return;
+            }
+            group = resolved;
         }
 
         // The identifier of the principal of the permission can come from the parameters directly or from the
@@ -236,6 +230,37 @@ public class AddPermissionCommand<T extends PermissionsOperationsParameters> ext
                     permission.getObjectType(), ActionGroup.ADD_USERS_AND_GROUPS_FROM_DIRECTORY));
         }
         return permissionsSubject;
+    }
+
+    /**
+     * Finds the database row that represents a principal the caller referenced.
+     *
+     * The identifier is matched first, because it names the row unambiguously. A match on name and domain is kept as a
+     * fallback for principals backed by an external identity provider, whose directory is not queried while a
+     * permission is being assigned. That fallback cannot stand on its own: it resolves nothing for a principal that
+     * carries no domain -- the built-in Everyone group is one such principal -- and nothing for a request that
+     * referenced the principal by identifier alone, which is what a client does when it already knows the id. An
+     * unresolved principal makes the permission impossible to assign at all.
+     */
+    private DbUser resolveUser(DbUser user, boolean externalSsoEnabled) {
+        DbUser existing =
+                dbUserDao.getByIdOrExternalId(user.getId(), user.getDomain(), user.getExternalId());
+        if (existing == null && externalSsoEnabled) {
+            existing = dbUserDao.getByUsernameAndDomain(user.getLoginName(), user.getDomain());
+        }
+        return existing;
+    }
+
+    /**
+     * Group counterpart of {@link #resolveUser(DbUser, boolean)}; the same ordering applies.
+     */
+    private DbGroup resolveGroup(DbGroup group, boolean externalSsoEnabled) {
+        DbGroup existing =
+                dbGroupDao.getByIdOrExternalId(group.getId(), group.getDomain(), group.getExternalId());
+        if (existing == null && externalSsoEnabled) {
+            existing = dbGroupDao.getByNameAndDomain(group.getName(), group.getDomain());
+        }
+        return existing;
     }
 
     private DbUser addUser(DbUser dbUser) {
