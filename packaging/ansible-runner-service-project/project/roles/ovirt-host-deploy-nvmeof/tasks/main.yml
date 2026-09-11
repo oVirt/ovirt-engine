@@ -1,10 +1,4 @@
 ---
-- name: Install nvme-cli package
-  ansible.builtin.package:
-    name: nvme-cli
-    state: present
-  when: nvmeof_setup_ensure_nvme_cli | bool
-
 - name: Create modules-load.d drop-in for NVMe-oF kernel modules
   ansible.builtin.copy:
     content: |
@@ -32,17 +26,41 @@
     - nvmeof_setup_ensure_modules_loaded | bool
     - nvmeof_modules_conf is changed
 
-- name: Generate NVMe host NQN if not present
-  ansible.builtin.command:
-    cmd: nvme gen-hostnqn
-    creates: /etc/nvme/hostnqn
+- name: Check if NVMe host NQN file exists
+  ansible.builtin.stat:
+    path: /etc/nvme/hostnqn
+  register: nvmeof_hostnqn_file
   when: nvmeof_setup_ensure_hostnqn | bool
 
-- name: Generate NVMe host ID if not present
+- name: Generate NVMe host NQN
   ansible.builtin.command:
-    cmd: nvme gen-hostid
-    creates: /etc/nvme/hostid
-  when: nvmeof_setup_ensure_hostnqn | bool
+    cmd: nvme gen-hostnqn
+  register: nvmeof_hostnqn_gen
+  when:
+    - nvmeof_setup_ensure_hostnqn | bool
+    - not nvmeof_hostnqn_file.stat.exists
+
+- name: Ensure NVMe host NQN directory
+  ansible.builtin.file:
+    path: /etc/nvme
+    state: directory
+    owner: root
+    group: root
+    mode: "0755"
+  when:
+    - nvmeof_setup_ensure_hostnqn | bool
+    - not nvmeof_hostnqn_file.stat.exists
+
+- name: Write NVMe host NQN
+  ansible.builtin.copy:
+    content: "{{ nvmeof_hostnqn_gen.stdout }}\n"
+    dest: /etc/nvme/hostnqn
+    owner: root
+    group: root
+    mode: "0644"
+  when:
+    - nvmeof_setup_ensure_hostnqn | bool
+    - not nvmeof_hostnqn_file.stat.exists
 
 - name: Enable NVMe auto-connect service
   ansible.builtin.systemd:

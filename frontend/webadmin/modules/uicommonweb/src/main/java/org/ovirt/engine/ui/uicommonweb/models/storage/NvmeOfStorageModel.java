@@ -2,7 +2,6 @@ package org.ovirt.engine.ui.uicommonweb.models.storage;
 
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 
-@SuppressWarnings("unused")
 public class NvmeOfStorageModel extends SanStorageModelBase {
     @Override
     public StorageType getType() {

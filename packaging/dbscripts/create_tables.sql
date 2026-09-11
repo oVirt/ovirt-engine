@@ -2385,6 +2385,7 @@ CREATE TABLE vds_dynamic (
     spice_version character varying(4000),
     kernel_version character varying(4000),
     iscsi_initiator_name character varying(4000),
+    nvme_host_nqn character varying(256),
     transparent_hugepages_state integer DEFAULT 0 NOT NULL,
     hooks text DEFAULT ''::character varying,
     _update_date timestamp with time zone,

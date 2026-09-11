@@ -127,6 +127,17 @@ public class StorageServerConnectionDaoImpl extends BaseDao implements
                         .addValue("port", port));
     }
 
+    @Override
+    public List<StorageServerConnections> getStorageConnectionsByConnectionPortAndNqn(
+            String connection, String port, String nqn) {
+        return getCallsHandler().executeReadList("GetStorageConnectionsByConnectionPortAndNqn",
+                mapper,
+                getCustomMapSqlParameterSource()
+                        .addValue("nqn", nqn)
+                        .addValue("connection", connection)
+                        .addValue("port", port));
+    }
+
 
     @Override
     public List<StorageServerConnections> getAllForDomain(Guid domainId) {
@@ -173,7 +184,7 @@ public class StorageServerConnectionDaoImpl extends BaseDao implements
                 .addValue("transport", connection.getTransport())
                 .addValue("trsvcid", connection.getTrsvcid())
                 .addValue("host_nqn", connection.getHostNqn())
-                .addValue("dhchap_key", connection.getDhchapKey());
+                .addValue("dhchap_key", DbFacadeUtils.encryptPassword(connection.getDhchapKey()));
     }
 
     private static final RowMapper<StorageServerConnections> mapper = (rs, rowNum) -> {
@@ -197,7 +208,7 @@ public class StorageServerConnectionDaoImpl extends BaseDao implements
         entity.setTransport(rs.getString("transport"));
         entity.setTrsvcid(rs.getString("trsvcid"));
         entity.setHostNqn(rs.getString("host_nqn"));
-        entity.setDhchapKey(rs.getString("dhchap_key"));
+        entity.setDhchapKey(DbFacadeUtils.decryptPassword(rs.getString("dhchap_key")));
         return entity;
     };
 

@@ -80,7 +80,7 @@ public abstract class StorageServerConnectionCommandBase<T extends StorageServer
             String connectionField = connection.getConnection();
             connections = storageServerConnectionDao.getAllForStorage(connectionField);
         } else if (connection.getStorageType() == StorageType.NVMEOF) {
-            connections = storageServerConnectionDao.getStorageConnectionsByConnectionPortAndIqn(
+            connections = storageServerConnectionDao.getStorageConnectionsByConnectionPortAndNqn(
                     connection.getConnection(),
                     connection.getTrsvcid(),
                     connection.getNqn());

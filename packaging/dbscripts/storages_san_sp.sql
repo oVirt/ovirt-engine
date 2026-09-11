@@ -584,6 +584,23 @@ BEGIN
 END;$FUNCTION$
 LANGUAGE plpgsql;
 
+CREATE OR REPLACE FUNCTION GetStorageConnectionsByConnectionPortAndNqn (
+    v_nqn VARCHAR(256),
+    v_connection VARCHAR(250),
+    v_port VARCHAR(50)
+    )
+RETURNS SETOF storage_server_connections STABLE AS $FUNCTION$
+BEGIN
+    RETURN QUERY
+
+    SELECT *
+    FROM storage_server_connections
+    WHERE nqn = v_nqn
+        AND connection = v_connection
+        AND port = v_port;
+END;$FUNCTION$
+LANGUAGE plpgsql;
+
 
 CREATE OR REPLACE FUNCTION Getstorage_server_connectionsByStorageType (v_storage_type INT)
 RETURNS SETOF storage_server_connections STABLE AS $FUNCTION$

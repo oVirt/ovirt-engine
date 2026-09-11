@@ -959,17 +959,11 @@ public class StorageListModel extends ListWithSimpleDetailsModel<Void, StorageDo
         getNewDomainCommand().setIsAvailable(true);
 
         getEditCommand().setIsExecutionAllowed(items.size() == 1 && isEditAvailable(item));
-        if (!getEditCommand().getIsExecutionAllowed() && item != null && item.getStorageType() == StorageType.NVMEOF) {
-            getEditCommand().getExecuteProhibitionReasons().add(
-                    ConstantsManager.getInstance().getConstants().nvmeofRestApiOnlyTooltip());
-        }
+        addNvmeofRestApiOnlyTooltip(getEditCommand(), item);
 
         getImportDomainCommand().setIsExecutionAllowed(
                 item == null || item.getStorageType() != StorageType.NVMEOF);
-        if (!getImportDomainCommand().getIsExecutionAllowed() && item != null && item.getStorageType() == StorageType.NVMEOF) {
-            getImportDomainCommand().getExecuteProhibitionReasons().add(
-                    ConstantsManager.getInstance().getConstants().nvmeofRestApiOnlyTooltip());
-        }
+        addNvmeofRestApiOnlyTooltip(getImportDomainCommand(), item);
 
         getRemoveCommand().setIsExecutionAllowed(items.size() == 1
                 && !items.get(0).getStorageType().isOpenStackDomain()
@@ -1001,6 +995,13 @@ public class StorageListModel extends ListWithSimpleDetailsModel<Void, StorageDo
         getUpdateOvfsCommand().setIsAvailable(true);
         getSwitchMasterCommand().setIsAvailable(true);
 
+    }
+
+    private void addNvmeofRestApiOnlyTooltip(UICommand command, StorageDomain item) {
+        if (!command.getIsExecutionAllowed() && item != null && item.getStorageType() == StorageType.NVMEOF) {
+            command.getExecuteProhibitionReasons().add(
+                    ConstantsManager.getInstance().getConstants().nvmeofRestApiOnlyTooltip());
+        }
     }
 
     private boolean isEditAvailable(StorageDomain storageDomain) {
