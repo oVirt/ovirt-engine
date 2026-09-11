@@ -413,6 +413,8 @@ public class StorageListModel extends ListWithSimpleDetailsModel<Void, StorageDo
                 return new GlusterStorageModel();
             case MANAGED_BLOCK_STORAGE:
                 return new ManagedBlockStorageModel();
+            case NVMEOF:
+                return new NvmeOfStorageModel();
         }
         return null;
     }
@@ -957,6 +959,11 @@ public class StorageListModel extends ListWithSimpleDetailsModel<Void, StorageDo
         getNewDomainCommand().setIsAvailable(true);
 
         getEditCommand().setIsExecutionAllowed(items.size() == 1 && isEditAvailable(item));
+        addNvmeofRestApiOnlyTooltip(getEditCommand(), item);
+
+        getImportDomainCommand().setIsExecutionAllowed(
+                item == null || item.getStorageType() != StorageType.NVMEOF);
+        addNvmeofRestApiOnlyTooltip(getImportDomainCommand(), item);
 
         getRemoveCommand().setIsExecutionAllowed(items.size() == 1
                 && !items.get(0).getStorageType().isOpenStackDomain()
@@ -990,8 +997,18 @@ public class StorageListModel extends ListWithSimpleDetailsModel<Void, StorageDo
 
     }
 
+    private void addNvmeofRestApiOnlyTooltip(UICommand command, StorageDomain item) {
+        if (!command.getIsExecutionAllowed() && item != null && item.getStorageType() == StorageType.NVMEOF) {
+            command.getExecuteProhibitionReasons().add(
+                    ConstantsManager.getInstance().getConstants().nvmeofRestApiOnlyTooltip());
+        }
+    }
+
     private boolean isEditAvailable(StorageDomain storageDomain) {
         if (storageDomain == null) {
+            return false;
+        }
+        if (storageDomain.getStorageType() == StorageType.NVMEOF) {
             return false;
         }
 

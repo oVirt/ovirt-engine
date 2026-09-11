@@ -68,8 +68,10 @@ public class BackendStorageServerConnectionsResource
                 break;
             case POSIXFS:
             case GLUSTERFS:
-                // address is possible, but is optional, non mandatory
                 validateParameters(storageConn, "path", "vfsType");
+                break;
+            case NVMEOF:
+                validateParameters(storageConn, "address", "nqn");
                 break;
             default:
                 break;

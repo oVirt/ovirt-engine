@@ -91,6 +91,7 @@ public class BackendStorageDomainResource
             switch (storageType) {
                 case ISCSI:
                 case FCP:
+                case NVMEOF:
                     extendStorageDomain(incoming, model);
                     break;
                 default:

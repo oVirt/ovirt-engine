@@ -27,6 +27,22 @@ public class StorageDomainHelper {
                 StorageServerConnections.DEFAULT_TPGT);
     }
 
+    public static StorageServerConnections getNvmeConnection(String address, String nqn, Integer port) {
+        StorageServerConnections conn = new StorageServerConnections();
+        conn.setConnection(address);
+        conn.setNqn(nqn);
+        conn.setStorageType(StorageType.NVMEOF);
+        if (port != null) {
+            conn.setPort(Integer.toString(port));
+            conn.setTrsvcid(Integer.toString(port));
+        } else {
+            conn.setPort(StorageServerConnections.DEFAULT_NVME_PORT);
+            conn.setTrsvcid(StorageServerConnections.DEFAULT_NVME_PORT);
+        }
+        conn.setTransport("tcp");
+        return conn;
+    }
+
     /**
      * Adds to the given Storage Domain the references to the Data Centers it is attached to.
      *

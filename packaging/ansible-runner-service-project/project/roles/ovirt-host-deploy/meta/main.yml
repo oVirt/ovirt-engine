@@ -1,7 +1,9 @@
+---
 dependencies:
   - role: ovirt-host-deploy-facts
   - role: ovirt-host-deploy-vdsm
   - role: ovirt-host-deploy-misc
+  - role: ovirt-host-deploy-nvmeof
   - role: ovirt-host-deploy-ovn-certificates
   - role: ovirt-provider-ovn-driver
   - role: ovirt-host-deploy-libvirt-guests
