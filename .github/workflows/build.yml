@@ -63,6 +63,11 @@ jobs:
     - name: Mark repository as safe
       run: git config --global --add safe.directory "$(pwd)"
 
+    - name: Check DB type consistency
+      run: |
+        # Check database type consistency against the current schema.
+        python3 .automation/db-type-consistency.py
+
     - name: Set build environment
       run: |
         TAG=$(git tag --points-at HEAD | head -1)

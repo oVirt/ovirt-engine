@@ -1469,7 +1469,7 @@ LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION InsertVmGuestAgentInterface (
     v_vm_id UUID,
-    v_interface_name VARCHAR(50),
+    v_interface_name TEXT,
     v_mac_address VARCHAR(59),
     v_ipv4_addresses TEXT,
     v_ipv6_addresses TEXT

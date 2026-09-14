@@ -194,7 +194,7 @@ LANGUAGE plpgsql;
 -- Deletes a key from vdc_options (if exists)
 CREATE OR REPLACE FUNCTION fn_db_delete_config_value (
     v_option_name VARCHAR(100),
-    v_version TEXT
+    v_version VARCHAR(40)
     )
 RETURNS void AS $FUNCTION$
 BEGIN

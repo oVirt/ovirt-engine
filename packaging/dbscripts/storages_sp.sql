@@ -569,7 +569,7 @@ CREATE OR REPLACE FUNCTION Updatestorage_domain_static (
     v_storage_comment TEXT,
     v_storage_type INT,
     v_storage_domain_type INT,
-    v_storage_domain_format_type INT,
+    v_storage_domain_format_type VARCHAR(50),
     v_last_time_used_as_master BIGINT,
     v_wipe_after_delete BOOLEAN,
     v_discard_after_delete BOOLEAN,

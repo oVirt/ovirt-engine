@@ -48,7 +48,7 @@ LANGUAGE plpgsql;
 CREATE OR REPLACE FUNCTION InsertGlusterGeoRepSessionConfig (
     v_session_id UUID,
     v_config_key VARCHAR(50),
-    v_config_value VARCHAR(50)
+    v_config_value TEXT
     )
 RETURNS VOID AS $FUNCTION$
 BEGIN
@@ -77,9 +77,9 @@ CREATE OR REPLACE FUNCTION InsertGlusterGeoRepSessionDetail (
     v_entry_pending BIGINT,
     v_meta_pending BIGINT,
     v_failures BIGINT,
-    v_last_synced_at TIMESTAMP,
-    v_checkpoint_time TIMESTAMP,
-    v_checkpoint_completed_time TIMESTAMP,
+    v_last_synced_at TIMESTAMP WITH TIME ZONE,
+    v_checkpoint_time TIMESTAMP WITH TIME ZONE,
+    v_checkpoint_completed_time TIMESTAMP WITH TIME ZONE,
     v_is_checkpoint_completed BOOLEAN
     )
 RETURNS VOID AS $FUNCTION$
@@ -133,9 +133,9 @@ CREATE OR REPLACE FUNCTION UpdateGlusterGeoRepSessionDetail (
     v_entry_pending BIGINT,
     v_meta_pending BIGINT,
     v_failures BIGINT,
-    v_last_synced_at TIMESTAMP,
-    v_checkpoint_time TIMESTAMP,
-    v_checkpoint_completed_time TIMESTAMP,
+    v_last_synced_at TIMESTAMP WITH TIME ZONE,
+    v_checkpoint_time TIMESTAMP WITH TIME ZONE,
+    v_checkpoint_completed_time TIMESTAMP WITH TIME ZONE,
     v_is_checkpoint_completed BOOLEAN
     )
 RETURNS VOID AS $FUNCTION$
