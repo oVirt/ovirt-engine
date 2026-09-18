@@ -269,7 +269,9 @@ public class ImportVmFromExternalUrlCommand<P extends ImportVmFromExternalUrlPar
 
         @Override
         protected ActionType getImportActionType() {
-            return ActionType.ImportVmFromOva;
+            return OvaImportManagedBlockSupport.isManagedBlockDestination(getStorageDomain())
+                    ? ActionType.MbsImportVmFromOva
+                    : ActionType.ImportVmFromOva;
         }
 
         @Override

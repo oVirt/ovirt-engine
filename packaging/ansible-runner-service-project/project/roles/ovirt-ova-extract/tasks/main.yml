@@ -18,7 +18,6 @@
         "{{ ova_temp.path }}/extract_ova.py"
         "{{ ovirt_import_ova_path }}"
         "{{ ovirt_import_ova_disks }}"
-        "{{ ovirt_import_ova_image_mappings }}"
       async: "{{ ansible_timeout }}"
       poll: 15
       register: extraction_result
