@@ -174,6 +174,14 @@ public class VdsDaoImpl extends BaseDao implements VdsDao {
     }
 
     @Override
+    public List<String> getClusterI440fxCommonMachines(Guid clusterId) {
+        return getCallsHandler().executeReadList("GetClusterI440fxCommonMachines",
+                (rs, rowNum) -> rs.getString(1),
+                getCustomMapSqlParameterSource()
+                        .addValue("cluster_id", clusterId));
+    }
+
+    @Override
     public List<VDS> getHostsForStorageOperation(Guid storagePoolId, boolean localFsOnly) {
         // normalize to uniquely represent in DB that we want candidates from all DC's
         if (storagePoolId == null || storagePoolId.equals(Guid.Empty)) {

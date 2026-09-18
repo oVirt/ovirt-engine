@@ -279,6 +279,26 @@
   <vm_static vm_guid="77296e00-0cad-4e5a-9299-008a7b6f5003" entity_type="VM" num_of_io_threads="1" vm_name="rhel5-pool-50" mem_size_mb="1024" max_memory_size_mb="4069" vmt_guid="1b85420c-b84c-4f29-997e-0eb674b40b83" os="0" cluster_id="b399944a-81ab-4ec5-8266-e19ba7c3c9d1" bios_type="2" creation_date="2010-11-18 11:13:24" num_of_monitors="1" allow_console_reconnect="false" is_initialized="1" num_of_sockets="1" cpu_per_socket="1" threads_per_cpu="1" usb_policy="1" time_zone="" is_stateless="0"  _create_date="2010-11-18 11:13:24" auto_startup="0" vm_type="0" nice_level="0" default_boot_sequence="0" default_display_type="0" priority="0" iso_path="" origin="0" initrd_url="" kernel_url="" kernel_params="" migration_support="0" quota_id="88296e00-0cad-4e5a-9291-008a7b7f4399" db_generation="1" min_allocated_mem="256" is_run_and_pause="false" sso_method="guest_agent" template_version_number="1" serial_number_policy="0" is_boot_menu_enabled="false" is_spice_file_transfer_enabled="true" is_spice_copy_paste_enabled="true" cpu_profile_id="fd81f1e1-785b-4579-ab75-1419ebb87055" is_auto_converge="true" is_migrate_compressed="false" custom_emulated_machine="rhel6.5.0" custom_cpu_name="Penryn" small_icon_id="38fc5e1a-f96b-339b-9894-def6f366daf5" large_icon_id="a3b954f0-31ff-3166-b7a1-28b23202b198" console_disconnect_action="LOCK_SCREEN" description=""/>
   <vm_static vm_guid="562b5036-368c-43ec-9e0c-55acab48bdd0" entity_type="VM" num_of_io_threads="1" vm_name="vm1-with-iso" mem_size_mb="1024" max_memory_size_mb="4069" vmt_guid="1b85420c-b84c-4f29-997e-0eb674b40b83" os="0" cluster_id="b399944a-81ab-4ec5-8266-e19ba7c3c9d2" bios_type="2" creation_date="2021-07-20 11:13:24" num_of_monitors="1" allow_console_reconnect="false" is_initialized="1" num_of_sockets="1" cpu_per_socket="1" threads_per_cpu="1" usb_policy="1" time_zone="" is_stateless="0"  _create_date="2021-07-20 11:13:24" auto_startup="0" vm_type="0" nice_level="0" default_boot_sequence="0" default_display_type="0" priority="0" iso_path="" origin="0" initrd_url="" kernel_url="" kernel_params="" migration_support="0" quota_id="88296e00-0cad-4e5a-9291-008a7b7f4399" db_generation="1" min_allocated_mem="256" is_run_and_pause="false" sso_method="guest_agent" template_version_number="1" serial_number_policy="0" is_boot_menu_enabled="false" is_spice_file_transfer_enabled="true" is_spice_copy_paste_enabled="true" cpu_profile_id="fd81f1e1-785b-4579-ab75-1419ebb87055" is_auto_converge="true" is_migrate_compressed="false" custom_emulated_machine="rhel6.5.0" custom_cpu_name="Penryn" small_icon_id="38fc5e1a-f96b-339b-9894-def6f366daf5" large_icon_id="a3b954f0-31ff-3166-b7a1-28b23202b198" console_disconnect_action="LOCK_SCREEN" description=""/>
 
+  <!-- Test fixtures for i440fx migration script (04_05_0340) -->
+  <!-- Cluster with dual-format emulated_machine (i440fx;Q35) for testing migration Step 2 and 3 -->
+  <cluster cluster_id="e14f0f1c-0000-0000-0000-000000000001" mac_pool_id="8c3a60e9-6a66-40db-84e0-c74077991775" name="i440fx.migration.test" cpu_name="Intel Xeon Core2" _create_date="2010-10-12 03:38:36" _update_date="2010-10-27 12:18:51" storage_pool_id="6d849ebf-755f-4552-ad09-9a090cda105d" max_vds_memory_over_commit="200" compatibility_version="4.8" transparent_hugepages="0" virt_service="true" gluster_service="false" count_threads_as_cores="false" upgrade_running="false" upgrade_percent_complete="0" tunnel_migration="false" emulated_machine="pc-i440fx-rhel7.6.0;pc-q35-rhel9.6.0" detect_emulated_machine="false" trusted_service="false" cluster_policy_id="20d25257-b4bd-4589-92a6-c4c5c5d3fd1a" cluster_policy_custom_properties="{}" architecture="1" additional_rng_sources="RANDOM" skip_fencing_if_sd_active="false" skip_fencing_if_connectivity_broken="false" hosts_with_broken_connectivity_threshold="50" fencing_enabled="true" is_auto_converge="true" is_migrate_compressed="true" gluster_cli_based_snapshot_scheduled="true" ksm_merge_across_nodes="true" migration_bandwidth_limit_type="AUTO" migration_policy_id="20d25257-b4bd-4589-92a6-c4c5c5d3fd1b" firewall_type="0" description="" free_text_comment="test" log_max_memory_used_threshold="95" log_max_memory_used_threshold_type="0" vnc_encryption_enabled="true" bios_type="0" managed="true"/>
+
+  <!-- Test fixtures for the below-4.8 no-op of the i440fx migration script (04_05_0340) -->
+  <!-- Below-4.8 cluster for the i440fx migration script: the migration must be a no-op for it -->
+  <cluster cluster_id="e14f0f1c-0000-0000-0000-0000000000b1" mac_pool_id="8c3a60e9-6a66-40db-84e0-c74077991775" name="i440fx.migration.below48" cpu_name="Intel Xeon Core2" _create_date="2010-10-12 03:38:36" _update_date="2010-10-27 12:18:51" storage_pool_id="6d849ebf-755f-4552-ad09-9a090cda105d" max_vds_memory_over_commit="200" compatibility_version="4.7" transparent_hugepages="0" virt_service="true" gluster_service="false" count_threads_as_cores="false" upgrade_running="false" upgrade_percent_complete="0" tunnel_migration="false" emulated_machine="pc-i440fx-rhel7.6.0;pc-q35-rhel9.6.0" detect_emulated_machine="false" trusted_service="false" cluster_policy_id="20d25257-b4bd-4589-92a6-c4c5c5d3fd1a" cluster_policy_custom_properties="{}" architecture="1" additional_rng_sources="RANDOM" skip_fencing_if_sd_active="false" skip_fencing_if_connectivity_broken="false" hosts_with_broken_connectivity_threshold="50" fencing_enabled="true" is_auto_converge="true" is_migrate_compressed="true" gluster_cli_based_snapshot_scheduled="true" ksm_merge_across_nodes="true" migration_bandwidth_limit_type="AUTO" migration_policy_id="20d25257-b4bd-4589-92a6-c4c5c5d3fd1b" firewall_type="0" description="" free_text_comment="test" log_max_memory_used_threshold="95" log_max_memory_used_threshold_type="0" vnc_encryption_enabled="true" bios_type="0" managed="true"/>
+  <!-- i440fx VM (running, unpinned) in the below-4.8 cluster - must stay unpinned -->
+  <vm_static vm_guid="e14f0f1c-0000-0000-0000-0000000000b2" entity_type="VM" num_of_io_threads="1" vm_name="i440fx-below48-running-vm" mem_size_mb="512" max_memory_size_mb="2048" vmt_guid="1b85420c-b84c-4f29-997e-0eb674b40b79" os="0" cluster_id="e14f0f1c-0000-0000-0000-0000000000b1" bios_type="1" creation_date="2010-11-18 11:13:24" num_of_monitors="1" allow_console_reconnect="false" is_initialized="1" num_of_sockets="1" cpu_per_socket="1" threads_per_cpu="1" usb_policy="1" time_zone="" is_stateless="0" _create_date="2010-11-18 11:13:24" auto_startup="0" vm_type="0" nice_level="0" default_boot_sequence="0" default_display_type="0" priority="0" iso_path="" origin="0" initrd_url="" kernel_url="" kernel_params="" migration_support="0" db_generation="1" min_allocated_mem="256" is_run_and_pause="false" sso_method="none" template_version_number="1" is_boot_menu_enabled="true" is_spice_file_transfer_enabled="true" is_spice_copy_paste_enabled="true" cpu_profile_id="fd81f1e1-785b-4579-ab75-1419ebb87055" is_auto_converge="true" is_migrate_compressed="true" custom_emulated_machine="" custom_cpu_name="" small_icon_id="38fc5e1a-f96b-339b-9894-def6f366daf5" large_icon_id="a3b954f0-31ff-3166-b7a1-28b23202b198" console_disconnect_action="LOCK_SCREEN" description=""/>
+  <!-- i440fx VM (down, unpinned) in the below-4.8 cluster - must stay unpinned -->
+  <vm_static vm_guid="e14f0f1c-0000-0000-0000-0000000000b3" entity_type="VM" num_of_io_threads="1" vm_name="i440fx-below48-down-vm" mem_size_mb="512" max_memory_size_mb="2048" vmt_guid="1b85420c-b84c-4f29-997e-0eb674b40b79" os="0" cluster_id="e14f0f1c-0000-0000-0000-0000000000b1" bios_type="1" creation_date="2010-11-18 11:13:24" num_of_monitors="1" allow_console_reconnect="false" is_initialized="1" num_of_sockets="1" cpu_per_socket="1" threads_per_cpu="1" usb_policy="1" time_zone="" is_stateless="0" _create_date="2010-11-18 11:13:24" auto_startup="0" vm_type="0" nice_level="0" default_boot_sequence="0" default_display_type="0" priority="0" iso_path="" origin="0" initrd_url="" kernel_url="" kernel_params="" migration_support="0" db_generation="1" min_allocated_mem="256" is_run_and_pause="false" sso_method="none" template_version_number="1" is_boot_menu_enabled="true" is_spice_file_transfer_enabled="true" is_spice_copy_paste_enabled="true" cpu_profile_id="fd81f1e1-785b-4579-ab75-1419ebb87055" is_auto_converge="true" is_migrate_compressed="true" custom_emulated_machine="" custom_cpu_name="" small_icon_id="38fc5e1a-f96b-339b-9894-def6f366daf5" large_icon_id="a3b954f0-31ff-3166-b7a1-28b23202b198" console_disconnect_action="LOCK_SCREEN" description=""/>
+  <!-- i440fx template (unpinned) in the below-4.8 cluster - must stay unpinned -->
+  <vm_static vm_guid="e14f0f1c-0000-0000-0000-0000000000b4" entity_type="TEMPLATE" num_of_io_threads="1" vm_name="i440fx-below48-template" mem_size_mb="512" max_memory_size_mb="2048" vmt_guid="e14f0f1c-0000-0000-0000-0000000000b4" os="0" cluster_id="e14f0f1c-0000-0000-0000-0000000000b1" bios_type="1" creation_date="2010-11-18 11:13:24" child_count="0" num_of_monitors="1" allow_console_reconnect="false" num_of_sockets="1" cpu_per_socket="1" threads_per_cpu="1" template_status="0" usb_policy="1" time_zone="" is_stateless="0" auto_startup="1" vm_type="0" nice_level="0" default_boot_sequence="12" default_display_type="0" priority="0" iso_path="" origin="0" initrd_url="" kernel_url="" kernel_params="0" migration_support="0" db_generation="1" min_allocated_mem="256" is_run_and_pause="false" sso_method="none" migration_downtime="0" template_version_number="1" template_version_name="ver 1" is_boot_menu_enabled="true" is_spice_file_transfer_enabled="true" is_spice_copy_paste_enabled="true" cpu_profile_id="471b199e-9454-47a1-85dd-4461f665abc5" is_auto_converge="true" is_migrate_compressed="true" custom_emulated_machine="" custom_cpu_name="" small_icon_id="38fc5e1a-f96b-339b-9894-def6f366daf5" large_icon_id="a3b954f0-31ff-3166-b7a1-28b23202b198" console_disconnect_action="LOCK_SCREEN" description=""/>
+  <!-- i440fx VM (running) - should be pinned in Step 1 from vm_dynamic -->
+  <vm_static vm_guid="e14f0f1c-0000-0000-0000-0000000000a1" entity_type="VM" num_of_io_threads="1" vm_name="i440fx-running-vm" mem_size_mb="512" max_memory_size_mb="2048" vmt_guid="1b85420c-b84c-4f29-997e-0eb674b40b79" os="0" cluster_id="e14f0f1c-0000-0000-0000-000000000001" bios_type="1" creation_date="2010-11-18 11:13:24" num_of_monitors="1" allow_console_reconnect="false" is_initialized="1" num_of_sockets="1" cpu_per_socket="1" threads_per_cpu="1" usb_policy="1" time_zone="" is_stateless="0" _create_date="2010-11-18 11:13:24" auto_startup="0" vm_type="0" nice_level="0" default_boot_sequence="0" default_display_type="0" priority="0" iso_path="" origin="0" initrd_url="" kernel_url="" kernel_params="" migration_support="0" db_generation="1" min_allocated_mem="256" is_run_and_pause="false" sso_method="none" template_version_number="1" is_boot_menu_enabled="true" is_spice_file_transfer_enabled="true" is_spice_copy_paste_enabled="true" cpu_profile_id="fd81f1e1-785b-4579-ab75-1419ebb87055" is_auto_converge="true" is_migrate_compressed="true" custom_emulated_machine="" custom_cpu_name="" small_icon_id="38fc5e1a-f96b-339b-9894-def6f366daf5" large_icon_id="a3b954f0-31ff-3166-b7a1-28b23202b198" console_disconnect_action="LOCK_SCREEN" description=""/>
+  <!-- i440fx VM (down) - should be pinned in Step 2 from cluster.emulated_machine -->
+  <vm_static vm_guid="e14f0f1c-0000-0000-0000-0000000000a2" entity_type="VM" num_of_io_threads="1" vm_name="i440fx-down-vm" mem_size_mb="512" max_memory_size_mb="2048" vmt_guid="1b85420c-b84c-4f29-997e-0eb674b40b79" os="0" cluster_id="e14f0f1c-0000-0000-0000-000000000001" bios_type="1" creation_date="2010-11-18 11:13:24" num_of_monitors="1" allow_console_reconnect="false" is_initialized="1" num_of_sockets="1" cpu_per_socket="1" threads_per_cpu="1" usb_policy="1" time_zone="" is_stateless="0" _create_date="2010-11-18 11:13:24" auto_startup="0" vm_type="0" nice_level="0" default_boot_sequence="0" default_display_type="0" priority="0" iso_path="" origin="0" initrd_url="" kernel_url="" kernel_params="" migration_support="0" db_generation="1" min_allocated_mem="256" is_run_and_pause="false" sso_method="none" template_version_number="1" is_boot_menu_enabled="true" is_spice_file_transfer_enabled="true" is_spice_copy_paste_enabled="true" cpu_profile_id="fd81f1e1-785b-4579-ab75-1419ebb87055" is_auto_converge="true" is_migrate_compressed="true" custom_emulated_machine="" custom_cpu_name="" small_icon_id="38fc5e1a-f96b-339b-9894-def6f366daf5" large_icon_id="a3b954f0-31ff-3166-b7a1-28b23202b198" console_disconnect_action="LOCK_SCREEN" description=""/>
+  <!-- i440fx template - should be pinned in Step 2b from cluster.emulated_machine -->
+  <vm_static vm_guid="e14f0f1c-0000-0000-0000-0000000000a3" entity_type="TEMPLATE" num_of_io_threads="1" vm_name="i440fx-template" mem_size_mb="512" max_memory_size_mb="2048" vmt_guid="e14f0f1c-0000-0000-0000-0000000000a3" os="0" cluster_id="e14f0f1c-0000-0000-0000-000000000001" bios_type="1" creation_date="2010-11-18 11:13:24" child_count="0" num_of_monitors="1" allow_console_reconnect="false" num_of_sockets="1" cpu_per_socket="1" threads_per_cpu="1" template_status="0" usb_policy="1" time_zone="" is_stateless="0" auto_startup="1" vm_type="0" nice_level="0" default_boot_sequence="12" default_display_type="0" priority="0" iso_path="" origin="0" initrd_url="" kernel_url="" kernel_params="0" migration_support="0" db_generation="1" min_allocated_mem="256" is_run_and_pause="false" sso_method="none" migration_downtime="0" template_version_number="1" template_version_name="ver 1" is_boot_menu_enabled="true" is_spice_file_transfer_enabled="true" is_spice_copy_paste_enabled="true" cpu_profile_id="471b199e-9454-47a1-85dd-4461f665abc5" is_auto_converge="true" is_migrate_compressed="true" custom_emulated_machine="" custom_cpu_name="" small_icon_id="38fc5e1a-f96b-339b-9894-def6f366daf5" large_icon_id="a3b954f0-31ff-3166-b7a1-28b23202b198" console_disconnect_action="LOCK_SCREEN" description=""/>
+
   <vds_dynamic vds_id="afce7a39-8e8c-4819-ba9c-796d316592e6" status="3" external_status="0" cpu_cores="8"
                cpu_model="Intel(R) Xeon(R) CPU           E5420  @ 2.50GHz" cpu_speed_mh="2494" kvm_enabled="1"
                physical_mem_mb="15952" mem_commited="0" vm_active="0" vm_count="0" vm_migrating="0" reserved_mem="256"
@@ -473,6 +493,9 @@
               guestos_type="Other" guest_containers="[]"/>
   <vm_dynamic vm_guid="77296e00-0cad-4e5a-9299-008a7b6f5003" status="0" app_list="" acpi_enable="1" session="0" utc_diff="0" client_ip="" boot_sequence="0" exit_status="0" pause_status="0" cpu_name="" emulated_machine="" exit_reason="-1" guest_cpu_count="64" spice_port="5900" spice_tls_port="-1" spice_ip="0" ovirt_guest_agent_status="0" qemu_guest_agent_status="0" guestos_arch="0" guestos_type="Other" guest_containers="[]"/>
   <vm_dynamic vm_guid="562b5036-368c-43ec-9e0c-55acab48bdd0" status="1" run_on_vds="afce7a39-8e8c-4819-ba9c-796d316592e6" app_list="" acpi_enable="1" session="0" utc_diff="0" client_ip="" boot_sequence="0" exit_status="0" pause_status="0" guest_agent_nics_hash="0" emulated_machine="rhel6.5.0" current_cd="174596b8-e54c-4c68-bfff-419a2237fddc" exit_reason="-1" guest_cpu_count="1" spice_port="5900" spice_tls_port="-1" spice_ip="0" ovirt_guest_agent_status="0" qemu_guest_agent_status="0" guestos_arch="0" guestos_type="Other" guest_containers="[]"/>
+  <!-- i440fx running VM - emulated_machine will be copied to custom_emulated_machine in Step 1 -->
+  <vm_dynamic vm_guid="e14f0f1c-0000-0000-0000-0000000000a1" status="1" run_on_vds="afce7a39-8e8c-4819-ba9c-796d316592e7" app_list="" acpi_enable="1" session="0" utc_diff="0" client_ip="" boot_sequence="0" exit_status="0" pause_status="0" guest_agent_nics_hash="0" emulated_machine="pc-i440fx-rhel7.6.0" exit_reason="-1" guest_cpu_count="1" spice_port="5900" spice_tls_port="-1" spice_ip="0" ovirt_guest_agent_status="0" qemu_guest_agent_status="0" guestos_arch="0" guestos_type="Other" guest_containers="[]"/>
+  <vm_dynamic vm_guid="e14f0f1c-0000-0000-0000-0000000000b2" status="1" run_on_vds="afce7a39-8e8c-4819-ba9c-796d316592e7" app_list="" acpi_enable="1" session="0" utc_diff="0" client_ip="" boot_sequence="0" exit_status="0" pause_status="0" guest_agent_nics_hash="0" emulated_machine="pc-i440fx-rhel7.6.0" exit_reason="-1" guest_cpu_count="1" spice_port="5900" spice_tls_port="-1" spice_ip="0" ovirt_guest_agent_status="0" qemu_guest_agent_status="0" guestos_arch="0" guestos_type="Other" guest_containers="[]"/>
 
 
   <vm_statistics vm_guid="77296e00-0cad-4e5a-9299-008a7b6f4356" cpu_user="17" cpu_sys="0" elapsed_time="267308" usage_network_percent="0" usage_mem_percent="0" usage_cpu_percent="17"/>
@@ -1006,5 +1029,186 @@
   <vm_checkpoints vm_id="77296e00-0cad-4e5a-9299-008a7b6f4362" checkpoint_id="b842d5c4-cb3b-426e-8255-3e7b070e0ef6" _create_date="2026-05-05 12:12:42.806609" state="Created"/>
 
   <vm_checkpoint_disk_map checkpoint_id="b842d5c4-cb3b-426e-8255-3e7b070e0ef6" disk_id="1b26a52b-b60f-44cb-9f46-3ef333b04a47"/>
+
+  <!-- Clusters and hosts for GetClusterI440fxCommonMachinesDaoTest.
+       EMPTY_CLUSTER (e14f0f1c-0000-0000-0000-000000000001) has no vds rows.
+       UNIFORM_CLUSTER: 2 hosts both advertising pc-i440fx-rhel10.0.0.
+       PARTIAL_CLUSTER: host-A rhel10.0.0+rhel10.2.0, host-B rhel10.0.0; intersection = {rhel10.0.0}. -->
+  <cluster cluster_id="a0000000-0000-0000-0000-000000000001" mac_pool_id="8c3a60e9-6a66-40db-84e0-c74077991775"
+           name="i440fx.uniform.test" cpu_name="Intel Xeon Core2"
+           _create_date="2010-10-12 03:38:36" _update_date="2010-10-27 12:18:51"
+           storage_pool_id="6d849ebf-755f-4552-ad09-9a090cda105d"
+           max_vds_memory_over_commit="200" compatibility_version="4.8"
+           transparent_hugepages="0" virt_service="true" gluster_service="false"
+           count_threads_as_cores="false" upgrade_running="false" upgrade_percent_complete="0"
+           tunnel_migration="false" emulated_machine="pc-q35-rhel9.6.0"
+           detect_emulated_machine="false" trusted_service="false"
+           cluster_policy_id="20d25257-b4bd-4589-92a6-c4c5c5d3fd1a"
+           cluster_policy_custom_properties="{}" architecture="1"
+           additional_rng_sources="RANDOM" skip_fencing_if_sd_active="false"
+           skip_fencing_if_connectivity_broken="false"
+           hosts_with_broken_connectivity_threshold="50" fencing_enabled="true"
+           is_auto_converge="true" is_migrate_compressed="true"
+           gluster_cli_based_snapshot_scheduled="true" ksm_merge_across_nodes="true"
+           migration_bandwidth_limit_type="AUTO"
+           migration_policy_id="20d25257-b4bd-4589-92a6-c4c5c5d3fd1b"
+           firewall_type="0"
+           description="" free_text_comment="" log_max_memory_used_threshold="95"
+           log_max_memory_used_threshold_type="0" vnc_encryption_enabled="true"
+           bios_type="0" managed="true"/>
+  <cluster cluster_id="a0000000-0000-0000-0000-000000000002" mac_pool_id="8c3a60e9-6a66-40db-84e0-c74077991775"
+           name="i440fx.partial.test" cpu_name="Intel Xeon Core2"
+           _create_date="2010-10-12 03:38:36" _update_date="2010-10-27 12:18:51"
+           storage_pool_id="6d849ebf-755f-4552-ad09-9a090cda105d"
+           max_vds_memory_over_commit="200" compatibility_version="4.8"
+           transparent_hugepages="0" virt_service="true" gluster_service="false"
+           count_threads_as_cores="false" upgrade_running="false" upgrade_percent_complete="0"
+           tunnel_migration="false" emulated_machine="pc-q35-rhel9.6.0"
+           detect_emulated_machine="false" trusted_service="false"
+           cluster_policy_id="20d25257-b4bd-4589-92a6-c4c5c5d3fd1a"
+           cluster_policy_custom_properties="{}" architecture="1"
+           additional_rng_sources="RANDOM" skip_fencing_if_sd_active="false"
+           skip_fencing_if_connectivity_broken="false"
+           hosts_with_broken_connectivity_threshold="50" fencing_enabled="true"
+           is_auto_converge="true" is_migrate_compressed="true"
+           gluster_cli_based_snapshot_scheduled="true" ksm_merge_across_nodes="true"
+           migration_bandwidth_limit_type="AUTO"
+           migration_policy_id="20d25257-b4bd-4589-92a6-c4c5c5d3fd1b"
+           firewall_type="0"
+           description="" free_text_comment="" log_max_memory_used_threshold="95"
+           log_max_memory_used_threshold_type="0" vnc_encryption_enabled="true"
+           bios_type="0" managed="true"/>
+
+  <!-- vds_static rows for the two test clusters -->
+  <vds_static vds_id="b0000000-0000-0000-0000-000000000001" vds_name="i440fx-uniform-host1"
+              host_name="i440fx-uniform-host1.test" port="54321"
+              cluster_id="a0000000-0000-0000-0000-000000000001"
+              vds_type="1" pm_enabled="false" pm_detect_kdump="false"
+              reinstall_required="false" vgpu_placement="0"/>
+  <vds_static vds_id="b0000000-0000-0000-0000-000000000002" vds_name="i440fx-uniform-host2"
+              host_name="i440fx-uniform-host2.test" port="54321"
+              cluster_id="a0000000-0000-0000-0000-000000000001"
+              vds_type="1" pm_enabled="false" pm_detect_kdump="false"
+              reinstall_required="false" vgpu_placement="0"/>
+  <vds_static vds_id="b0000000-0000-0000-0000-000000000003" vds_name="i440fx-partial-host1"
+              host_name="i440fx-partial-host1.test" port="54321"
+              cluster_id="a0000000-0000-0000-0000-000000000002"
+              vds_type="1" pm_enabled="false" pm_detect_kdump="false"
+              reinstall_required="false" vgpu_placement="0"/>
+  <vds_static vds_id="b0000000-0000-0000-0000-000000000004" vds_name="i440fx-partial-host2"
+              host_name="i440fx-partial-host2.test" port="54321"
+              cluster_id="a0000000-0000-0000-0000-000000000002"
+              vds_type="1" pm_enabled="false" pm_detect_kdump="false"
+              reinstall_required="false" vgpu_placement="0"/>
+
+  <!-- vds_dynamic rows: supported_emulated_machines is the key field -->
+  <vds_dynamic vds_id="b0000000-0000-0000-0000-000000000001" status="4" external_status="0"
+               cpu_cores="4" cpu_speed_mh="2000" kvm_enabled="1" physical_mem_mb="8192"
+               mem_commited="0" vm_active="0" vm_count="0" vm_migrating="0" reserved_mem="256"
+               guest_overhead="65" software_version="4.9" version_name="test"
+               previous_status="3" vms_cores_count="0" pending_vcpus_count="0"
+               cpu_sockets="2" net_config_dirty="0"
+               supported_cluster_levels="4.8" supported_engines="4.8"
+               transparent_hugepages_state="0" _update_date="2024-01-01 00:00:00"
+               hooks="{}" non_operational_reason="0" cpu_threads="4" kdump_status="0"
+               auto_numa_balancing="2" is_numa_supported="true" supported_rng_sources="RANDOM"
+               online_cpus="0,1,2,3" incoming_migrations="0" outgoing_migrations="0"
+               is_update_available="false" is_hostdev_enabled="false"
+               pretty_name="RHEL 10.0" hosted_engine_configured="false"
+               in_fence_flow="false" vnc_encryption_enabled="false"
+               backup_enabled="false" cold_backup_enabled="false"
+               clear_bitmaps_enabled="false" supported_domain_versions="5"
+               supported_emulated_machines="pc-i440fx-rhel10.0.0,pc-q35-rhel9.6.0"/>
+  <vds_dynamic vds_id="b0000000-0000-0000-0000-000000000002" status="4" external_status="0"
+               cpu_cores="4" cpu_speed_mh="2000" kvm_enabled="1" physical_mem_mb="8192"
+               mem_commited="0" vm_active="0" vm_count="0" vm_migrating="0" reserved_mem="256"
+               guest_overhead="65" software_version="4.9" version_name="test"
+               previous_status="3" vms_cores_count="0" pending_vcpus_count="0"
+               cpu_sockets="2" net_config_dirty="0"
+               supported_cluster_levels="4.8" supported_engines="4.8"
+               transparent_hugepages_state="0" _update_date="2024-01-01 00:00:00"
+               hooks="{}" non_operational_reason="0" cpu_threads="4" kdump_status="0"
+               auto_numa_balancing="2" is_numa_supported="true" supported_rng_sources="RANDOM"
+               online_cpus="0,1,2,3" incoming_migrations="0" outgoing_migrations="0"
+               is_update_available="false" is_hostdev_enabled="false"
+               pretty_name="RHEL 10.0" hosted_engine_configured="false"
+               in_fence_flow="false" vnc_encryption_enabled="false"
+               backup_enabled="false" cold_backup_enabled="false"
+               clear_bitmaps_enabled="false" supported_domain_versions="5"
+               supported_emulated_machines="pc-i440fx-rhel10.0.0,pc-q35-rhel9.6.0"/>
+  <!-- host-A: EL10.2, advertises both rhel10.0.0 and rhel10.2.0 -->
+  <vds_dynamic vds_id="b0000000-0000-0000-0000-000000000003" status="4" external_status="0"
+               cpu_cores="4" cpu_speed_mh="2000" kvm_enabled="1" physical_mem_mb="8192"
+               mem_commited="0" vm_active="0" vm_count="0" vm_migrating="0" reserved_mem="256"
+               guest_overhead="65" software_version="4.9" version_name="test"
+               previous_status="3" vms_cores_count="0" pending_vcpus_count="0"
+               cpu_sockets="2" net_config_dirty="0"
+               supported_cluster_levels="4.8" supported_engines="4.8"
+               transparent_hugepages_state="0" _update_date="2024-01-01 00:00:00"
+               hooks="{}" non_operational_reason="0" cpu_threads="4" kdump_status="0"
+               auto_numa_balancing="2" is_numa_supported="true" supported_rng_sources="RANDOM"
+               online_cpus="0,1,2,3" incoming_migrations="0" outgoing_migrations="0"
+               is_update_available="false" is_hostdev_enabled="false"
+               pretty_name="RHEL 10.2" hosted_engine_configured="false"
+               in_fence_flow="false" vnc_encryption_enabled="false"
+               backup_enabled="false" cold_backup_enabled="false"
+               clear_bitmaps_enabled="false" supported_domain_versions="5"
+               supported_emulated_machines="pc-i440fx-rhel10.0.0,pc-i440fx-rhel10.2.0,pc-q35-rhel9.6.0"/>
+  <!-- host-B: EL10.0, advertises only rhel10.0.0 -->
+  <vds_dynamic vds_id="b0000000-0000-0000-0000-000000000004" status="4" external_status="0"
+               cpu_cores="4" cpu_speed_mh="2000" kvm_enabled="1" physical_mem_mb="8192"
+               mem_commited="0" vm_active="0" vm_count="0" vm_migrating="0" reserved_mem="256"
+               guest_overhead="65" software_version="4.9" version_name="test"
+               previous_status="3" vms_cores_count="0" pending_vcpus_count="0"
+               cpu_sockets="2" net_config_dirty="0"
+               supported_cluster_levels="4.8" supported_engines="4.8"
+               transparent_hugepages_state="0" _update_date="2024-01-01 00:00:00"
+               hooks="{}" non_operational_reason="0" cpu_threads="4" kdump_status="0"
+               auto_numa_balancing="2" is_numa_supported="true" supported_rng_sources="RANDOM"
+               online_cpus="0,1,2,3" incoming_migrations="0" outgoing_migrations="0"
+               is_update_available="false" is_hostdev_enabled="false"
+               pretty_name="RHEL 10.0" hosted_engine_configured="false"
+               in_fence_flow="false" vnc_encryption_enabled="false"
+               backup_enabled="false" cold_backup_enabled="false"
+               clear_bitmaps_enabled="false" supported_domain_versions="5"
+               supported_emulated_machines="pc-i440fx-rhel10.0.0,pc-q35-rhel9.6.0"/>
+
+  <!-- vds_statistics rows required by the vds VIEW join -->
+  <vds_statistics vds_id="b0000000-0000-0000-0000-000000000001"
+                  cpu_idle="100" cpu_load="0" cpu_sys="0" cpu_user="0"
+                  usage_mem_percent="0" usage_cpu_percent="0" usage_network_percent="0"
+                  mem_shared="0" mem_free="8000" swap_free="8000" swap_total="8000"
+                  ksm_cpu_percent="0" ksm_pages="0" ksm_state="0"
+                  anonymous_hugepages="0" hugepages="[]" ha_score="0"
+                  ha_configured="false" ha_active="false"
+                  ha_global_maintenance="false" ha_local_maintenance="false"
+                  boot_time="0" cpu_over_commit_time_stamp="2024-01-01 00:00:00"/>
+  <vds_statistics vds_id="b0000000-0000-0000-0000-000000000002"
+                  cpu_idle="100" cpu_load="0" cpu_sys="0" cpu_user="0"
+                  usage_mem_percent="0" usage_cpu_percent="0" usage_network_percent="0"
+                  mem_shared="0" mem_free="8000" swap_free="8000" swap_total="8000"
+                  ksm_cpu_percent="0" ksm_pages="0" ksm_state="0"
+                  anonymous_hugepages="0" hugepages="[]" ha_score="0"
+                  ha_configured="false" ha_active="false"
+                  ha_global_maintenance="false" ha_local_maintenance="false"
+                  boot_time="0" cpu_over_commit_time_stamp="2024-01-01 00:00:00"/>
+  <vds_statistics vds_id="b0000000-0000-0000-0000-000000000003"
+                  cpu_idle="100" cpu_load="0" cpu_sys="0" cpu_user="0"
+                  usage_mem_percent="0" usage_cpu_percent="0" usage_network_percent="0"
+                  mem_shared="0" mem_free="8000" swap_free="8000" swap_total="8000"
+                  ksm_cpu_percent="0" ksm_pages="0" ksm_state="0"
+                  anonymous_hugepages="0" hugepages="[]" ha_score="0"
+                  ha_configured="false" ha_active="false"
+                  ha_global_maintenance="false" ha_local_maintenance="false"
+                  boot_time="0" cpu_over_commit_time_stamp="2024-01-01 00:00:00"/>
+  <vds_statistics vds_id="b0000000-0000-0000-0000-000000000004"
+                  cpu_idle="100" cpu_load="0" cpu_sys="0" cpu_user="0"
+                  usage_mem_percent="0" usage_cpu_percent="0" usage_network_percent="0"
+                  mem_shared="0" mem_free="8000" swap_free="8000" swap_total="8000"
+                  ksm_cpu_percent="0" ksm_pages="0" ksm_state="0"
+                  anonymous_hugepages="0" hugepages="[]" ha_score="0"
+                  ha_configured="false" ha_active="false"
+                  ha_global_maintenance="false" ha_local_maintenance="false"
+                  boot_time="0" cpu_over_commit_time_stamp="2024-01-01 00:00:00"/>
 
 </dataset>
