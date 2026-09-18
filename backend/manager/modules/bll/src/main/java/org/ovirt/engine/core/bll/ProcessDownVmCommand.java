@@ -1,7 +1,6 @@
 package org.ovirt.engine.core.bll;
 
 import java.util.Collections;
-import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -11,41 +10,27 @@ import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.hostdev.HostDeviceManager;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.network.host.NetworkDeviceHelper;
-import org.ovirt.engine.core.bll.snapshots.SnapshotsManager;
 import org.ovirt.engine.core.bll.storage.disk.managedblock.ManagedBlockStorageCommandUtil;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
-import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.DetachUserFromVmFromPoolParameters;
 import org.ovirt.engine.core.common.action.ProcessDownVmParameters;
 import org.ovirt.engine.core.common.action.VdsActionParameters;
-import org.ovirt.engine.core.common.action.VmManagementParametersBase;
 import org.ovirt.engine.core.common.action.VmOperationParameterBase;
-import org.ovirt.engine.core.common.businessentities.GraphicsDevice;
-import org.ovirt.engine.core.common.businessentities.GraphicsType;
-import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
-import org.ovirt.engine.core.common.businessentities.VmNumaNode;
-import org.ovirt.engine.core.common.businessentities.VmPayload;
 import org.ovirt.engine.core.common.businessentities.VmPool;
 import org.ovirt.engine.core.common.businessentities.VmPoolType;
-import org.ovirt.engine.core.common.businessentities.VmRngDevice;
-import org.ovirt.engine.core.common.businessentities.VmWatchdog;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.utils.VmDeviceCommonUtils;
-import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.DbUserDao;
 import org.ovirt.engine.core.dao.SnapshotDao;
 import org.ovirt.engine.core.dao.VmDeviceDao;
-import org.ovirt.engine.core.dao.VmNumaNodeDao;
 import org.ovirt.engine.core.dao.VmPoolDao;
 import org.ovirt.engine.core.dao.network.VmNicDao;
-import org.ovirt.engine.core.utils.lock.EngineLock;
-import org.ovirt.engine.core.utils.lock.LockManager;
 import org.ovirt.engine.core.vdsbroker.ResourceManager;
 import org.ovirt.engine.core.vdsbroker.VdsManager;
 import org.ovirt.engine.core.vdsbroker.VmManager;
@@ -57,6 +42,14 @@ import org.slf4j.LoggerFactory;
 public class ProcessDownVmCommand<T extends ProcessDownVmParameters> extends CommandBase<T> {
 
     private static final Logger log = LoggerFactory.getLogger(ProcessDownVmCommand.class);
+
+    /**
+     * How long to wait for the UpdateVm lock when applying the next run configuration of a
+     * VM that went down, in case the lock is held by a still-running asynchronous command
+     * (e.g. snapshot removal or live merge) that started while the VM was still up.
+     */
+    private static final long NEXT_RUN_LOCK_TIMEOUT_MILLIS = 10 * 60 * 1000L;
+
     private boolean templateVersionChanged;
 
     @Inject
@@ -68,9 +61,7 @@ public class ProcessDownVmCommand<T extends ProcessDownVmParameters> extends Com
     @Inject
     private ResourceManager resourceManager;
     @Inject
-    private SnapshotsManager snapshotsManager;
-    @Inject
-    private LockManager lockManager;
+    private NextRunConfigurationApplier nextRunConfigurationApplier;
     private VmPool vmPoolCached;
     @Inject
     private VmPoolDao vmPoolDao;
@@ -86,8 +77,6 @@ public class ProcessDownVmCommand<T extends ProcessDownVmParameters> extends Com
     private VmHandler vmHandler;
     @Inject
     private VmNicDao vmNicDao;
-    @Inject
-    private VmNumaNodeDao vmNumaNodeDao;
 
     protected ProcessDownVmCommand(Guid commandId) {
         super(commandId);
@@ -248,102 +237,25 @@ public class ProcessDownVmCommand<T extends ProcessDownVmParameters> extends Com
 
     /**
      * Update VM configuration with NEXT_RUN configuration, if exists.
+     *
+     * <p>If the configuration cannot be applied now, e.g. because the VM is locked by another operation, it stays
+     * pending and {@link RunVmCommand} applies it before the VM is started again.
      */
     private void applyNextRunConfiguration() {
-        // Remove snpashot first, in case other update is in progress, it will block this one with exclusive lock
-        // and any newer update should be preffered to this one.
-        Snapshot runSnap = snapshotDao.get(getVmId(), SnapshotType.NEXT_RUN);
-        if (runSnap != null && getVm().getStatus() != VMStatus.Suspended) {
-            log.debug("Attempt to apply NEXT_RUN snapshot for VM '{}'", getVmId());
-
-            EngineLock updateVmLock = createUpdateVmLock();
-            if (lockManager.acquireLock(updateVmLock).isAcquired()) {
-                snapshotDao.remove(runSnap.getId());
-                List<VmNumaNode> vmNumaNodeList = vmNumaNodeDao.getAllVmNumaNodeByVmId(getVmId());
-                Date originalCreationDate = getVm().getVmCreationDate();
-                snapshotsManager.updateVmFromConfiguration(getVm(), runSnap.getVmConfiguration());
-                // override creation date because the value in the config is the creation date of the config, not the vm
-                getVm().setVmCreationDate(originalCreationDate);
-                boolean isNumaChanged = !getVm().getvNumaNodeList().equals(vmNumaNodeList);
-
-                ActionReturnValue result = runInternalAction(ActionType.UpdateVm, createUpdateVmParameters(isNumaChanged),
-                        ExecutionHandler.createInternalJobContext(updateVmLock));
-                if (result.getActionReturnValue() != null && result.getActionReturnValue()
-                        .equals(ActionType.UpdateVmVersion)) { // Template-version changed
-                    templateVersionChanged = true;
-                }
-            } else {
-                log.warn("Could not acquire lock for UpdateVmCommand to apply Next Run Config of VM '{}'", getVmId());
-            }
-        }
-    }
-
-    private EngineLock createUpdateVmLock() {
-        return new EngineLock(
-                UpdateVmCommand.getExclusiveLocksForUpdateVm(getVm()),
-                UpdateVmCommand.getSharedLocksForUpdateVm(getVm()));
-    }
-
-    private VmManagementParametersBase createUpdateVmParameters(boolean isNumaChanged) {
-        // clear non updateable fields got from config
-        getVm().setExportDate(null);
-        getVm().setOvfVersion(null);
-
-        VmManagementParametersBase updateVmParams = new VmManagementParametersBase(getVm());
-        updateVmParams.setUpdateWatchdog(true);
-        updateVmParams.setTpmEnabled(false);
-        updateVmParams.setSoundDeviceEnabled(false);
-        updateVmParams.setVirtioScsiEnabled(false);
-        updateVmParams.setClearPayload(true);
-        updateVmParams.setUpdateRngDevice(true);
-        updateVmParams.setUpdateNuma(isNumaChanged);
-        for (GraphicsType graphicsType : GraphicsType.values()) {
-            updateVmParams.getGraphicsDevices().put(graphicsType, null);
+        if (getVm().getStatus() == VMStatus.Suspended) {
+            return;
         }
 
-        for (VmDevice device : getVm().getManagedVmDeviceMap().values()) {
-            switch (device.getType()) {
-                case WATCHDOG:
-                    updateVmParams.setWatchdog(new VmWatchdog(device));
-                    break;
-                case SOUND:
-                    updateVmParams.setSoundDeviceEnabled(true);
-                    break;
-                case CONTROLLER:
-                    if (VmDeviceType.VIRTIOSCSI.getName().equals(device.getDevice())) {
-                        updateVmParams.setVirtioScsiEnabled(true);
-                    }
-                    break;
-                case DISK:
-                    if (VmPayload.isPayload(device.getSpecParams())) {
-                        updateVmParams.setVmPayload(new VmPayload(device));
-                    }
-                    break;
-                case CONSOLE:
-                    updateVmParams.setConsoleEnabled(true);
-                    break;
-                case RNG:
-                    updateVmParams.setRngDevice(new VmRngDevice(device));
-                    break;
-                case GRAPHICS:
-                    updateVmParams.getGraphicsDevices().put(GraphicsType.fromString(device.getDevice()),
-                            new GraphicsDevice(device));
-                    break;
-                case TPM:
-                    updateVmParams.setTpmEnabled(true);
-                    break;
-                case MDEV:
-                    updateVmParams.getMdevs().put(device.getDeviceId(), device.getSpecParams());
-                    break;
-                default:
-            }
+        // The VM is already down, hence the only reason for the UpdateVm lock to be
+        // unavailable is an asynchronous command that started while the VM was still
+        // running (e.g. snapshot removal or live merge) and is still holding the VM
+        // lock. Waiting for it is safe; if it still fails after the timeout, the
+        // configuration stays pending and RunVmCommand applies it before the VM is
+        // started again.
+        if (nextRunConfigurationApplier.apply(getVm(), NEXT_RUN_LOCK_TIMEOUT_MILLIS)
+                == NextRunConfigurationApplier.Result.TEMPLATE_VERSION_CHANGED) {
+            templateVersionChanged = true;
         }
-
-        // clear these fields as these are non updatable
-        getVm().getManagedVmDeviceMap().clear();
-        getVm().getUnmanagedDeviceList().clear();
-
-        return updateVmParams;
     }
 
     private void removeVmStatelessImages() {
