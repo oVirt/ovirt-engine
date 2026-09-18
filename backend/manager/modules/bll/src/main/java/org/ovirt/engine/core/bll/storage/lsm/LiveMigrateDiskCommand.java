@@ -824,13 +824,20 @@ public class LiveMigrateDiskCommand<T extends LiveMigrateDiskParameters> extends
         DiskImage destDiskImage = diskImageDao.getSnapshotById(getParameters().getDestinationImageId());
 
         Map<String, String> jobMessageProperties = new HashMap<>();
-        jobMessageProperties.put(VdcObjectType.Disk.name().toLowerCase(), diskImage.getDiskAlias());
-        jobMessageProperties.put("sourcesnapshot",
-                Optional.ofNullable(snapshotDao.get(diskImage.getVmSnapshotId()).getDescription()).orElse(""));
-        jobMessageProperties.put("destinationsnapshot",
-                Optional.ofNullable(snapshotDao.get(destDiskImage.getVmSnapshotId()).getDescription()).orElse(""));
+        jobMessageProperties.put(VdcObjectType.Disk.name().toLowerCase(),
+                diskImage != null ? diskImage.getDiskAlias() : "");
+        jobMessageProperties.put("sourcesnapshot", getSnapshotDescription(diskImage));
+        jobMessageProperties.put("destinationsnapshot", getSnapshotDescription(destDiskImage));
 
         return jobMessageProperties;
+    }
+
+    private String getSnapshotDescription(DiskImage diskImage) {
+        return Optional.ofNullable(diskImage)
+                .map(DiskImage::getVmSnapshotId)
+                .map(snapshotDao::get)
+                .map(Snapshot::getDescription)
+                .orElse("");
     }
 
 }
