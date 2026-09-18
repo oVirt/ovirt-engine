@@ -104,7 +104,7 @@
                   <e:ListModelListBoxEditor ui:field="oSTypeEditor" label="{constants.osVmPopup}" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
               </b:Row>
               <b:Row>
-                  <e:ListModelListBoxEditor ui:field="biosTypeEditor" label="{constants.customBiosTypeLabel}" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
+                  <w:EntityModelWidgetWithInfo ui:field="biosTypeWithInfo" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
               </b:Row>
               <b:Row>
                   <e:ListModelListBoxEditor ui:field="vmTypeEditor" label="{constants.optimizedFor}" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
@@ -232,7 +232,7 @@
                                     <e:ListModelListBoxOnlyEditor ui:field="threadsPerCoreEditor" usePatternFly="true" widgetColSize="SM_6" />
                                 </b:Row>
                                 <b:Row>
-                                    <e:ListModelTypeAheadChangeableListBoxEditor ui:field="emulatedMachine" label="{constants.emulatedMachineLabel}" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
+                                    <w:EntityModelWidgetWithInfo ui:field="emulatedMachineWithInfo" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
                                 </b:Row>
                                 <b:Row>
                                     <e:ListModelTypeAheadChangeableListBoxEditor ui:field="customCpu" label="{constants.cpuModelLabel}" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
