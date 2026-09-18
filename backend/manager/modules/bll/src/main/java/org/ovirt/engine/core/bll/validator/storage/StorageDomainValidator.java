@@ -292,6 +292,28 @@ public class StorageDomainValidator {
         return hasSpaceForNewDisks(Collections.singleton(diskImage));
     }
 
+    /**
+     * Validate space for a new sparse COW volume with an optional initial size passed to vdsm
+     * (allocated by vdsm multiplied by QCOW_OVERHEAD_FACTOR). Without an initial size the full
+     * capacity is allocated on block domains, only the header on file domains.
+     */
+    public ValidationResult hasSpaceForNewSparseVolume(DiskImage diskImage, Long initialSizeInBytes) {
+        if (storageDomain.getStorageType().isVendorManagedBlock()) {
+            return ValidationResult.VALID;
+        }
+
+        double requiredSize;
+        if (initialSizeInBytes != null) {
+            requiredSize = Math.ceil(StorageConstants.QCOW_OVERHEAD_FACTOR * initialSizeInBytes);
+        } else if (storageDomain.getStorageType().isFileDomain()) {
+            requiredSize = EMPTY_QCOW_HEADER_SIZE;
+        } else {
+            requiredSize = diskImage.getSize();
+        }
+
+        return validateRequiredSpace(storageDomain.getAvailableDiskSizeInBytes(), requiredSize);
+    }
+
     private ValidationResult validateRequiredSpace(Long availableSize, double requiredSize) {
         // If availableSize is not yet set, we'll allow the operation.
         if (availableSize == null || availableSize.doubleValue() >= requiredSize) {

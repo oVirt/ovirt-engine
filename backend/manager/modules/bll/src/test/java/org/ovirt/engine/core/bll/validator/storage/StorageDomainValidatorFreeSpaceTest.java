@@ -170,4 +170,38 @@ public class StorageDomainValidatorFreeSpaceTest {
         assertEquals(expectedValid, sdValidator.hasSpaceForNewDisk(disk).isValid(),
                 "COW Preallocated: " + diskSizeGb + "GB disk, " + availableSizeGb + "GB available, " + storageType);
     }
+
+    public static Stream<Arguments> createNewSparseVolumeParams() {
+        final long gb = 1024L * 1024L * 1024L;
+        return Stream.of(
+                // block domain with initial size: vdsm allocates initialSize * 1.1 overhead
+                Arguments.of(StorageType.ISCSI, 12, 10L * gb, true),
+                Arguments.of(StorageType.ISCSI, 10, 10L * gb, false),
+                // file domain without initial size: only the ~1MB qcow2 header is allocated
+                Arguments.of(StorageType.NFS, 1, null, true),
+                // block domain without initial size: full capacity is allocated
+                Arguments.of(StorageType.ISCSI, 1, null, false),
+                Arguments.of(StorageType.ISCSI, 200, null, true)
+        );
+    }
+
+    @MockedConfig("mockConfiguration")
+    @ParameterizedTest
+    @MethodSource("createNewSparseVolumeParams")
+    public void testValidateNewSparseVolume(StorageType storageType, int availableSizeGb, Long initialSizeBytes,
+            boolean expectedValid) {
+        DiskImage disk = new DiskImage();
+        disk.setVolumeFormat(VolumeFormat.COW);
+        disk.setVolumeType(VolumeType.Sparse);
+        disk.setStorageIds(Collections.singletonList(Guid.newGuid()));
+        disk.setSizeInGigabytes(200);
+
+        StorageDomain sd = new StorageDomain();
+        sd.setStorageType(storageType);
+        sd.setAvailableDiskSize(availableSizeGb);
+
+        StorageDomainValidator sdValidator = new StorageDomainValidator(sd);
+        assertEquals(expectedValid, sdValidator.hasSpaceForNewSparseVolume(disk, initialSizeBytes).isValid(),
+                "initialSize " + initialSizeBytes + ", " + availableSizeGb + "GB available, " + storageType);
+    }
 }
