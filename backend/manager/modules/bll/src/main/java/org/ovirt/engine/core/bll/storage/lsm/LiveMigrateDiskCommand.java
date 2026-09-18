@@ -133,6 +133,7 @@ public class LiveMigrateDiskCommand<T extends LiveMigrateDiskParameters> extends
     private Map<Guid, DiskImage> diskImagesMap = new HashMap<>();
 
     private StorageDomain dstStorageDomain;
+    private StorageDomain srcStorageDomain;
 
     public LiveMigrateDiskCommand(Guid commandId) {
         super(commandId);
@@ -639,7 +640,8 @@ public class LiveMigrateDiskCommand<T extends LiveMigrateDiskParameters> extends
         }
 
         if (!validate(new StorageDomainValidator(getDstStorageDomain()).isNotBackupDomain())
-                || !validateDestDomainsSpaceRequirements()) {
+                || !validateDestDomainsSpaceRequirements()
+                || !validateSourceDomainSpaceRequirements()) {
             return false;
         }
 
@@ -675,6 +677,14 @@ public class LiveMigrateDiskCommand<T extends LiveMigrateDiskParameters> extends
         return dstStorageDomain;
     }
 
+    private StorageDomain getSrcStorageDomain() {
+        if (srcStorageDomain == null) {
+            srcStorageDomain = storageDomainDao.getForStoragePool(getParameters().getSourceDomainId(),
+                    getStoragePoolId());
+        }
+        return srcStorageDomain;
+    }
+
     protected boolean validateDestDomainsSpaceRequirements() {
         DiskImage diskImage = getDiskImageByImageId(getParameters().getImageId());
         List<DiskImage> allImageSnapshots = diskImageDao.getAllSnapshotsForLeaf(diskImage.getImageId());
@@ -686,6 +696,23 @@ public class LiveMigrateDiskCommand<T extends LiveMigrateDiskParameters> extends
         }
 
         return true;
+    }
+
+    /**
+     * Validate the source domain has space for the auto-generated snapshot volume created on it
+     * during live storage migration (the disk data itself is already there).
+     */
+    protected boolean validateSourceDomainSpaceRequirements() {
+        DiskImage diskImage = getDiskImageByImageId(getParameters().getImageId());
+
+        Long initialSizeInBytes = null;
+        if (FeatureSupported.isReplicateExtendSupported(getCluster().getCompatibilityVersion())
+                && getSrcStorageDomain().getStorageType().isBlockDomain()) {
+            initialSizeInBytes = ImagesHandler.computeImageInitialSizeInBytes(diskImage.getImage());
+        }
+
+        StorageDomainValidator storageDomainValidator = createStorageDomainValidator(getSrcStorageDomain());
+        return validate(storageDomainValidator.hasSpaceForNewSparseVolume(diskImage, initialSizeInBytes));
     }
 
     private DiskImage getDiskImageByImageId(Guid imageId) {
