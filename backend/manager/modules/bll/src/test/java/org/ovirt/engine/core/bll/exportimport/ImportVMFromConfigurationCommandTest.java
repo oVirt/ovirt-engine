@@ -66,6 +66,7 @@ import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.LabelDao;
 import org.ovirt.engine.core.dao.UnregisteredDisksDao;
 import org.ovirt.engine.core.dao.UnregisteredOVFDataDao;
+import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.dao.VmDynamicDao;
 import org.ovirt.engine.core.dao.VmStaticDao;
 import org.ovirt.engine.core.dao.VmStatisticsDao;
@@ -111,6 +112,9 @@ public class ImportVMFromConfigurationCommandTest extends BaseCommandTest implem
 
     @Mock
     private UnregisteredOVFDataDao unregisteredOVFDataDao;
+
+    @Mock
+    private VdsDao vdsDao;
 
     @Mock
     private UnregisteredDisksDao unregisteredDisksDao;

@@ -70,34 +70,16 @@ WHERE vm_static.bios_type = 1
   AND vm_dynamic.emulated_machine IS NOT NULL
   AND vm_dynamic.emulated_machine LIKE '%i440fx%';
 
--- Step 2: Pin custom_emulated_machine on down i440fx VMs
--- For down VMs, extract the i440fx portion from the cluster's emulated_machine.
--- The format is "i440fxType;q35Type" or just "i440fxType" if single. The i440fx type is
--- always the FIRST part (ClusterEmulatedMachines.build writes i440fx first; historic
--- rows produced by the engine follow the same order) — the chipset guard below keeps
--- the pin safe even if a hand-edited row ever deviated from that invariant.
+-- Step 2: Pin custom_emulated_machine on down i440fx VMs and i440fx templates
+-- Both are rows in vm_static; templates (entity_type = 'TEMPLATE') need pinning so that
+-- future VMs created from them inherit the pinned value. The i440fx type is always the
+-- FIRST part of the dual default (ClusterEmulatedMachines.build writes i440fx first;
+-- historic rows produced by the engine follow the same order) — the chipset guard below
+-- keeps the pin safe even if a hand-edited row ever deviated from that invariant.
 UPDATE vm_static
 SET custom_emulated_machine = split_part(cluster.emulated_machine, ';', 1)
 FROM cluster
 WHERE vm_static.bios_type = 1
-  AND (vm_static.custom_emulated_machine IS NULL OR vm_static.custom_emulated_machine = '')
-  AND vm_static.cluster_id = cluster.cluster_id
-  AND cluster.compatibility_version >= '4.8'
-  AND cluster.emulated_machine IS NOT NULL
-  AND cluster.emulated_machine LIKE '%i440fx%'
-  AND cluster.emulated_machine NOT LIKE ';%'  -- skip if i440fx entry is empty
-  AND split_part(cluster.emulated_machine, ';', 1) NOT LIKE '%q35%';  -- chipset guard: pin must be i440fx
-
--- Step 2b: Pin custom_emulated_machine on i440fx templates
--- Templates are rows in vm_static with entity_type = 'TEMPLATE'.
--- For running VMs that were cloned from templates: the VM gets pinned in Step 1/2 above.
--- The template itself needs pinning so that future VMs created from it inherit the pinned value.
--- Same part-order invariant and chipset guard as Step 2.
-UPDATE vm_static
-SET custom_emulated_machine = split_part(cluster.emulated_machine, ';', 1)
-FROM cluster
-WHERE vm_static.entity_type = 'TEMPLATE'
-  AND vm_static.bios_type = 1
   AND (vm_static.custom_emulated_machine IS NULL OR vm_static.custom_emulated_machine = '')
   AND vm_static.cluster_id = cluster.cluster_id
   AND cluster.compatibility_version >= '4.8'
