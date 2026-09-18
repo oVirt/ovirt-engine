@@ -2,9 +2,12 @@ package org.ovirt.engine.core.bll;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
@@ -27,6 +30,7 @@ import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
+import org.ovirt.engine.core.common.action.DeleteAllVmCheckpointsParameters;
 import org.ovirt.engine.core.common.action.RemoveDiskParameters;
 import org.ovirt.engine.core.common.action.VmLeaseParameters;
 import org.ovirt.engine.core.common.action.VmOperationParameterBase;
@@ -42,6 +46,7 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VdsmImageLocationInfo;
 import org.ovirt.engine.core.common.businessentities.VmBackup;
+import org.ovirt.engine.core.common.businessentities.VmCheckpoint;
 import org.ovirt.engine.core.common.businessentities.VmPayload;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.network.VmNic;
@@ -58,12 +63,14 @@ import org.ovirt.engine.core.common.utils.ValidationUtils;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VdsAndPoolIDVDSParametersBase;
+import org.ovirt.engine.core.common.vdscommands.VmCheckpointsVDSParameters;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.DiskDao;
 import org.ovirt.engine.core.dao.SnapshotDao;
 import org.ovirt.engine.core.dao.StorageDomainDao;
 import org.ovirt.engine.core.dao.TagDao;
 import org.ovirt.engine.core.dao.VmBackupDao;
+import org.ovirt.engine.core.dao.VmCheckpointDao;
 import org.ovirt.engine.core.dao.VmStaticDao;
 import org.ovirt.engine.core.dao.network.VmNicDao;
 import org.ovirt.engine.core.utils.transaction.TransactionSuccessListener;
@@ -111,6 +118,8 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
     private OvfDataUpdater ovfDataUpdater;
     @Inject
     private VmBackupDao vmBackupDao;
+    @Inject
+    private VmCheckpointDao vmCheckpointDao;
 
     @Inject
     protected ImagesHandler imagesHandler;
@@ -678,5 +687,116 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
                 log.error("Failed to remove all bitmaps for VM '{}' volume '{}'", getVmName(), image.getId());
             }
         }
+    }
+
+    /**
+     * Removes the given bitmap from a volume of the disk, best effort - failures are logged, not thrown.
+     *
+     * @return {@code true} when the bitmap was removed successfully
+     */
+    protected boolean removeDiskBitmap(DiskImage volume, String bitmapName) {
+        return removeDiskBitmap(volume, bitmapName, null);
+    }
+
+    /**
+     * Removes the given bitmap from a volume of the disk, best effort - failures are logged, not thrown.
+     *
+     * @param vdsId a specific host to run the removal on, {@code null} to let the engine pick one
+     * @return {@code true} when the bitmap was removed successfully
+     */
+    protected boolean removeDiskBitmap(DiskImage volume, String bitmapName, Guid vdsId) {
+        VdsmImageLocationInfo locationInfo = new VdsmImageLocationInfo(
+                volume.getStorageIds().get(0),
+                volume.getId(),
+                volume.getImageId(),
+                null);
+
+        VolumeBitmapCommandParameters parameters =
+                new VolumeBitmapCommandParameters(getStoragePoolId(), locationInfo, bitmapName);
+        if (vdsId != null) {
+            parameters.setVdsId(vdsId);
+        }
+        parameters.setEndProcedure(ActionParametersBase.EndProcedure.COMMAND_MANAGED);
+        parameters.setParentCommand(getActionType());
+        parameters.setParentParameters(getParameters());
+
+        ActionReturnValue returnValue = runInternalActionWithTasksContext(ActionType.RemoveVolumeBitmap, parameters);
+        if (!returnValue.getSucceeded()) {
+            log.warn("Failed to remove bitmap '{}' from VM '{}' volume '{}'",
+                    bitmapName,
+                    getVmName(),
+                    volume.getImageId());
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * Marks all the checkpoints of the VM as invalid: the bitmaps backing them cannot be used anymore, so a full VM
+     * backup is required before the next incremental one.
+     * <p>
+     * This is all-or-nothing by design, even when only one bitmap looks broken: every checkpoint of the chain has a
+     * recording segment on the active volume (each snapshot clones all the previous bitmaps to the new leaf), and an
+     * unclean shutdown marks that volume's entire bitmap directory as in-use. A single broken checkpoint therefore
+     * leaves no older checkpoint that an incremental backup could safely start from.
+     */
+    protected void invalidateAllCheckpoints() {
+        log.info("Invalidating all VM '{}' checkpoints, full VM backup is now needed.", getVmName());
+        TransactionSupport.executeInNewTransaction(() -> {
+            vmCheckpointDao.invalidateAllCheckpointsByVmId(getVmId());
+            return null;
+        });
+    }
+
+    /**
+     * Removes all the checkpoints of the VM: from libvirt (best effort, only meaningful for a running VM), the
+     * Engine database and the bitmaps left behind on storage.
+     */
+    protected void removeAllCheckpoints() {
+        List<VmCheckpoint> vmCheckpoints = vmCheckpointDao.getAllForVm(getVmId());
+        if (vmCheckpoints.isEmpty()) {
+            return;
+        }
+
+        // Best effort to remove all the checkpoints in the chain from libvirt,
+        // starting from the oldest checkpoint to the leaf. Without this the
+        // libvirt checkpoints would stay defined on the running VM forever,
+        // referencing bitmaps that no longer exist on storage.
+        if (getVdsId() != null) {
+            for (VmCheckpoint vmCheckpoint : vmCheckpoints) {
+                try {
+                    runVdsCommand(VDSCommandType.DeleteVmCheckpoints,
+                            new VmCheckpointsVDSParameters(getVdsId(), getVmId(), List.of(vmCheckpoint)));
+                } catch (RuntimeException e) {
+                    log.warn("Failed to remove VM '{}' checkpoint '{}' from libvirt: {}",
+                            getVmId(),
+                            vmCheckpoint.getId(),
+                            e.getMessage());
+                }
+            }
+        }
+
+        // The disks are taken from the engine's own checkpoints and not from what libvirt reported: when libvirt has
+        // no checkpoints defined at all we still have to clear the bitmaps that are left behind on storage.
+        List<DiskImage> imagesWithCheckpoints = vmCheckpoints.stream()
+                .map(vmCheckpoint -> vmCheckpointDao.getDisksByCheckpointId(vmCheckpoint.getId()))
+                .flatMap(List::stream)
+                .filter(distinctByImageId())
+                .collect(Collectors.toCollection(ArrayList::new));
+
+        DeleteAllVmCheckpointsParameters deleteAllVmCheckpointsParameters =
+                new DeleteAllVmCheckpointsParameters(getVmId(), imagesWithCheckpoints);
+        deleteAllVmCheckpointsParameters.setParentCommand(getActionType());
+        deleteAllVmCheckpointsParameters.setParentParameters(getParameters());
+        deleteAllVmCheckpointsParameters.setEndProcedure(ActionParametersBase.EndProcedure.COMMAND_MANAGED);
+        // The bitmaps are already known to be broken, a best effort cleanup is better than leaving them behind.
+        deleteAllVmCheckpointsParameters.setForce(true);
+
+        runInternalAction(ActionType.DeleteAllVmCheckpoints, deleteAllVmCheckpointsParameters);
+    }
+
+    private static Predicate<DiskImage> distinctByImageId() {
+        Set<Guid> seen = new HashSet<>();
+        return diskImage -> seen.add(diskImage.getImageId());
     }
 }

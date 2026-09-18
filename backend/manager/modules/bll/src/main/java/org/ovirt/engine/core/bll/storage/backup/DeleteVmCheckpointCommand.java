@@ -26,10 +26,8 @@ import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.VmBackupParameters;
 import org.ovirt.engine.core.common.action.VmCheckpointParameters;
-import org.ovirt.engine.core.common.action.VolumeBitmapCommandParameters;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.VDS;
-import org.ovirt.engine.core.common.businessentities.VdsmImageLocationInfo;
 import org.ovirt.engine.core.common.businessentities.VmBackup;
 import org.ovirt.engine.core.common.businessentities.VmCheckpoint;
 import org.ovirt.engine.core.common.businessentities.VmCheckpointState;
@@ -164,24 +162,7 @@ public class DeleteVmCheckpointCommand<T extends VmCheckpointParameters> extends
 
         // Remove the bitmap from all the disk snapshots.
         for (DiskImage image : diskImages) {
-            VdsmImageLocationInfo locationInfo = new VdsmImageLocationInfo(
-                    image.getStorageIds().get(0),
-                    image.getId(),
-                    image.getImageId(),
-                    null);
-
-            VolumeBitmapCommandParameters parameters =
-                    new VolumeBitmapCommandParameters(
-                            getStoragePoolId(),
-                            locationInfo,
-                            vmCheckpoint.getId().toString());
-            parameters.setVdsId(vdsId);
-            parameters.setEndProcedure(ActionParametersBase.EndProcedure.COMMAND_MANAGED);
-            parameters.setParentCommand(getActionType());
-            parameters.setParentParameters(getParameters());
-
-            ActionReturnValue returnValue = runInternalActionWithTasksContext(ActionType.RemoveVolumeBitmap, parameters);
-            if (!returnValue.getSucceeded()) {
+            if (!removeDiskBitmap(image, vmCheckpoint.getId().toString(), vdsId)) {
                 log.error("Failed to remove checkpoint '{}' bitmap '{}' from disk '{}'",
                         vmCheckpoint.getId(),
                         vmCheckpoint.getId(),
@@ -214,6 +195,8 @@ public class DeleteVmCheckpointCommand<T extends VmCheckpointParameters> extends
         VmBackupParameters vmBackupParameters = new VmBackupParameters(vmBackup);
         vmBackupParameters.setParentCommand(getActionType());
         vmBackupParameters.setParentParameters(getParameters());
+        // The bitmaps doesn't need to be valid, as we will delete anyway
+        vmBackupParameters.setValidateCheckpoints(false);
         vmBackupParameters.setEndProcedure(ActionParametersBase.EndProcedure.PARENT_MANAGED);
 
         log.info("Redefine VM checkpoint '{}' for VM '{}'", vmCheckpoint.getId(), getVmId());

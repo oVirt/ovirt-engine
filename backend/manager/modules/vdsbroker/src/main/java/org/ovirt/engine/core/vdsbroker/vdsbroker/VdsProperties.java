@@ -591,4 +591,8 @@ public final class VdsProperties {
     public static final String BOOT_UUID = "boot_uuid";
 
     public static final String CD_CHANGE_PDIV = "cd_change_pdiv";
+
+    public static final String QEMU_IMAGE_INFO_BITMAPS = "qemu_image_info_bitmaps";
+
+    public static final String REDEFINE_CHECKPOINT_VALIDATE = "redefine_checkpoint_validate";
 }
