@@ -3,12 +3,17 @@ package org.ovirt.engine.core.bll;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
@@ -33,18 +38,22 @@ import org.mockito.quality.Strictness;
 import org.ovirt.engine.core.bll.network.cluster.DefaultManagementNetworkFinder;
 import org.ovirt.engine.core.bll.scheduling.SchedulingManager;
 import org.ovirt.engine.core.bll.validator.InClusterUpgradeValidator;
+import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.ClusterOperationParameters;
 import org.ovirt.engine.core.common.businessentities.AdditionalFeature;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.BiosType;
 import org.ovirt.engine.core.common.businessentities.Cluster;
+import org.ovirt.engine.core.common.businessentities.OriginType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.SupportedAdditionalClusterFeature;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.common.businessentities.VmDynamic;
 import org.ovirt.engine.core.common.businessentities.VmRngDevice;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
+import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.config.ConfigValues;
@@ -53,12 +62,15 @@ import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.core.common.scheduling.ClusterPolicy;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogable;
 import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.ClusterFeatureDao;
 import org.ovirt.engine.core.dao.StoragePoolDao;
 import org.ovirt.engine.core.dao.SupportedHostFeatureDao;
 import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.dao.VmDao;
+import org.ovirt.engine.core.dao.VmDynamicDao;
 import org.ovirt.engine.core.dao.VmNumaNodeDao;
 import org.ovirt.engine.core.dao.VmStaticDao;
 import org.ovirt.engine.core.dao.VmTemplateDao;
@@ -75,6 +87,13 @@ public class UpdateClusterCommandTest {
     private static final Version VERSION_1_0 = new Version(1, 0);
     private static final Version VERSION_1_1 = new Version(1, 1);
     private static final Version VERSION_1_2 = new Version(1, 2);
+    private static final Version VERSION_4_7 = new Version(4, 7);
+    private static final Version VERSION_4_8 = new Version(4, 8);
+    private static final Version VERSION_4_5 = new Version(4, 5);
+    private static final String PC_I440FX_RHEL = "pc-i440fx-rhel7.6.0";
+    private static final String PC_Q35_RHEL = "pc-q35-rhel9.6.0";
+    private static final String DUAL_DEFAULT = PC_I440FX_RHEL + ";" + PC_Q35_RHEL;
+    private static final String PC_I440FX_RHEL10 = "pc-i440fx-rhel10.0.0";
     private static final Guid DC_ID1 = Guid.newGuid();
     private static final Guid DC_ID2 = Guid.newGuid();
     private static final Guid DEFAULT_CLUSTER_ID = new Guid("99408929-82CF-4DC7-A532-9D998063FA95");
@@ -98,7 +117,12 @@ public class UpdateClusterCommandTest {
                         MockConfigDescriptor.of(ConfigValues.SupportedClusterLevels, versions),
                         MockConfigDescriptor.of(ConfigValues.BiosTypeSupported, VERSION_1_0, true),
                         MockConfigDescriptor.of(ConfigValues.BiosTypeSupported, VERSION_1_1, true),
-                        MockConfigDescriptor.of(ConfigValues.BiosTypeSupported, VERSION_1_2, true)
+                        MockConfigDescriptor.of(ConfigValues.BiosTypeSupported, VERSION_1_2, true),
+                        MockConfigDescriptor.of(ConfigValues.BiosTypeSupported, VERSION_4_7, true),
+                        MockConfigDescriptor.of(ConfigValues.BiosTypeSupported, VERSION_4_8, true),
+                        MockConfigDescriptor.of(ConfigValues.IsMigrationSupported, VERSION_4_5, migrationMap),
+                        MockConfigDescriptor.of(ConfigValues.IsMigrationSupported, VERSION_4_7, migrationMap),
+                        MockConfigDescriptor.of(ConfigValues.IsMigrationSupported, VERSION_4_8, migrationMap)
                 ),
                 // Permute the migration map to all supported versions
                 versions.stream().map(v -> MockConfigDescriptor.of(ConfigValues.IsMigrationSupported, v, migrationMap))
@@ -139,6 +163,10 @@ public class UpdateClusterCommandTest {
     private InClusterUpgradeValidator inClusterUpgradeValidator;
     @Mock
     private VmNumaNodeDao vmNumaNodeDao;
+    @Mock
+    private VmDynamicDao vmDynamicDao;
+    @Mock
+    private AuditLogDirector auditLogDirector;
 
     @Mock
     private Network mockManagementNetwork;
@@ -885,5 +913,327 @@ public class UpdateClusterCommandTest {
     private void validateFailedWithReason(final EngineMessage message) {
         initAndAssertValidation(false);
         ValidateTestUtils.assertValidationMessages("Wrong validation message", cmd, message);
+    }
+    // --- i440fx raise-time migration (validateI440fxRaise / pinI440fxEntitiesOnRaise) ---
+
+    private static Cluster createCluster(Version version, String emulatedMachine) {
+        Cluster cluster = new Cluster();
+        cluster.setId(Guid.newGuid());
+        cluster.setName("raise-test-cluster");
+        cluster.setCompatibilityVersion(version);
+        cluster.setEmulatedMachine(emulatedMachine);
+        return cluster;
+    }
+
+    private static VmStatic createI440fxVm(String name) {
+        VmStatic vm = new VmStatic();
+        vm.setId(Guid.newGuid());
+        vm.setName(name);
+        vm.setBiosType(BiosType.I440FX_SEA_BIOS);
+        vm.setCustomEmulatedMachine("");
+        return vm;
+    }
+
+    private static VmTemplate createI440fxTemplate(String name) {
+        VmTemplate template = new VmTemplate();
+        template.setId(Guid.newGuid());
+        template.setName(name);
+        template.setBiosType(BiosType.I440FX_SEA_BIOS);
+        template.setCustomEmulatedMachine("");
+        return template;
+    }
+
+    private static VDS hostWithMachines(String machines) {
+        VDS vds = new VDS();
+        vds.setId(Guid.newGuid());
+        vds.setSupportedEmulatedMachines(machines);
+        return vds;
+    }
+
+    /**
+     * Prepares a raise command (oldCluster from the DAO, new cluster in the parameters)
+     * and runs init(), so vmsLockedForUpdate/templatesLockedForUpdate are populated like
+     * in the real flow.
+     */
+    private void createRaiseCommand(Cluster oldCluster, Cluster newCluster,
+            List<VmStatic> vms, List<VmTemplate> templates) {
+        newCluster.setId(oldCluster.getId());
+        cmd.getParameters().setCluster(newCluster);
+        cmd.setClusterId(oldCluster.getId());
+        when(clusterDao.get(any())).thenReturn(oldCluster);
+        when(vmStaticDao.getAllByCluster(any())).thenReturn(vms);
+        when(vmTemplateDao.getAllForCluster(any())).thenReturn(templates);
+        cmd.init();
+    }
+
+    private static VmDynamic dynamicWithEmulatedMachine(VmStatic vm, String emulatedMachine) {
+        VmDynamic dynamic = new VmDynamic();
+        dynamic.setId(vm.getId());
+        dynamic.setEmulatedMachine(emulatedMachine);
+        return dynamic;
+    }
+
+    private void verifyNoPinningWrites() {
+        // The raise never writes VM data itself: pins are persisted by the standard
+        // UpdateVm/UpdateVmTemplate flow, compensation-enabled.
+        verify(vmStaticDao, never()).update(any(VmStatic.class));
+        verify(vmTemplateDao, never()).update(any(VmTemplate.class));
+    }
+
+    @Test
+    public void raisePreservesRunnablePinOnAllEl9Cluster() {
+        VmStatic downVm = createI440fxVm("down-vm");
+        VmTemplate template = createI440fxTemplate("tpl");
+        createRaiseCommand(
+                createCluster(VERSION_4_7, DUAL_DEFAULT),
+                createCluster(VERSION_4_8, null),
+                Collections.singletonList(downVm),
+                Collections.singletonList(template));
+        when(vdsDao.getClusterI440fxCommonMachines(any()))
+                .thenReturn(Collections.singletonList(PC_I440FX_RHEL));
+        when(vdsDao.getAllForCluster(any()))
+                .thenReturn(Collections.singletonList(hostWithMachines(PC_I440FX_RHEL + "," + PC_Q35_RHEL)));
+
+        assertTrue(cmd.validateI440fxRaise(), "raise with pinnable entities must pass validation");
+        cmd.pinI440fxEntitiesOnRaise();
+        cmd.auditI440fxRaiseMigration();
+
+        assertEquals(PC_I440FX_RHEL, downVm.getCustomEmulatedMachine(),
+                "down VM must keep the machine type it effectively uses");
+        assertEquals(PC_I440FX_RHEL, template.getCustomEmulatedMachine());
+        verifyNoPinningWrites();
+        verify(auditLogDirector, times(2)).log(any(AuditLogable.class),
+                eq(AuditLogType.CLUSTER_UPDATE_I440FX_VM_PINNED));
+        verify(auditLogDirector, never()).log(any(AuditLogable.class),
+                eq(AuditLogType.CLUSTER_UPDATE_I440FX_VM_RETARGETED));
+        verify(auditLogDirector).log(any(AuditLogable.class),
+                eq(AuditLogType.CLUSTER_UPDATE_I440FX_DEFAULT_MIGRATED));
+    }
+
+    @Test
+    public void raisePreservesRunningVmsMachineFromVmDynamic() {
+        VmStatic runningVm = createI440fxVm("running-vm");
+        createRaiseCommand(
+                createCluster(VERSION_4_7, DUAL_DEFAULT),
+                createCluster(VERSION_4_8, null),
+                Collections.singletonList(runningVm),
+                Collections.emptyList());
+        when(vdsDao.getClusterI440fxCommonMachines(any()))
+                .thenReturn(Collections.singletonList(PC_I440FX_RHEL));
+        when(vmDynamicDao.get(runningVm.getId()))
+                .thenReturn(dynamicWithEmulatedMachine(runningVm, "pc-i440fx-rhel9.4.0"));
+        // the host must support what the VM is running, or the pin is dead and gets retargeted
+        when(vdsDao.getAllForCluster(any()))
+                .thenReturn(Collections.singletonList(
+                        hostWithMachines("pc-i440fx-rhel9.4.0," + PC_I440FX_RHEL + "," + PC_Q35_RHEL)));
+
+        assertTrue(cmd.validateI440fxRaise());
+        cmd.pinI440fxEntitiesOnRaise();
+
+        assertEquals("pc-i440fx-rhel9.4.0", runningVm.getCustomEmulatedMachine(),
+                "a running VM must keep what it is actually running (vm_dynamic)");
+        verifyNoPinningWrites();
+    }
+
+    @Test
+    public void raiseRetargetsDeadPinToNewestCommonMachine() {
+        // Hosts were refreshed to EL10 before the raise; the stored dual default still
+        // says pc-i440fx-rhel7.6.0, which no host supports: dead hardware is revived with
+        // the newest machine type common to all hosts, loudly.
+        VmStatic downVm = createI440fxVm("dead-vm");
+        createRaiseCommand(
+                createCluster(VERSION_4_7, DUAL_DEFAULT),
+                createCluster(VERSION_4_8, null),
+                Collections.singletonList(downVm),
+                Collections.emptyList());
+        when(vdsDao.getClusterI440fxCommonMachines(any()))
+                .thenReturn(Arrays.asList(PC_I440FX_RHEL10));
+        when(vdsDao.getAllForCluster(any()))
+                .thenReturn(Collections.singletonList(
+                        hostWithMachines(PC_I440FX_RHEL10 + ",pc-q35-rhel10.0.0")));
+
+        assertTrue(cmd.validateI440fxRaise(),
+                "a dead pin with a common machine type must not fail the raise");
+        cmd.pinI440fxEntitiesOnRaise();
+        cmd.auditI440fxRaiseMigration();
+
+        assertEquals(PC_I440FX_RHEL10, downVm.getCustomEmulatedMachine(),
+                "dead machine type must be retargeted to the newest common type");
+        verifyNoPinningWrites();
+        verify(auditLogDirector).log(any(AuditLogable.class),
+                eq(AuditLogType.CLUSTER_UPDATE_I440FX_VM_RETARGETED));
+        verify(auditLogDirector, never()).log(any(AuditLogable.class),
+                eq(AuditLogType.CLUSTER_UPDATE_I440FX_VM_PINNED));
+    }
+
+    @Test
+    public void raisePreservesPinRunnableOnSomeHostsInMixedCluster() {
+        // Mixed EL9/EL10 cluster: the VM's machine type runs on the EL9 hosts, so the
+        // raise proceeds and keeps it — even though no i440fx type is common to all
+        // hosts (there is nothing to fix; the VM keeps working where it does).
+        VmStatic vm = createI440fxVm("mixed-vm");
+        createRaiseCommand(
+                createCluster(VERSION_4_7, DUAL_DEFAULT),
+                createCluster(VERSION_4_8, null),
+                Collections.singletonList(vm),
+                Collections.emptyList());
+        when(vdsDao.getClusterI440fxCommonMachines(any())).thenReturn(Collections.emptyList());
+        when(vdsDao.getAllForCluster(any())).thenReturn(Arrays.asList(
+                hostWithMachines(PC_I440FX_RHEL + ",pc-q35-rhel9.6.0"),
+                hostWithMachines(PC_I440FX_RHEL10 + ",pc-q35-rhel10.0.0")));
+
+        assertTrue(cmd.validateI440fxRaise(),
+                "a machine type runnable on some host must not fail the raise");
+        cmd.pinI440fxEntitiesOnRaise();
+
+        assertEquals(PC_I440FX_RHEL, vm.getCustomEmulatedMachine(),
+                "a machine type some host can run must be preserved, not retargeted");
+        verifyNoPinningWrites();
+    }
+
+    @Test
+    public void raiseRetargetsUnderivablePinWhenCommonExists() {
+        // Single-Q35 cluster default + down VM: nothing can be derived, but the hosts
+        // share a common i440fx type — the VM is revived with it.
+        VmStatic downVm = createI440fxVm("underivable-vm");
+        createRaiseCommand(
+                createCluster(VERSION_4_7, PC_Q35_RHEL),
+                createCluster(VERSION_4_8, null),
+                Collections.singletonList(downVm),
+                Collections.emptyList());
+        when(vdsDao.getClusterI440fxCommonMachines(any()))
+                .thenReturn(Collections.singletonList(PC_I440FX_RHEL10));
+        when(vdsDao.getAllForCluster(any()))
+                .thenReturn(Collections.singletonList(hostWithMachines(PC_I440FX_RHEL10)));
+
+        assertTrue(cmd.validateI440fxRaise());
+        cmd.pinI440fxEntitiesOnRaise();
+
+        assertEquals(PC_I440FX_RHEL10, downVm.getCustomEmulatedMachine(),
+                "an underivable pin must be revived from the common machine types");
+        verifyNoPinningWrites();
+    }
+
+    @Test
+    public void raiseFailsWhenEntityCannotBeFixed() {
+        // Dead/un-derivable machine type AND no common i440fx type (mixed-host cluster):
+        // the only state the raise refuses — the remedy is Q35 conversion.
+        VmStatic downVm = createI440fxVm("unfixable-vm");
+        VmTemplate template = createI440fxTemplate("unfixable-tpl");
+        createRaiseCommand(
+                createCluster(VERSION_4_7, PC_Q35_RHEL),
+                createCluster(VERSION_4_8, null),
+                Collections.singletonList(downVm),
+                Collections.singletonList(template));
+        when(vdsDao.getClusterI440fxCommonMachines(any())).thenReturn(Collections.emptyList());
+        when(vdsDao.getAllForCluster(any())).thenReturn(Arrays.asList(
+                hostWithMachines(PC_I440FX_RHEL + ",pc-q35-rhel9.6.0"),
+                hostWithMachines(PC_I440FX_RHEL10 + ",pc-q35-rhel10.0.0")));
+
+        assertFalse(cmd.validateI440fxRaise(),
+                "raise must fail when an entity can neither keep nor get a machine type");
+        ValidateTestUtils.assertValidationMessages("Wrong validation message", cmd,
+                EngineMessage.CLUSTER_CANNOT_UPDATE_COMPATIBILITY_VERSION_NO_COMMON_I440FX_MACHINE);
+        assertNull(downVm.getCustomEmulatedMachine(),
+                "a failed validation must not have pinned anything");
+    }
+
+    @Test
+    public void raiseLeavesPinnedEntitiesUntouched() {
+        VmStatic pinnedVm = createI440fxVm("pinned-vm");
+        pinnedVm.setCustomEmulatedMachine(PC_I440FX_RHEL);
+        createRaiseCommand(
+                createCluster(VERSION_4_7, DUAL_DEFAULT),
+                createCluster(VERSION_4_8, null),
+                Collections.singletonList(pinnedVm),
+                Collections.emptyList());
+
+        assertTrue(cmd.validateI440fxRaise());
+        cmd.pinI440fxEntitiesOnRaise();
+        cmd.auditI440fxRaiseMigration();
+
+        assertEquals(PC_I440FX_RHEL, pinnedVm.getCustomEmulatedMachine());
+        verifyNoPinningWrites();
+        verify(auditLogDirector).log(any(AuditLogable.class),
+                eq(AuditLogType.CLUSTER_UPDATE_I440FX_DEFAULT_MIGRATED));
+        verify(auditLogDirector, never()).log(any(AuditLogable.class),
+                eq(AuditLogType.CLUSTER_UPDATE_I440FX_VM_PINNED));
+    }
+
+    @Test
+    public void raisePinsHostedEngineVm() {
+        // Pinning preserves hardware — the Hosted Engine VM must be pinned like any
+        // other, leaving it unpinned is what would break it after the raise.
+        VmStatic heVm = createI440fxVm("he-vm");
+        heVm.setOrigin(OriginType.HOSTED_ENGINE);
+        createRaiseCommand(
+                createCluster(VERSION_4_7, DUAL_DEFAULT),
+                createCluster(VERSION_4_8, null),
+                Collections.singletonList(heVm),
+                Collections.emptyList());
+        when(vdsDao.getClusterI440fxCommonMachines(any()))
+                .thenReturn(Collections.singletonList(PC_I440FX_RHEL));
+        when(vdsDao.getAllForCluster(any()))
+                .thenReturn(Collections.singletonList(hostWithMachines(PC_I440FX_RHEL)));
+
+        assertTrue(cmd.validateI440fxRaise(), "the HE VM must be included in the validate list");
+        cmd.pinI440fxEntitiesOnRaise();
+
+        assertEquals(PC_I440FX_RHEL, heVm.getCustomEmulatedMachine(),
+                "Hosted Engine VM must be pinned at raise time");
+        verifyNoPinningWrites();
+    }
+
+    @Test
+    public void raiseBelow48DoesNotPin() {
+        VmStatic unpinnedVm = createI440fxVm("old-vm");
+        createRaiseCommand(
+                createCluster(VERSION_4_5, DUAL_DEFAULT),
+                createCluster(VERSION_4_7, null),
+                Collections.singletonList(unpinnedVm),
+                Collections.emptyList());
+
+        assertTrue(cmd.validateI440fxRaise());
+        cmd.pinI440fxEntitiesOnRaise();
+        cmd.auditI440fxRaiseMigration();
+
+        assertNull(unpinnedVm.getCustomEmulatedMachine(),
+                "a raise that stays below 4.8 must not pin anything");
+        verifyNoPinningWrites();
+        verify(vdsDao, never()).getClusterI440fxCommonMachines(any());
+        verifyNoMoreInteractions(auditLogDirector);
+    }
+
+    @Test
+    public void downgradeIsNoOp() {
+        VmStatic unpinnedVm = createI440fxVm("vm");
+        createRaiseCommand(
+                createCluster(VERSION_4_8, PC_Q35_RHEL),
+                createCluster(VERSION_4_7, null),
+                Collections.singletonList(unpinnedVm),
+                Collections.emptyList());
+
+        assertTrue(cmd.validateI440fxRaise());
+        cmd.pinI440fxEntitiesOnRaise();
+        cmd.auditI440fxRaiseMigration();
+
+        assertNull(unpinnedVm.getCustomEmulatedMachine(),
+                "a downgrade must not touch anything");
+        verifyNoPinningWrites();
+        verifyNoMoreInteractions(auditLogDirector);
+    }
+
+    @Test
+    public void raiseWithoutUnpinnedEntitiesSkipsCommonMachinesCheck() {
+        VmStatic pinnedVm = createI440fxVm("pinned-vm");
+        pinnedVm.setCustomEmulatedMachine(PC_I440FX_RHEL);
+        createRaiseCommand(
+                createCluster(VERSION_4_7, DUAL_DEFAULT),
+                createCluster(VERSION_4_8, null),
+                Collections.singletonList(pinnedVm),
+                Collections.emptyList());
+
+        assertTrue(cmd.validateI440fxRaise());
+        verify(vdsDao, never()).getClusterI440fxCommonMachines(any());
     }
 }

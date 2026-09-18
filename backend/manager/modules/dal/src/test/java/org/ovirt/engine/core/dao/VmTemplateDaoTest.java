@@ -28,7 +28,7 @@ import org.ovirt.engine.core.compat.Guid;
 public class VmTemplateDaoTest extends BaseGenericDaoTestCase<Guid, VmTemplate, VmTemplateDao> {
     private static final int NUMBER_OF_TEMPLATES_FOR_PRIVELEGED_USER = 1;
     private static final int NUMBER_OF_INSTANCE_TYPES_FOR_PRIVELEGED_USER = 1;
-    private static final int NUMBER_OF_TEMPLATES_IN_DB = 9;
+    private static final int NUMBER_OF_TEMPLATES_IN_DB = 10;
     private static final Guid EXISTING_IMAGE_TYPE_ID = new Guid("5849b030-626e-47cb-ad90-3ce782d831b3");
     protected static final Guid[] HOST_GUIDS = {FixturesTool.VDS_RHEL6_NFS_SPM,
         FixturesTool.HOST_ID,
@@ -72,7 +72,7 @@ public class VmTemplateDaoTest extends BaseGenericDaoTestCase<Guid, VmTemplate, 
      */
     @Override
     protected int getEntitiesTotalCount() {
-        return 7;
+        return 8;
     }
 
     /**

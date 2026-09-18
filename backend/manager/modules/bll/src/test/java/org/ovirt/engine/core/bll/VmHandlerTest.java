@@ -3,6 +3,10 @@ package org.ovirt.engine.core.bll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyBoolean;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.Mockito.when;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -23,6 +27,9 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
 import org.ovirt.engine.core.bll.storage.domain.IsoDomainListSynchronizer;
+import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
+import org.ovirt.engine.core.common.businessentities.BiosType;
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.GuestAgentStatus;
 import org.ovirt.engine.core.common.businessentities.OriginType;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -37,11 +44,15 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.storage.LunDisk;
 import org.ovirt.engine.core.common.config.ConfigValues;
+import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.DiskVmElementDao;
 import org.ovirt.engine.core.utils.MockConfigDescriptor;
 import org.ovirt.engine.core.utils.MockConfigExtension;
 import org.ovirt.engine.core.utils.RandomUtils;
+import org.ovirt.engine.core.vdsbroker.ResourceManager;
+import org.ovirt.engine.core.vdsbroker.VmManager;
 
 @ExtendWith({MockitoExtension.class, MockConfigExtension.class})
 @MockitoSettings(strictness = Strictness.LENIENT)
@@ -56,6 +67,21 @@ public class VmHandlerTest {
     @InjectMocks
     private VmHandler vmHandler = new VmHandler();
 
+    @Mock
+    private ResourceManager resourceManager;
+
+    @Mock
+    private VmManager vmManager;
+
+    @Mock
+    private OsRepository osRepository;
+
+    @Mock
+    private VmDeviceUtils vmDeviceUtils;
+
+    @Mock
+    private DiskVmElementDao diskVmElementDao;
+
 
     public static Stream<MockConfigDescriptor<?>> mockConfiguration() {
         return Stream.of(
@@ -66,6 +92,9 @@ public class VmHandlerTest {
     @BeforeEach
     public void setUp() {
         vmHandler.init();
+        when(resourceManager.getVmManager(any(Guid.class), anyBoolean())).thenReturn(vmManager);
+        when(resourceManager.getVmManager(any(Guid.class))).thenReturn(vmManager);
+        when(diskVmElementDao.getAllForVm(any(Guid.class))).thenReturn(java.util.Collections.emptyList());
     }
 
     @Test
@@ -116,6 +145,56 @@ public class VmHandlerTest {
                     null);
             vm.getManagedVmDeviceMap().put(disk.getId(), device);
         }
+    }
+
+    /**
+     * The OST basic-suite scenario: an OVF-configuration import of a VMWARE-origin
+     * VM with no BiosType in the OVF gets auto-pinned at init (bios resolves to
+     * I440FX_SEA_BIOS + pin 'pc-i440fx-rhel7.6.0'), and the post-import updateToQ35
+     * then converts the VM to Q35 — which must also drop the i440fx pin, otherwise
+     * the persisted row contradicts itself (Q35 bios + i440fx emulated machine) and
+     * every VM later created from a template of it is rejected by the chipset
+     * consistency validation.
+     */
+    @Test
+    public void updateToQ35DropsI440fxPinOfAutoPinnedImportedVm() {
+        VmStatic oldVm = new VmStatic();
+        oldVm.setId(Guid.newGuid());
+        oldVm.setBiosType(BiosType.I440FX_SEA_BIOS); // resolved by OvfReader default when OVF has no BiosType
+        oldVm.setCustomEmulatedMachine("pc-i440fx-rhel7.6.0"); // auto-pin from ImportVmCommandBase.init()
+        VmStatic newVm = new VmStatic(oldVm);
+
+        Cluster q35Cluster = new Cluster();
+        q35Cluster.setBiosType(BiosType.Q35_OVMF); // test-cluster at 4.8
+        when(osRepository.isQ35Supported(anyInt())).thenReturn(true);
+
+        vmHandler.updateToQ35(oldVm, newVm, q35Cluster, null);
+
+        assertEquals(BiosType.Q35_SEA_BIOS, newVm.getBiosType());
+        assertEquals(null, newVm.getCustomEmulatedMachine(),
+                "the i440fx pin must be dropped when the chipset flips to Q35");
+    }
+
+    /**
+     * A VM that is not Q35-converted (i440fx cluster or Q35-unsupported OS) must keep
+     * its pin — pinning preserves hardware for VMs that stay i440fx.
+     */
+    @Test
+    public void updateToQ35KeepsPinWhenConversionDoesNotApply() {
+        VmStatic oldVm = new VmStatic();
+        oldVm.setId(Guid.newGuid());
+        oldVm.setBiosType(BiosType.I440FX_SEA_BIOS);
+        oldVm.setCustomEmulatedMachine("pc-i440fx-rhel7.6.0");
+        VmStatic newVm = new VmStatic(oldVm);
+
+        Cluster q35Cluster = new Cluster();
+        q35Cluster.setBiosType(BiosType.Q35_OVMF);
+        when(osRepository.isQ35Supported(anyInt())).thenReturn(false); // conversion blocked
+
+        vmHandler.updateToQ35(oldVm, newVm, q35Cluster, null);
+
+        assertEquals(BiosType.I440FX_SEA_BIOS, newVm.getBiosType());
+        assertEquals("pc-i440fx-rhel7.6.0", newVm.getCustomEmulatedMachine());
     }
 
     private LunDisk createLunDisk() {

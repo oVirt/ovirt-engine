@@ -33,7 +33,7 @@ import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dao.scheduling.ClusterPolicyDao;
 
 public class ClusterDaoTest extends BaseDaoTestCase<ClusterDao> {
-    private static final int NUMBER_OF_GROUPS = 12;
+    private static final int NUMBER_OF_GROUPS = 13;
     private static final int NUMBER_OF_TRUSTED_GROUPS = 4;
     private static final int NUMBER_OF_GROUPS_FOR_PRIVELEGED_USER = 2;
 

@@ -22,8 +22,10 @@ import org.ovirt.engine.core.common.businessentities.VmNumaNode;
 import org.ovirt.engine.core.common.businessentities.VmPayload;
 import org.ovirt.engine.core.common.businessentities.VmRngDevice;
 import org.ovirt.engine.core.common.businessentities.VmWatchdog;
+import org.ovirt.engine.core.common.utils.ClusterEmulatedMachines;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.SnapshotDao;
 import org.ovirt.engine.core.dao.VmNumaNodeDao;
 import org.ovirt.engine.core.utils.lock.EngineLock;
@@ -57,6 +59,8 @@ public class NextRunConfigurationApplier {
     private BackendInternal backend;
     @Inject
     private LockManager lockManager;
+    @Inject
+    private ClusterDao clusterDao;
     @Inject
     private SnapshotDao snapshotDao;
     @Inject
@@ -114,7 +118,15 @@ public class NextRunConfigurationApplier {
         snapshotDao.remove(snapUnderLock.getId());
         List<VmNumaNode> vmNumaNodeList = vmNumaNodeDao.getAllVmNumaNodeByVmId(vm.getId());
         Date originalCreationDate = vm.getVmCreationDate();
+        // The pending configuration may predate the i440fx pinning (snapshots are
+        // not migrated): propagate the pin the VM already carries so the strict
+        // >= 4.8 validation of the pending edit below doesn't reject it.
+        String currentEmulatedMachine = vm.getCustomEmulatedMachine();
         snapshotsManager.updateVmFromConfiguration(vm, snapUnderLock.getVmConfiguration());
+        if (ClusterEmulatedMachines.isI440fxDeprecated(
+                vm.getStaticData(), clusterDao.get(vm.getClusterId()))) {
+            ClusterEmulatedMachines.propagateI440fxPin(currentEmulatedMachine, vm.getStaticData());
+        }
         // override creation date because the value in the config is the creation date of the config, not the vm
         vm.setVmCreationDate(originalCreationDate);
         boolean isNumaChanged = !vm.getvNumaNodeList().equals(vmNumaNodeList);
