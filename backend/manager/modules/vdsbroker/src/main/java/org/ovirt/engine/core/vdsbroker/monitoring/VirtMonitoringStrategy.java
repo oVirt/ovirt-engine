@@ -252,7 +252,8 @@ public class VirtMonitoringStrategy implements MonitoringStrategy {
         String matchedI440fx =
                 EmulatedMachineCommonUtils.getSupportedByChipset(ChipsetType.I440FX, supported, available);
         String matchedQ35 = EmulatedMachineCommonUtils.getSupportedByChipset(ChipsetType.Q35, supported, available);
-        String matchedEmulatedMachine = ClusterEmulatedMachines.build(matchedI440fx, matchedQ35);
+        String matchedAarch64 = EmulatedMachineCommonUtils.getSupportedByChipset(ChipsetType.VIRT, supported, available);
+        String matchedEmulatedMachine = ClusterEmulatedMachines.build(matchedI440fx, matchedQ35, matchedAarch64);
 
         if (!StringUtils.isEmpty(matchedEmulatedMachine)) {
             setClusterEmulatedMachine(vds, matchedEmulatedMachine);

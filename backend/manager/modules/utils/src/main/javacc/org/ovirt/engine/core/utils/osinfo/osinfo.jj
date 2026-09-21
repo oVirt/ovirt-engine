@@ -94,7 +94,7 @@ void booleanValue() : {} {
 }
 
 void archValue() : {} {
-    valueSpecifier() ("x86_64" | "ppc64" | "s390x")
+    valueSpecifier() ("x86_64" | "ppc64" | "s390x" | "aarch64")
 }
 
 void busValue() : {} {

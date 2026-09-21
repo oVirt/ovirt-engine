@@ -1627,7 +1627,7 @@ public class VmBase implements Queryable, BusinessEntity<Guid>, Nameable, Commen
     }
 
     public boolean isUseHostCpuFlags() {
-        return useHostCpuFlags;
+        return useHostCpuFlags = biosType == BiosType.AMPERE || biosType == BiosType.AMPERE_OVMF;
     }
 
     public void setUseHostCpuFlags(boolean useHostCpuFlags) {
