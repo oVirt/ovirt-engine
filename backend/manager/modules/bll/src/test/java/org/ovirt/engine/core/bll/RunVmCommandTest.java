@@ -11,6 +11,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
@@ -28,6 +29,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Stream;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -779,6 +781,12 @@ public class RunVmCommandTest extends BaseCommandTest {
         when(vdsManager.getVdsMonitor()).thenReturn(monitor);
         when(resourceManager.getVdsManager(host.getId())).thenReturn(vdsManager);
 
+        AtomicReference<Guid> runOnVdsAtSetUnknown = new AtomicReference<>();
+        doAnswer(invocation -> {
+            runOnVdsAtSetUnknown.set(((VM) invocation.getArgument(0)).getRunOnVds());
+            return null;
+        }).when(resourceManager).setVmUnknown(any(VM.class));
+
         EngineException thrown = assertThrows(EngineException.class, () -> {
             command.runVm();
         });
@@ -787,8 +795,12 @@ public class RunVmCommandTest extends BaseCommandTest {
         assertEquals(org.ovirt.engine.core.common.errors.EngineError.VDS_NETWORK_ERROR, thrown.getErrorCode());
 
         verify(command, never()).rerun();
-        verify(resourceManager).setVmUnknown(vm);
-        assertEquals(host.getId(), vm.getRunOnVds());
+
+        verify(resourceManager).setVmUnknown(any(VM.class));
+        assertEquals(host.getId(), runOnVdsAtSetUnknown.get(),
+                "run_on_vds must already be set when the VM is persisted as Unknown, "
+                        + "otherwise the DB row (status=Unknown, run_on_vds=null) is invisible "
+                        + "to every recovery path that selects VMs by host");
 
         verify(command).cleanupPassthroughVnics(host.getId());
         verify(command).reportCompleted();

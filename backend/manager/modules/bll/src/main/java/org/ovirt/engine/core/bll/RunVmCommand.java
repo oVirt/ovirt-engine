@@ -313,8 +313,8 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
                         reportCompleted();
                         throw e;
                     case VDS_NETWORK_ERROR:
-                        resourceManager.setVmUnknown(getVm());
                         getVm().setRunOnVds(getVdsId());
+                        resourceManager.setVmUnknown(getVm());
                         cleanupPassthroughVnics();
                         reportCompleted();
                         throw e;
