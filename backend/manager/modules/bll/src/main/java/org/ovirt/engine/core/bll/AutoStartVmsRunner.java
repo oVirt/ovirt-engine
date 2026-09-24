@@ -49,11 +49,11 @@ import org.slf4j.LoggerFactory;
  * registered for being automatically restarted (e.g., highly-available VMs that went down unexpectedly
  * are registered by the monitoring) and process each VM according to the following logic:
  *
- * - If the VM contains next-run configuration then we check every {@link ConfigValues#DelayToRunAutoStartVmIntervalInSeconds} sec
- * whether or not that configuration was applied (by {@link ProcessDownVmCommand}). If we detect that this
- * configuration does not exist anymore, i.e., was applied, we proceed with the restart procedure. Otherwise,
- * after {@link ConfigValues#MaxNumOfSkipsBeforeAutoStartVm} checks, we proceed with the restart procedure that would try to start
- * the VM using its current configuration.
+ * - If the VM contains next-run configuration then we apply it before the VM is started. If it cannot be
+ * applied, because the VM is locked by another operation, we check again every {@link ConfigValues#DelayToRunAutoStartVmIntervalInSeconds}
+ * sec whether the configuration was applied, and retry applying it. After {@link ConfigValues#MaxNumOfSkipsBeforeAutoStartVm}
+ * checks, we proceed with the restart procedure that would try to start the VM using its current configuration
+ * (the next-run configuration will be applied when the VM goes down again).
  * - If the VM is locked by other module, we skip it in the current cycle and try again in the next cycle.
  * - If we managed to lock the VM, we check if it still needs to be automatically started. If not, we remove
  * it from the list of VMs to start and skip it (the VM will not be automatically started).
@@ -81,6 +81,9 @@ public abstract class AutoStartVmsRunner implements BackendService {
 
     @Inject
     private SnapshotDao snapshotDao;
+
+    @Inject
+    private NextRunConfigurationApplier nextRunConfigurationApplier;
 
     @Inject
     @ThreadPools(ThreadPools.ThreadPoolType.EngineScheduledThreadPool)
@@ -234,15 +237,23 @@ public abstract class AutoStartVmsRunner implements BackendService {
         }
 
         if (isNextRunConfiguration(vmId)) {
-            // if the NextRun config exists then give the ProcessDownVmCommand time to apply it
-            log.debug("NextRun config found for '{}' vm, the RunVm will be delayed", vm.getName());
-            if (autoStartVmToRestart.delayNextTimeToRun(iterationStartTime)) {
-                // Skip attempt to run the VM for now.
-                // The priority is to run the VM even if the NextRun fails to be applied
-                return AutoStartVmToRestart.State.VM_DOWN;
+            // Apply the NextRun config here, the RunVm below cannot do it while this runner holds the VM lock
+            log.debug("NextRun config found for '{}' vm, applying it before the RunVm", vm.getName());
+            VM vmToUpdate = vmDao.get(vmId);
+            if (vmToUpdate == null
+                    || nextRunConfigurationApplier.apply(vmToUpdate) != NextRunConfigurationApplier.Result.APPLIED) {
+                // The VM is locked by another operation, e.g. live merge, which the RunVm below would not be able
+                // to work around either. Wait for that operation to end.
+                log.info("Failed to apply the NextRun config on vm '{}', the start will be delayed", vm.getName());
+                if (autoStartVmToRestart.delayNextTimeToRun(iterationStartTime)) {
+                    // Skip attempt to run the VM for now.
+                    return AutoStartVmToRestart.State.VM_DOWN;
+                }
+                // Waiting for the NextRun config is over, let's run the VM even with the non-applied Next-Run;
+                // it will be applied when the VM goes down again.
+                log.warn("Failed to wait for the NextRun config to be applied on vm '{}', " +
+                        "trying to run the VM anyway", vm.getName());
             }
-            // Waiting for NextRun config is over, let's run the VM even with the non-applied Next-Run
-            log.warn("Failed to wait for the NextRun config to be applied on vm '{}', trying to run the VM anyway", vm.getName());
         }
 
         EngineLock runVmLock = createEngineLockForRunVm(vmId);
@@ -387,7 +398,7 @@ public abstract class AutoStartVmsRunner implements BackendService {
                 Config.<Integer> getValue(ConfigValues.NumOfTriesToRunFailedAutoStartVmInShortIntervals);
         private static final int MAXIMUM_NUM_OF_SKIPS_BEFORE_AUTO_START_VM =
                 Config.<Integer> getValue(ConfigValues.MaxNumOfSkipsBeforeAutoStartVm);
-        /** How long to wait before next check whether the NextRun configuration is applied */
+        /** How long to wait before next attempt to apply the NextRun configuration */
         private static final int DELAY_TO_RUN_AUTO_START_VM_INTERVAL =
                 Config.<Integer> getValue(ConfigValues.DelayToRunAutoStartVmIntervalInSeconds);
 
