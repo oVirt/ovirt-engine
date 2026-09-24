@@ -16,6 +16,7 @@ public class DeleteAllVmCheckpointsParameters extends VmOperationParameterBase {
     @NotNull
     private List<DiskImage> diskImages;
     private int completedDisksCount;
+    private boolean force;
 
     public DeleteAllVmCheckpointsParameters() {
     }
@@ -24,6 +25,7 @@ public class DeleteAllVmCheckpointsParameters extends VmOperationParameterBase {
         super(vmId);
         this.diskImages = diskImages;
         completedDisksCount = 0;
+        force = false;
     }
 
     public List<DiskImage> getDiskImages() {
@@ -48,5 +50,17 @@ public class DeleteAllVmCheckpointsParameters extends VmOperationParameterBase {
 
     public void advanceToNextDisk() {
         completedDisksCount++;
+    }
+
+    /**
+     * When set, failures of the per-volume bitmap removal do not abort the command. Used when clearing bitmaps that are
+     * known to be broken, where a best-effort cleanup is better than leaving the checkpoints chain behind.
+     */
+    public boolean isForce() {
+        return force;
+    }
+
+    public void setForce(boolean force) {
+        this.force = force;
     }
 }

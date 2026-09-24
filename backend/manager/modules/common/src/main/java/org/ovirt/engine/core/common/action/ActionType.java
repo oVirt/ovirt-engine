@@ -623,6 +623,7 @@ public enum ActionType {
     RemoveVolumeBitmap(3308, ActionGroup.BACKUP_DISK, false, QuotaDependency.NONE),
     ClearVolumeBitmaps(3309, ActionGroup.BACKUP_DISK, false, QuotaDependency.NONE),
     DeleteAllVmCheckpoints(3310, ActionGroup.BACKUP_DISK, false, QuotaDependency.NONE),
+    ReconcileVmCheckpoints(3312, QuotaDependency.NONE),
     HybridBackup(3311, ActionGroup.BACKUP_DISK, QuotaDependency.NONE),
 
     // Host Devices
