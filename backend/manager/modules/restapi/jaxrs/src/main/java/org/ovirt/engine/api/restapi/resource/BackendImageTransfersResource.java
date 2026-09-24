@@ -14,6 +14,10 @@ import org.ovirt.engine.api.restapi.types.ImageTransferMapper;
 import org.ovirt.engine.api.restapi.utils.GuidUtils;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.TransferDiskImageParameters;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
+import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
+import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
+import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.businessentities.storage.TimeoutPolicyType;
 import org.ovirt.engine.core.common.businessentities.storage.TransferClientType;
 import org.ovirt.engine.core.common.businessentities.storage.TransferType;
@@ -79,8 +83,30 @@ public class BackendImageTransfersResource
             params.setShallow(imageTransfer.isShallow());
         }
         params.setTransferClientType(TransferClientType.TRANSFER_VIA_API);
-        return performCreate(ActionType.TransferDiskImage, params, new QueryIdResolver<Guid>(QueryType.GetImageTransferById,
-                IdQueryParameters.class));
+        ActionType actionType = resolveTransferDiskImageActionType(params);
+        return performCreate(actionType, params,
+                new QueryIdResolver<Guid>(QueryType.GetImageTransferById, IdQueryParameters.class));
+    }
+
+    private ActionType resolveTransferDiskImageActionType(TransferDiskImageParameters params) {
+        if (!Guid.isNullOrEmpty(params.getImageGroupID())) {
+            QueryReturnValue diskQuery = runQuery(QueryType.GetDiskByDiskId,
+                    new IdQueryParameters(params.getImageGroupID()));
+            if (diskQuery.getReturnValue() instanceof DiskImage
+                    && ((DiskImage) diskQuery.getReturnValue()).getDiskStorageType() == DiskStorageType.MANAGED_BLOCK_STORAGE) {
+                return ActionType.MbsTransferDiskImage;
+            }
+        }
+        if (params.getAddDiskParameters() != null
+                && params.getAddDiskParameters().getStorageDomainId() != null) {
+            QueryReturnValue sdQuery = runQuery(QueryType.GetStorageDomainById,
+                    new IdQueryParameters(params.getAddDiskParameters().getStorageDomainId()));
+            if (sdQuery.getReturnValue() instanceof StorageDomain
+                    && ((StorageDomain) sdQuery.getReturnValue()).getStorageType() == StorageType.MANAGED_BLOCK_STORAGE) {
+                return ActionType.MbsTransferDiskImage;
+            }
+        }
+        return ActionType.TransferDiskImage;
     }
 
     private void updateTransferType(ImageTransfer imageTransfer, TransferDiskImageParameters params) {
