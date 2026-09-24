@@ -1108,7 +1108,7 @@ public class AsyncDataProvider {
         }
         if (storageType.isFileDomain()) {
             return VolumeFormat.RAW;
-        } else if (storageType.isBlockDomain()) {
+        } else if (storageType.isBlockDomain() || storageType.isManagedBlockStorage()) {
             switch (volumeType) {
                 case Sparse:
                     return VolumeFormat.COW;
@@ -1119,8 +1119,6 @@ public class AsyncDataProvider {
                 default:
                     return VolumeFormat.Unassigned;
             }
-        } else if (storageType.isManagedBlockStorage()) {
-            return volumeType == VolumeType.Preallocated ? VolumeFormat.RAW : VolumeFormat.Unassigned;
         } else {
             return VolumeFormat.Unassigned;
         }
