@@ -638,6 +638,19 @@ BEGIN
 END;$FUNCTION$
 LANGUAGE plpgsql;
 
+CREATE OR REPLACE FUNCTION GetVmDynamicByVmGuids (v_vm_guids UUID[])
+RETURNS SETOF vm_dynamic STABLE AS $FUNCTION$
+BEGIN
+    RETURN QUERY
+
+    SELECT vm_dynamic.*
+    FROM vm_dynamic
+    WHERE vm_guid = ANY(v_vm_guids);
+
+    RETURN;
+END;$FUNCTION$
+LANGUAGE plpgsql;
+
 DROP TYPE IF EXISTS GetAllHashesFromVmDynamic_rs CASCADE;
 CREATE TYPE GetAllHashesFromVmDynamic_rs AS (vm_guid UUID, hash VARCHAR);
 CREATE OR REPLACE FUNCTION GetAllHashesFromVmDynamic ()

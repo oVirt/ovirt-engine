@@ -1,6 +1,8 @@
 package org.ovirt.engine.api.restapi.util;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -158,6 +160,45 @@ public class DisplayHelper {
                 vm.getDisplay().getCertificate().setContent(caCertificateReturnValue.getReturnValue());
             }
         }
+    }
+
+    public static void addDisplayCertificate(Vm vm, Certificate certificate) {
+        if (certificate != null) {
+            if (!vm.isSetDisplay()) {
+                vm.setDisplay(new Display());
+            }
+            vm.getDisplay().setCertificate(certificate);
+        }
+    }
+
+    public static Map<Guid, Certificate> getDisplayCertificatesForMultipleEntities(BackendResource res, List<Guid> vmIds) {
+        QueryReturnValue result =
+                res.runQuery(QueryType.GetVdsCertificateSubjectsByVmIds,
+                        new IdsQueryParameters(vmIds));
+
+        if (result != null && result.getSucceeded() && result.getReturnValue() != null) {
+            Map<Guid, String> certificateForVms = result.getReturnValue();
+
+            String certificateContent = null;
+            final QueryReturnValue caCertificateReturnValue =
+                    res.runQuery(QueryType.GetCACertificate, new QueryParametersBase());
+            if (caCertificateReturnValue.getSucceeded()) {
+                certificateContent = caCertificateReturnValue.getReturnValue();
+            }
+            String organizationName = CertificateSubjectHelper.getOrganizationName();
+
+            Map<Guid, Certificate> certificates = new HashMap<>();
+            for (Map.Entry<Guid, String> e : certificateForVms.entrySet()) {
+                Certificate cert = new Certificate();
+                cert.setSubject(e.getValue());
+                cert.setOrganization(organizationName);
+                cert.setContent(certificateContent);
+
+                certificates.put(e.getKey(), cert);
+            }
+            return certificates;
+        }
+        return Collections.emptyMap();
     }
 
     private static Display extractDisplayFromResource(BaseResource res) {
