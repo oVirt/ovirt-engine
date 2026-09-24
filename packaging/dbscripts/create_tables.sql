@@ -173,7 +173,7 @@ CREATE TABLE affinity_group_members (
 
 CREATE TABLE affinity_groups (
     id uuid NOT NULL,
-    name character varying(128) NOT NULL,
+    name character varying(255) NOT NULL,
     description character varying(4000),
     cluster_id uuid NOT NULL,
     positive boolean DEFAULT true NOT NULL,
@@ -241,7 +241,7 @@ CREATE TABLE audit_log (
     vm_id uuid,
     vm_name character varying(255),
     vm_template_id uuid,
-    vm_template_name character varying(40),
+    vm_template_name character varying(255),
     vds_id uuid,
     vds_name character varying(255),
     log_time timestamp with time zone NOT NULL,
@@ -2998,7 +2998,7 @@ CREATE TABLE vm_static (
     is_auto_converge boolean,
     is_migrate_compressed boolean,
     custom_emulated_machine character varying(40),
-    custom_cpu_name character varying(40),
+    custom_cpu_name character varying(255),
     small_icon_id uuid,
     large_icon_id uuid,
     provider_id uuid,

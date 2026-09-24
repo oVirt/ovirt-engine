@@ -6,7 +6,7 @@
 CREATE OR REPLACE FUNCTION InsertVmDevice (
     v_device_id UUID,
     v_vm_id UUID,
-    v_device VARCHAR(30),
+    v_device VARCHAR(255),
     v_type VARCHAR(30),
     v_address VARCHAR(255),
     v_spec_params TEXT,
@@ -59,7 +59,7 @@ LANGUAGE plpgsql;
 CREATE OR REPLACE FUNCTION UpdateVmDevice (
     v_device_id UUID,
     v_vm_id UUID,
-    v_device VARCHAR(30),
+    v_device VARCHAR(255),
     v_type VARCHAR(30),
     v_address VARCHAR(255),
     v_spec_params TEXT,
@@ -194,7 +194,7 @@ LANGUAGE plpgsql;
 CREATE OR REPLACE FUNCTION GetVmDeviceByVmIdTypeAndDevice (
     v_vm_id UUID,
     v_type VARCHAR(30),
-    v_device VARCHAR(30),
+    v_device VARCHAR(255),
     v_user_id UUID,
     v_is_filtered BOOLEAN
     )
@@ -229,7 +229,7 @@ LANGUAGE plpgsql;
 CREATE OR REPLACE FUNCTION GetVmDeviceByTypeAndDevice (
     v_vm_ids UUID[],
     v_type VARCHAR(30),
-    v_device VARCHAR(30),
+    v_device VARCHAR(255),
     v_user_id UUID,
     v_is_filtered BOOLEAN
     )

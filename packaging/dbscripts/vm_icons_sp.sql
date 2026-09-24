@@ -75,7 +75,7 @@ LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION InsertVmIcon (
     v_id UUID,
-    v_data_url TEXT
+    v_data_url VARCHAR
     )
 RETURNS VOID AS $FUNCTION$
 BEGIN
@@ -92,7 +92,7 @@ LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION UpdateVmIcon (
     v_id UUID,
-    v_data_url TEXT
+    v_data_url VARCHAR
     )
 RETURNS VOID AS $FUNCTION$
 BEGIN
@@ -112,7 +112,7 @@ BEGIN
 END;$FUNCTION$
 LANGUAGE plpgsql;
 
-CREATE OR REPLACE FUNCTION GetVmIconByVmIconDataUrl (v_data_url TEXT)
+CREATE OR REPLACE FUNCTION GetVmIconByVmIconDataUrl (v_data_url VARCHAR)
 RETURNS SETOF vm_icons STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY

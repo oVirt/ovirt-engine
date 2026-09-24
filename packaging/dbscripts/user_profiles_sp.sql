@@ -8,7 +8,7 @@ CREATE OR REPLACE FUNCTION InsertUserProfileProperty (
     v_property_id UUID,
     v_property_name TEXT,
     v_property_type TEXT,
-    v_property_content TEXT
+    v_property_content JSONB
     )
 RETURNS VOID AS $FUNCTION$
 BEGIN
@@ -34,7 +34,7 @@ CREATE OR REPLACE FUNCTION UpdateUserProfileProperty (
     v_property_id UUID,
     v_property_name TEXT,
     v_property_type TEXT,
-    v_property_content TEXT,
+    v_property_content JSONB,
     v_new_property_id UUID
     )
 RETURNS SETOF user_profiles AS $FUNCTION$

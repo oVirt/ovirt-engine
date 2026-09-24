@@ -10,9 +10,9 @@ CREATE OR REPLACE FUNCTION Insertdisk_image_dynamic (
     v_write_rate BIGINT,
     v_write_ops BIGINT,
     v_actual_size BIGINT,
-    v_read_latency_seconds NUMERIC(18, 9),
-    v_write_latency_seconds NUMERIC(18, 9),
-    v_flush_latency_seconds NUMERIC(18, 9)
+    v_read_latency_seconds NUMERIC(18,9),
+    v_write_latency_seconds NUMERIC(18,9),
+    v_flush_latency_seconds NUMERIC(18,9)
     )
 RETURNS VOID AS $FUNCTION$
 BEGIN
@@ -48,9 +48,9 @@ CREATE OR REPLACE FUNCTION Updatedisk_image_dynamic (
     v_write_rate BIGINT,
     v_write_ops BIGINT,
     v_actual_size BIGINT,
-    v_read_latency_seconds NUMERIC(18, 9),
-    v_write_latency_seconds NUMERIC(18, 9),
-    v_flush_latency_seconds NUMERIC(18, 9)
+    v_read_latency_seconds NUMERIC(18,9),
+    v_write_latency_seconds NUMERIC(18,9),
+    v_flush_latency_seconds NUMERIC(18,9)
     )
 RETURNS VOID
     --The [disk_image_dynamic] table doesn't have a timestamp column. Optimistic concurrency logic cannot be generated
@@ -78,9 +78,9 @@ CREATE OR REPLACE FUNCTION Updatedisk_image_dynamic_by_disk_id_and_vm_id (
     v_write_rate BIGINT,
     v_write_ops BIGINT,
     v_actual_size BIGINT,
-    v_read_latency_seconds NUMERIC(18, 9),
-    v_write_latency_seconds NUMERIC(18, 9),
-    v_flush_latency_seconds NUMERIC(18, 9)
+    v_read_latency_seconds NUMERIC(18,9),
+    v_write_latency_seconds NUMERIC(18,9),
+    v_flush_latency_seconds NUMERIC(18,9)
     )
 RETURNS VOID
     --The [disk_image_dynamic] table doesn't have a timestamp column. Optimistic concurrency logic cannot be generated

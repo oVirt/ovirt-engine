@@ -65,7 +65,7 @@ LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetAllOVFEntitiesForStorageDomainByEntityType (
     v_storage_domain_id UUID,
-    v_entity_type VARCHAR(20)
+    v_entity_type VARCHAR(32)
     )
 RETURNS SETOF unregistered_ovf_of_entities STABLE AS $FUNCTION$
 BEGIN

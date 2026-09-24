@@ -3,8 +3,8 @@
 CREATE OR REPLACE FUNCTION InsertQuota (
     v_id UUID,
     v_storage_pool_id UUID,
-    v_quota_name VARCHAR(50),
-    v_description VARCHAR(500),
+    v_quota_name VARCHAR(65),
+    v_description VARCHAR(250),
     v_threshold_cluster_percentage INT,
     v_threshold_storage_percentage INT,
     v_grace_cluster_percentage INT,
@@ -240,8 +240,8 @@ LANGUAGE plpgsql;
 CREATE OR REPLACE FUNCTION UpdateQuotaMetaData (
     v_id UUID,
     v_storage_pool_id UUID,
-    v_quota_name VARCHAR(50),
-    v_description VARCHAR(500),
+    v_quota_name VARCHAR(65),
+    v_description VARCHAR(250),
     v_threshold_cluster_percentage INT,
     v_threshold_storage_percentage INT,
     v_grace_cluster_percentage INT,

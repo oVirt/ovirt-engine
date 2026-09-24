@@ -73,7 +73,7 @@ public class EngineSessionDaoImpl extends BaseDao implements EngineSessionDao {
 
     @Override
     public long save(EngineSession session) {
-        return ((Integer) getCallsHandler()
+        return ((Number) getCallsHandler()
                 .executeModification("InsertEngineSession", getEngineSessionParameterSource(session))
                 .get("id")).longValue();
     }

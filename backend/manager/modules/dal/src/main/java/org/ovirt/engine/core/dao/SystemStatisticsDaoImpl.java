@@ -41,7 +41,7 @@ public class SystemStatisticsDaoImpl implements SystemStatisticsDao {
         MapSqlParameterSource parameterSource =
                 new CustomMapSqlParameterSource(dbEngineDialect)
                         .addValue("entity", entity)
-                        .addValue("status", status);
+                        .addValue("states", status);
 
         RowMapper<Integer> mapper = (rs, rowNum) -> rs.getInt("val");
 
