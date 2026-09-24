@@ -67,6 +67,13 @@ public class CreateSnapshotForVmParameters extends VmOperationParameterBase impl
 
     private boolean shouldFreezeOrThaw;
 
+    /**
+     * Set when a Freeze was attempted on the VM and a successful Thaw was not yet confirmed,
+     * regardless of whether the Freeze succeeded (a freeze that failed engine-side, e.g. on
+     * timeout, may still have frozen the guest).
+     */
+    private boolean vmNeedsThaw;
+
     private Guid bitmap;
 
 
@@ -240,6 +247,14 @@ public class CreateSnapshotForVmParameters extends VmOperationParameterBase impl
 
     public boolean getShouldFreezeOrThaw() {
         return shouldFreezeOrThaw;
+    }
+
+    public void setVmNeedsThaw(boolean vmNeedsThaw) {
+        this.vmNeedsThaw = vmNeedsThaw;
+    }
+
+    public boolean isVmNeedsThaw() {
+        return vmNeedsThaw;
     }
 
     public Guid getBitmap() {
