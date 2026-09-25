@@ -258,7 +258,7 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
         } else {
             storageType = StorageType.FCP;
         }
-        if (storageType == StorageType.ISCSI) {
+        if (storageType == StorageType.ISCSI || storageType == StorageType.NVMEOF) {
             ValidationResult connectionsInLunResult = diskValidator.validateConnectionsInLun(storageType);
             if (!connectionsInLunResult.isValid()) {
                 return connectionsInLunResult.getMessages();

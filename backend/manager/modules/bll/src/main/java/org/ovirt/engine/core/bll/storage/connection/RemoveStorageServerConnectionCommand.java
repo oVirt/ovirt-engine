@@ -64,7 +64,7 @@ public class RemoveStorageServerConnectionCommand<T extends StorageServerConnect
                 String domainNames = createDomainNamesListFromStorageDomains(domains);
                 return prepareFailureMessageForDomains(domainNames);
             }
-        } else if (storageType.equals(StorageType.ISCSI)) {
+        } else if (storageType.equals(StorageType.ISCSI) || storageType.equals(StorageType.NVMEOF)) {
             List<String> domainNames = new ArrayList<>();
             List<String> diskNames = new ArrayList<>();
             // go to luns to storage connections map table, get it from there
@@ -129,7 +129,7 @@ public class RemoveStorageServerConnectionCommand<T extends StorageServerConnect
         if (StringUtils.isEmpty(connectionFromParams.getConnection())) {
             connectionFromParams.setConnection(connectionFromDb.getConnection());
         }
-        if (connectionFromParams.getStorageType().equals(StorageType.ISCSI)) {
+        if (connectionFromParams.getStorageType().equals(StorageType.ISCSI) || connectionFromParams.getStorageType().equals(StorageType.NVMEOF)) {
             if (StringUtils.isEmpty(connectionFromParams.getIqn())) {
                 connectionFromParams.setIqn(connectionFromDb.getIqn());
             }
@@ -141,6 +141,24 @@ public class RemoveStorageServerConnectionCommand<T extends StorageServerConnect
             }
             if (StringUtils.isEmpty(connectionFromParams.getPort())) {
                 connectionFromParams.setPort(connectionFromDb.getPort());
+            }
+        }
+
+        if (connectionFromParams.getStorageType().equals(StorageType.NVMEOF)) {
+            if (StringUtils.isEmpty(connectionFromParams.getNqn())) {
+                connectionFromParams.setNqn(connectionFromDb.getNqn());
+            }
+            if (StringUtils.isEmpty(connectionFromParams.getTransport())) {
+                connectionFromParams.setTransport(connectionFromDb.getTransport());
+            }
+            if (StringUtils.isEmpty(connectionFromParams.getTrsvcid())) {
+                connectionFromParams.setTrsvcid(connectionFromDb.getTrsvcid());
+            }
+            if (StringUtils.isEmpty(connectionFromParams.getHostNqn())) {
+                connectionFromParams.setHostNqn(connectionFromDb.getHostNqn());
+            }
+            if (StringUtils.isEmpty(connectionFromParams.getDhchapKey())) {
+                connectionFromParams.setDhchapKey(connectionFromDb.getDhchapKey());
             }
         }
 

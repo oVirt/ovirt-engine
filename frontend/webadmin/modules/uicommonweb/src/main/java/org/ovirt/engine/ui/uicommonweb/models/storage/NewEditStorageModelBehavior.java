@@ -3,6 +3,7 @@ package org.ovirt.engine.ui.uicommonweb.models.storage;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
+import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
 
@@ -94,6 +95,12 @@ public class NewEditStorageModelBehavior extends StorageModelBehavior {
         if ((isExportDomain && canAttachExportDomain || isIsoDomain && canAttachIsoDomain ||
                 isManagedBlockDomain && canAttachManagedBlockDomain) && canAttachLocalStorage) {
             updateItemSelectability(item, true);
+            return;
+        }
+
+        if (item.getType() == StorageType.NVMEOF &&
+                !AsyncDataProvider.getInstance().isNvmeOfSupported(dataCenter.getCompatibilityVersion())) {
+            updateItemSelectability(item, false);
             return;
         }
 

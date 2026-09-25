@@ -112,7 +112,30 @@ public class StorageDomainMapper {
                         if (storage.isSetVfsType()) {
                             entity.setVfsType(storage.getVfsType());
                         }
-
+                        break;
+                    case NVMEOF:
+                        if (storage.isSetAddress()) {
+                            entity.setConnection(storage.getAddress());
+                        }
+                        if (storage.isSetPort()) {
+                            entity.setPort(storage.getPort().toString());
+                        }
+                        if (storage.isSetNqn()) {
+                            entity.setNqn(storage.getNqn());
+                        }
+                        if (storage.isSetTransport()) {
+                            entity.setTransport(storage.getTransport());
+                        }
+                        if (storage.isSetTrsvcid()) {
+                            entity.setTrsvcid(storage.getTrsvcid());
+                        }
+                        if (storage.isSetHostNqn()) {
+                            entity.setHostNqn(storage.getHostNqn());
+                        }
+                        if (storage.isSetDhchapKey()) {
+                            entity.setDhchapKey(storage.getDhchapKey());
+                        }
+                        break;
                     default:
                         break;
                 }
@@ -142,7 +165,8 @@ public class StorageDomainMapper {
         model.setStorage(new HostStorage());
         model.getStorage().setType(map(entity.getStorageType(), null));
         if (entity.getStorageType() == org.ovirt.engine.core.common.businessentities.storage.StorageType.ISCSI ||
-                entity.getStorageType() == org.ovirt.engine.core.common.businessentities.storage.StorageType.FCP) {
+                entity.getStorageType() == org.ovirt.engine.core.common.businessentities.storage.StorageType.FCP ||
+                entity.getStorageType() == org.ovirt.engine.core.common.businessentities.storage.StorageType.NVMEOF) {
             model.getStorage().setVolumeGroup(new VolumeGroup());
             model.getStorage().getVolumeGroup().setId(entity.getStorage());
         }
@@ -249,20 +273,43 @@ public class StorageDomainMapper {
                     }
                     break;
                 case POSIXFS:
-                case GLUSTERFS:
-                    if (model.isSetAddress() && model.isSetPath()) {
-                        entity.setConnection(model.getAddress() + ":" + model.getPath());
-                    } else if (model.isSetPath()) {
-                        entity.setConnection(model.getPath());
-                    }
-                    if (model.isSetMountOptions()) {
-                        entity.setMountOptions(model.getMountOptions());
-                    }
-                    if (model.isSetVfsType()) {
-                        entity.setVfsType(model.getVfsType());
-                    }
-                    break;
-                default:
+                    case GLUSTERFS:
+                        if (model.isSetAddress() && model.isSetPath()) {
+                            entity.setConnection(model.getAddress() + ":" + model.getPath());
+                        } else if (model.isSetPath()) {
+                            entity.setConnection(model.getPath());
+                        }
+                        if (model.isSetMountOptions()) {
+                            entity.setMountOptions(model.getMountOptions());
+                        }
+                        if (model.isSetVfsType()) {
+                            entity.setVfsType(model.getVfsType());
+                        }
+                        break;
+                    case NVMEOF:
+                        if (model.isSetAddress()) {
+                            entity.setConnection(model.getAddress());
+                        }
+                        if (model.isSetPort()) {
+                            entity.setPort(model.getPort().toString());
+                        }
+                        if (model.isSetNqn()) {
+                            entity.setNqn(model.getNqn());
+                        }
+                        if (model.isSetTransport()) {
+                            entity.setTransport(model.getTransport());
+                        }
+                        if (model.isSetTrsvcid()) {
+                            entity.setTrsvcid(model.getTrsvcid());
+                        }
+                        if (model.isSetHostNqn()) {
+                            entity.setHostNqn(model.getHostNqn());
+                        }
+                        if (model.isSetDhchapKey()) {
+                            entity.setDhchapKey(model.getDhchapKey());
+                        }
+                        break;
+                    default:
                     break;
             }
         }
@@ -301,6 +348,13 @@ public class StorageDomainMapper {
                 || entity.getStorageType().equals(org.ovirt.engine.core.common.businessentities.storage.StorageType.GLUSTERFS)) {
             model.setMountOptions(entity.getMountOptions());
             model.setVfsType(entity.getVfsType());
+        } else if (entity.getStorageType().equals(org.ovirt.engine.core.common.businessentities.storage.StorageType.NVMEOF)) {
+            model.setAddress(entity.getConnection());
+            model.setPort(Integer.parseInt(entity.getPort()));
+            model.setNqn(entity.getNqn());
+            model.setTransport(entity.getTransport());
+            model.setTrsvcid(entity.getTrsvcid());
+            model.setHostNqn(entity.getHostNqn());
         }
         return model;
     }
@@ -341,6 +395,8 @@ public class StorageDomainMapper {
                 return org.ovirt.engine.core.common.businessentities.storage.StorageType.CINDER;
             case MANAGED_BLOCK_STORAGE:
                 return org.ovirt.engine.core.common.businessentities.storage.StorageType.MANAGED_BLOCK_STORAGE;
+            case NVMEOF:
+                return org.ovirt.engine.core.common.businessentities.storage.StorageType.NVMEOF;
             default:
                 return null;
         }
@@ -367,6 +423,8 @@ public class StorageDomainMapper {
                 return StorageType.CINDER;
             case MANAGED_BLOCK_STORAGE:
                 return StorageType.MANAGED_BLOCK_STORAGE;
+            case NVMEOF:
+                return StorageType.NVMEOF;
             default:
                 return null;
         }

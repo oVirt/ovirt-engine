@@ -265,6 +265,7 @@ public class VDS implements Queryable, BusinessEntityWithStatus<Guid, VDSStatus>
         vds.setBootUuid(getBootUuid());
         vds.setCdChangePdiv(isCdChangePdiv());
         vds.setOvnConfigured(isOvnConfigured());
+        vds.setNvmeHostNqn(getNvmeHostNqn());
         return vds;
     }
 
@@ -1111,6 +1112,14 @@ public class VDS implements Queryable, BusinessEntityWithStatus<Guid, VDSStatus>
 
     public String getIScsiInitiatorName() {
         return vdsDynamic.getIScsiInitiatorName();
+    }
+
+    public void setNvmeHostNqn(String value) {
+        vdsDynamic.setNvmeHostNqn(value);
+    }
+
+    public String getNvmeHostNqn() {
+        return vdsDynamic.getNvmeHostNqn();
     }
 
     public Map<String, List<Map<String, String>>> getHBAs() {

@@ -11,6 +11,7 @@ import org.ovirt.engine.api.model.LogicalUnits;
 import org.ovirt.engine.api.model.LunStatus;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.businessentities.storage.LUNs;
+import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.utils.SizeConverter;
 
 public class StorageLogicalUnitMapper {
@@ -56,6 +57,9 @@ public class StorageLogicalUnitMapper {
             model.setAddress(lunConnection.getConnection());
             model.setPort(Integer.valueOf(lunConnection.getPort()));
             model.setTarget(lunConnection.getIqn());
+            if (lunConnection.getStorageType() == StorageType.NVMEOF) {
+                model.setNqn(lunConnection.getNqn());
+            }
         }
 
         model.setActivePaths(entity.getActivePathCount());
@@ -70,6 +74,9 @@ public class StorageLogicalUnitMapper {
         model.setTarget(entity.getIqn());
         model.setPort(Integer.parseInt(entity.getPort()));
         model.setUsername(entity.getUserName());
+        if (entity.getStorageType() == StorageType.NVMEOF) {
+            model.setNqn(entity.getNqn());
+        }
         if (entity.getConnection() != null && entity.getPort() != null && entity.getPortal() != null) {
             model.setPortal(entity.getConnection() + ":" + entity.getPort() + "," + entity.getPortal());
         }
@@ -125,6 +132,9 @@ public class StorageLogicalUnitMapper {
         }
         if (logicalUnit.isSetPassword()) {
             entity.setPassword(logicalUnit.getPassword());
+        }
+        if (logicalUnit.isSetNqn()) {
+            entity.setNqn(logicalUnit.getNqn());
         }
 
         return entity;

@@ -977,6 +977,7 @@ public class VdsBrokerObjectsBuilder {
 
         vds.setSupportedEngines(assignStringValueFromArray(struct, VdsProperties.supported_engines));
         vds.setIScsiInitiatorName(assignStringValue(struct, VdsProperties.iSCSIInitiatorName));
+        vds.setNvmeHostNqn(assignStringValue(struct, VdsProperties.nvmeHostNqn));
 
         vds.setSupportedEmulatedMachines(assignStringValueFromArray(struct, VdsProperties.emulatedMachines));
 

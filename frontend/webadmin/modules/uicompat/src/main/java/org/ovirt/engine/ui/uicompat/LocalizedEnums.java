@@ -1391,6 +1391,8 @@ public interface LocalizedEnums extends ConstantsWithLookup {
 
     String StorageType___CINDER();
 
+    String StorageType___NVMEOF();
+
     String StorageType___UNKNOWN();
 
     String NfsVersion___V3();
