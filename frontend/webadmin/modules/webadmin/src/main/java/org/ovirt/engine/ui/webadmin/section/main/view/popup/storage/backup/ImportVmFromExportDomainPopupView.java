@@ -585,7 +585,9 @@ public class ImportVmFromExportDomainPopupView extends AbstractModelBoundPopupVi
         };
 
         storageDomainsColumn.setFieldUpdater((index, disk, value) -> {
-            String storageDomainName = value.substring(0, value.lastIndexOf(" (")); //$NON-NLS-1$
+            int freeSpaceParen = value.lastIndexOf(" ("); //$NON-NLS-1$
+            String storageDomainName =
+                    freeSpaceParen >= 0 ? value.substring(0, freeSpaceParen) : value;
             importModel.getDiskImportData(disk.getId()).setSelectedStorageDomainString(storageDomainName);
             diskTable.asEditor().edit(importModel.getImportDiskListModel());
         });
