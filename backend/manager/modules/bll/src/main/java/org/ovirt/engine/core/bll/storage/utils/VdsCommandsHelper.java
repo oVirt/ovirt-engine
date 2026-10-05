@@ -151,12 +151,21 @@ public class VdsCommandsHelper {
     }
 
     public Guid getHostForExecution(Guid poolId, Predicate<VDS> predicate) {
-        List<Guid> hostsForExecution = vdsDao
-                .getAllForStoragePoolAndStatus(poolId, VDSStatus.Up).stream()
+        List<VDS> allHosts = vdsDao.getAllForStoragePoolAndStatus(poolId, VDSStatus.Up);
+        log.debug("getHostForExecution: Found {} hosts from database for poolId: {}", allHosts.size(), poolId);
+        if (allHosts.isEmpty()) {
+            log.warn("getHostForExecution: No hosts found in database for storage pool: {}", poolId);
+            return null;
+        }
+
+        List<Guid> hostsForExecution = allHosts.stream()
                 .filter(predicate)
                 .map(VDS::getId)
                 .collect(Collectors.toList());
+        log.debug("getHostForExecution found {} hosts after filtering", hostsForExecution.size());
         if (hostsForExecution.isEmpty()) {
+            log.warn("getHostForExecution: No hosts passed the predicate filter for storage pool: {}. " +
+                    "All {} hosts were filtered out.", poolId, allHosts.size());
             return null;
         }
 

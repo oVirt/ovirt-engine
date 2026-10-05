@@ -604,6 +604,9 @@ public interface IVdsServer {
 
     StatusOnlyReturn detachManagedBlockStorageVolume(Guid volumeId, Guid sdUUID);
 
+    StatusOnlyReturn convertManagedBlockVolume(Guid sdId, Guid srcVolId, Guid dstVolId,
+            String srcFormat, String dstFormat);
+
     VDSInfoReturn getLeaseStatus(String leaseUUID, String sdUUID);
 
     StatusOnlyReturn fenceLeaseJob(String leaseUUID, String sdUUID, Map<String, Object> leaseMetadata);

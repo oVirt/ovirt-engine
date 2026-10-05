@@ -1091,6 +1091,11 @@ public class NullVdsServer implements IVdsServer {
         return null;
     }
 
+    @Override public StatusOnlyReturn convertManagedBlockVolume(Guid sdId, Guid srcVolId, Guid dstVolId,
+            String srcFormat, String dstFormat) {
+        return null;
+    }
+
     @Override public VDSInfoReturn getLeaseStatus(String leaseUUID, String sdUUID) {
         return null;
     }
