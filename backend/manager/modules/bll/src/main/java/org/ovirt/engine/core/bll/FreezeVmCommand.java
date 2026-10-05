@@ -1,5 +1,7 @@
 package org.ovirt.engine.core.bll;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.VmOperationParameterBase;
@@ -10,9 +12,13 @@ import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.common.vdscommands.VdsAndVmIDVDSParametersBase;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 
 @NonTransactiveCommandAttribute(forceCompensation = true)
 public class FreezeVmCommand<T extends VmOperationParameterBase> extends VmOperationCommandBase<T> {
+
+    @Inject
+    private AuditLogDirector auditLogDirector;
 
     public FreezeVmCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
@@ -31,6 +37,7 @@ public class FreezeVmCommand<T extends VmOperationParameterBase> extends VmOpera
 
     @Override
     protected void perform() {
+        auditLogDirector.log(this, AuditLogType.FREEZE_VM_INITIATED);
         VDSReturnValue returnValue = runVdsCommand(VDSCommandType.Freeze,
                 new VdsAndVmIDVDSParametersBase(getVdsId(), getVmId()));
         setActionReturnValue(returnValue.getReturnValue());

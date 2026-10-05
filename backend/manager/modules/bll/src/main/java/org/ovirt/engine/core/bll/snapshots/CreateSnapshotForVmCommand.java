@@ -55,6 +55,7 @@ import org.ovirt.engine.core.common.action.CreateSnapshotForVmParameters;
 import org.ovirt.engine.core.common.action.ImagesActionsParametersBase;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.RemoveMemoryVolumesParameters;
+import org.ovirt.engine.core.common.action.VmOperationParameterBase;
 import org.ovirt.engine.core.common.asynctasks.EntityInfo;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
@@ -73,9 +74,6 @@ import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.scheduling.VmOverheadCalculator;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
-import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
-import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
-import org.ovirt.engine.core.common.vdscommands.VdsAndVmIDVDSParametersBase;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
@@ -181,6 +179,13 @@ public class CreateSnapshotForVmCommand<T extends CreateSnapshotForVmParameters>
                     snapshotDao.removeMemoryFromSnapshot(createdSnapshot.getId());
                     removeMemoryVolumesOfSnapshot(createdSnapshot);
                 }
+            }
+
+            // When the live snapshot child was not launched (e.g. only MBS/Cinder disks, or the
+            // disk snapshots failed) no other command will thaw the VM, so thaw it here rather
+            // than waiting for the end-action phase.
+            if (getParameters().isVmNeedsThaw() && !getParameters().isLiveSnapshotSucceeded() && thawVm()) {
+                getParameters().setVmNeedsThaw(false);
             }
 
             getParameters().setCreateSnapshotStage(CreateSnapshotForVmParameters.CreateSnapshotStage.CREATE_SNAPSHOT_COMPLETED);
@@ -380,7 +385,7 @@ public class CreateSnapshotForVmCommand<T extends CreateSnapshotForVmParameters>
                 && (getVm().isRunning() || getVm().getStatus() == VMStatus.Paused) && getVm().getRunOnVds() != null;
     }
 
-    private boolean performLiveSnapshot(final Snapshot snapshot) {
+    boolean performLiveSnapshot(final Snapshot snapshot) {
         ActionReturnValue actionReturnValue = runInternalAction(ActionType.CreateLiveSnapshotForVm,
                 createLiveSnapshotParameters(snapshot),
                 ExecutionHandler.createDefaultContextForTasks(getContext()));
@@ -434,6 +439,7 @@ public class CreateSnapshotForVmCommand<T extends CreateSnapshotForVmParameters>
 
     @Override
     protected void endVmCommand() {
+        thawVmIfNeeded();
         if (getParameters().getTaskGroupSuccess()) {
             snapshotDao.updateStatus(getParameters().getCreatedSnapshotId(), Snapshot.SnapshotStatus.OK);
         } else {
@@ -547,7 +553,7 @@ public class CreateSnapshotForVmCommand<T extends CreateSnapshotForVmParameters>
         auditLogDirector.log(this, AuditLogType.SNAPSHOT_MAY_BE_INCONSISTENT);
     }
 
-    private boolean shouldPerformLiveSnapshot(Snapshot snapshot) {
+    boolean shouldPerformLiveSnapshot(Snapshot snapshot) {
         return isLiveSnapshotApplicable && snapshot != null &&
                 (snapshotWithMemory(snapshot) || hasDisksForLiveSnapshot());
     }
@@ -615,34 +621,63 @@ public class CreateSnapshotForVmCommand<T extends CreateSnapshotForVmParameters>
     /**
      * Freezing the VM is needed for live snapshot with Cinder disks or when forced selected.
      */
-    private void freezeVm() {
+    void freezeVm() {
         if (!shouldFreezeOrThaw) {
             return;
         }
 
-        VDSReturnValue returnValue = null;
-        boolean allowInconsistent = Config.<Boolean>getValue(ConfigValues.LiveSnapshotAllowInconsistent);
-        try {
-            auditLogDirector.log(this, AuditLogType.FREEZE_VM_INITIATED);
-            returnValue = runVdsCommand(VDSCommandType.Freeze, new VdsAndVmIDVDSParametersBase(
-                    getVds().getId(), getVmId()));
-        } catch (EngineException e) {
-            if (allowInconsistent) {
-                handleInconsistent();
-            } else {
-                handleFreezeVmFailure(e);
-            }
-            return;
-        }
-        if (returnValue != null && returnValue.getSucceeded()) {
-            auditLogDirector.log(this, AuditLogType.FREEZE_VM_SUCCESS);
-        } else {
-            if (allowInconsistent) {
+        // Record that a thaw is owed before attempting the freeze: a freeze that fails
+        // engine-side (e.g. on timeout) may still have frozen the guest.
+        getParameters().setVmNeedsThaw(true);
+        persistCommandIfNeeded();
+
+        ActionReturnValue returnValue = runInternalAction(ActionType.FreezeVm,
+                new VmOperationParameterBase(getVmId()),
+                cloneContextAndDetachFromParent());
+        if (returnValue == null || !returnValue.getSucceeded()) {
+            if (Config.<Boolean>getValue(ConfigValues.LiveSnapshotAllowInconsistent)) {
                 handleInconsistent();
             } else {
                 handleFreezeVmFailure(new EngineException(EngineError.freezeErr));
             }
         }
+    }
+
+    /**
+     * Guarantees the VM does not stay frozen on flows where {@link CreateLiveSnapshotForVmCommand}
+     * (which thaws the VM at its end) is not executed: VMs with only MBS/Cinder disks, failure to
+     * create the disk snapshots, failure to launch the live snapshot, or a freeze failure that
+     * aborted the command.
+     */
+    void thawVmIfNeeded() {
+        if (!getParameters().isVmNeedsThaw()
+                || getParameters().isLiveSnapshotRequired() && getParameters().isLiveSnapshotSucceeded()) {
+            return;
+        }
+        if (!thawVm() && !Config.<Boolean>getValue(ConfigValues.LiveSnapshotAllowInconsistent)) {
+            // When inconsistency is tolerated a failed thaw is expected whenever the freeze
+            // failed (e.g. no guest agent), so avoid the warning audit in that case
+            addCustomValue("SnapshotName", getSnapshotName());
+            addCustomValue("VmName", getVmName());
+            auditLogDirector.log(this, AuditLogType.FAILED_TO_THAW_VM);
+        }
+        getParameters().setVmNeedsThaw(false);
+    }
+
+    /**
+     * Thaws the VM on the host it currently runs on. Never throws.
+     *
+     * @return true if and only if the thaw succeeded.
+     */
+    private boolean thawVm() {
+        if (getVm() == null || getVm().getRunOnVds() == null) {
+            log.info("VM '{}' is not running on any host, skipping thaw", getVmId());
+            return false;
+        }
+        ActionReturnValue returnValue = runInternalAction(ActionType.ThawVm,
+                new VmOperationParameterBase(getVmId()),
+                cloneContextAndDetachFromParent());
+        return returnValue != null && returnValue.getSucceeded();
     }
 
     private void handleFreezeVmFailure(EngineException e) {

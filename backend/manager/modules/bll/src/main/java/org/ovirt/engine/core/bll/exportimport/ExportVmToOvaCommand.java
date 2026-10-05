@@ -32,7 +32,9 @@ import org.ovirt.engine.core.common.businessentities.Nameable;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
+import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
+import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
 import org.ovirt.engine.core.common.constants.StorageConstants;
 import org.ovirt.engine.core.common.errors.EngineException;
 import org.ovirt.engine.core.common.errors.EngineMessage;
@@ -235,6 +237,9 @@ public class ExportVmToOvaCommand<T extends ExportVmToOvaParameters> extends Exp
                     diskVmElementDao.get(new VmDeviceId(disk.getId(), getParameters().getEntityId())))));
             for (DiskImage disk : cachedDisks) {
                 disk.getImage().setVolumeFormat(VolumeFormat.COW);
+                if (DiskStorageType.MANAGED_BLOCK_STORAGE.equals(disk.getDiskStorageType())) {
+                    disk.getImage().setVolumeType(VolumeType.Sparse);
+                }
             }
         }
         return cachedDisks;
