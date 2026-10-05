@@ -22,6 +22,7 @@ import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.common.action.CloneVmParameters;
+import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.BiosType;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -106,6 +107,7 @@ public class CloneVMCommandTest extends BaseCommandTest {
         when(vmDao.get(any())).thenReturn(vm);
         Cluster cluster = new Cluster();
         cluster.setCompatibilityVersion(Version.v4_4);
+        cluster.setArchitecture(ArchitectureType.x86);
         when(clusterDao.get(any())).thenReturn(cluster);
         VmTemplate vmTemplate = new VmTemplate();
         when(vmTemplateDao.get(any())).thenReturn(vmTemplate);

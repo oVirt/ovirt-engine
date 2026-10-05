@@ -35,6 +35,7 @@ public class KernelCmdlineUtil {
             case IBM:
                 return "rdblacklist=nouveau "; //$NON-NLS-1$
             case IBMS390:
+            case ARM:
                 return "";
             default:
                 throw new RuntimeException("Unknown CpuType: " + cpuVendor); //$NON-NLS-1$
@@ -52,6 +53,7 @@ public class KernelCmdlineUtil {
                 return "intel_iommu=on "; //$NON-NLS-1$
             case IBM:
             case IBMS390:
+            case ARM:
                 return "";
             default:
                 throw new RuntimeException("Unknown CpuType: " + cpuVendor); //$NON-NLS-1$
@@ -70,7 +72,8 @@ public class KernelCmdlineUtil {
             case IBM:
                 return "";
             case IBMS390:
-                return "kvm.nested=1 "; //$NON-NLS-1$
+            case ARM:
+		return "kvm.nested=1 "; //$NON-NLS-1$
             default:
                 throw new RuntimeException("Unknown CpuType: " + cpuVendor); //$NON-NLS-1$
         }
