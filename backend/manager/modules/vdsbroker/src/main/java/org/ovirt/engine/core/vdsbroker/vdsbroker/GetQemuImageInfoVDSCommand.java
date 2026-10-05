@@ -61,6 +61,10 @@ public class GetQemuImageInfoVDSCommand<P extends GetVolumeInfoVDSCommandParamet
             if (struct.containsKey("clustersize")) {
                 qemuImageInfo.setClusterSize(Long.parseLong(struct.get("clustersize").toString()));
             }
+            if (struct.containsKey("bitmaps") && struct.get("bitmaps") != null) {
+                Object[] bitmaps = (Object[]) struct.get("bitmaps");
+                qemuImageInfo.setBitmaps(VdsBrokerObjectsBuilder.buildQcow2Bitmaps(bitmaps));
+            }
         } catch (RuntimeException ex) {
             log.error("Failed building Qemu image: {}", ex.getMessage());
             printReturnValue();

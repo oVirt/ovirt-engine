@@ -18,8 +18,16 @@ public class RedefineVmCheckpointsVDSCommand<P extends VmBackupVDSParameters> ex
 
     @Override
     protected void executeVdsBrokerCommand() {
+        if (!getParameters().isValidateCheckpoints()
+                && !getVds().isRedefineCheckpointValidate()) {
+            log.warn("Host '{}' does not support redefining VM checkpoints without validation, "
+                            + "redefining with validation instead",
+                    getParameters().getVdsId());
+        }
         vmCheckpointIds = getBroker().redefineVmCheckpoints(
-                getParameters().getVmBackup().getVmId().toString(), createCheckpointsMap());
+                getParameters().getVmBackup().getVmId().toString(),
+                createCheckpointsMap(),
+                getParameters().isValidateCheckpoints());
         proceedProxyReturnValue();
 
         setReturnValue(vmCheckpointIds);

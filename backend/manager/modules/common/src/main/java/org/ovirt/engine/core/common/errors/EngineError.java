@@ -368,6 +368,10 @@ public enum EngineError {
     // Hook Errors
     GeneralHookError(1500),
 
+    // Checkpoint errors
+    NoSuchCheckpointError(1611),
+    InconsistentCheckpointError(1612),
+
     NotImplementedException(2000),
     MiscFileReadException(2001),
     MiscFileWriteException(2002),
