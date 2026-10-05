@@ -96,6 +96,7 @@ public class VdsDynamicDaoImpl extends MassOperationsGenericDao<VdsDynamic, Guid
         entity.setNmstateVersion(new RpmVersion(rs.getString("nmstate_version")));
         entity.setKernelVersion(rs.getString("kernel_version"));
         entity.setIScsiInitiatorName(rs.getString("iscsi_initiator_name"));
+        entity.setNvmeHostNqn(rs.getString("nvme_host_nqn"));
         entity.setTransparentHugePagesState(VdsTransparentHugePagesState
                 .forValue(rs.getInt("transparent_hugepages_state")));
         entity.setHooksStr(rs.getString("hooks"));
@@ -306,6 +307,7 @@ public class VdsDynamicDaoImpl extends MassOperationsGenericDao<VdsDynamic, Guid
                 .addValue("nmstate_version", vds.getNmstateVersion().getRpmName())
                 .addValue("kernel_version", vds.getKernelVersion())
                 .addValue("iscsi_initiator_name", vds.getIScsiInitiatorName())
+                .addValue("nvme_host_nqn", vds.getNvmeHostNqn())
                 .addValue("transparent_hugepages_state",
                         vds.getTransparentHugePagesState().getValue())
                 .addValue("hooks", vds.getHooksStr())

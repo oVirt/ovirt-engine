@@ -133,6 +133,17 @@ public interface StorageServerConnectionDao extends GenericDao<StorageServerConn
             String connection, String port, String iqn);
 
     /**
+     * Retrieves all connections for the specified address, port and nqn
+     *
+     * @param connection the address of the connection
+     * @param port the port of the connection
+     * @param nqn the NQN (NVMe Qualified Name) of the connection
+     * @return the list of connections
+     */
+    List<StorageServerConnections> getStorageConnectionsByConnectionPortAndNqn(
+            String connection, String port, String nqn);
+
+    /**
      * Retrieves all connections used by the specified storage domain
      * @return the list of connections
      */

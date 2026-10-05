@@ -66,6 +66,58 @@ public class StorageGeneralModel extends EntityModel<StorageDomain> {
         }
     }
 
+    private boolean isNvmeof;
+
+    public boolean getIsNvmeof() {
+        return isNvmeof;
+    }
+
+    public void setIsNvmeof(boolean value) {
+        if (isNvmeof != value) {
+            isNvmeof = value;
+            onPropertyChanged(new PropertyChangedEventArgs("isNvmeof")); //$NON-NLS-1$
+        }
+    }
+
+    private String nqn;
+
+    public String getNqn() {
+        return nqn;
+    }
+
+    public void setNqn(String value) {
+        if (!Objects.equals(nqn, value)) {
+            nqn = value;
+            onPropertyChanged(new PropertyChangedEventArgs("Nqn")); //$NON-NLS-1$
+        }
+    }
+
+    private String transport;
+
+    public String getTransport() {
+        return transport;
+    }
+
+    public void setTransport(String value) {
+        if (!Objects.equals(transport, value)) {
+            transport = value;
+            onPropertyChanged(new PropertyChangedEventArgs("Transport")); //$NON-NLS-1$
+        }
+    }
+
+    private String hostNqn;
+
+    public String getHostNqn() {
+        return hostNqn;
+    }
+
+    public void setHostNqn(String value) {
+        if (!Objects.equals(hostNqn, value)) {
+            hostNqn = value;
+            onPropertyChanged(new PropertyChangedEventArgs("HostNqn")); //$NON-NLS-1$
+        }
+    }
+
     private String path;
 
     public String getPath() {
@@ -174,13 +226,14 @@ public class StorageGeneralModel extends EntityModel<StorageDomain> {
             setIsLocalS(storageDomain.getStorageType() == StorageType.LOCALFS);
             setIsPosix(storageDomain.getStorageType() == StorageType.POSIXFS);
             setIsGlusterfs(storageDomain.getStorageType() == StorageType.GLUSTERFS);
+            setIsNvmeof(storageDomain.getStorageType() == StorageType.NVMEOF);
 
             if (getEntity().getStorageDomainType().isDataDomain()) {
                 AsyncDataProvider.getInstance().getNumberOfImagesOnStorageDomain(
                         new AsyncQuery<>(num -> setNumOfImages(num.toString())), storageDomain.getId());
             }
 
-            if (getIsNfs() || getIsLocalS() || getIsPosix() || getIsGlusterfs()) {
+            if (getIsNfs() || getIsLocalS() || getIsPosix() || getIsGlusterfs() || getIsNvmeof()) {
                 AsyncDataProvider.getInstance().getStorageConnectionById(new AsyncQuery<>(connection -> {
                     if (connection != null) {
                         setPath(connection.getConnection());
@@ -194,6 +247,11 @@ public class StorageGeneralModel extends EntityModel<StorageDomain> {
                         if (isPosix || isGlusterfs) {
                             setVfsType(connection.getVfsType());
                             setMountOptions(connection.getMountOptions());
+                        }
+                        if (isNvmeof) {
+                            setNqn(connection.getNqn());
+                            setTransport(connection.getTransport());
+                            setHostNqn(connection.getHostNqn());
                         }
                     } else {
                         setPath(null);

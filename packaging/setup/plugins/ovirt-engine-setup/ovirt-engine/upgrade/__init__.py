@@ -9,13 +9,13 @@
 
 """ovirt-host-setup upgrade validations plugin."""
 
-
 from otopi import util
 
 from . import answerfile_fixup
 from . import asynctasks
 from . import auth_url_validation
 from . import dbvalidations
+from . import nvmeof_info
 
 
 @util.export
@@ -24,6 +24,7 @@ def createPlugins(context):
     asynctasks.Plugin(context=context)
     answerfile_fixup.Plugin(context=context)
     auth_url_validation.Plugin(context=context)
+    nvmeof_info.Plugin(context=context)
 
 
 # vim: expandtab tabstop=4 shiftwidth=4

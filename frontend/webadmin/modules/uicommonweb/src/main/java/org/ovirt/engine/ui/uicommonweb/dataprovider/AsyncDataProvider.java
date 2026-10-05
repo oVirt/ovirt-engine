@@ -203,6 +203,7 @@ import org.ovirt.engine.ui.uicommonweb.models.storage.IscsiStorageModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.LocalStorageModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.ManagedBlockStorageModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.NfsStorageModel;
+import org.ovirt.engine.ui.uicommonweb.models.storage.NvmeOfStorageModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.PosixStorageModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.NetworkFilterParameterModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
@@ -2831,6 +2832,9 @@ public class AsyncDataProvider {
         FcpStorageModel fcpDataModel = new FcpStorageModel();
         models.add(fcpDataModel);
 
+        NvmeOfStorageModel nvmeofDataModel = new NvmeOfStorageModel();
+        models.add(nvmeofDataModel);
+
         addTypeToStorageModels(StorageDomainType.Data, models);
 
         return models;
@@ -3174,6 +3178,11 @@ public class AsyncDataProvider {
     public boolean isManagedBlockDomainSupported(Version dataCenterVersion) {
         return (Boolean) getConfigValuePreConverted(
                 ConfigValues.ManagedBlockDomainSupported, dataCenterVersion.getValue());
+    }
+
+    public boolean isNvmeOfSupported(Version dataCenterVersion) {
+        return (Boolean) getConfigValuePreConverted(
+                ConfigValues.NVMeOfSupported, dataCenterVersion.getValue());
     }
 
     public Boolean isCopyPreallocatedFileBasedDiskSupported(Version dataCenterVersion) {

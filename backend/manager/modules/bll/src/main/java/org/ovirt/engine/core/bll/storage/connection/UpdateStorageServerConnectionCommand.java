@@ -79,7 +79,7 @@ public class UpdateStorageServerConnectionCommand<T extends StorageServerConnect
     protected boolean validate() {
         StorageServerConnections newConnectionDetails = getConnection();
         StorageType storageType = newConnectionDetails.getStorageType();
-        if (!storageType.isFileDomain() && !storageType.equals(StorageType.ISCSI)) {
+        if (!storageType.isFileDomain() && !storageType.equals(StorageType.ISCSI) && !storageType.equals(StorageType.NVMEOF)) {
             return failValidation(EngineMessage.ACTION_TYPE_FAILED_STORAGE_CONNECTION_UNSUPPORTED_ACTION_FOR_STORAGE_TYPE);
         }
 
@@ -357,8 +357,16 @@ public class UpdateStorageServerConnectionCommand<T extends StorageServerConnect
                     LockMessagesMatchUtil.makeLockingPair(LockingGroup.STORAGE_CONNECTION,
                             EngineMessage.ACTION_TYPE_FAILED_OBJECT_LOCKED));
         } else {
-          // for block domains, locking the target details
-            locks.put(getConnection().getConnection() + ";" + getConnection().getIqn() + ";" + getConnection().getPort() + ";" + getConnection().getUserName(),
+            // for block domains, locking the target details
+            String targetKey;
+            if (getConnection().getStorageType().equals(StorageType.NVMEOF)) {
+                targetKey = getConnection().getConnection() + ";" + getConnection().getNqn()
+                        + ";" + getConnection().getTrsvcid();
+            } else {
+                targetKey = getConnection().getConnection() + ";" + getConnection().getIqn()
+                        + ";" + getConnection().getPort() + ";" + getConnection().getUserName();
+            }
+            locks.put(targetKey,
                 LockMessagesMatchUtil.makeLockingPair(LockingGroup.STORAGE_CONNECTION,
                     EngineMessage.ACTION_TYPE_FAILED_OBJECT_LOCKED));
 

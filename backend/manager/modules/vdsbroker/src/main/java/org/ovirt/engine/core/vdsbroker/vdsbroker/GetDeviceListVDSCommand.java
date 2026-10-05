@@ -24,6 +24,7 @@ import org.ovirt.engine.core.vdsbroker.irsbroker.IrsBrokerCommand;
 public class GetDeviceListVDSCommand<P extends GetDeviceListVDSCommandParameters> extends VdsBrokerCommand<P> {
 
     protected static final String DEVTYPE_VALUE_FCP = "fcp";
+    protected static final String DEVTYPE_VALUE_NVMEOF = "nvmeof";
     protected static final String DEVTYPE_FIELD = "devtype";
     protected static final String STATUS = "status";
 
@@ -177,6 +178,8 @@ public class GetDeviceListVDSCommand<P extends GetDeviceListVDSCommandParameters
             String devtype = xlun.get(DEVTYPE_FIELD).toString();
             if (DEVTYPE_VALUE_FCP.equalsIgnoreCase(devtype)) {
                 lun.setLunType(StorageType.FCP);
+            } else if (DEVTYPE_VALUE_NVMEOF.equalsIgnoreCase(devtype)) {
+                lun.setLunType(StorageType.NVMEOF);
             } else {
                 lun.setLunType(StorageType.ISCSI);
             }
@@ -207,6 +210,21 @@ public class GetDeviceListVDSCommand<P extends GetDeviceListVDSCommandParameters
         }
         if (xcon.containsKey("password")) {
             con.setPassword(xcon.get("password").toString());
+        }
+        if (xcon.containsKey("nqn")) {
+            con.setNqn(xcon.get("nqn").toString());
+        }
+        if (xcon.containsKey("transport")) {
+            con.setTransport(xcon.get("transport").toString());
+        }
+        if (xcon.containsKey("trsvcid")) {
+            con.setTrsvcid(xcon.get("trsvcid").toString());
+        }
+        if (xcon.containsKey("host_nqn")) {
+            con.setHostNqn(xcon.get("host_nqn").toString());
+        }
+        if (xcon.containsKey("dhchap_key")) {
+            con.setDhchapKey(xcon.get("dhchap_key").toString());
         }
         return con;
     }

@@ -30,6 +30,11 @@ public class GetDeviceListVDSCommandTest {
         testParseLunForDevtypeField(StorageType.FCP, GetDeviceListVDSCommand.DEVTYPE_VALUE_FCP);
     }
 
+    @Test
+    public void parseLunReturnsNvmeofForNvmeof() {
+        testParseLunForDevtypeField(StorageType.NVMEOF, GetDeviceListVDSCommand.DEVTYPE_VALUE_NVMEOF);
+    }
+
     /**
      * Test that parseLun parses the {@link GetDeviceListVDSCommand#DEVTYPE_FIELD} correctly.
      *

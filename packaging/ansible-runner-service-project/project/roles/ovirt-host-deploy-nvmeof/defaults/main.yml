@@ -1,0 +1,4 @@
+---
+nvmeof_setup_ensure_modules_loaded: true
+nvmeof_setup_ensure_hostnqn: true
+nvmeof_setup_ensure_autoconnect: true

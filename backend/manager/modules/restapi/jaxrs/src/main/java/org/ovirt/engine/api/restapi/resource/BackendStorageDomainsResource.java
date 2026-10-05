@@ -230,10 +230,12 @@ public class BackendStorageDomainsResource
             // to the target.
             if (storageType == StorageType.ISCSI && !isConnectionAssumed(unit)) {
                 connectStorageToHost(hostId, storageType, unit);
+            } else if (storageType == StorageType.NVMEOF && !isConnectionAssumed(unit)) {
+                connectNVMeStorageToHost(hostId, unit);
             }
             lunIds.add(unit.getId());
         }
-        refreshHostStorage(hostId);
+        refreshHostStorage(hostId, storageType);
         return !lunIds.isEmpty() ? lunIds : null;
     }
 
@@ -250,9 +252,9 @@ public class BackendStorageDomainsResource
      * This is a work-around for a VDSM bug. The call to GetDeviceList causes a necessary refresh in the VDSM, without
      * which the creation will fail.
      */
-    private void refreshHostStorage(Guid hostId) {
+    private void refreshHostStorage(Guid hostId, StorageType storageType) {
         getBackendCollection(QueryType.GetDeviceList, new GetDeviceListQueryParameters(hostId,
-                StorageType.ISCSI,
+                storageType,
                 false, null, false));
     }
 
@@ -263,6 +265,16 @@ public class BackendStorageDomainsResource
                         unit.getTarget(),
                         unit.getUsername(),
                         unit.getPassword(),
+                        unit.getPort());
+        performAction(ActionType.ConnectStorageToVds,
+                new StorageServerConnectionParametersBase(cnx, hostId, false));
+    }
+
+    private void connectNVMeStorageToHost(Guid hostId, LogicalUnit unit) {
+        StorageServerConnections cnx =
+                StorageDomainHelper.getNvmeConnection(
+                        unit.getAddress(),
+                        unit.getNqn(),
                         unit.getPort());
         performAction(ActionType.ConnectStorageToVds,
                 new StorageServerConnectionParametersBase(cnx, hostId, false));
@@ -293,6 +305,7 @@ public class BackendStorageDomainsResource
         switch (entity.getStorageType()) {
             case ISCSI:
             case FCP:
+            case NVMEOF:
                 if (storageDomain.isSetImport() && storageDomain.isImport()) {
                     validateParameters(storageDomain, "id");
                     resp = addExistingSAN(storageDomain, entity.getStorageType(), hostId);
@@ -353,18 +366,17 @@ public class BackendStorageDomainsResource
         // Mapping the connection properties only in case it is a non-filtered session
         if (!isFiltered()) {
             switch (entity.getStorageType()) {
-                case ISCSI:
-                    mapVolumeGroupIscsi(model, entity);
-                    break;
-                case FCP:
-                    mapVolumeGroupFcp(model, entity);
-                    break;
-                case NFS:
-                case LOCALFS:
-                case POSIXFS:
-                case GLUSTERFS:
-                    mapFileDomain(model, entity);
-                    break;
+            case ISCSI:
+            case FCP:
+            case NVMEOF:
+                mapVolumeGroupIscsi(model, entity);
+                break;
+            case NFS:
+            case LOCALFS:
+            case POSIXFS:
+            case GLUSTERFS:
+                mapFileDomain(model, entity);
+                break;
             }
         }
 

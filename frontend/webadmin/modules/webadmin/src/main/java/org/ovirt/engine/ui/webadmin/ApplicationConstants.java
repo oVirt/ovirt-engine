@@ -1392,6 +1392,8 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     String updateOvfsForStorage();
 
+    String nvmeofRestApiOnlyTooltip();
+
     String destroyStorage();
 
     String scanDisksStorage();
@@ -1451,6 +1453,12 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     String nfsRetransmissionsGeneral();
 
     String nfsTimeoutGeneral();
+
+    String nqnStorageGeneral();
+
+    String transportStorageGeneral();
+
+    String hostNqnStorageGeneral();
 
     String uploadImageSourceLabel();
 
