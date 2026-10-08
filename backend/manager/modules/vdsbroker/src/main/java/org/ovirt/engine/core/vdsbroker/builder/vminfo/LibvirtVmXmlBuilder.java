@@ -566,7 +566,8 @@ public class LibvirtVmXmlBuilder {
          Baseboard Product Name: RHEL-AV          hardcoded but added only if SkuToAVLevel options set
         */
 
-        if (vm.getClusterArch().getFamily() != ArchitectureType.x86) {
+        if (vm.getClusterArch().getFamily() != ArchitectureType.x86 &&
+                vm.getClusterArch().getFamily() != ArchitectureType.aarch64) {
             return;
         }
 
@@ -684,7 +685,8 @@ public class LibvirtVmXmlBuilder {
             }
         }
 
-        if (vm.getClusterArch().getFamily() == ArchitectureType.x86) {
+        if (vm.getClusterArch().getFamily() == ArchitectureType.x86 ||
+                vm.getClusterArch().getFamily() == ArchitectureType.aarch64) {
             writer.writeStartElement("smbios");
             writer.writeAttributeString("mode", "sysinfo");
             writer.writeEndElement();
