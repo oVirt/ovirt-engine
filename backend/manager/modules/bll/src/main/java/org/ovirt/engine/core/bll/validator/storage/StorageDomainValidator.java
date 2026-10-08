@@ -97,7 +97,7 @@ public class StorageDomainValidator {
     }
 
     public ValidationResult isDomainWithinThresholds() {
-        if (storageDomain.getStorageType().isCinderDomain()) {
+        if (storageDomain.getStorageType().isVendorManagedBlock()) {
             return ValidationResult.VALID;
         }
         StorageDomainDynamic dynamicData = storageDomain.getStorageDynamicData();
@@ -122,9 +122,10 @@ public class StorageDomainValidator {
      * according to the following table:
      *
      *      | File Domain                             | Block Domain
-     * -----|-----------------------------------------|-------------
-     * qcow | 1M (header size)                        | 1G
-     * -----|-----------------------------------------|-------------
+     * -----|-----------------------------------------|------------------------------------------
+     * qcow | preallocated: disk capacity (getSize()) | preallocated: disk capacity (getSize())
+     *      | sparse: 1M (header size)                | sparse: 1G
+     * -----|-----------------------------------------|------------------------------------------
      * raw  | preallocated: disk capacity (getSize()) | disk capacity
      *      | thin (sparse): 1M                       | (there is no raw sparse on
      *      |                                         | block domains)
@@ -132,17 +133,17 @@ public class StorageDomainValidator {
      */
     private double getTotalSizeForNewDisks(Collection<DiskImage> diskImages) {
         return getTotalSizeForDisksByMethod(diskImages, diskImage -> {
-            double sizeForDisk = diskImage.getSize();
             if (diskImage.getVolumeFormat() == VolumeFormat.COW) {
-                if (storageDomain.getStorageType().isFileDomain()) {
-                    sizeForDisk = EMPTY_QCOW_HEADER_SIZE;
-                } else {
-                    sizeForDisk = INITIAL_BLOCK_ALLOCATION_SIZE;
+                if (diskImage.getVolumeType() == VolumeType.Preallocated) {
+                    return diskImage.getSize();
                 }
-            } else if (diskImage.getVolumeType() == VolumeType.Sparse) {
-                sizeForDisk = EMPTY_QCOW_HEADER_SIZE;
+                return storageDomain.getStorageType().isFileDomain()
+                        ? EMPTY_QCOW_HEADER_SIZE
+                        : INITIAL_BLOCK_ALLOCATION_SIZE;
             }
-            return sizeForDisk;
+            return diskImage.getVolumeType() == VolumeType.Sparse
+                    ? EMPTY_QCOW_HEADER_SIZE
+                    : diskImage.getSize();
         });
     }
 
@@ -207,7 +208,7 @@ public class StorageDomainValidator {
      * Validate space for new, empty disks. Used for a new Active Image.
      */
     public ValidationResult hasSpaceForNewDisks(Collection<DiskImage> diskImages) {
-        if (storageDomain.getStorageType().isCinderDomain()) {
+        if (storageDomain.getStorageType().isVendorManagedBlock()) {
             return ValidationResult.VALID;
         }
         Long availableSize = storageDomain.getAvailableDiskSizeInBytes();
@@ -220,7 +221,7 @@ public class StorageDomainValidator {
      * Validate space for a cloned disk with the collapse option.
      */
     public ValidationResult hasSpaceForClonedDisks(Collection<DiskImage> diskImages) {
-        if (storageDomain.getStorageType().isCinderDomain()) {
+        if (storageDomain.getStorageType().isVendorManagedBlock()) {
             return ValidationResult.VALID;
         }
         Long availableSize = storageDomain.getAvailableDiskSizeInBytes();
@@ -230,7 +231,7 @@ public class StorageDomainValidator {
     }
 
     public ValidationResult hasSpaceForMerge(List<SubchainInfo> subchains, ActionType snapshotActionType) {
-        if (storageDomain.getStorageType().isCinderDomain() || storageDomain.getStorageType().isManagedBlockStorage()) {
+        if (storageDomain.getStorageType().isVendorManagedBlock()) {
             return ValidationResult.VALID;
         }
         Long availableSize = storageDomain.getAvailableDiskSizeInBytes();
@@ -243,7 +244,7 @@ public class StorageDomainValidator {
      * Validate space for cloned disks without the collapse option. Every snapshot will be cloned.
      */
     public ValidationResult hasSpaceForDisksWithSnapshots(Collection<DiskImage> diskImages) {
-        if (storageDomain.getStorageType().isCinderDomain()) {
+        if (storageDomain.getStorageType().isVendorManagedBlock()) {
             return ValidationResult.VALID;
         }
         Long availableSize = storageDomain.getAvailableDiskSizeInBytes();
@@ -259,7 +260,7 @@ public class StorageDomainValidator {
      * so there's no method for this.
      */
     public ValidationResult hasSpaceForAllDisks(Collection<DiskImage> newDiskImages, Collection<DiskImage> clonedDiskImages) {
-        if (storageDomain.getStorageType().isCinderDomain()) {
+        if (storageDomain.getStorageType().isVendorManagedBlock()) {
             return ValidationResult.VALID;
         }
         Long availableSize = storageDomain.getAvailableDiskSizeInBytes();
@@ -289,6 +290,28 @@ public class StorageDomainValidator {
      */
     public ValidationResult hasSpaceForNewDisk(DiskImage diskImage) {
         return hasSpaceForNewDisks(Collections.singleton(diskImage));
+    }
+
+    /**
+     * Validate space for a new sparse COW volume with an optional initial size passed to vdsm
+     * (allocated by vdsm multiplied by QCOW_OVERHEAD_FACTOR). Without an initial size the full
+     * capacity is allocated on block domains, only the header on file domains.
+     */
+    public ValidationResult hasSpaceForNewSparseVolume(DiskImage diskImage, Long initialSizeInBytes) {
+        if (storageDomain.getStorageType().isVendorManagedBlock()) {
+            return ValidationResult.VALID;
+        }
+
+        double requiredSize;
+        if (initialSizeInBytes != null) {
+            requiredSize = Math.ceil(StorageConstants.QCOW_OVERHEAD_FACTOR * initialSizeInBytes);
+        } else if (storageDomain.getStorageType().isFileDomain()) {
+            requiredSize = EMPTY_QCOW_HEADER_SIZE;
+        } else {
+            requiredSize = diskImage.getSize();
+        }
+
+        return validateRequiredSpace(storageDomain.getAvailableDiskSizeInBytes(), requiredSize);
     }
 
     private ValidationResult validateRequiredSpace(Long availableSize, double requiredSize) {

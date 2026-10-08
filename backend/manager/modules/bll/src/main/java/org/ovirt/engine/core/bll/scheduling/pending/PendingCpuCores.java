@@ -34,7 +34,7 @@ public class PendingCpuCores extends PendingResource {
         this.cpuPinningPolicy = vm.getCpuPinningPolicy();
     }
 
-    public long getCpuCount() {
+    public int getCpuCount() {
         return cpuCount;
     }
 

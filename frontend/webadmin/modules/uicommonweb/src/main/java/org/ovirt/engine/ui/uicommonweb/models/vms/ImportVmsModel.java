@@ -230,7 +230,8 @@ public class ImportVmsModel extends ListWithSimpleDetailsModel {
                 break;
             case OVA:
                 importFromOvaModel.init(getVmsToImport(), getDataCenters().getSelectedItem().getId());
-                importFromOvaModel.setIsoName(getOvaPath().getEntity());
+                String ovaPathEntity = getOvaPath().getEntity();
+                importFromOvaModel.setIsoName(ovaPathEntity == null ? null : ovaPathEntity.trim());
                 importFromOvaModel.setHostId(getHosts().getSelectedItem().getId());
                 importFromOvaModel.setVmNameToOva(getVmNameToOva());
                 selectedImportVmModel = importFromOvaModel;

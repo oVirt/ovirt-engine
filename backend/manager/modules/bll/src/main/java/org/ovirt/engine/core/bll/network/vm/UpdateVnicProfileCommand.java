@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 import javax.inject.Inject;
 
 import org.ovirt.engine.core.bll.RenamedEntityInfoProvider;
+import org.ovirt.engine.core.bll.VmSlaPolicyUtils;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.validator.VnicProfileValidator;
 import org.ovirt.engine.core.common.AuditLogType;
@@ -31,6 +32,8 @@ public class UpdateVnicProfileCommand<T extends VnicProfileParameters>
     private VmNicDao vmNicDao;
     @Inject
     private AuditLogDirector auditLogDirector;
+    @Inject
+    private VmSlaPolicyUtils vmSlaPolicyUtils;
 
     private VnicProfile oldVnicProfile;
 
@@ -63,7 +66,17 @@ public class UpdateVnicProfileCommand<T extends VnicProfileParameters>
         getOldVnicProfile();
         markVnicsOutOfSync();
         vnicProfileDao.update(getVnicProfile());
+
+        // Refresh running VMs if Network QoS was added, changed, or removed
+        if (networkQosChanged()) {
+            vmSlaPolicyUtils.refreshRunningVmsWithVnicProfile(getVnicProfile().getId());
+        }
+
         setSucceeded(true);
+    }
+
+    private boolean networkQosChanged() {
+        return !Objects.equals(getOldVnicProfile().getNetworkQosId(), getVnicProfile().getNetworkQosId());
     }
 
     private void markVnicsOutOfSync() {
@@ -79,7 +92,6 @@ public class UpdateVnicProfileCommand<T extends VnicProfileParameters>
         var prev = getOldVnicProfile();
         var curr = getVnicProfile();
         return !Objects.equals(prev.getNetworkId(), curr.getNetworkId()) ||
-            !Objects.equals(prev.getNetworkQosId(), curr.getNetworkQosId()) ||
             !Objects.equals(prev.getCustomProperties(), curr.getCustomProperties()) ||
             !Objects.equals(prev.getNetworkFilterId(), curr.getNetworkFilterId()) ||
             !Objects.equals(prev.getFailoverVnicProfileId(), curr.getFailoverVnicProfileId());

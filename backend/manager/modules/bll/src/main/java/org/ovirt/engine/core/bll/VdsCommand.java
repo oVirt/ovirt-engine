@@ -46,6 +46,7 @@ import org.ovirt.engine.core.utils.lock.EngineLock;
 import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
 import org.ovirt.engine.core.utils.threadpool.ThreadPools;
 import org.ovirt.engine.core.vdsbroker.ResourceManager;
+import org.ovirt.engine.core.vdsbroker.VdsManager;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.IVdsServer;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.VDSInfoReturn;
 
@@ -128,7 +129,12 @@ public abstract class VdsCommand<T extends VdsActionParameters> extends CommandB
      * Enables timeout on the thread until max timeout time is exceeded or a connection is made with the rebooting device
      */
     private void sleepOnReboot(final VDSStatus status) {
-        resourceManager.getVdsManager(getVdsId()).setInServerRebootTimeout(true);
+        VdsManager vdsManager = resourceManager.getVdsManager(getVdsId());
+        if (vdsManager == null) {
+            log.warn("Host '{}' has already been removed, skipping reboot timeout.", getVdsId());
+            return;
+        }
+        vdsManager.setInServerRebootTimeout(true);
         int serverRebootMax = Config.<Integer> getValue(ConfigValues.ServerRebootTimeout);
         int retryTime = Config.<Integer> getValue(ConfigValues.ServerRebootSleepTime);
         try {
@@ -144,7 +150,10 @@ public abstract class VdsCommand<T extends VdsActionParameters> extends CommandB
         } catch (CancellationException e) {
             log.info("Future cancelled due to ability to connect to host {} after reboot.", getVdsId());
         } finally {
-            resourceManager.getVdsManager(getVdsId()).setInServerRebootTimeout(false);
+            if (reachableFuture != null) {
+                reachableFuture.cancel(false);
+            }
+            vdsManager.setInServerRebootTimeout(false);
             setVdsStatus(status);
         }
     }
@@ -155,7 +164,13 @@ public abstract class VdsCommand<T extends VdsActionParameters> extends CommandB
      */
     private void isReachable() {
         try {
-            IVdsServer serv = resourceManager.getVdsManager(getVdsId()).getVdsProxy();
+            VdsManager vdsManager = resourceManager.getVdsManager(getVdsId(), true);
+            if (vdsManager == null) {
+                log.info("Host '{}' has been removed, stopping reboot monitoring.", getVdsId());
+                reachableFuture.cancel(false);
+                return;
+            }
+            IVdsServer serv = vdsManager.getVdsProxy();
             VDSInfoReturn info = serv.getVdsStats();
             log.info("Status of host {} is {}", getVdsId(), info.status.toString());
             if (info.status.code == 0) {

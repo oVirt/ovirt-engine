@@ -102,6 +102,56 @@ public enum VmTestPairs {
         Pair<VM, VdsmVm> build() {
             return pairOf(null, createVmInternalData(VMStatus.Paused));
         }
+    },
+    VM_UNKNOWN_ACTUALLY_RUNNING("E") {
+        @Override
+        Pair<VM, VdsmVm> build() {
+            Pair<VM, VdsmVm> pair = createPair();
+            setPairStatuses(pair, VMStatus.Unknown, VMStatus.Up);
+            return pair;
+        }
+    },
+    VM_UNKNOWN_NOT_FOUND_ON_HOST("F") {
+        @Override
+        Pair<VM, VdsmVm> build() {
+            VM dbVm = createDbVm();
+            dbVm.setStatus(VMStatus.Unknown);
+            dbVm.setRunOnVds(SRC_HOST_ID);
+            return pairOf(dbVm, null);
+        }
+    },
+    VM_UNKNOWN_CRASHED("10") {
+        @Override
+        Pair<VM, VdsmVm> build() {
+            Pair<VM, VdsmVm> pair = createPair();
+            pair.getFirst().setStatus(VMStatus.Unknown);
+            pair.getFirst().setRunOnVds(SRC_HOST_ID);
+            pair.getSecond().getVmDynamic().setStatus(VMStatus.Down);
+            pair.getSecond().getVmDynamic().setExitStatus(VmExitStatus.Error);
+            return pair;
+        }
+    },
+    VM_UNKNOWN_WAITING_FOR_LAUNCH("11") {
+        @Override
+        Pair<VM, VdsmVm> build() {
+            Pair<VM, VdsmVm> pair = createPair();
+            pair.getFirst().setStatus(VMStatus.Unknown);
+            pair.getFirst().setRunOnVds(SRC_HOST_ID);
+            pair.getSecond().getVmDynamic().setStatus(VMStatus.WaitForLaunch);
+            return pair;
+        }
+    },
+    VM_MIGRATED_UP_EARLY("12") {
+        @Override
+        Pair<VM, VdsmVm> build() {
+            return createMigrationDoneEarly();
+        }
+    },
+    VM_MIGRATED_UP_EARLY_END("13") {
+        @Override
+        Pair<VM, VdsmVm> build() {
+            return createMigrationDoneEarlyEnd();
+        }
     };
     public static final Guid DST_HOST_ID = Guid.newGuid();
     public static final Guid SRC_HOST_ID = Guid.newGuid();
@@ -111,7 +161,8 @@ public enum VmTestPairs {
     private Pair<VM, VdsmVm> pair;
 
     VmTestPairs(String id) {
-        this.id = Guid.createGuidFromString(id + "0000000-0000-0000-0000-000000000000");
+        String paddedId = String.format("%8s", id).replace(' ', '0');
+        this.id = Guid.createGuidFromString(paddedId + "-0000-0000-0000-000000000000");
         pair = build();
     }
 
@@ -165,6 +216,23 @@ public enum VmTestPairs {
         return pair;
     }
 
+    Pair<VM, VdsmVm> createMigrationDoneEarly() {
+        Pair<VM, VdsmVm> pair = createPair();
+        setPairStatuses(pair, VMStatus.MigratingTo, VMStatus.Up);
+        setDstHost(pair);
+        pair.getFirst().setRunOnVds(SRC_HOST_ID);
+        return pair;
+    }
+
+    Pair<VM, VdsmVm> createMigrationDoneEarlyEnd() {
+        Pair<VM, VdsmVm> pair = createPair();
+        setPairStatuses(pair, VMStatus.Up, VMStatus.Down);
+        pair.getFirst().setRunOnVds(DST_HOST_ID);
+        pair.getSecond().getVmDynamic().setExitStatus(VmExitStatus.Normal);
+        pair.getSecond().getVmDynamic().setExitReason(VmExitReason.MigrationSucceeded);
+        return pair;
+    }
+
     private void setDstHost(Pair<VM, VdsmVm> pair) {
         pair.getFirst().setMigratingToVds(DST_HOST_ID);
     }
@@ -212,7 +280,7 @@ public enum VmTestPairs {
         return vm;
     }
 
-    private void setPairStatuses(Pair<VM, VdsmVm> pair, VMStatus dbStatus, VMStatus vdsmStatus) {
+    private static void setPairStatuses(Pair<VM, VdsmVm> pair, VMStatus dbStatus, VMStatus vdsmStatus) {
         pair.getFirst().setStatus(dbStatus);
         pair.getSecond().getVmDynamic().setStatus(vdsmStatus);
     }

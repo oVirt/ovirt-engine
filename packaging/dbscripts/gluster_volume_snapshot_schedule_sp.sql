@@ -14,7 +14,7 @@ CREATE OR REPLACE FUNCTION InsertGlusterVolumeSnapshotSchedule (
     v_time_zone VARCHAR(128),
     v_interval INT,
     v_start_date TIMESTAMP WITH TIME ZONE,
-    v_execution_time TIME,
+    v_execution_time TIME WITHOUT TIME ZONE,
     v_days VARCHAR(256),
     v_end_by TIMESTAMP WITH TIME ZONE
     )
@@ -86,7 +86,7 @@ CREATE OR REPLACE FUNCTION UpdateGlusterVolumeSnapshotScheduleByVolumeId (
     v_time_zone VARCHAR(128),
     v_interval INT,
     v_start_date TIMESTAMP WITH TIME ZONE,
-    v_execution_time TIME,
+    v_execution_time TIME WITHOUT TIME ZONE,
     v_days VARCHAR(256),
     v_end_by TIMESTAMP WITH TIME ZONE
     )

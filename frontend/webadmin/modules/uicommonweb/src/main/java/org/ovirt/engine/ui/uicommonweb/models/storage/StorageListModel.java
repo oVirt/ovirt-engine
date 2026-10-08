@@ -910,7 +910,7 @@ public class StorageListModel extends ListWithSimpleDetailsModel<Void, StorageDo
             templateRegisterListModel.setIsAvailable(isRegisterSubtabsAvailable);
             diskImageRegisterListModel.setIsAvailable(isRegisterSubtabsAvailable);
             diskListModel.setIsAvailable(isDataStorage || isManagedBlockStorage);
-            snapshotListModel.setIsAvailable(isDataStorage);
+            snapshotListModel.setIsAvailable(isDataStorage || isManagedBlockStorage);
             diskProfileListModel.setIsAvailable(isDataStorage);
             drListModel.setIsAvailable(isGlusterStorage);
             leaseListModel.setIsAvailable(isDataStorage);
@@ -1188,7 +1188,7 @@ public class StorageListModel extends ListWithSimpleDetailsModel<Void, StorageDo
         Map<String, Object> driverOptions = ManagedBlockStorageModel.getDriverOptions().serializeToMap();
         driverOptions.put(AddManagedBlockStorageDomainParameters.VOLUME_BACKEND_NAME, storageDomain.getStorageName());
         parameter.setDriverOptions(driverOptions);
-        parameter.setSriverSensitiveOptions(ManagedBlockStorageModel.getDriverSensitiveOptions().serializeToMap());
+        parameter.setDriverSensitiveOptions(ManagedBlockStorageModel.getDriverSensitiveOptions().serializeToMap());
 
         parameters.add(parameter);
 

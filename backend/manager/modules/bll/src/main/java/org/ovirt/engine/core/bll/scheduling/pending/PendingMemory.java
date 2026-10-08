@@ -10,23 +10,23 @@ import org.ovirt.engine.core.compat.Guid;
  * by not yet started VM on a specified host
  */
 public class PendingMemory extends PendingResource {
-    private long sizeInMb;
+    private int sizeInMb;
 
-    public PendingMemory(VDS host, VM vm, long sizeInMb) {
+    public PendingMemory(VDS host, VM vm, int sizeInMb) {
         super(host, vm);
         this.sizeInMb = sizeInMb;
     }
 
-    public PendingMemory(Guid host, VM vm, long sizeInMb) {
+    public PendingMemory(Guid host, VM vm, int sizeInMb) {
         super(host, vm);
         this.sizeInMb = sizeInMb;
     }
 
-    public long getSizeInMb() {
+    public int getSizeInMb() {
         return sizeInMb;
     }
 
-    public void setSizeInMb(long sizeInMb) {
+    public void setSizeInMb(int sizeInMb) {
         this.sizeInMb = sizeInMb;
     }
 

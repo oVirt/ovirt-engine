@@ -5,7 +5,7 @@
 -- [vdc_options] Table
 --
 CREATE OR REPLACE FUNCTION InsertVdcOption (
-    v_option_name VARCHAR(50),
+    v_option_name VARCHAR(100),
     v_option_value TEXT,
     v_default_value TEXT,
     v_version VARCHAR(40),
@@ -30,7 +30,7 @@ END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION UpdateVdcOption (
-    v_option_name VARCHAR(50),
+    v_option_name VARCHAR(100),
     v_option_value TEXT,
     v_option_id INT,
     v_version VARCHAR(40)
@@ -78,7 +78,7 @@ END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetVdcOptionByName (
-    v_option_name VARCHAR(50),
+    v_option_name VARCHAR(100),
     v_version VARCHAR(40)
     )
 RETURNS SETOF vdc_options STABLE AS $FUNCTION$

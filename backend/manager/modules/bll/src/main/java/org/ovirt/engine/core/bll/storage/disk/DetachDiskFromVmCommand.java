@@ -22,6 +22,7 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.DiskImageDao;
 import org.ovirt.engine.core.dao.DiskVmElementDao;
 import org.ovirt.engine.core.dao.ImageDao;
+import org.ovirt.engine.core.dao.VmCheckpointDao;
 import org.ovirt.engine.core.dao.VmDeviceDao;
 import org.ovirt.engine.core.dao.VmStaticDao;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
@@ -41,6 +42,8 @@ public class DetachDiskFromVmCommand<T extends AttachDetachVmDiskParameters> ext
     private ImageDao imageDao;
     @Inject
     private VmStaticDao vmStaticDao;
+    @Inject
+    private VmCheckpointDao vmCheckpointDao;
 
     private Disk disk;
     private VmDevice vmDevice;
@@ -130,7 +133,8 @@ public class DetachDiskFromVmCommand<T extends AttachDetachVmDiskParameters> ext
                     // clears snapshot ID
                     imageDao.updateImageVmSnapshotId(((DiskImage) disk).getImageId(), null);
                 }
-
+                clearDiskBitmaps(diskImageDao.getAllSnapshotsForImageGroup(disk.getId()));
+                vmCheckpointDao.removeAllCheckpointsByDiskId(disk.getId());
                 vmStaticDao.incrementDbGeneration(getVm().getId());
                 return null;
             });

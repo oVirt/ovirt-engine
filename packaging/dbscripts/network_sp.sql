@@ -460,7 +460,7 @@ CREATE OR REPLACE FUNCTION Insertvds_interface (
     v_is_bond BOOLEAN,
     v_reported_switch_type VARCHAR(6),
     v_bond_opts VARCHAR(4000),
-    v_mac_addr VARCHAR(20),
+    v_mac_addr VARCHAR(59),
     v_name VARCHAR(50),
     v_network_name VARCHAR(256),
     v_speed INT,
@@ -477,7 +477,7 @@ CREATE OR REPLACE FUNCTION Insertvds_interface (
     v_ipv6_address VARCHAR(50),
     v_ipv6_prefix INT,
     v_ipv6_gateway VARCHAR(50),
-    v_ad_partner_mac VARCHAR(50),
+    v_ad_partner_mac VARCHAR(59),
     v_ad_aggregator_id INT,
     v_bond_active_slave VARCHAR(50)
     )
@@ -558,7 +558,7 @@ CREATE OR REPLACE FUNCTION Updatevds_interface (
     v_is_bond BOOLEAN,
     v_reported_switch_type VARCHAR(6),
     v_bond_opts VARCHAR(4000),
-    v_mac_addr VARCHAR(20),
+    v_mac_addr VARCHAR(59),
     v_name VARCHAR(50),
     v_network_name VARCHAR(256),
     v_speed INT,
@@ -575,7 +575,7 @@ CREATE OR REPLACE FUNCTION Updatevds_interface (
     v_ipv6_gateway VARCHAR(50),
     v_ipv6_prefix INT,
     v_ipv6_boot_protocol INT,
-    v_ad_partner_mac VARCHAR(50),
+    v_ad_partner_mac VARCHAR(59),
     v_ad_aggregator_id INT,
     v_bond_active_slave VARCHAR(50)
     )
@@ -1330,16 +1330,16 @@ LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION Insertvm_interface_statistics (
     v_id UUID,
-    v_rx_drop NUMERIC(20, 0),
-    v_rx_rate NUMERIC(24, 4),
-    v_rx_total NUMERIC(20, 0),
-    v_rx_offset NUMERIC(20, 0),
-    v_tx_drop NUMERIC(20, 0),
-    v_tx_rate NUMERIC(24, 4),
-    v_tx_total NUMERIC(20, 0),
-    v_tx_offset NUMERIC(20, 0),
+    v_rx_drop NUMERIC(20,0),
+    v_rx_rate NUMERIC(24,4),
+    v_rx_total NUMERIC(20,0),
+    v_rx_offset NUMERIC(20,0),
+    v_tx_drop NUMERIC(20,0),
+    v_tx_rate NUMERIC(24,4),
+    v_tx_total NUMERIC(20,0),
+    v_tx_offset NUMERIC(20,0),
     v_iface_status INT,
-    v_sample_time FLOAT,
+    v_sample_time DOUBLE PRECISION,
     v_vm_id UUID
     )
 RETURNS VOID AS $FUNCTION$
@@ -1377,16 +1377,16 @@ LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION Updatevm_interface_statistics (
     v_id UUID,
-    v_rx_drop NUMERIC(20, 0),
-    v_rx_rate NUMERIC(24, 4),
-    v_rx_total NUMERIC(20, 0),
-    v_rx_offset NUMERIC(20, 0),
-    v_tx_drop NUMERIC(20, 0),
-    v_tx_rate NUMERIC(24, 4),
-    v_tx_total NUMERIC(20, 0),
-    v_tx_offset NUMERIC(20, 0),
+    v_rx_drop NUMERIC(20,0),
+    v_rx_rate NUMERIC(24,4),
+    v_rx_total NUMERIC(20,0),
+    v_rx_offset NUMERIC(20,0),
+    v_tx_drop NUMERIC(20,0),
+    v_tx_rate NUMERIC(24,4),
+    v_tx_total NUMERIC(20,0),
+    v_tx_offset NUMERIC(20,0),
     v_iface_status INT,
-    v_sample_time FLOAT,
+    v_sample_time DOUBLE PRECISION,
     v_vm_id UUID
     )
 RETURNS VOID
@@ -1469,7 +1469,7 @@ LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION InsertVmGuestAgentInterface (
     v_vm_id UUID,
-    v_interface_name VARCHAR(50),
+    v_interface_name TEXT,
     v_mac_address VARCHAR(59),
     v_ipv4_addresses TEXT,
     v_ipv6_addresses TEXT
@@ -1498,16 +1498,16 @@ LANGUAGE plpgsql;
 --
 CREATE OR REPLACE FUNCTION Insertvds_interface_statistics (
     v_id UUID,
-    v_rx_drop NUMERIC(20, 0),
-    v_rx_rate NUMERIC(24, 4),
-    v_rx_total NUMERIC(20, 0),
-    v_rx_offset NUMERIC(20, 0),
-    v_tx_drop NUMERIC(20, 0),
-    v_tx_rate NUMERIC(24, 4),
-    v_tx_total NUMERIC(20, 0),
-    v_tx_offset NUMERIC(20, 0),
+    v_rx_drop NUMERIC(20,0),
+    v_rx_rate NUMERIC(24,4),
+    v_rx_total NUMERIC(20,0),
+    v_rx_offset NUMERIC(20,0),
+    v_tx_drop NUMERIC(20,0),
+    v_tx_rate NUMERIC(24,4),
+    v_tx_total NUMERIC(20,0),
+    v_tx_offset NUMERIC(20,0),
     v_iface_status INT,
-    v_sample_time FLOAT,
+    v_sample_time DOUBLE PRECISION,
     v_vds_id UUID
     )
 RETURNS VOID AS $FUNCTION$
@@ -1545,16 +1545,16 @@ LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION Updatevds_interface_statistics (
     v_id UUID,
-    v_rx_drop NUMERIC(20, 0),
-    v_rx_rate NUMERIC(24, 4),
-    v_rx_total NUMERIC(20, 0),
-    v_rx_offset NUMERIC(20, 0),
-    v_tx_drop NUMERIC(20, 0),
-    v_tx_rate NUMERIC(24, 4),
-    v_tx_total NUMERIC(20, 0),
-    v_tx_offset NUMERIC(20, 0),
+    v_rx_drop NUMERIC(20,0),
+    v_rx_rate NUMERIC(24,4),
+    v_rx_total NUMERIC(20,0),
+    v_rx_offset NUMERIC(20,0),
+    v_tx_drop NUMERIC(20,0),
+    v_tx_rate NUMERIC(24,4),
+    v_tx_total NUMERIC(20,0),
+    v_tx_offset NUMERIC(20,0),
     v_iface_status INT,
-    v_sample_time FLOAT,
+    v_sample_time DOUBLE PRECISION,
     v_vds_id UUID
     )
 RETURNS VOID

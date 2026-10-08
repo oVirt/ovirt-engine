@@ -17,9 +17,9 @@ import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.AddManagedBlockStorageDomainParameters;
 import org.ovirt.engine.core.common.businessentities.SubjectEntity;
 import org.ovirt.engine.core.common.utils.Pair;
-import org.ovirt.engine.core.common.utils.cinderlib.CinderlibCommandParameters;
-import org.ovirt.engine.core.common.utils.cinderlib.CinderlibExecutor;
-import org.ovirt.engine.core.common.utils.cinderlib.CinderlibReturnValue;
+import org.ovirt.engine.core.common.utils.managedblock.ManagedBlockCommandParameters;
+import org.ovirt.engine.core.common.utils.managedblock.ManagedBlockExecutor;
+import org.ovirt.engine.core.common.utils.managedblock.ManagedBlockReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.utils.JsonHelper;
 
@@ -28,7 +28,7 @@ import org.ovirt.engine.core.utils.JsonHelper;
 public class GetManagedBlockStorageStatsCommand<T extends AddManagedBlockStorageDomainParameters> extends CommandBase<T> {
 
     @Inject
-    private CinderlibExecutor cinderlibExecutor;
+    private ManagedBlockExecutor managedBlockExecutor;
 
     public GetManagedBlockStorageStatsCommand(Guid commandId) {
         super(commandId);
@@ -40,21 +40,29 @@ public class GetManagedBlockStorageStatsCommand<T extends AddManagedBlockStorage
 
     @Override
     protected void executeCommand() {
-        Map<String, Object> driverOptions = new HashMap<>(getParameters().getDriverOptions());
+        Map<String, Object> driverOptions = new HashMap<>();
+        if (getParameters().getDriverOptions() != null) {
+            driverOptions.putAll(getParameters().getDriverOptions());
+        }
         if (getParameters().getDriverSensitiveOptions() != null) {
             driverOptions.putAll(getParameters().getDriverSensitiveOptions());
         }
+        if (driverOptions.isEmpty()) {
+            log.warn("No driver options for MBS domain '{}'; cannot fetch stats",
+                    getParameters().getStorageDomainId());
+            return;
+        }
 
-        CinderlibReturnValue returnValue = null;
+        ManagedBlockReturnValue returnValue = null;
         Map<String, Object> storageStats = null;
 
         try {
-            CinderlibCommandParameters params =
-                    new CinderlibCommandParameters(JsonHelper.mapToJson(driverOptions,
+            ManagedBlockCommandParameters params =
+                    new ManagedBlockCommandParameters(JsonHelper.mapToJson(driverOptions,
                             false),
                             Collections.singletonList(Boolean.TRUE.toString()),
                             getCorrelationId());
-            returnValue = cinderlibExecutor.runCommand(CinderlibExecutor.CinderlibCommand.STORAGE_STATS, params);
+            returnValue = managedBlockExecutor.runCommand(ManagedBlockExecutor.ManagedBlockCommand.STORAGE_STATS, params);
 
             if (returnValue.getSucceed()) {
                 storageStats = JsonHelper.jsonToMap(returnValue.getOutput());

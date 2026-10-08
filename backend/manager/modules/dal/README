@@ -24,35 +24,16 @@ To run the DAO tests manually you can either do:
 
   $> mvn -P enable-dao-tests test
 
-or enable them using your ~/.m2/settings.xml:
-
-   <activeProfiles>
-     <activeProfile>enable-dao-tests</activeProfile>
-   </activeProfiles>
 
 You can also choose to run individual tests:
 
-  $> mvn -D test=VdcOptionDAOTest test
+  $> mvn -pl backend/manager/modules/dal -Dtest=VdcOptionDaoTest -P enable-dao-tests test
 
 By default, this will run the tests using the JDBC implementation
 against a PostgreSQL database called 'engine_dao_tests' on the
-localhost using the username 'engine' and password 'engine'.
+localhost using the username 'ovirt' and password 'ovirt'.
 
-You can change the database configuration in ~/.m2/settings.xml e.g.
-
-  <profile>
-    <id>my-engine-db</id>
-    <activation>
-      <activeByDefault>true</activeByDefault>
-    </activation>
-    <properties>
-      <engine.db.username>foo</engine.db.username>
-      <engine.db.password>bar</engine.db.password>
-      <engine.db.url>jdbc:postgresql://my-db-host/mydb</engine.db.url>
-      <engine.db.url.escaped>jdbc:postgresql://localhost/mydb</engine.db.url.escaped>
-      <engine.db.driver>org.postgresql.Driver</engine.db.driver>
-    </properties>
-  </profile>
+You can choose your own database but then the values that are present in `backend/manager/modules/bll/src/test/resources/test-database.properties` and `backend/manager/modules/dal/src/test/filters/pgsql.properties` must be updated to match your database configuration.
 
 == More on Impl DAOs ==
 

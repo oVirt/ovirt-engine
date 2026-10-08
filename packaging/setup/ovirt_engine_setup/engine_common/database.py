@@ -81,7 +81,7 @@ def _ind_env(inst, keykey):
 
 
 def getInvalidConfigItemsMessage(invalid_config_items):
-    return '\n'.join(
+    base_message = '\n'.join(
         [
             e['format_str'].format(**e)
             for e in invalid_config_items
@@ -105,6 +105,25 @@ def getInvalidConfigItemsMessage(invalid_config_items):
         ),
         pg_host=invalid_config_items[0]['pg_host'],
     )
+
+    password_encryption_issues = [
+        e for e in invalid_config_items
+        if e.get('key') == 'password_encryption' and e['needed_on_create']
+    ]
+
+    if password_encryption_issues:
+        base_message += '\n\n' + _(
+            "IMPORTANT: After changing password_encryption, you must also:\n"
+            "1. Update pg_hba.conf to use the new authentication method "
+            "(e.g., change 'md5' to 'scram-sha-256')\n"
+            "2. Regenerate password verifiers for existing users:\n"
+            "   postgres=# ALTER USER <username> PASSWORD '<password>';\n"
+            "3. Restart or reload PostgreSQL service\n"
+            "\nFor more details, see PostgreSQL documentation on "
+            "password authentication methods."
+        )
+
+    return base_message
 
 
 @util.export
@@ -954,6 +973,8 @@ class OvirtUtils(base.Base):
         )
 
     def _pg_conf_info(self):
+        from ovirt_engine_setup.engine_common.postgres import Provisioning
+        auth_method = Provisioning.get_postgres_auth_method(self.environment)
         return self.environment.get(
             oengcommcons.ProvisioningEnv.POSTGRES_EXTRA_CONFIG_ITEMS,
             ()
@@ -1133,6 +1154,16 @@ class OvirtUtils(base.Base):
                 'check_on_use': False,
                 'needed_on_create': True,
                 'error_msg': None,
+            },
+            {
+                'key': 'password_encryption',
+                'expected': auth_method,
+                'ok': self._lower_equal,
+                'check_on_use': True,
+                'needed_on_create': True,
+                'error_msg': '{specific}'.format(
+                    specific=_('{key} must be {expected}'),
+                ),
             },
         )
 

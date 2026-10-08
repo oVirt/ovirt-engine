@@ -30,6 +30,7 @@ import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.RemoveDiskParameters;
 import org.ovirt.engine.core.common.action.VmLeaseParameters;
 import org.ovirt.engine.core.common.action.VmOperationParameterBase;
+import org.ovirt.engine.core.common.action.VolumeBitmapCommandParameters;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskType;
 import org.ovirt.engine.core.common.asynctasks.EntityInfo;
 import org.ovirt.engine.core.common.businessentities.OriginType;
@@ -39,6 +40,7 @@ import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.TagsVmMap;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
+import org.ovirt.engine.core.common.businessentities.VdsmImageLocationInfo;
 import org.ovirt.engine.core.common.businessentities.VmBackup;
 import org.ovirt.engine.core.common.businessentities.VmPayload;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
@@ -645,5 +647,36 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
 
     protected VdsManager getVdsManager(Guid vdsId) {
         return resourceManager.getVdsManager(vdsId);
+    }
+
+    public void clearDiskBitmaps(List<DiskImage> diskImages) {
+        // Remove the bitmap from all the disk snapshots.
+        for (DiskImage image : diskImages) {
+            // RAW volumes do not support bitmaps
+            if (!image.isQcowFormat()) {
+                continue;
+            }
+
+            log.info("Clear all bitmaps from VM '{}' for volume '{}'.", getVmName(), image.getId());
+            VdsmImageLocationInfo locationInfo = new VdsmImageLocationInfo(
+                    image.getStorageIds().get(0),
+                    image.getId(),
+                    image.getImageId(),
+                    null);
+
+            VolumeBitmapCommandParameters parameters =
+                    new VolumeBitmapCommandParameters(
+                            getStoragePoolId(),
+                            locationInfo,
+                            null);
+            parameters.setEndProcedure(ActionParametersBase.EndProcedure.COMMAND_MANAGED);
+            parameters.setParentCommand(getActionType());
+            parameters.setParentParameters(getParameters());
+
+            ActionReturnValue returnValue = runInternalActionWithTasksContext(ActionType.ClearVolumeBitmaps, parameters);
+            if (!returnValue.getSucceeded()) {
+                log.error("Failed to remove all bitmaps for VM '{}' volume '{}'", getVmName(), image.getId());
+            }
+        }
     }
 }

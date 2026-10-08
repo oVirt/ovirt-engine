@@ -176,8 +176,8 @@ public abstract class SearchableListModel<E, T> extends SortedListModel<T> imple
             //Nothing added, we can append the tags.
             return getSearchString() + tags.toString();
         } else {
-            //Have a search string with something already, append with OR.
-            return getSearchString() + " OR " + tags.toString(); // $NON-NLS-1$
+            // Apply the already present search string on the tags only
+            return getSearchString() + " AND " + tags.toString(); // $NON-NLS-1$
         }
     }
 

@@ -170,11 +170,13 @@ class Provisioning(base.Base):
         environment,
         op,
     ):
+        auth_method = Provisioning.get_postgres_auth_method(self.environment)
         statements = [
             (
                 True,
                 (
                     """
+                        SET password_encryption = '{encryption}';
                         {op} role {user}
                         with
                             login
@@ -183,6 +185,7 @@ class Provisioning(base.Base):
                 ).format(
                     op=op,
                     user=_ind_env(self, DEK.USER),
+                    encryption=auth_method,
                 ),
             ),
             (
@@ -330,6 +333,7 @@ class Provisioning(base.Base):
         self,
         transaction,
     ):
+        auth_method = Provisioning.get_postgres_auth_method(self.environment)
         lines = [
             # we cannot use all for address <psql-9
             (
@@ -343,7 +347,7 @@ class Provisioning(base.Base):
                 user=_ind_env(self, DEK.USER),
                 database=_ind_env(self, DEK.DATABASE),
                 address=address,
-                auth='md5',
+                auth=auth_method,
             )
             for address in ('0.0.0.0/0', '::0/0')
         ]
@@ -411,6 +415,31 @@ class Provisioning(base.Base):
                 raiseOnError=False,
             )
 
+    def reloadPgConf(self):
+        with AlternateUser(
+            user=self.environment[
+                oengcommcons.SystemEnv.USER_POSTGRES
+            ],
+        ):
+            usockenv = {
+                self._dbenvkeys[DEK.HOST]: '',  # usock
+                self._dbenvkeys[DEK.PORT]: '',
+                self._dbenvkeys[DEK.SECURED]: False,
+                self._dbenvkeys[DEK.HOST_VALIDATION]: False,
+                self._dbenvkeys[DEK.USER]: 'postgres',
+                self._dbenvkeys[DEK.PASSWORD]: '',
+                self._dbenvkeys[DEK.DATABASE]: 'template1',
+            }
+            self._waitForDatabase(environment=usockenv)
+            database.Statement(
+                dbenvkeys=self._dbenvkeys,
+                environment=usockenv,
+            ).execute(
+                statement='SELECT pg_reload_conf()',
+                ownConnection=True,
+                transaction=False,
+            )
+
     def _waitForDatabase(self, environment=None):
         dbovirtutils = database.OvirtUtils(
             plugin=self._plugin,
@@ -434,6 +463,9 @@ class Provisioning(base.Base):
                 )
                 raise
 
+    def waitForDatabase(self, environment=None):  # noqa: D401
+        return self._waitForDatabase(environment=environment)
+
     def __init__(
         self,
         plugin,
@@ -445,6 +477,17 @@ class Provisioning(base.Base):
         self._dbenvkeys = dbenvkeys
         self._defaults = defaults
         self._renamed_db_resources = False
+
+    @staticmethod
+    def get_postgres_auth_method(environment):
+        """Return configured PostgreSQL auth method ('scram-sha-256' or 'md5').
+        """
+        from ovirt_engine_setup.engine_common.constants import \
+            Defaults as CommonDefaults
+        return environment.get(
+            oengcommcons.ProvisioningEnv.POSTGRES_AUTH_METHOD,
+            CommonDefaults.DEFAULT_POSTGRES_AUTH_METHOD,
+        )
 
     def detectCommands(self):
         self.command.detect('postgresql-setup')
@@ -492,6 +535,11 @@ class Provisioning(base.Base):
 
         self._initDbIfRequired()
 
+        with transaction.Transaction() as localtransaction:
+            self._updatePostgresConf(
+                transaction=localtransaction,
+            )
+
         self.logger.info(
             _("Creating PostgreSQL '{database}' database").format(
                 database=_ind_env(self, DEK.DATABASE),
@@ -538,11 +586,8 @@ class Provisioning(base.Base):
             # restore everything
             localtransaction.abort()
 
-        self.logger.info(_('Configuring PostgreSQL'))
+        self.logger.info(_('Configuring PostgreSQL client access'))
         with transaction.Transaction() as localtransaction:
-            self._updatePostgresConf(
-                transaction=localtransaction,
-            )
             self.addPgHbaDatabaseAccess(
                 transaction=localtransaction,
             )
@@ -585,6 +630,8 @@ class Provisioning(base.Base):
                     oengcommcons.SystemEnv.USER_POSTGRES
                 ],
             ):
+                auth_method = Provisioning.get_postgres_auth_method(
+                    self.environment)
                 usockenv = {
                     self._dbenvkeys[DEK.HOST]: '',  # usock
                     self._dbenvkeys[DEK.PORT]: '',
@@ -599,6 +646,7 @@ class Provisioning(base.Base):
                 )
                 perform_role_sql = (
                     """
+                        SET password_encryption = '{encryption}';
                         {op} role {user}
                         with
                             login
@@ -610,6 +658,7 @@ class Provisioning(base.Base):
                         if self._userExists(environment=usockenv)
                         else 'create'
                     ),
+                    encryption=auth_method,
                     user=_ind_env(self, DEK.USER),
                 )
                 database.Statement(

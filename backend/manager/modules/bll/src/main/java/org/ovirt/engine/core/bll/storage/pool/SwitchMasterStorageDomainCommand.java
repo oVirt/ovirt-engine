@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Callable;
+import java.util.stream.Collectors;
 
 import javax.enterprise.inject.Instance;
 import javax.enterprise.inject.Typed;
@@ -31,6 +33,9 @@ import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMap;
 import org.ovirt.engine.core.common.errors.EngineException;
 import org.ovirt.engine.core.common.errors.EngineMessage;
+import org.ovirt.engine.core.common.eventqueue.Event;
+import org.ovirt.engine.core.common.eventqueue.EventResult;
+import org.ovirt.engine.core.common.eventqueue.EventType;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.vdscommands.DeactivateStorageDomainVDSCommandParameters;
@@ -44,7 +49,9 @@ import org.ovirt.engine.core.dao.StorageDomainDao;
 import org.ovirt.engine.core.dao.StorageDomainStaticDao;
 import org.ovirt.engine.core.dao.StoragePoolDao;
 import org.ovirt.engine.core.dao.StoragePoolIsoMapDao;
+import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
+import org.ovirt.engine.core.vdsbroker.storage.StoragePoolDomainHelper;
 
 @NonTransactiveCommandAttribute
 public class SwitchMasterStorageDomainCommand<T extends SwitchMasterStorageDomainCommandParameters>
@@ -62,6 +69,8 @@ public class SwitchMasterStorageDomainCommand<T extends SwitchMasterStorageDomai
     private StoragePoolDao storagePoolDao;
     @Inject
     private StoragePoolIsoMapDao storagePoolIsoMapDao;
+    @Inject
+    private StoragePoolDomainHelper storagePoolDomainHelper;
     @Inject
     private CommandCoordinatorUtil commandCoordinatorUtil;
     @Inject
@@ -274,9 +283,28 @@ public class SwitchMasterStorageDomainCommand<T extends SwitchMasterStorageDomai
         addAuditLogCustomValues();
         auditLogDirector.log(this, AuditLogType.SWITCH_MASTER_STORAGE_DOMAIN_ON_SPM);
         updateStoragePoolOnDB();
+        notifyAllHostsOfNewMaster();
         commandCoordinatorUtil.removeAllCommandsInHierarchy(getCommandId());
         auditLogDirector.log(this, AuditLogType.SWITCH_MASTER_STORAGE_DOMAIN);
         setSucceeded(true);
+    }
+
+    protected void notifyAllHostsOfNewMaster() {
+        getEventQueue().submitEventSync(
+                new Event(getStoragePoolId(), getStorageDomainId(), null, EventType.POOLREFRESH, ""),
+                () -> {
+                    List<StoragePoolIsoMap> storagePoolIsoMap =
+                            storagePoolIsoMapDao.getAllForStoragePool(getStoragePoolId());
+                    ThreadPoolUtil.invokeAll(
+                            getAllRunningVdssInPool().stream()
+                                    .map(vds -> (Callable<Void>) () -> {
+                                        storagePoolDomainHelper.refreshHostPoolMetadata(
+                                                vds, getStoragePool(), getStorageDomainId(), storagePoolIsoMap);
+                                        return null;
+                                    })
+                                    .collect(Collectors.toList()));
+                    return new EventResult(true, EventType.POOLREFRESH);
+                });
     }
 
     @Override

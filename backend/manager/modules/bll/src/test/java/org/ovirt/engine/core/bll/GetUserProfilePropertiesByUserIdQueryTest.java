@@ -1,7 +1,7 @@
 package org.ovirt.engine.core.bll;
 
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
-import static org.mockito.Mockito.verifyZeroInteractions;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
 import java.util.List;
@@ -66,7 +66,7 @@ class GetUserProfilePropertiesByUserIdQueryTest extends AbstractUserQueryTest<Us
 
         getQuery().executeQueryCommand();
 
-        verifyZeroInteractions(userProfileDaoMock);
+        verifyNoMoreInteractions(userProfileDaoMock);
         assertThat((Object) getQuery().getQueryReturnValue().getReturnValue()).isNull();
     }
 

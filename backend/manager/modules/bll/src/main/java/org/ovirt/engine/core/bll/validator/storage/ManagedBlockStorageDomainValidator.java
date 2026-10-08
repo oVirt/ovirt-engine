@@ -11,7 +11,7 @@ import org.ovirt.engine.core.utils.EngineLocalConfig;
 
 public class ManagedBlockStorageDomainValidator {
 
-    private static final String CINDERLIB_DB_ENABLE = "CINDERLIB_DB_ENABLE";
+    private static final String MANAGEDBLOCK_DB_ENABLE = "MANAGEDBLOCK_DB_ENABLE";
 
     private static final Set<ActionType> allowedStorageOperations;
     private static final boolean isDataBaseInitialized;
@@ -49,7 +49,7 @@ public class ManagedBlockStorageDomainValidator {
                 ActionType.MoveOrCopyDisk
         ));
         EngineLocalConfig config = EngineLocalConfig.getInstance();
-        isDataBaseInitialized = Boolean.parseBoolean(config.getProperty(CINDERLIB_DB_ENABLE));
+        isDataBaseInitialized = Boolean.parseBoolean(config.getProperty(MANAGEDBLOCK_DB_ENABLE));
     }
 
     public ManagedBlockStorageDomainValidator() {
@@ -57,7 +57,7 @@ public class ManagedBlockStorageDomainValidator {
 
     public static ValidationResult isOperationSupportedByManagedBlockStorage(ActionType actionType) {
         if (!isDataBaseInitialized) {
-            return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_CINDERLIB_DATA_BASE_REQUIRED);
+            return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_MANAGEDBLOCK_DATA_BASE_REQUIRED);
         }
         return allowedStorageOperations.contains(actionType) ?
                 ValidationResult.VALID :

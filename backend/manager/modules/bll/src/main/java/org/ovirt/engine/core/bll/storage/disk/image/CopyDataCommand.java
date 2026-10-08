@@ -27,6 +27,7 @@ import org.ovirt.engine.core.common.businessentities.VdsmImageLocationInfo;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.ExternalLease;
 import org.ovirt.engine.core.common.businessentities.storage.LeaseJobStatus;
+import org.ovirt.engine.core.common.errors.EngineException;
 import org.ovirt.engine.core.common.job.StepEnum;
 import org.ovirt.engine.core.common.job.StepSubjectEntity;
 import org.ovirt.engine.core.common.vdscommands.CopyVolumeDataVDSCommandParameters;
@@ -77,7 +78,14 @@ public class CopyDataCommand<T extends CopyDataCommandParameters> extends
 
     @Override
     protected void executeCommand() {
-        completeGenerationInfo();
+        try {
+            completeGenerationInfo();
+        } catch (EngineException e) {
+            log.error("An exception occurred during the completion of generation info. Exception: {}", e.getMessage());
+            setSucceeded(false);
+            logExecutionHost(AuditLogType.COPY_VOLUME_DATA_FAILED);
+            return;
+        }
         CopyVolumeDataVDSCommandParameters parameters =
                 new CopyVolumeDataVDSCommandParameters(getParameters().getStorageJobId(),
                         getParameters().getSrcInfo(),
@@ -87,7 +95,7 @@ public class CopyDataCommand<T extends CopyDataCommandParameters> extends
                         getParameters().isLegal());
         parameters.setVdsId(getVdsId());
 
-        logExecutionHost();
+        logExecutionHost(AuditLogType.COPY_VOLUME_DATA_EXECUTION_HOST);
 
         vdsCommandsHelper.runVdsCommandWithFailover(VDSCommandType.CopyVolumeData,
                 parameters,
@@ -178,6 +186,9 @@ public class CopyDataCommand<T extends CopyDataCommandParameters> extends
     @Override
     public HostJobStatus poll() {
         if (isDstVdsmImage()) {
+            if (!getSucceeded()) {
+                return HostJobStatus.failed;
+            }
             VdsmImageLocationInfo info = (VdsmImageLocationInfo) getParameters().getDstInfo();
             return vdsmImagePoller.pollImage(getParameters().getStoragePoolId(), info.getStorageDomainId(),
                     info.getImageGroupId(), info.getImageId(), info.getGeneration(), getCommandId(), getActionType());
@@ -194,7 +205,7 @@ public class CopyDataCommand<T extends CopyDataCommandParameters> extends
         return null;
     }
 
-    private void logExecutionHost() {
+    private void logExecutionHost(AuditLogType logType) {
         AuditLogable loggable = new AuditLogableImpl();
         LocationInfo destInfo = getParameters().getDstInfo();
         Guid storageDomainId = Guid.Empty;
@@ -222,6 +233,6 @@ public class CopyDataCommand<T extends CopyDataCommandParameters> extends
         loggable.setStorageDomainName(domainName);
         loggable.addCustomValue("diskId", diskId.toString());
         loggable.addCustomValue("imageId", imageId.toString());
-        auditLogDirector.log(loggable, AuditLogType.COPY_VOLUME_DATA_EXECUTION_HOST);
+        auditLogDirector.log(loggable, logType);
     }
 }

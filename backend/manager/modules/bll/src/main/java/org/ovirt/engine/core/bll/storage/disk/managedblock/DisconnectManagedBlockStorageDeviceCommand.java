@@ -12,13 +12,13 @@ import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.action.DisconnectManagedBlockStorageDeviceParameters;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.storage.ManagedBlockStorage;
-import org.ovirt.engine.core.common.utils.cinderlib.CinderlibCommandParameters;
-import org.ovirt.engine.core.common.utils.cinderlib.CinderlibExecutor;
+import org.ovirt.engine.core.common.utils.managedblock.ManagedBlockCommandParameters;
+import org.ovirt.engine.core.common.utils.managedblock.ManagedBlockExecutor;
 import org.ovirt.engine.core.common.vdscommands.AttachManagedBlockStorageVolumeVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.CinderStorageDao;
+import org.ovirt.engine.core.dao.ManagedBlockStorageDao;
 import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.utils.JsonHelper;
 
@@ -26,10 +26,10 @@ import org.ovirt.engine.core.utils.JsonHelper;
 public class DisconnectManagedBlockStorageDeviceCommand<T extends DisconnectManagedBlockStorageDeviceParameters> extends CommandBase<T> {
 
     @Inject
-    private CinderlibExecutor cinderlibExecutor;
+    private ManagedBlockExecutor managedBlockExecutor;
 
     @Inject
-    private CinderStorageDao cinderStorageDao;
+    private ManagedBlockStorageDao managedBlockStorageDao;
 
     @Inject
     private VdsDao vdsDao;
@@ -49,19 +49,19 @@ public class DisconnectManagedBlockStorageDeviceCommand<T extends DisconnectMana
         }
 
         boolean succeeded;
-        ManagedBlockStorage managedBlockStorage = cinderStorageDao.get(getParameters().getStorageDomainId());
+        ManagedBlockStorage managedBlockStorage = managedBlockStorageDao.get(getParameters().getStorageDomainId());
         List<String> extraParams = new ArrayList<>();
         extraParams.add(getParameters().getDiskId().toString());
 
         try {
-            CinderlibCommandParameters params =
-                    new CinderlibCommandParameters(JsonHelper.mapToJson(managedBlockStorage.getAllDriverOptions(),
+            ManagedBlockCommandParameters params =
+                    new ManagedBlockCommandParameters(JsonHelper.mapToJson(managedBlockStorage.getAllDriverOptions(),
                             false),
                             extraParams,
                             getCorrelationId());
 
-            succeeded = cinderlibExecutor
-                        .runCommand(CinderlibExecutor.CinderlibCommand.DISCONNECT_VOLUME, params)
+            succeeded = managedBlockExecutor
+                        .runCommand(ManagedBlockExecutor.ManagedBlockCommand.DISCONNECT_VOLUME, params)
                         .getSucceed();
         } catch (Exception e) {
             log.error("Failed executing disconnect_volume verb", e);

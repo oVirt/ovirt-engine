@@ -429,7 +429,7 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
         maxBandwidth = getMaxBandwidth(clusterMigrationPolicy);
         if (!NoMigrationPolicy.ID.equals(effectiveMigrationPolicy.getId())) {
             autoConverge = effectiveMigrationPolicy.isAutoConvergence();
-            migrateCompressed = effectiveMigrationPolicy.isMigrationCompression();
+            migrateCompressed = parallelMigrations == null ? effectiveMigrationPolicy.isMigrationCompression() : false;
         }
         enableGuestEvents = effectiveMigrationPolicy.isEnableGuestEvents();
 

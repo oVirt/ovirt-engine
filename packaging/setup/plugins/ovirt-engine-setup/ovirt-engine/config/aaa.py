@@ -116,9 +116,21 @@ class Plugin(plugin.PluginBase):
         condition=lambda self: (
             self.environment[
                 oenginecons.CoreEnv.ENABLE
-            ] and self.environment[
-                oenginecons.EngineDBEnv.NEW_DATABASE
-            ] and self.environment[
+            ]
+            and (
+                self.environment[
+                    oenginecons.EngineDBEnv.NEW_DATABASE
+                ]
+                or (
+                    self.environment[
+                        oengcommcons.KeycloakEnv.ENABLE
+                    ]
+                    and not self.environment[
+                        oengcommcons.KeycloakEnv.CONFIGURED
+                    ]
+                )
+            )
+            and self.environment[
                 oenginecons.ConfigEnv.ADMIN_PASSWORD
             ] is None
         ),

@@ -16,13 +16,8 @@ import org.ovirt.engine.core.bll.SerialChildExecutingCommand;
 import org.ovirt.engine.core.bll.VmCommand;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
-import org.ovirt.engine.core.common.action.ActionParametersBase;
-import org.ovirt.engine.core.common.action.ActionReturnValue;
-import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.DeleteAllVmCheckpointsParameters;
 import org.ovirt.engine.core.common.action.LockProperties;
-import org.ovirt.engine.core.common.action.VolumeBitmapCommandParameters;
-import org.ovirt.engine.core.common.businessentities.VdsmImageLocationInfo;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.locks.LockingGroup;
@@ -73,43 +68,12 @@ public class DeleteAllVmCheckpointsCommand<T extends DeleteAllVmCheckpointsParam
             });
             return false;
         }
+        List<DiskImage> diskImages = diskImageDao.getAllSnapshotsForLeaf(getParameters().getCurrentDisk().getImageId());
 
-        clearDiskBitmaps(getParameters().getDiskImages().get(getParameters().getCompletedDisksCount()));
-        getParameters().setCompletedDisksCount(getParameters().getCompletedDisksCount() + 1);
+        clearDiskBitmaps(diskImages);
+        getParameters().advanceToNextDisk();
         persistCommandIfNeeded();
         return true;
-    }
-
-    private void clearDiskBitmaps(DiskImage diskImage) {
-        List<DiskImage> diskImages = diskImageDao.getAllSnapshotsForLeaf(diskImage.getImageId());
-        // Remove the bitmap from all the disk snapshots.
-        for (DiskImage image : diskImages) {
-            // RAW volumes do not support bitmaps
-            if (!image.isQcowFormat()) {
-                continue;
-            }
-
-            log.info("Clear all bitmaps from VM '{}' volume '{}'.", getVmName(), image.getId());
-            VdsmImageLocationInfo locationInfo = new VdsmImageLocationInfo(
-                    image.getStorageIds().get(0),
-                    image.getId(),
-                    image.getImageId(),
-                    null);
-
-            VolumeBitmapCommandParameters parameters =
-                    new VolumeBitmapCommandParameters(
-                            getStoragePoolId(),
-                            locationInfo,
-                            null);
-            parameters.setEndProcedure(ActionParametersBase.EndProcedure.COMMAND_MANAGED);
-            parameters.setParentCommand(getActionType());
-            parameters.setParentParameters(getParameters());
-
-            ActionReturnValue returnValue = runInternalActionWithTasksContext(ActionType.ClearVolumeBitmaps, parameters);
-            if (!returnValue.getSucceeded()) {
-                log.error("Failed to remove all bitmaps for VM '{}' volume '{}'", getVmName(), image.getId());
-            }
-        }
     }
 
     @Override

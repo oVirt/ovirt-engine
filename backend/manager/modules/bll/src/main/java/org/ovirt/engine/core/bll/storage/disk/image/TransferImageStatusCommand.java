@@ -117,9 +117,11 @@ public class TransferImageStatusCommand<T extends TransferImageStatusParameters>
         );
 
         // Only check generic permissions because the command and/or ImageUpload entity may be missing
+        // If a storage domain id is available, check permissions on the storage domain; otherwise, check system-level permissions
+        VdcObjectType objectType = getStorageDomainId() != null ? VdcObjectType.Storage : VdcObjectType.System;
         return Collections.singletonList(new PermissionSubject(
                 objectId,
-                VdcObjectType.System,
+                objectType,
                 ActionGroup.CREATE_DISK));
     }
 

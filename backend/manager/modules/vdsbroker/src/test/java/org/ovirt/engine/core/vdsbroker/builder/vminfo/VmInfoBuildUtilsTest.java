@@ -59,11 +59,11 @@ import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
-import org.ovirt.engine.core.dao.CinderStorageDao;
 import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.ClusterFeatureDao;
 import org.ovirt.engine.core.dao.DiskVmElementDao;
 import org.ovirt.engine.core.dao.HostDeviceDao;
+import org.ovirt.engine.core.dao.ManagedBlockStorageDao;
 import org.ovirt.engine.core.dao.StorageDomainStaticDao;
 import org.ovirt.engine.core.dao.StorageServerConnectionDao;
 import org.ovirt.engine.core.dao.VdsDynamicDao;
@@ -156,7 +156,7 @@ public class VmInfoBuildUtilsTest {
     @Mock
     private MultiQueueUtils multiQueueUtils;
     @Mock
-    private CinderStorageDao cinderStorageDao;
+    private ManagedBlockStorageDao managedBlockStorageDao;
 
     @InjectMocks
     private VmInfoBuildUtils underTest;

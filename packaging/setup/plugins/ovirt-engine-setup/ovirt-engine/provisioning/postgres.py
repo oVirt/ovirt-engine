@@ -9,7 +9,6 @@
 
 """Local Postgres plugin."""
 
-
 import gettext
 
 from otopi import plugin
@@ -24,7 +23,7 @@ from ovirt_setup_lib import dialog
 
 
 def _(m):
-    return gettext.dgettext(message=m, domain='ovirt-engine-setup')
+    return gettext.dgettext(message=m, domain="ovirt-engine-setup")
 
 
 @util.export
@@ -46,22 +45,35 @@ class Plugin(plugin.PluginBase):
     )
     def _init(self):
         self.environment.setdefault(
-            oengcommcons.ProvisioningEnv.POSTGRES_PROVISIONING_ENABLED,
-            None
+            oengcommcons.ProvisioningEnv.POSTGRES_PROVISIONING_ENABLED, None
         )
+        if (
+            oengcommcons.ProvisioningEnv.POSTGRES_AUTH_METHOD
+            not in self.environment
+        ):
+            import os
+
+            from ovirt_engine_setup.engine_common.constants import \
+                Defaults as CommonDefaults
+
+            default_method = CommonDefaults.DEFAULT_POSTGRES_AUTH_METHOD
+            method = (
+                os.environ.get("OVIRT_POSTGRES_AUTH_METHOD", default_method)
+                .strip()
+                .lower()
+            )
+            if method not in ("scram-sha-256", "md5"):
+                method = default_method
+            self.environment[
+                oengcommcons.ProvisioningEnv.POSTGRES_AUTH_METHOD
+            ] = method
 
     @plugin.event(
         stage=plugin.Stages.STAGE_SETUP,
-        after=(
-            oengcommcons.Stages.DB_CONNECTION_SETUP,
-        ),
+        after=(oengcommcons.Stages.DB_CONNECTION_SETUP,),
         condition=lambda self: (
-            not self.environment[
-                osetupcons.CoreEnv.DEVELOPER_MODE
-            ] and
-            self.environment[
-                oenginecons.EngineDBEnv.NEW_DATABASE
-            ]
+            not self.environment[osetupcons.CoreEnv.DEVELOPER_MODE]
+            and self.environment[oenginecons.EngineDBEnv.NEW_DATABASE]
         ),
     )
     def _setup(self):
@@ -75,9 +87,7 @@ class Plugin(plugin.PluginBase):
             oengcommcons.Stages.DIALOG_TITLES_E_DATABASE,
             oengcommcons.Stages.DB_CONNECTION_CUSTOMIZATION,
         ),
-        after=(
-            oengcommcons.Stages.DIALOG_TITLES_S_DATABASE,
-        ),
+        after=(oengcommcons.Stages.DIALOG_TITLES_S_DATABASE,),
         condition=lambda self: not self.environment[
             oenginecons.CoreEnv.ENABLE
         ],
@@ -92,32 +102,33 @@ class Plugin(plugin.PluginBase):
             oengcommcons.Stages.DIALOG_TITLES_E_DATABASE,
             oengcommcons.Stages.DB_CONNECTION_CUSTOMIZATION,
         ),
-        after=(
-            oenginecons.Stages.POSTGRES_PROVISIONING_ALLOWED,
-        ),
+        after=(oenginecons.Stages.POSTGRES_PROVISIONING_ALLOWED,),
         condition=lambda self: self._enabled,
     )
     def _customization(self):
-        if self.environment[
-            oengcommcons.ProvisioningEnv.POSTGRES_PROVISIONING_ENABLED
-        ] is None:
+        if (
+            self.environment[
+                oengcommcons.ProvisioningEnv.POSTGRES_PROVISIONING_ENABLED
+            ]
+            is None
+        ):
             local = dialog.queryBoolean(
                 dialog=self.dialog,
-                name='OVESETUP_PROVISIONING_POSTGRES_LOCATION',
+                name="OVESETUP_PROVISIONING_POSTGRES_LOCATION",
                 note=_(
-                    'Where is the Engine database located? '
-                    '(@VALUES@) [@DEFAULT@]: '
+                    "Where is the Engine database located? "
+                    "(@VALUES@) [@DEFAULT@]: "
                 ),
                 prompt=True,
-                true=_('Local'),
-                false=_('Remote'),
+                true=_("Local"),
+                false=_("Remote"),
                 default=True,
             )
             if local:
-                self.environment[oenginecons.EngineDBEnv.HOST] = 'localhost'
-                self.environment[
-                    oenginecons.EngineDBEnv.PORT
-                ] = oenginecons.Defaults.DEFAULT_DB_PORT
+                self.environment[oenginecons.EngineDBEnv.HOST] = "localhost"
+                self.environment[oenginecons.EngineDBEnv.PORT] = (
+                    oenginecons.Defaults.DEFAULT_DB_PORT
+                )
 
                 # TODO:
                 # consider creating database and role
@@ -126,19 +137,19 @@ class Plugin(plugin.PluginBase):
                     oengcommcons.ProvisioningEnv.POSTGRES_PROVISIONING_ENABLED
                 ] = dialog.queryBoolean(
                     dialog=self.dialog,
-                    name='OVESETUP_PROVISIONING_POSTGRES_ENABLED',
+                    name="OVESETUP_PROVISIONING_POSTGRES_ENABLED",
                     note=_(
-                        '\nSetup can configure the local postgresql server '
-                        'automatically for the engine to run. This may '
-                        'conflict with existing applications.\n'
-                        'Would you like Setup to automatically configure '
-                        'postgresql and create Engine database, '
-                        'or prefer to perform that '
-                        'manually? (@VALUES@) [@DEFAULT@]: '
+                        "\nSetup can configure the local postgresql server "
+                        "automatically for the engine to run. This may "
+                        "conflict with existing applications.\n"
+                        "Would you like Setup to automatically configure "
+                        "postgresql and create Engine database, "
+                        "or prefer to perform that "
+                        "manually? (@VALUES@) [@DEFAULT@]: "
                     ),
                     prompt=True,
-                    true=_('Automatic'),
-                    false=_('Manual'),
+                    true=_("Automatic"),
+                    false=_("Manual"),
                     default=True,
                 )
 
@@ -157,18 +168,15 @@ class Plugin(plugin.PluginBase):
         stage=plugin.Stages.STAGE_CUSTOMIZATION,
         priority=plugin.Stages.PRIORITY_LAST,
         condition=lambda self: (
-            self.environment[
-                oenginecons.EngineDBEnv.HOST
-            ] == 'localhost'
+            self.environment[oenginecons.EngineDBEnv.HOST] == "localhost"
         ),
     )
     def _customization_firewall(self):
-        self.environment[osetupcons.NetEnv.FIREWALLD_SERVICES].extend([
-            {
-                'name': 'ovirt-postgres',
-                'directory': 'ovirt-common'
-            },
-        ])
+        self.environment[osetupcons.NetEnv.FIREWALLD_SERVICES].extend(
+            [
+                {"name": "ovirt-postgres", "directory": "ovirt-common"},
+            ]
+        )
 
     @plugin.event(
         stage=plugin.Stages.STAGE_VALIDATION,
@@ -183,9 +191,7 @@ class Plugin(plugin.PluginBase):
             oengcommcons.Stages.DB_CREDENTIALS_AVAILABLE_LATE,
             oengcommcons.Stages.DB_SCHEMA,
         ),
-        after=(
-            osetupcons.Stages.SYSTEM_SYSCTL_CONFIG_AVAILABLE,
-        ),
+        after=(osetupcons.Stages.SYSTEM_SYSCTL_CONFIG_AVAILABLE,),
         condition=lambda self: self._enabled,
     )
     def _misc(self):
@@ -193,27 +199,19 @@ class Plugin(plugin.PluginBase):
 
     @plugin.event(
         stage=plugin.Stages.STAGE_CLOSEUP,
-        before=(
-            osetupcons.Stages.DIALOG_TITLES_E_SUMMARY,
-        ),
-        after=(
-            osetupcons.Stages.DIALOG_TITLES_S_SUMMARY,
-        ),
+        before=(osetupcons.Stages.DIALOG_TITLES_E_SUMMARY,),
+        after=(osetupcons.Stages.DIALOG_TITLES_S_SUMMARY,),
         condition=lambda self: self._provisioning.databaseRenamed,
     )
     def _closeup(self):
         self.dialog.note(
             text=_(
-                'Engine database resources:\n'
-                '    Database name:      {database}\n'
-                '    Database user name: {user}\n'
+                "Engine database resources:\n"
+                "    Database name:      {database}\n"
+                "    Database user name: {user}\n"
             ).format(
-                database=self.environment[
-                    oenginecons.EngineDBEnv.DATABASE
-                ],
-                user=self.environment[
-                    oenginecons.EngineDBEnv.USER
-                ],
+                database=self.environment[oenginecons.EngineDBEnv.DATABASE],
+                user=self.environment[oenginecons.EngineDBEnv.USER],
             )
         )
 

@@ -108,6 +108,7 @@ public class DiskVmElementValidator {
 
         DiskInterface diskInterface = diskVmElement.getDiskInterface();
         if (diskInterface != DiskInterface.VirtIO_SCSI
+                && diskInterface != DiskInterface.VirtIO
                 && diskInterface != DiskInterface.IDE
                 && diskInterface != DiskInterface.SATA) {
             return new ValidationResult(

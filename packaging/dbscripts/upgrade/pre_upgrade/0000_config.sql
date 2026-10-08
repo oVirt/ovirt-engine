@@ -45,6 +45,7 @@ select fn_db_rename_config_key('FreeSpaceLow', 'WarningLowSpaceIndicator', 'gene
 select fn_db_rename_config_key('MaxBlockDiskSize', 'MaxBlockDiskSizeInGibiBytes', 'general');
 select fn_db_rename_config_key('RetryToRunAutoStartVmIntervalInSeconds','RetryToRunAutoStartVmShortIntervalInSeconds','general');
 select fn_db_rename_config_key('MaxNumOfTriesToRunFailedAutoStartVm','NumOfTriesToRunFailedAutoStartVmInShortIntervals','general');
+select fn_db_rename_config_key('CinderlibCommandTimeoutInMinutes', 'ManagedBlockCommandTimeoutInMinutes', 'general');
 
 ------------------------------------------------------------------------------------
 --                  Add configuration values section
@@ -189,8 +190,6 @@ select fn_db_add_config_value_for_versions_up_to('ManagedBlockDomainSupported', 
 
 -- migration support per architecture
 select fn_db_add_config_value_for_versions_up_to('IsMigrationSupported','{"undefined": "true", "x86": "true", "ppc" : "true", "s390x" : "true", "aarch64" : "true"}','4.8');
--- snapshot support per architecture
-select fn_db_add_config_value_for_versions_up_to('IsMemorySnapshotSupported','{"undefined": "true", "x86": "true", "ppc" : "true", "s390x" : "true"}','4.8');
 -- suspend support per architecture
 select fn_db_add_config_value_for_versions_up_to('IsSuspendSupported','{"undefined": "true", "x86": "true", "ppc" : "true", "s390x" : "true", "aarch64" : "true"}','4.8');
 select fn_db_add_config_value('OsRepositoryConfDir','/osinfo.conf.d','general');
@@ -700,7 +699,8 @@ select fn_db_add_config_value('VdsCertificateValidityInDays','1827','general');
 --Handling Virtual Machine Domain Name
 select fn_db_add_config_value_for_versions_up_to('VM32BitMaxMemorySizeInMB','20480','4.8');
 select fn_db_add_config_value_for_versions_up_to('VM64BitMaxMemorySizeInMB','6291456','4.5');
-select fn_db_add_config_value_for_versions_up_to('VM64BitMaxMemorySizeInMB','16777216','4.8');
+select fn_db_add_config_value_for_versions_up_to('VM64BitMaxMemorySizeInMB','16777216','4.7');
+select fn_db_add_config_value('VM64BitMaxMemorySizeInMB', '67108864', '4.8');
 select fn_db_add_config_value_for_versions_up_to('VMPpc64BitMaxMemorySizeInMB', '1048576', '4.3');
 select fn_db_add_config_value_for_versions_up_to('VMPpc64BitMaxMemorySizeInMB', '6291456', '4.8');
 select fn_db_add_config_value('VmGracefulShutdownMessage','System Administrator has initiated shutdown of this Virtual Machine. Virtual Machine is shutting down.','general');
@@ -917,7 +917,6 @@ select fn_db_add_config_value('DBPagingType', 'Range', 'general');
 select fn_db_add_config_value('DBSearchTemplate',
                               'SELECT * FROM (SELECT *, ROW_NUMBER() OVER(%1$s) as RowNum FROM (%2$s)) as T1 ) as T2 %3$s',
                               'general');
-select fn_db_add_config_value('DnsResolverConfigurationSupported', 'true', 'general');
 select fn_db_add_config_value('EnableAutomaticHostPowerManagement', 'false', 'general');
 select fn_db_add_config_value('ExternalNetworkProviderConnectionTimeout', '20', 'general');
 select fn_db_add_config_value('ExternalNetworkProviderTimeout', '30', 'general');
@@ -968,8 +967,6 @@ select fn_db_add_config_value('EnableKASLRDump','true','general');
 select fn_db_add_config_value('GuestNicNamesBlacklist','lo[0-9]*,Loopback.*,tun[0-9]*,veth[0-9a-f]*','general');
 select fn_db_add_config_value_for_versions_up_to('HyperVSynicStimerSupported', 'false', '4.2');
 select fn_db_add_config_value_for_versions_up_to('HyperVSynicStimerSupported', 'true', '4.8');
-select fn_db_add_config_value_for_versions_up_to('IsDeferringFileVolumePreallocationSupported', 'false', '4.2');
-select fn_db_add_config_value_for_versions_up_to('IsDeferringFileVolumePreallocationSupported', 'true', '4.8');
 select fn_db_add_config_value_for_versions_up_to('IsPortIsolationSupported', 'false', '4.4');
 select fn_db_add_config_value_for_versions_up_to('IsPortIsolationSupported', 'true', '4.8');
 select fn_db_add_config_value_for_versions_up_to('TpmDeviceSupported', '{"x86":"false","ppc":"false","s390x":"false"}', '4.5');
@@ -1001,7 +998,7 @@ select fn_db_add_config_value('MaxBackupBlockScratchDiskInitialSizePercents','20
 select fn_db_add_config_value('MinBackupBlockScratchDiskInitialSizeInGB','4','general');
 
 -- Managed block storage
-select fn_db_add_config_value('CinderlibCommandTimeoutInMinutes','2','general');
+select fn_db_add_config_value('ManagedBlockCommandTimeoutInMinutes','2','general');
 
 select fn_db_add_config_value('NumOfPciExpressPorts', '16', 'general');
 
@@ -1171,7 +1168,6 @@ select fn_db_update_config_value('AllowEditingHostedEngine','true','general');
 
 -- enable migration, memory snapshot and suspend in the ppc64 architecture
 select fn_db_update_config_value('IsMigrationSupported','{"undefined": "true", "x86": "true", "ppc" : "true", "s390x" : "true"}','4.2');
-select fn_db_update_config_value('IsMemorySnapshotSupported','{"undefined": "true", "x86": "true", "ppc" : "true", "s390x" : "true"}','4.2');
 select fn_db_update_config_value('IsSuspendSupported','{"undefined": "true", "x86": "true", "ppc" : "true", "s390x" : "true"}','4.2');
 
 -- aarch64 architecture support
@@ -1204,6 +1200,7 @@ select fn_db_update_config_value('MaxNumOfVmCpus', '{"x86":710,"ppc":384,"s390x"
 select fn_db_update_config_value('MaxNumOfCpuPerSocket', '254', '4.2');
 select fn_db_update_config_value_for_versions_from_up_to('VM64BitMaxMemorySizeInMB', '6291456', '4.2','4.5');
 select fn_db_update_config_value('VM64BitMaxMemorySizeInMB', '16777216', '4.6');
+select fn_db_update_config_value('VM64BitMaxMemorySizeInMB', '67108864', '4.8');
 select fn_db_update_config_value_for_versions_from_up_to('VMPpc64BitMaxMemorySizeInMB', '6291456', '4.4','4.6');
 select fn_db_update_config_value('MaxNumOfVmSockets', '10000', '4.6');
 
@@ -1567,6 +1564,12 @@ select fn_db_update_default_config_value('VdsCertificateValidityInDays', '398', 
 
 -- Add Very large VMs migration policy
 select fn_db_update_default_config_value('MigrationPolicies', '[{"id":{"uuid":"80554327-0569-496b-bdeb-fcbbf52b827b"},"maxMigrations":2,"autoConvergence":true,"migrationCompression":false,"enableGuestEvents":true,"name":"Minimal downtime","description":"","config":{"convergenceItems":[{"stallingLimit":1,"convergenceItem":{"action":"setDowntime","params":["150"]}},{"stallingLimit":2,"convergenceItem":{"action":"setDowntime","params":["200"]}},{"stallingLimit":3,"convergenceItem":{"action":"setDowntime","params":["300"]}},{"stallingLimit":4,"convergenceItem":{"action":"setDowntime","params":["400"]}},{"stallingLimit":6,"convergenceItem":{"action":"setDowntime","params":["500"]}}],"initialItems":[{"action":"setDowntime","params":["100"]}],"lastItems":[{"action":"abort","params":[]}]}},{"id":{"uuid":"80554327-0569-496b-bdeb-fcbbf52b827c"},"maxMigrations":1,"autoConvergence":true,"migrationCompression":true,"enableGuestEvents":true,"name":"Suspend workload if needed","description":"","config":{"convergenceItems":[{"stallingLimit":1,"convergenceItem":{"action":"setDowntime","params":["150"]}},{"stallingLimit":2,"convergenceItem":{"action":"setDowntime","params":["200"]}},{"stallingLimit":3,"convergenceItem":{"action":"setDowntime","params":["300"]}},{"stallingLimit":4,"convergenceItem":{"action":"setDowntime","params":["400"]}},{"stallingLimit":6,"convergenceItem":{"action":"setDowntime","params":["500"]}}],"initialItems":[{"action":"setDowntime","params":["100"]}],"lastItems":[{"action":"setDowntime","params":["5000"]},{"action":"abort","params":[]}]}},{"id":{"uuid":"a7aeedb2-8d66-4e51-bb22-32595027ce71"},"maxMigrations":2,"autoConvergence":true,"migrationCompression":false,"enableGuestEvents":true,"name":"Post-copy migration","description":"","config":{"convergenceItems":[{"stallingLimit":1,"convergenceItem":{"action":"setDowntime","params":["150"]}},{"stallingLimit":2,"convergenceItem":{"action":"setDowntime","params":["200"]}}],"initialItems":[{"action":"setDowntime","params":["100"]}],"lastItems":[{"action":"postcopy","params":[]},{"action":"abort","params":[]}]}}]', '[{"id":{"uuid":"80554327-0569-496b-bdeb-fcbbf52b827b"},"maxMigrations":2,"autoConvergence":true,"migrationCompression":false,"enableGuestEvents":true,"name":"Minimal downtime","description":"","config":{"convergenceItems":[{"stallingLimit":1,"convergenceItem":{"action":"setDowntime","params":["150"]}},{"stallingLimit":2,"convergenceItem":{"action":"setDowntime","params":["200"]}},{"stallingLimit":3,"convergenceItem":{"action":"setDowntime","params":["300"]}},{"stallingLimit":4,"convergenceItem":{"action":"setDowntime","params":["400"]}},{"stallingLimit":6,"convergenceItem":{"action":"setDowntime","params":["500"]}}],"initialItems":[{"action":"setDowntime","params":["100"]}],"lastItems":[{"action":"abort","params":[]}]}},{"id":{"uuid":"80554327-0569-496b-bdeb-fcbbf52b827c"},"maxMigrations":1,"autoConvergence":true,"migrationCompression":true,"enableGuestEvents":true,"name":"Suspend workload if needed","description":"","config":{"convergenceItems":[{"stallingLimit":1,"convergenceItem":{"action":"setDowntime","params":["150"]}},{"stallingLimit":2,"convergenceItem":{"action":"setDowntime","params":["200"]}},{"stallingLimit":3,"convergenceItem":{"action":"setDowntime","params":["300"]}},{"stallingLimit":4,"convergenceItem":{"action":"setDowntime","params":["400"]}},{"stallingLimit":6,"convergenceItem":{"action":"setDowntime","params":["500"]}}],"initialItems":[{"action":"setDowntime","params":["100"]}],"lastItems":[{"action":"setDowntime","params":["5000"]},{"action":"abort","params":[]}]}},{"id":{"uuid":"a7aeedb2-8d66-4e51-bb22-32595027ce71"},"maxMigrations":2,"autoConvergence":true,"migrationCompression":false,"enableGuestEvents":true,"name":"Post-copy migration","description":"","config":{"convergenceItems":[{"stallingLimit":1,"convergenceItem":{"action":"setDowntime","params":["150"]}},{"stallingLimit":2,"convergenceItem":{"action":"setDowntime","params":["200"]}}],"initialItems":[{"action":"setDowntime","params":["100"]}],"lastItems":[{"action":"postcopy","params":[]},{"action":"abort","params":[]}]}},{"id":{"uuid":"57237b82-b8c2-425f-b425-114b35219626"},"maxMigrations":1,"autoConvergence":true,"migrationCompression":false,"enableGuestEvents":true,"zeroCopy":true,"name":"Very large VMs","description":"","config":{"convergenceItems":[{"stallingLimit":1,"convergenceItem":{"action":"setDowntime","params":["400"]}},{"stallingLimit":2,"convergenceItem":{"action":"setDowntime","params":["500"]}},{"stallingLimit":3,"convergenceItem":{"action":"setDowntime","params":["700"]}},{"stallingLimit":4,"convergenceItem":{"action":"setDowntime","params":["1000"]}},{"stallingLimit":6,"convergenceItem":{"action":"setDowntime","params":["1500"]}}],"initialItems":[{"action":"setDowntime","params":["300"]}],"lastItems":[{"action":"setDowntime","params":["5000"]},{"action":"abort","params":[]}]}}]', '4.8', false);
+
+-- add none value to disable keymap for VNC
+select fn_db_update_default_config_value('VncKeyboardLayoutValidValues','ar,cz,da,de,de-ch,en-gb,en-us,es,et,fi,fo,fr,fr-be,fr-ca,fr-ch,hr,hu,is,it,ja,lt,lv,mk,nl,no,pl,pt,pt-br,ru,sl,sv,th,tr','ar,cz,da,de,de-ch,en-gb,en-us,es,et,fi,fo,fr,fr-be,fr-ca,fr-ch,hr,hu,is,it,ja,lt,lv,mk,nl,no,pl,pt,pt-br,ru,sl,sv,th,tr,none','general', false);
+
+-- Set none as default VNC keyboard layout to disable keymap by default
+select fn_db_update_default_config_value('VncKeyboardLayout','en-us','none','general', false);
 
 ------------------------------------------------------------------------------------
 --                  Split config section

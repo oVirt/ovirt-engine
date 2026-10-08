@@ -19,14 +19,14 @@ import org.ovirt.engine.core.common.businessentities.storage.ManagedBlockStorage
 import org.ovirt.engine.core.common.businessentities.storage.ManagedBlockStorageDisk;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeClassification;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
-import org.ovirt.engine.core.common.utils.cinderlib.CinderlibCommandParameters;
-import org.ovirt.engine.core.common.utils.cinderlib.CinderlibExecutor;
-import org.ovirt.engine.core.common.utils.cinderlib.CinderlibReturnValue;
+import org.ovirt.engine.core.common.utils.managedblock.ManagedBlockCommandParameters;
+import org.ovirt.engine.core.common.utils.managedblock.ManagedBlockExecutor;
+import org.ovirt.engine.core.common.utils.managedblock.ManagedBlockReturnValue;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.CinderStorageDao;
 import org.ovirt.engine.core.dao.DiskDao;
 import org.ovirt.engine.core.dao.DiskImageDao;
 import org.ovirt.engine.core.dao.ImageDao;
+import org.ovirt.engine.core.dao.ManagedBlockStorageDao;
 import org.ovirt.engine.core.utils.JsonHelper;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
@@ -34,10 +34,10 @@ import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 public class TryBackToManagedBlockSnapshotCommand<T extends CreateManagedBlockStorageDiskSnapshotParameters>
         extends CommandBase<T> {
     @Inject
-    private CinderlibExecutor cinderlibExecutor;
+    private ManagedBlockExecutor managedBlockExecutor;
 
     @Inject
-    private CinderStorageDao cinderStorageDao;
+    private ManagedBlockStorageDao managedBlockStorageDao;
 
     @Inject
     private DiskImageDao diskImageDao;
@@ -70,21 +70,21 @@ public class TryBackToManagedBlockSnapshotCommand<T extends CreateManagedBlockSt
 
     @Override
     protected void executeCommand() {
-        ManagedBlockStorage managedBlockStorage = cinderStorageDao.get(getParameters().getStorageDomainId());
+        ManagedBlockStorage managedBlockStorage = managedBlockStorageDao.get(getParameters().getStorageDomainId());
         List<String> extraParams = new ArrayList<>();
         extraParams.add(getParameters().getVolumeId().toString());
         extraParams.add(getParameters().getImageId().toString());
-        CinderlibReturnValue returnValue;
+        ManagedBlockReturnValue returnValue;
 
         try {
-            CinderlibCommandParameters params =
-                    new CinderlibCommandParameters(JsonHelper.mapToJson(
+            ManagedBlockCommandParameters params =
+                    new ManagedBlockCommandParameters(JsonHelper.mapToJson(
                             managedBlockStorage.getAllDriverOptions(),
                             false),
                             extraParams,
                             getCorrelationId());
             returnValue =
-                    cinderlibExecutor.runCommand(CinderlibExecutor.CinderlibCommand.CREATE_VOLUME_FROM_SNAPSHOT,
+                    managedBlockExecutor.runCommand(ManagedBlockExecutor.ManagedBlockCommand.CREATE_VOLUME_FROM_SNAPSHOT,
                             params);
             if (!returnValue.getSucceed()) {
                 return;

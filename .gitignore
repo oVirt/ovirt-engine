@@ -4,6 +4,7 @@
 # mvn folders
 ###########################
 target
+repository/
 
 # build-time files
 ###########################
@@ -46,7 +47,6 @@ __pycache__
 
 # Files generated from templates
 ###########################
-.automation/milestone-config.sh
 ovirt-engine.spec
 build/helptag.py
 build/helptag_checker.py
@@ -103,8 +103,8 @@ packaging/setup/ovirt_engine_setup/websocket_proxy/config.py
 packaging/sys-etc/logrotate.d/ovirt-engine
 packaging/sys-etc/logrotate.d/ovirt-engine-notifier
 packaging/sys-etc/logrotate.d/ovirt-engine-setup
-packaging/cinderlib/config.py
-packaging/cinderlib/cinderlib-client.py
+packaging/managedblock/config.py
+packaging/managedblock/cinderlib-client.py
 
 
 # dbscripts

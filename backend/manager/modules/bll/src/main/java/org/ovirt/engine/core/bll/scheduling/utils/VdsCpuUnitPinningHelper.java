@@ -112,7 +112,7 @@ public class VdsCpuUnitPinningHelper {
         List<VdsCpuUnit> cpusToBeAllocated = allocateExclusiveCpus(cpuTopology, vm, hostId);
         if (vm.getCpuPinningPolicy() == CpuPinningPolicy.ISOLATE_THREADS) {
             List<Integer> socketsUsed = cpusToBeAllocated.stream().map(VdsCpuUnit::getSocket).distinct().collect(Collectors.toList());
-            int pCores = 0;
+            long pCores = 0;
             for (int socket: socketsUsed) {
                 pCores += getCoresInSocket(cpusToBeAllocated, socket).stream().map(VdsCpuUnit::getCore).distinct().count();
             }

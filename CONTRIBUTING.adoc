@@ -24,7 +24,7 @@ First of all, the commit title should be prepended with a defined prefix:
 * `ansible`: changes to the ansible code (packaging/ansible-runner-service-project)
 * `packaging`: changes in packaging/ but does not fit the above ones
 * `build`: changes to the build system/new release/etc
-* `ci`: changes for ci/copr/etc
+* `ci`: changes for ci/etc
 * `docs`: changes to the documentation
 
 If you think some prefix needs to be added to the list, feel free to recommend!

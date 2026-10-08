@@ -569,7 +569,7 @@ public class BackendStorageDomainsResource
         Map<String, Object> driverOptionsMap = new HashMap<>(CustomPropertiesParser.toObjectsMap(driverOptions, mapper));
         driverOptionsMap.put(AddManagedBlockStorageDomainParameters.VOLUME_BACKEND_NAME, entity.getName());
         params.setDriverOptions(driverOptionsMap);
-        params.setSriverSensitiveOptions(CustomPropertiesParser.toObjectsMap(driverSensitiveOptions));
+        params.setDriverSensitiveOptions(CustomPropertiesParser.toObjectsMap(driverSensitiveOptions));
         entity.setStorage(Guid.Empty.toString());
         params.setStorageDomain(entity);
         return params;

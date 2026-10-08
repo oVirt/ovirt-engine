@@ -10,7 +10,6 @@ import java.util.Map;
 
 import javax.inject.Inject;
 
-import org.ovirt.engine.core.bll.CommandBase;
 import org.ovirt.engine.core.bll.InternalCommandAttribute;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.context.CommandContext;
@@ -29,27 +28,28 @@ import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.utils.SizeConverter;
-import org.ovirt.engine.core.common.utils.cinderlib.CinderlibCommandParameters;
-import org.ovirt.engine.core.common.utils.cinderlib.CinderlibExecutor;
-import org.ovirt.engine.core.common.utils.cinderlib.CinderlibExecutor.CinderlibCommand;
-import org.ovirt.engine.core.common.utils.cinderlib.CinderlibReturnValue;
+import org.ovirt.engine.core.common.utils.managedblock.ManagedBlockCommandParameters;
+import org.ovirt.engine.core.common.utils.managedblock.ManagedBlockExecutor;
+import org.ovirt.engine.core.common.utils.managedblock.ManagedBlockExecutor.ManagedBlockCommand;
+import org.ovirt.engine.core.common.utils.managedblock.ManagedBlockReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.BaseDiskDao;
-import org.ovirt.engine.core.dao.CinderStorageDao;
 import org.ovirt.engine.core.dao.DiskVmElementDao;
 import org.ovirt.engine.core.dao.ImageDao;
+import org.ovirt.engine.core.dao.ManagedBlockStorageDao;
 import org.ovirt.engine.core.utils.JsonHelper;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 @NonTransactiveCommandAttribute
 @InternalCommandAttribute
-public class AddManagedBlockStorageDiskCommand<T extends AddManagedBlockStorageDiskParameters> extends CommandBase<T> {
+public class AddManagedBlockStorageDiskCommand<T extends AddManagedBlockStorageDiskParameters>
+        extends ManagedBlockStorageDiskCommandBase<T> {
 
     @Inject
-    private CinderStorageDao cinderStorageDao;
+    private ManagedBlockStorageDao managedBlockStorageDao;
 
     @Inject
-    private CinderlibExecutor cinderlibExecutor;
+    private ManagedBlockExecutor managedBlockExecutor;
 
     @Inject
     private BaseDiskDao baseDiskDao;
@@ -76,26 +76,26 @@ public class AddManagedBlockStorageDiskCommand<T extends AddManagedBlockStorageD
 
     @Override
     protected void executeCommand() {
-        ManagedBlockStorage managedBlockStorage = cinderStorageDao.get(getParameters().getStorageDomainId());
+        ManagedBlockStorage managedBlockStorage = managedBlockStorageDao.get(getParameters().getStorageDomainId());
         Guid volumeId = getParameters().getDiskInfo().getId();
         List<String> extraParams = new ArrayList<>();
         extraParams.add(volumeId.toString());
 
-        // Rounding and converting to GiB is required since cinderlib works with GiB multiples and not bytes
+        // Rounding and converting to GiB is required since the original managed block storage backend (cinderlib) works with GiB multiples and not bytes
         extraParams.add(Long.toString(SizeConverter.convert(getDiskSize(getParameters().getDiskInfo().getSize()),
                 SizeConverter.SizeUnit.BYTES,
                 SizeConverter.SizeUnit.GiB).longValue()));
 
-        CinderlibReturnValue returnValue;
+        ManagedBlockReturnValue returnValue;
 
         try {
-            CinderlibCommandParameters params =
-                    new CinderlibCommandParameters(JsonHelper.mapToJson(
+            ManagedBlockCommandParameters params =
+                    new ManagedBlockCommandParameters(JsonHelper.mapToJson(
                                 managedBlockStorage.getAllDriverOptions(),
                             false),
                                 extraParams,
                                 getCorrelationId());
-            returnValue = cinderlibExecutor.runCommand(CinderlibCommand.CREATE_VOLUME, params);
+            returnValue = managedBlockExecutor.runCommand(ManagedBlockCommand.CREATE_VOLUME, params);
         } catch (Exception e) {
             log.error("Failed executing volume creation", e);
             return;
@@ -107,6 +107,7 @@ public class AddManagedBlockStorageDiskCommand<T extends AddManagedBlockStorageD
 
         saveDisk(volumeId);
         getReturnValue().setActionReturnValue(volumeId);
+        refreshAffectedDomain(getParameters().getStorageDomainId());
         setSucceeded(true);
         persistCommandIfNeeded();
     }

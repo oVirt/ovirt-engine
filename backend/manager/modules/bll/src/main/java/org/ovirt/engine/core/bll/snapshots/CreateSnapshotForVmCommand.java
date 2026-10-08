@@ -837,4 +837,11 @@ public class CreateSnapshotForVmCommand<T extends CreateSnapshotForVmParameters>
     public CommandCallback getCallback() {
         return callbackProvider.get();
     }
+
+    @Override
+    protected void freeLock() {
+        if (getParameters().getParentCommand() != ActionType.LiveMigrateDisk) {
+            super.freeLock();
+        }
+    }
 }

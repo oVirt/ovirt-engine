@@ -6,7 +6,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyZeroInteractions;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
 import javax.validation.ConstraintValidatorContext;
@@ -73,7 +73,7 @@ public class CidrConstraintTest {
     public void checkValidCidr() {
         runSetup(true, true, "");
         assertTrue(underTest.isValid(testedSubnet, contextMock));
-        verifyZeroInteractions(contextMock);
+        verifyNoMoreInteractions(contextMock);
     }
 
     private void runSetup(boolean isValidFormat, boolean isCidrNetworkAddressValid, String errorMessage) {

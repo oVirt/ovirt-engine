@@ -240,7 +240,6 @@ public class ResourceManager implements BackendService {
      * Set vm status to Unknown and save to DB.
      */
     public void setVmUnknown(VM vm) {
-        removeAsyncRunningVm(vm.getId());
         internalSetVmStatus(vm.getDynamicData(), VMStatus.Unknown);
         // log VM transition to unknown status
         AuditLogable logable = new AuditLogableImpl();

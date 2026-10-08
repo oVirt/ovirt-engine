@@ -5,9 +5,11 @@ public enum EngineBackupScope {
     DB("db"),
     FILES("files"),
     DWH("dwhdb"),
+    @Deprecated
     CINDER("cinderlib"),
     KEYCLOAK("keycloak"),
-    GRAFANA("grafanadb");
+    GRAFANA("grafanadb"),
+    MANAGEDBLOCK("managedblock");
 
     String name;
 

@@ -31,7 +31,7 @@ public class AddManagedBlockStorageDomainParameters extends StorageDomainManagem
         this.driverOptions = driverOptions;
     }
 
-    public void setSriverSensitiveOptions(Map<String, Object> driverSensitiveOptions) {
+    public void setDriverSensitiveOptions(Map<String, Object> driverSensitiveOptions) {
         this.driverSensitiveOptions = driverSensitiveOptions;
     }
 

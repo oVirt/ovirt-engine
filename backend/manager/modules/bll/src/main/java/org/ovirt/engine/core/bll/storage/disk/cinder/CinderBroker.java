@@ -13,9 +13,9 @@ import org.ovirt.engine.core.bll.provider.storage.OpenStackVolumeProviderProxy;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.businessentities.storage.CinderConnectionInfo;
 import org.ovirt.engine.core.common.businessentities.storage.CinderDisk;
-import org.ovirt.engine.core.common.businessentities.storage.CinderVolumeDriver;
 import org.ovirt.engine.core.common.businessentities.storage.CinderVolumeStatus;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
+import org.ovirt.engine.core.common.businessentities.storage.ManagedVolumeDriver;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeClassification;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
 import org.ovirt.engine.core.common.errors.EngineError;
@@ -196,8 +196,8 @@ public class CinderBroker {
     public void updateConnectionInfoForDisk(CinderDisk cinderDisk) {
         try {
             CinderConnectionInfo connectionInfo = initializeConnectionForDisk(cinderDisk);
-            CinderVolumeDriver cinderVolumeDriver = CinderVolumeDriver.forValue(connectionInfo.getDriverVolumeType());
-            if (cinderVolumeDriver == null) {
+            ManagedVolumeDriver managedVolumeDriver = ManagedVolumeDriver.forValue(connectionInfo.getDriverVolumeType());
+            if (managedVolumeDriver == null) {
                 logDiskEvent(cinderDisk, AuditLogType.CINDER_DISK_CONNECTION_VOLUME_DRIVER_UNSUPPORTED);
             }
             cinderDisk.setCinderConnectionInfo(connectionInfo);

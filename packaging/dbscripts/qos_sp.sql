@@ -53,7 +53,7 @@ CREATE OR REPLACE FUNCTION InsertCpuQos (
     v_name VARCHAR(50),
     v_description TEXT,
     v_storage_pool_id uuid,
-    v_cpu_limit INT
+    v_cpu_limit SMALLINT
     )
 RETURNS VOID AS $FUNCTION$
 BEGIN
@@ -192,7 +192,7 @@ CREATE OR REPLACE FUNCTION UpdateCpuQos (
     v_name VARCHAR(50),
     v_description TEXT,
     v_storage_pool_id uuid,
-    v_cpu_limit INT
+    v_cpu_limit SMALLINT
     )
 RETURNS VOID AS $FUNCTION$
 BEGIN

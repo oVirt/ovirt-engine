@@ -4,7 +4,7 @@
   <parent>
     <groupId>org.ovirt.engine.ui</groupId>
     <artifactId>webadmin-all</artifactId>
-    <version>4.5.7-SNAPSHOT</version>
+    <version>4.5.8-SNAPSHOT</version>
   </parent>
   <artifactId>webadmin-modules</artifactId>
   <packaging>pom</packaging>
@@ -138,7 +138,7 @@
       <id>all-user-agents</id>
       <properties>
         <!-- See [gwt-user.jar:com/google/gwt/useragent/UserAgent.gwt.xml] for a complete list -->
-        <gwt.userAgent>ie10,gecko1_8,safari</gwt.userAgent>
+        <gwt.userAgent>gecko1_8,safari</gwt.userAgent>
       </properties>
     </profile>
     <profile>

@@ -3,7 +3,7 @@
     "-//Checkstyle//DTD SuppressionFilter Configuration 1.2//EN"
     "https://checkstyle.org/dtds/suppressions_1_2.dtd">
 <suppressions>
-    <!-- Suppress checks on properties files brought from Zanata-->
+    <!-- Suppress checks on translated properties files -->
     <suppress checks="RegexpSingleline" files="[\\/].*.properties"/>
     <suppress checks="NewlineAtEndOfFile" files="[\\/].*.properties"/>
     <suppress checks="FileTabCharacter" files="[\\/].*.properties"/>

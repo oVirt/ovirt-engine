@@ -582,7 +582,7 @@ LANGUAGE plpgsql;
 --Returns true if update was successful.
 CREATE OR REPLACE FUNCTION UpdateClusterUpgradeProgress (
     v_cluster_id UUID,
-    v_upgrade_percent_complete INT,
+    v_upgrade_percent_complete SMALLINT,
     OUT v_updated BOOLEAN
     )
 AS $FUNCTION$

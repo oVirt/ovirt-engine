@@ -4,6 +4,7 @@ import java.util.Map;
 import java.util.Objects;
 
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 import org.ovirt.engine.core.common.businessentities.comparators.BusinessEntityComparator;
 import org.ovirt.engine.core.common.utils.ToStringBuilder;
@@ -24,12 +25,14 @@ public class VmDevice implements Queryable, BusinessEntity<VmDeviceId>, Comparab
     private VmDeviceId id;
 
     /** The device name. */
+    @Size(max = BusinessEntitiesDefinitions.GENERAL_NAME_SIZE)
     private String device;
 
     /** The device type. */
     private VmDeviceGeneralType type;
 
     /** The device address. */
+    @Size(max = BusinessEntitiesDefinitions.GENERAL_NAME_SIZE)
     private String address;
 
     /** The device boot order (if applicable). */
@@ -60,6 +63,7 @@ public class VmDevice implements Queryable, BusinessEntity<VmDeviceId>, Comparab
 
     /** The device alias. */
     @NotNull
+    @Size(max = BusinessEntitiesDefinitions.GENERAL_NAME_SIZE)
     private String alias;
 
     /** The device logical name. */
@@ -69,6 +73,7 @@ public class VmDevice implements Queryable, BusinessEntity<VmDeviceId>, Comparab
     private Map<String, String> customProperties;
 
     /** The passthrough host device this vm device represents in case there is any. */
+    @Size(max = BusinessEntitiesDefinitions.GENERAL_NAME_SIZE)
     private String hostDevice;
 
     public VmDevice() {

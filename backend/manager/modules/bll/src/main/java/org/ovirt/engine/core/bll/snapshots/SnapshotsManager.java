@@ -569,6 +569,14 @@ public class SnapshotsManager {
             vm.setCpuProfileId(oldVmStatic.getCpuProfileId());
             vm.setClusterId(oldVmStatic.getClusterId());
 
+            // The original template fields are not editable, so the value in the DB is authoritative.
+            // The configuration (e.g. a next-run snapshot taken before the original template was
+            // renamed) may carry a stale or missing value; applying it as-is would fail the
+            // UpdateVmCommand validation (VM_CANNOT_UPDATE_ILLEGAL_FIELD), so always take the
+            // current values from the DB.
+            vm.getStaticData().setOriginalTemplateName(oldVmStatic.getOriginalTemplateName());
+            vm.getStaticData().setOriginalTemplateGuid(oldVmStatic.getOriginalTemplateGuid());
+
             // The VM configuration does not hold the vds group Id.
             // It is necessary to fetch the vm static from the Db, in order to get this information
             VmStatic vmStaticFromDb = vmStaticDao.get(vm.getId());
