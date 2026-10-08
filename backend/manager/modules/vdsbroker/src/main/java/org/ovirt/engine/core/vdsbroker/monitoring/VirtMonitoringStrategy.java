@@ -243,6 +243,7 @@ public class VirtMonitoringStrategy implements MonitoringStrategy {
                 return supported.contains(cluster.getEmulatedMachine());
             } else {
                 ClusterEmulatedMachines ems = ClusterEmulatedMachines.parse(cluster.getEmulatedMachine());
+                // TODO, aarch64 emulation type?
                 return supported.contains(ems.getI440fxType()) && supported.contains(ems.getQ35Type());
             }
         }
