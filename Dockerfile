@@ -23,7 +23,11 @@ RUN make ovirt-engine.spec
 RUN dnf -y builddep ovirt-engine.spec
 
 # Install run deps
-RUN dnf -y install python3-daemon python3-otopi python3-psycopg2 python3-ovirt-setup-lib otopi-common initscripts-service bind-utils postgresql ovirt-engine-wildfly-overlay mailcap ansible-runner ansible-collection-ansible-posix ovirt-imageio-daemon novnc ovirt-engine-websocket-proxy python3-pip
+RUN dnf -y install python3-daemon python3-otopi python3-psycopg2 python3-ovirt-setup-lib otopi-common initscripts-service bind-utils postgresql ovirt-engine-wildfly-overlay mailcap ansible-runner ansible-collection-ansible-posix ovirt-imageio-daemon novnc ovirt-engine-websocket-proxy python3-pip glibc-langpack-en
+
+# Fail the build early if en_US.UTF-8 does not resolve, so a broken locale never
+# silently breaks host-deploy at runtime.
+RUN LC_ALL=en_US.UTF-8 python3 -c "import locale; locale.setlocale(locale.LC_ALL, '')"
 
 # Install linting tools
 RUN pip install pylint pyflakes isort pycodestyle mock
