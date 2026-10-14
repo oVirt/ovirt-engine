@@ -87,6 +87,9 @@ public class BackendDisksResource
             if (storageType != null && storageType == StorageType.ISCSI) {
                 validateParameters(disk.getLunStorage().getLogicalUnits().getLogicalUnits().get(0), 3, "address",
                         "target", "port", "id");
+            } else if (storageType != null && storageType == StorageType.NVMEOF) {
+                validateParameters(disk.getLunStorage().getLogicalUnits().getLogicalUnits().get(0), 3,
+                        "address", "nqn", "id");
             }
         } else if (disk.isSetLunStorage() && (!disk.getLunStorage().isSetLogicalUnits() || !disk.getLunStorage().getLogicalUnits().isSetLogicalUnits())) {
             // TODO: Implement nested entity existence validation infra for validateParameters()

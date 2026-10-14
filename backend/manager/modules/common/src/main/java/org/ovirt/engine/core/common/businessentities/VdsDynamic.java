@@ -241,6 +241,8 @@ public class VdsDynamic implements BusinessEntityWithStatus<Guid, VDSStatus> {
 
     private String vdsmCpusAffinity;
 
+    private String nvmeHostNqn;
+
     public VdsDynamic() {
         rpmVersion = new RpmVersion();
         libvirtVersion = new RpmVersion();
@@ -1028,6 +1030,14 @@ public class VdsDynamic implements BusinessEntityWithStatus<Guid, VDSStatus> {
         return vdsmCpusAffinity;
     }
 
+    public String getNvmeHostNqn() {
+        return nvmeHostNqn;
+    }
+
+    public void setNvmeHostNqn(String nvmeHostNqn) {
+        this.nvmeHostNqn = nvmeHostNqn;
+    }
+
 
     @Override
     public int hashCode() {
@@ -1113,7 +1123,8 @@ public class VdsDynamic implements BusinessEntityWithStatus<Guid, VDSStatus> {
                 cdChangePdiv,
                 ovnConfigured,
                 cpuTopology,
-                vdsmCpusAffinity
+                vdsmCpusAffinity,
+                nvmeHostNqn
         );
     }
 
@@ -1209,6 +1220,7 @@ public class VdsDynamic implements BusinessEntityWithStatus<Guid, VDSStatus> {
                 && cdChangePdiv == other.cdChangePdiv
                 && ovnConfigured == other.ovnConfigured
                 && Objects.equals(cpuTopology, other.cpuTopology)
-                && Objects.equals(vdsmCpusAffinity, other.vdsmCpusAffinity);
+                && Objects.equals(vdsmCpusAffinity, other.vdsmCpusAffinity)
+                && Objects.equals(nvmeHostNqn, other.nvmeHostNqn);
     }
 }

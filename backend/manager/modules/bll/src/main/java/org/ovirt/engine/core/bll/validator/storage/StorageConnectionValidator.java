@@ -57,6 +57,25 @@ public class StorageConnectionValidator {
         return ValidationResult.VALID;
     }
 
+    public ValidationResult isISCSIOrNVMEOFConnectionAndDomain(StorageDomain storageDomain) {
+        ValidationResult validationResult = isSameStorageType(storageDomain);
+        if (!validationResult.isValid()) {
+            return validationResult;
+        }
+
+        StorageType connectionStorageType = connection.getStorageType();
+        StorageType storageDomainType = storageDomain.getStorageType();
+
+        if (!connectionStorageType.equals(StorageType.ISCSI) && !connectionStorageType.equals(StorageType.NVMEOF)) {
+            return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_ACTION_IS_SUPPORTED_ONLY_FOR_ISCSI_DOMAINS);
+        }
+        if (!storageDomainType.equals(StorageType.ISCSI) && !storageDomainType.equals(StorageType.NVMEOF)) {
+            return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_ACTION_IS_SUPPORTED_ONLY_FOR_ISCSI_DOMAINS);
+        }
+
+        return ValidationResult.VALID;
+    }
+
     public ValidationResult isDomainOfConnectionExistsAndInactive(StorageDomain storageDomain) {
         if (storageDomain == null) {
             return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_NOT_EXIST);

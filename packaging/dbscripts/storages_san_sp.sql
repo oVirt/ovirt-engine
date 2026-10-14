@@ -348,7 +348,12 @@ CREATE OR REPLACE FUNCTION Insertstorage_server_connections (
     v_nfs_version VARCHAR(4),
     v_nfs_timeo SMALLINT,
     v_nfs_retrans SMALLINT,
-    v_gluster_volume_id UUID
+    v_gluster_volume_id UUID,
+    v_nqn VARCHAR(256),
+    v_transport VARCHAR(16),
+    v_trsvcid VARCHAR(50),
+    v_host_nqn VARCHAR(256),
+    v_dhchap_key TEXT
     )
 RETURNS VOID AS $FUNCTION$
 BEGIN
@@ -366,7 +371,12 @@ BEGIN
         nfs_version,
         nfs_timeo,
         nfs_retrans,
-        gluster_volume_id
+        gluster_volume_id,
+        nqn,
+        transport,
+        trsvcid,
+        host_nqn,
+        dhchap_key
         )
     VALUES (
         v_connection,
@@ -382,7 +392,12 @@ BEGIN
         v_nfs_version,
         v_nfs_timeo,
         v_nfs_retrans,
-        v_gluster_volume_id
+        v_gluster_volume_id,
+        v_nqn,
+        v_transport,
+        v_trsvcid,
+        v_host_nqn,
+        v_dhchap_key
         );
 END;$FUNCTION$
 LANGUAGE plpgsql;
@@ -401,7 +416,12 @@ CREATE OR REPLACE FUNCTION Updatestorage_server_connections (
     v_nfs_version VARCHAR(4),
     v_nfs_timeo SMALLINT,
     v_nfs_retrans SMALLINT,
-    v_gluster_volume_id UUID
+    v_gluster_volume_id UUID,
+    v_nqn VARCHAR(256),
+    v_transport VARCHAR(16),
+    v_trsvcid VARCHAR(50),
+    v_host_nqn VARCHAR(256),
+    v_dhchap_key TEXT
     )
 RETURNS VOID
     --The [storage_server_connections] table doesn't have a timestamp column. Optimistic concurrency logic cannot be generated
@@ -420,7 +440,12 @@ BEGIN
         nfs_version = v_nfs_version,
         nfs_timeo = v_nfs_timeo,
         nfs_retrans = v_nfs_retrans,
-        gluster_volume_id = v_gluster_volume_id
+        gluster_volume_id = v_gluster_volume_id,
+        nqn = v_nqn,
+        transport = v_transport,
+        trsvcid = v_trsvcid,
+        host_nqn = v_host_nqn,
+        dhchap_key = v_dhchap_key
     WHERE id = v_id;
 END;$FUNCTION$
 LANGUAGE plpgsql;
@@ -554,6 +579,23 @@ BEGIN
     SELECT *
     FROM storage_server_connections
     WHERE iqn = v_iqn
+        AND connection = v_connection
+        AND port = v_port;
+END;$FUNCTION$
+LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION GetStorageConnectionsByConnectionPortAndNqn (
+    v_nqn VARCHAR(256),
+    v_connection VARCHAR(250),
+    v_port VARCHAR(50)
+    )
+RETURNS SETOF storage_server_connections STABLE AS $FUNCTION$
+BEGIN
+    RETURN QUERY
+
+    SELECT *
+    FROM storage_server_connections
+    WHERE nqn = v_nqn
         AND connection = v_connection
         AND port = v_port;
 END;$FUNCTION$

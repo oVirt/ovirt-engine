@@ -187,6 +187,8 @@ select fn_db_add_config_value_for_versions_up_to('CopyPreallocatedFileBasedDiskS
 select fn_db_add_config_value_for_versions_up_to('CopyPreallocatedFileBasedDiskSupported', 'true', '4.8');
 select fn_db_add_config_value_for_versions_up_to('ManagedBlockDomainSupported', 'false', '4.5');
 select fn_db_add_config_value_for_versions_up_to('ManagedBlockDomainSupported', 'true', '4.8');
+select fn_db_add_config_value_for_versions_up_to('NVMeOfSupported', 'false', '4.5');
+select fn_db_add_config_value_for_versions_up_to('NVMeOfSupported', 'true', '4.8');
 
 -- migration support per architecture
 select fn_db_add_config_value_for_versions_up_to('IsMigrationSupported','{"undefined": "true", "x86": "true", "ppc" : "true", "s390x" : "true"}','4.8');

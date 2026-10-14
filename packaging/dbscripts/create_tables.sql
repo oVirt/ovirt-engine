@@ -2071,7 +2071,12 @@ CREATE TABLE storage_server_connections (
     vfs_type character varying(128),
     nfs_version character varying(4),
     nfs_timeo smallint,
-    nfs_retrans smallint
+    nfs_retrans smallint,
+    nqn character varying(256),
+    transport character varying(16),
+    trsvcid character varying(50),
+    host_nqn character varying(256),
+    dhchap_key text
 );
 
 
@@ -2380,6 +2385,7 @@ CREATE TABLE vds_dynamic (
     spice_version character varying(4000),
     kernel_version character varying(4000),
     iscsi_initiator_name character varying(4000),
+    nvme_host_nqn character varying(256),
     transparent_hugepages_state integer DEFAULT 0 NOT NULL,
     hooks text DEFAULT ''::character varying,
     _update_date timestamp with time zone,

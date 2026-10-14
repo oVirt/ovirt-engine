@@ -124,6 +124,21 @@ public class ConnectStorageToVdsCommand<T extends StorageServerConnectionParamet
             }
         }
 
+        if (storageType == StorageType.NVMEOF) {
+            if (StringUtils.isEmpty(conn.getConnection())) {
+                return failValidation(EngineMessage.VALIDATION_STORAGE_CONNECTION_EMPTY_CONNECTION);
+            }
+            if (StringUtils.isEmpty(conn.getNqn())) {
+                return failValidation(EngineMessage.VALIDATION_STORAGE_CONNECTION_EMPTY_IQN);
+            }
+            if (StringUtils.isEmpty(conn.getTrsvcid())) {
+                conn.setTrsvcid(StorageServerConnections.DEFAULT_NVME_PORT);
+            }
+            if (!isValidStorageConnectionPort(conn.getTrsvcid())) {
+                return failValidation(EngineMessage.VALIDATION_STORAGE_CONNECTION_INVALID_PORT);
+            }
+        }
+
         if (storageType == StorageType.GLUSTERFS) {
             if (!validate(validateVolumeIdAndUpdatePath(conn)) || !validate(canVDSConnectToGlusterfs(getVds()))) {
                 return false;

@@ -15,6 +15,7 @@ import org.ovirt.engine.core.common.action.LockProperties.Scope;
 import org.ovirt.engine.core.common.action.StorageServerConnectionParametersBase;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
+import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.errors.EngineError;
 import org.ovirt.engine.core.common.errors.EngineException;
 import org.ovirt.engine.core.common.errors.EngineMessage;
@@ -121,8 +122,15 @@ public class AddStorageServerConnectionCommand<T extends StorageServerConnection
                     LockMessagesMatchUtil.makeLockingPair(LockingGroup.STORAGE_CONNECTION,
                             EngineMessage.ACTION_TYPE_FAILED_OBJECT_LOCKED));
         } else { // lock target details
-            return Collections.singletonMap(getConnection().getConnection() + ";" + getConnection().getIqn() + ";"
-                    + getConnection().getPort() + ";" + getConnection().getUserName(),
+            String targetKey;
+            if (getConnection().getStorageType().equals(StorageType.NVMEOF)) {
+                targetKey = getConnection().getConnection() + ";" + getConnection().getNqn()
+                        + ";" + getConnection().getTrsvcid();
+            } else {
+                targetKey = getConnection().getConnection() + ";" + getConnection().getIqn() + ";"
+                        + getConnection().getPort() + ";" + getConnection().getUserName();
+            }
+            return Collections.singletonMap(targetKey,
                     LockMessagesMatchUtil.makeLockingPair(LockingGroup.STORAGE_CONNECTION,
                             EngineMessage.ACTION_TYPE_FAILED_OBJECT_LOCKED));
         }

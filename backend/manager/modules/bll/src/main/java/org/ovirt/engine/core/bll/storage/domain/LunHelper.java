@@ -4,6 +4,7 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.ovirt.engine.core.bll.storage.connection.ISCSIStorageHelper;
+import org.ovirt.engine.core.bll.storage.connection.NVMEOFStorageHelper;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.businessentities.storage.LUNStorageServerConnectionMap;
 import org.ovirt.engine.core.common.businessentities.storage.LUNStorageServerConnectionMapId;
@@ -29,6 +30,9 @@ public class LunHelper {
     @Inject
     private ISCSIStorageHelper iscsiStorageHelper;
 
+    @Inject
+    private NVMEOFStorageHelper nvmeofStorageHelper;
+
     public void proceedDirectLUNInDb(final LUNs lun, StorageType storageType) {
         lun.setPhysicalVolumeId(null);
         proceedLUNInDb(lun, storageType, "");
@@ -47,8 +51,14 @@ public class LunHelper {
             return;
         }
 
+        if (storageType == StorageType.NVMEOF) {
+            // NVMe-oF connections are stored and mapped like iSCSI.
+        }
+
         for (StorageServerConnections connection : lun.getLunConnections()) {
-            StorageServerConnections dbConnection = iscsiStorageHelper.findConnectionWithSameDetails(connection);
+            StorageServerConnections dbConnection = storageType == StorageType.NVMEOF
+                    ? nvmeofStorageHelper.findConnectionWithSameDetails(connection)
+                    : iscsiStorageHelper.findConnectionWithSameDetails(connection);
             if (dbConnection == null) {
                 connection.setId(Guid.newGuid().toString());
                 connection.setStorageType(storageType);

@@ -258,6 +258,9 @@ public class HostMapper {
             model.setIscsi(new IscsiDetails());
             model.getIscsi().setInitiator(entity.getIScsiInitiatorName());
         }
+        if (entity.getDynamicData().getNvmeHostNqn() != null) {
+            model.setNvmeHostNqn(entity.getDynamicData().getNvmeHostNqn());
+        }
         model.setPowerManagement(map(entity, (PowerManagement) null));
         model.setHardwareInformation(map(entity, (HardwareInformation) null));
         model.setSsh(map(entity.getStaticData(), null));

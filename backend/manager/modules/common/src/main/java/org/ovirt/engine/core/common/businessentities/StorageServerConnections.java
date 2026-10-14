@@ -14,6 +14,7 @@ public class StorageServerConnections implements BusinessEntity<String> {
 
     public static final String DEFAULT_TPGT = "1";
     public static final String DEFAULT_ISCSI_PORT = "3260";
+    public static final String DEFAULT_NVME_PORT = "4420";
 
     public StorageServerConnections() {
         storageType = StorageType.UNKNOWN;
@@ -32,7 +33,12 @@ public class StorageServerConnections implements BusinessEntity<String> {
             NfsVersion nfsVersion,
             Short nfsRetrans,
             Short nfsTimeo,
-            Guid glusterVolumeId) {
+            Guid glusterVolumeId,
+            String nqn,
+            String transport,
+            String trsvcid,
+            String hostNqn,
+            String dhchapKey) {
         setConnection(connection);
         setId(id);
         setIqn(iqn);
@@ -47,6 +53,11 @@ public class StorageServerConnections implements BusinessEntity<String> {
         setNfsRetrans(nfsRetrans);
         setNfsTimeo(nfsTimeo);
         setGlusterVolumeId(glusterVolumeId);
+        setNqn(nqn);
+        setTransport(transport);
+        setTrsvcid(trsvcid);
+        setHostNqn(hostNqn);
+        setDhchapKey(dhchapKey);
     }
 
     public StorageServerConnections(String connection,
@@ -57,7 +68,8 @@ public class StorageServerConnections implements BusinessEntity<String> {
             String userName,
             String port,
             String portal) {
-        this(connection, id, iqn, password, storageType, userName, port, portal, null, null, null, null, null, null);
+        this(connection, id, iqn, password, storageType, userName, port, portal, null, null, null, null, null, null,
+                null, null, null, null, null);
     }
 
     private String connection;
@@ -217,6 +229,56 @@ public class StorageServerConnections implements BusinessEntity<String> {
         this.glusterVolumeId = glusterVolumeId;
     }
 
+    private String nqn;
+
+    public String getNqn() {
+        return nqn;
+    }
+
+    public void setNqn(String nqn) {
+        this.nqn = nqn;
+    }
+
+    private String transport;
+
+    public String getTransport() {
+        return transport;
+    }
+
+    public void setTransport(String transport) {
+        this.transport = transport;
+    }
+
+    private String trsvcid;
+
+    public String getTrsvcid() {
+        return trsvcid;
+    }
+
+    public void setTrsvcid(String trsvcid) {
+        this.trsvcid = trsvcid;
+    }
+
+    private String hostNqn;
+
+    public String getHostNqn() {
+        return hostNqn;
+    }
+
+    public void setHostNqn(String hostNqn) {
+        this.hostNqn = hostNqn;
+    }
+
+    private String dhchapKey;
+
+    public String getDhchapKey() {
+        return dhchapKey;
+    }
+
+    public void setDhchapKey(String dhchapKey) {
+        this.dhchapKey = dhchapKey;
+    }
+
     @Override
     public boolean equals(Object obj) {
         boolean returnValue = super.equals(obj);
@@ -248,7 +310,12 @@ public class StorageServerConnections implements BusinessEntity<String> {
                 ssc.nfsVersion,
                 ssc.nfsRetrans,
                 ssc.nfsTimeo,
-                ssc.glusterVolumeId);
+                ssc.glusterVolumeId,
+                ssc.nqn,
+                ssc.transport,
+                ssc.trsvcid,
+                ssc.hostNqn,
+                ssc.dhchapKey);
     }
 
     @Override
@@ -264,6 +331,10 @@ public class StorageServerConnections implements BusinessEntity<String> {
                 .append("nfsTimeo", getNfsTimeo())
                 .append("iface", getIface())
                 .append("netIfaceName", getNetIfaceName())
+                .append("nqn", getNqn())
+                .append("transport", getTransport())
+                .append("trsvcid", getTrsvcid())
+                .append("hostNqn", getHostNqn())
                 .build();
     }
 

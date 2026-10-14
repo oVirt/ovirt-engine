@@ -444,6 +444,10 @@ public abstract class StorageDomainCommandBase<T extends StorageDomainParameters
         return getStorageDomain().getStorageType().isManagedBlockStorage();
     }
 
+    protected boolean isNvmeOfStorageDomain() {
+        return getStorageDomain().getStorageType().isNvmeOfDomain();
+    }
+
     protected EventQueue getEventQueue() {
         return eventQueue;
     }
