@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.bll;
 
 import java.io.File;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -426,23 +427,28 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
     }
 
     protected boolean checkPayload(VmPayload payload) {
-        boolean returnValue = true;
         if (payload.getDeviceType() != VmDeviceType.CDROM && payload.getDeviceType() != VmDeviceType.FLOPPY) {
             addValidationMessage(EngineMessage.VMPAYLOAD_INVALID_PAYLOAD_TYPE);
-            returnValue = false;
+            return false;
         } else {
             for (String content : payload.getFiles().values()) {
+                // ensure that the content is present, before checking its size
+                if (content == null) {
+                    addValidationMessage(EngineMessage.VMPAYLOAD_CONTENT_NULL);
+                    return false;
+                }
                 // Check each file individually, no constraint on total size
                 if (!VmPayload.isPayloadSizeLegal(content)) {
-                    Integer lengthInKb = 2 * Config.<Integer> getValue(ConfigValues.PayloadSize) / Kb;
+                    int sizeInKb = content.getBytes(StandardCharsets.UTF_8).length / Kb;
+                    int maxSizeInKb = Config.<Integer> getValue(ConfigValues.PayloadSize) / Kb;
                     addValidationMessage(EngineMessage.VMPAYLOAD_SIZE_EXCEEDED);
-                    addValidationMessageVariable("size", lengthInKb.toString());
-                    returnValue = false;
-                    break;
+                    addValidationMessageVariable("maxSize", String.valueOf(maxSizeInKb));
+                    addValidationMessageVariable("currentSize", String.valueOf(sizeInKb));
+                    return false;
                 }
             }
         }
-        return returnValue;
+        return true;
     }
 
     protected boolean canRunActionOnNonManagedVm() {
