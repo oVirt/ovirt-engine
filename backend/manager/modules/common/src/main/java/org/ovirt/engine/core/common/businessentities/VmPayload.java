@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.common.businessentities;
 
 import java.io.Serializable;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -58,8 +59,14 @@ public class VmPayload extends VmDevice implements Serializable {
         return specParams == null ? false : specParams.containsKey(SpecParamsPayload);
     }
 
-    public static boolean isPayloadSizeLegal(String payload) {
-        return payload.length() <= Config.<Integer> getValue(ConfigValues.PayloadSize);
+    /**
+     * Enforce a max byte size for the payload content.
+     *
+     * @param content The payload content to check.
+     * @return true if the payload size is within the allowed limit, false otherwise.
+     */
+    public static boolean isPayloadSizeLegal(String content) {
+        return content.getBytes(StandardCharsets.UTF_8).length <= Config.<Integer> getValue(ConfigValues.PayloadSize);
     }
 
     public VmDeviceType getDeviceType() {
