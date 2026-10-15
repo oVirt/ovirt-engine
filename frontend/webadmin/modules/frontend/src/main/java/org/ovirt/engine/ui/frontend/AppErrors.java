@@ -2223,12 +2223,6 @@ public interface AppErrors extends ConstantsWithLookup {
 
     String VMPAYLOAD_SIZE_EXCEEDED();
 
-    String VMPAYLOAD_FLOPPY_EXCEEDED();
-
-    String VMPAYLOAD_FLOPPY_WITH_SYSPREP();
-
-    String VMPAYLOAD_CDROM_WITH_CLOUD_INIT();
-
     String VMPAYLOAD_CDROM_OR_CLOUD_INIT_MAXIMUM_DEVICES();
 
     String VMPAYLOAD_CONTENT_NULL();
