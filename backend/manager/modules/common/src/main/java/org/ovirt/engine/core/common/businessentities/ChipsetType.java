@@ -3,7 +3,8 @@ package org.ovirt.engine.core.common.businessentities;
 public enum ChipsetType {
 
     I440FX("i440fx"),
-    Q35("q35");
+    Q35("q35"),
+    VIRT("virt");
 
     private String chipsetName;
 
@@ -25,6 +26,9 @@ public enum ChipsetType {
                 }
                 if (element.equalsIgnoreCase("pc")) {
                     defaultChipset = I440FX;
+                }
+                if (element.equalsIgnoreCase("virt")) {
+                    defaultChipset = VIRT;
                 }
             }
         }

@@ -124,6 +124,11 @@ public class ExistingVmModelBehavior extends VmModelBehaviorBase<UnitVmModel> {
             getModel().getIsHighlyAvailable().setIsChangeable(false);
             getModel().getIsHighlyAvailable().setChangeProhibitionReason(constants.noHaWhenHostedEngineUsed());
         }
+
+        // update HostCpu for aarch64
+        if (clusterHasAarch64Architecture()) {
+            updateHostCpuAndMigrationForAarch64();
+        }
     }
 
     private void loadDataCenter() {
