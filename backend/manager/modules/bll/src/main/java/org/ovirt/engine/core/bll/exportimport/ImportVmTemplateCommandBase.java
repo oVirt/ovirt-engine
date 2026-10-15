@@ -520,13 +520,50 @@ public abstract class ImportVmTemplateCommandBase<T extends ImportVmTemplatePara
         return jobProperties;
     }
 
+    protected Map<Guid, Guid> getImageToDestinationDomainMap() {
+        if (imageToDestinationDomainMap == null) {
+            imageToDestinationDomainMap = getParameters().getImageToDestinationDomainMap();
+        }
+        return imageToDestinationDomainMap;
+    }
+
+    protected Guid getDestinationDomainIdForDisk(Guid diskId) {
+        Map<Guid, Guid> destMap = getImageToDestinationDomainMap();
+        if (destMap == null || Guid.isNullOrEmpty(diskId)) {
+            return null;
+        }
+        Guid destDomainId = destMap.get(diskId);
+        if (destDomainId != null) {
+            return destDomainId;
+        }
+        Guid originalDiskId = getOriginalDiskIdMap(diskId);
+        if (originalDiskId != null) {
+            return destMap.get(originalDiskId);
+        }
+        return null;
+    }
+
+    protected boolean diskTargetsManagedBlockStorage(DiskImage diskImage) {
+        Guid destDomainId = getDestinationDomainIdForDisk(diskImage.getId());
+        if (Guid.isNullOrEmpty(destDomainId)) {
+            return false;
+        }
+        StorageDomain sd = storageDomainDao.getForStoragePool(destDomainId, getStoragePoolId());
+        return OvaImportManagedBlockSupport.isManagedBlockDestination(sd);
+    }
+
+    protected boolean skipDiskProfileValidation(DiskImage diskImage) {
+        return false;
+    }
+
     protected boolean setAndValidateDiskProfiles() {
         if (getParameters().getVmTemplate().getDiskList() != null) {
             Map<DiskImage, Guid> map = new HashMap<>();
             for (DiskImage diskImage : getParameters().getVmTemplate().getDiskList()) {
-                map.put(diskImage, imageToDestinationDomainMap.get(diskImage.getId()));
+                map.put(diskImage, getDestinationDomainIdForDisk(diskImage.getId()));
             }
-            return validate(diskProfileHelper.setAndValidateDiskProfiles(map, getCurrentUser()));
+            return validate(diskProfileHelper.setAndValidateDiskProfiles(
+                    map, getCurrentUser(), this::skipDiskProfileValidation));
         }
         return true;
     }
@@ -548,7 +585,7 @@ public abstract class ImportVmTemplateCommandBase<T extends ImportVmTemplatePara
             list.add(new QuotaStorageConsumptionParameter(
                     disk.getQuotaId(),
                     QuotaConsumptionParameter.QuotaAction.CONSUME,
-                    imageToDestinationDomainMap.get(disk.getId()),
+                    getDestinationDomainIdForDisk(disk.getId()),
                     (double) disk.getSizeInGigabytes()));
         }
         return list;
@@ -579,9 +616,10 @@ public abstract class ImportVmTemplateCommandBase<T extends ImportVmTemplatePara
      *            - The disk which is about to be cloned
      */
     protected void generateNewDiskId(DiskImage disk) {
+        Guid oldDiskId = disk.getId();
         Guid newGuidForDisk = Guid.newGuid();
 
-        originalDiskIdMap.put(newGuidForDisk, disk.getId());
+        originalDiskIdMap.put(newGuidForDisk, oldDiskId);
         originalDiskImageIdMap.put(newGuidForDisk, disk.getImageId());
         disk.setId(newGuidForDisk);
         disk.setImageId(Guid.newGuid());

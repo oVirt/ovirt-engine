@@ -1,11 +1,13 @@
 package org.ovirt.engine.core.bll.storage.disk.managedblock;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import javax.inject.Inject;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.ovirt.engine.core.bll.VmHandler;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.bll.storage.disk.image.DisksFilter;
@@ -34,8 +36,12 @@ import org.ovirt.engine.core.dao.StorageDomainDao;
 import org.ovirt.engine.core.dao.VmDeviceDao;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 import org.ovirt.engine.core.vdsbroker.builder.vminfo.VmInfoBuildUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ManagedBlockStorageCommandUtil {
+    private static final Logger log = LoggerFactory.getLogger(ManagedBlockStorageCommandUtil.class);
+
     @Inject
     private BackendInternal backend;
     @Inject
@@ -77,6 +83,27 @@ public class ManagedBlockStorageCommandUtil {
                 });
     }
 
+    public boolean attachManagedBlockStorageDisksOnHost(Collection<ManagedBlockStorageDisk> disks,
+            VDS vds,
+            Guid vmOrTemplateEntityId) {
+        if (CollectionUtils.isEmpty(disks)) {
+            return true;
+        }
+        if (vds.getConnectorInfo() == null) {
+            AuditLogable event = new AuditLogableImpl();
+            event.addCustomValue("VdsName", vds.getName());
+            event.addCustomValue("VmName", vmOrTemplateEntityId != null ? vmOrTemplateEntityId.toString() : "");
+            auditLogDirector.log(event, AuditLogType.CONNECTOR_INFO_MISSING_ON_VDS);
+            return false;
+        }
+        return disks.stream()
+                .allMatch(disk -> saveDevices(
+                        disk,
+                        vds,
+                        vmDeviceDao.get(new VmDeviceId(disk.getId(), vmOrTemplateEntityId)),
+                        false));
+    }
+
     public boolean saveDevices(ManagedBlockStorageDisk disk,
             VDS vds,
             VmDevice vmDevice) {
@@ -113,6 +140,12 @@ public class ManagedBlockStorageCommandUtil {
     private void saveAttachedHost(VmDevice vmDevice,
             Guid vdsId,
             boolean isLiveMigration) {
+        if (vmDevice == null) {
+            log.warn(
+                    "Managed-block attach: vm_device is null; skipping ATTACHED_VDS_ID persistence for VDS {}",
+                    vdsId);
+            return;
+        }
         TransactionSupport.executeInNewTransaction(() -> {
             Map<String, Object> specParams = new HashMap<>();
             if (isLiveMigration) {
@@ -168,11 +201,35 @@ public class ManagedBlockStorageCommandUtil {
 
         List<ManagedBlockStorageDisk> disks =
                 DisksFilter.filterManagedBlockStorageDisks(vm.getDiskMap().values());
-        return disks.stream().allMatch(disk -> disconnectManagedBlockStorageDisk(vm, disk, removeDest));
+        return disks.stream().allMatch(disk -> disconnectManagedBlockStorageDisk(vm, disk, removeDest, null));
     }
 
     public boolean disconnectManagedBlockStorageDisk(VM vm, DiskImage disk, boolean removeDest) {
+        return disconnectManagedBlockStorageDisk(vm, disk, removeDest, null);
+    }
+
+    public boolean disconnectManagedBlockStorageDisk(VM vm,
+            DiskImage disk,
+            boolean removeDest,
+            Guid fallbackVdsIdWhenNoVmDevice) {
         VmDevice vmDevice = vmDeviceDao.get(new VmDeviceId(disk.getId(), vm.getId()));
+        if (vmDevice == null) {
+            if (!removeDest && fallbackVdsIdWhenNoVmDevice != null
+                    && !Guid.isNullOrEmpty(fallbackVdsIdWhenNoVmDevice)) {
+                log.debug(
+                        "Managed-block disconnect: no vm_device for disk {} on {}; detaching from host {}",
+                        disk.getId(),
+                        vm.getId(),
+                        fallbackVdsIdWhenNoVmDevice);
+                return disconnectManagedBlockStorageDeviceFromHost(disk, fallbackVdsIdWhenNoVmDevice);
+            }
+            log.warn(
+                    "Managed-block disconnect: no vm_device for disk {} on vm/template {}, and no fallback host; "
+                            + "cannot determine VDS for detach",
+                    disk.getId(),
+                    vm.getId());
+            return false;
+        }
         DisconnectManagedBlockStorageDeviceParameters parameters =
                 new DisconnectManagedBlockStorageDeviceParameters();
         parameters.setStorageDomainId(disk.getStorageIds().get(0));
