@@ -12,6 +12,7 @@ import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.businessentities.BusinessEntity;
 import org.ovirt.engine.core.common.businessentities.BusinessEntityWithStatus;
 import org.ovirt.engine.core.common.businessentities.Identifiable;
@@ -29,6 +30,7 @@ import org.ovirt.engine.core.common.businessentities.gluster.StorageDevice;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.VnicProfileView;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
+import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.compat.Guid;
@@ -67,6 +69,18 @@ public final class Linq {
         boolean isActive = storageDomain.getStatus() == StorageDomainStatus.Active;
 
         return isData && isActive;
+    }
+
+    public static ActionType transferDiskImageActionType(StorageDomain storageDomain) {
+        return isManagedBlockActiveStorageDomain(storageDomain)
+                ? ActionType.MbsTransferDiskImage
+                : ActionType.TransferDiskImage;
+    }
+
+    public static ActionType transferDiskImageActionType(DiskImage diskImage) {
+        return diskImage.getDiskStorageType() == DiskStorageType.MANAGED_BLOCK_STORAGE
+                ? ActionType.MbsTransferDiskImage
+                : ActionType.TransferDiskImage;
     }
 
     public static boolean isManagedBlockActiveStorageDomain(StorageDomain storageDomain) {

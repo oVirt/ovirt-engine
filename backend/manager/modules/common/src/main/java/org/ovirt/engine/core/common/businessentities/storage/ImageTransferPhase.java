@@ -20,7 +20,9 @@ public enum ImageTransferPhase implements Identifiable {
     FINISHED_FAILURE(10, "Finished Failure"),
     CANCELLED_USER(11, "Cancelled by user"),
     FINALIZING_CLEANUP(12, "Finalizing Cleanup"),
-    FINISHED_CLEANUP(13, "Finished Cleanup");
+    FINISHED_CLEANUP(13, "Finished Cleanup"),
+    /** Volume format conversion performed on the host (VDSM) via CopyImage / qemu-img convert. */
+    CONVERTING(14, "Converting");
 
     private int value;
     private String description;
