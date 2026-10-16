@@ -546,7 +546,7 @@ public interface IVdsServer {
 
     VmBackupInfo vmBackupInfo(String vmId, String backupId, String checkpointId);
 
-    VmCheckpointIds redefineVmCheckpoints(String vmId, Collection<Map<String, Object>> checkpoints);
+    VmCheckpointIds redefineVmCheckpoints(String vmId, Collection<Map<String, Object>> checkpoints, boolean validate);
 
     VmCheckpointIds deleteVmCheckpoints(String vmId, String[] checkpointIds);
 

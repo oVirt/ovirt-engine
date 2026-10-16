@@ -42,7 +42,6 @@ import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ActionParametersBase.EndProcedure;
 import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
-import org.ovirt.engine.core.common.action.DeleteAllVmCheckpointsParameters;
 import org.ovirt.engine.core.common.action.ImagesContainterParametersBase;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.LockProperties.Scope;
@@ -59,7 +58,6 @@ import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
 import org.ovirt.engine.core.common.businessentities.SnapshotActionEnum;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
-import org.ovirt.engine.core.common.businessentities.VmCheckpoint;
 import org.ovirt.engine.core.common.businessentities.storage.CinderDisk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
@@ -81,7 +79,6 @@ import org.ovirt.engine.core.dao.VmCheckpointDao;
 import org.ovirt.engine.core.dao.VmDynamicDao;
 import org.ovirt.engine.core.dao.VmStaticDao;
 import org.ovirt.engine.core.utils.OvfUtils;
-import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 /**
  * Restores the given snapshot, including all the VM configuration that was stored in it.<br>
@@ -281,36 +278,12 @@ public class RestoreAllSnapshotsCommand<T extends RestoreAllSnapshotsParameters>
         // When a snapshot is committed and restored we cannot tell which
         // checkpoint was taken on which snapshot. Invalidate all the VM previous
         // checkpoints, so a full VM backup should be taken after restoring a snapshot.
-        List<VmCheckpoint> vmCheckpoints = vmCheckpointDao.getAllForVm(getVmId());
-
-        if (vmCheckpoints != null && !vmCheckpoints.isEmpty()) {
-            log.info("Invalidating all VM '{}' checkpoints, full VM backup is now needed.", getVmName());
-            TransactionSupport.executeInNewTransaction(() -> {
-                vmCheckpointDao.invalidateAllCheckpointsByVmId(getVmId());
-                return null;
-            });
-            log.info("Removing all VM '{}' checkpoints.", getVmName());
-            removeAllVmCheckpoints(vmCheckpoints);
+        if (vmCheckpointDao.getAllForVm(getVmId()).isEmpty()) {
+            return;
         }
-    }
 
-    private void removeAllVmCheckpoints(List<VmCheckpoint> vmCheckpoints) {
-        log.info("Removing VM '{}' checkpoints.", getVmName());
-
-        // Collect all the images that were part of a backup.
-        List<DiskImage> imagesWithCheckpoints = vmCheckpoints.stream()
-                .map(vmCheckpoint -> vmCheckpointDao.getDisksByCheckpointId(vmCheckpoint.getId()))
-                .flatMap(List::stream)
-                .distinct()
-                .collect(Collectors.toCollection(ArrayList::new));
-
-        DeleteAllVmCheckpointsParameters deleteAllVmCheckpointsParameters =
-                new DeleteAllVmCheckpointsParameters(getVmId(), imagesWithCheckpoints);
-        deleteAllVmCheckpointsParameters.setParentCommand(getActionType());
-        deleteAllVmCheckpointsParameters.setParentParameters(getParameters());
-        deleteAllVmCheckpointsParameters.setEndProcedure(EndProcedure.COMMAND_MANAGED);
-
-        runInternalAction(ActionType.DeleteAllVmCheckpoints, deleteAllVmCheckpointsParameters);
+        invalidateAllCheckpoints();
+        removeAllCheckpoints();
     }
 
     private boolean updateLeaseInfoIfNeeded() {

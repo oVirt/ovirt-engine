@@ -99,6 +99,8 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskInterface;
 import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
 import org.ovirt.engine.core.common.businessentities.storage.LUNs;
 import org.ovirt.engine.core.common.businessentities.storage.LeaseJobStatus;
+import org.ovirt.engine.core.common.businessentities.storage.Qcow2BitmapInfo;
+import org.ovirt.engine.core.common.businessentities.storage.Qcow2BitmapInfoFlags;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
@@ -1040,6 +1042,8 @@ public class VdsBrokerObjectsBuilder {
         vds.setCdChangePdiv(assignBoolValue(struct, VdsProperties.CD_CHANGE_PDIV));
         vds.setOvnConfigured(assignBoolValue(struct, VdsProperties.OVN_CONFIGURED));
         vds.setVdsmCpusAffinity(assignStringValueFromArray(struct, VdsProperties.vdsm_cpus_affinity));
+        vds.setQemuImageInfoBitmaps(assignBoolValue(struct, VdsProperties.QEMU_IMAGE_INFO_BITMAPS));
+        vds.setRedefineCheckpointValidate(assignBoolValue(struct, VdsProperties.REDEFINE_CHECKPOINT_VALIDATE));
     }
 
     private void setDnsResolverConfigurationData(VDS vds, Map<String, Object> struct) {
@@ -2823,5 +2827,38 @@ public class VdsBrokerObjectsBuilder {
         }
 
         return leaseStatus;
+    }
+
+    public static List<Qcow2BitmapInfo> buildQcow2Bitmaps(Object[] struct) {
+        List<Qcow2BitmapInfo> bitmaps = new ArrayList<>();
+
+        for (Object entry : struct) {
+            if (!(entry instanceof Map)) {
+                // vdsm v4.50.6.1 and older had a small bug in it which caused it to send the bitmap as an array
+                // rather than a map. There is nothing to parse from that - skip the entry rather than fail.
+                log.warn("Unsupported bitmap format '{}' received from vdsm, skipping it", entry);
+                continue;
+            }
+
+            Map<String, Object> bitmap = (Map<String, Object>) entry;
+            Qcow2BitmapInfo bitmapInfo = new Qcow2BitmapInfo();
+            bitmapInfo.setName(Objects.toString(bitmap.get("name"), null));
+            if (bitmap.get("granularity") != null) {
+                bitmapInfo.setGranularity(Long.parseLong(bitmap.get("granularity").toString()));
+            }
+
+            Object[] flags = (Object[]) bitmap.get("flags");
+            if (flags != null) {
+                // Unknown flags reported by a newer qemu are ignored rather than failing the whole query.
+                bitmapInfo.setFlags(Arrays.stream(flags)
+                        .map(flag -> Qcow2BitmapInfoFlags.forValue(flag.toString()))
+                        .filter(Objects::nonNull)
+                        .collect(Collectors.toList()));
+            }
+
+            bitmaps.add(bitmapInfo);
+        }
+
+        return bitmaps;
     }
 }

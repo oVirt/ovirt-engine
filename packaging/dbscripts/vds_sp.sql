@@ -277,7 +277,9 @@ CREATE OR REPLACE FUNCTION InsertVdsDynamic (
     v_cd_change_pdiv BOOLEAN,
     v_ovn_configured BOOLEAN,
     v_cpu_topology JSONB,
-    v_vdsm_cpus_affinity VARCHAR(256)
+    v_vdsm_cpus_affinity VARCHAR(256),
+    v_qemu_image_info_bitmaps BOOLEAN,
+    v_redefine_checkpoint_validate BOOLEAN
     )
 RETURNS VOID AS $FUNCTION$
 BEGIN
@@ -360,7 +362,9 @@ BEGIN
             cd_change_pdiv,
             ovn_configured,
             cpu_topology,
-            vdsm_cpus_affinity
+            vdsm_cpus_affinity,
+            qemu_image_info_bitmaps,
+            redefine_checkpoint_validate
             )
         VALUES (
             v_cpu_cores,
@@ -440,7 +444,9 @@ BEGIN
             v_cd_change_pdiv,
             v_ovn_configured,
             v_cpu_topology,
-            v_vdsm_cpus_affinity
+            v_vdsm_cpus_affinity,
+            v_qemu_image_info_bitmaps,
+            v_redefine_checkpoint_validate
             );
     END;
 
@@ -545,7 +551,9 @@ CREATE OR REPLACE FUNCTION UpdateVdsDynamic (
     v_cd_change_pdiv BOOLEAN,
     v_ovn_configured BOOLEAN,
     v_cpu_topology JSONB,
-    v_vdsm_cpus_affinity VARCHAR(256)
+    v_vdsm_cpus_affinity VARCHAR(256),
+    v_qemu_image_info_bitmaps BOOLEAN,
+    v_redefine_checkpoint_validate BOOLEAN
     )
 RETURNS VOID
     --The [vds_dynamic] table doesn't have a timestamp column. Optimistic concurrency logic cannot be generated
@@ -633,7 +641,9 @@ BEGIN
             cd_change_pdiv = v_cd_change_pdiv,
             ovn_configured = v_ovn_configured,
             cpu_topology = v_cpu_topology,
-            vdsm_cpus_affinity = v_vdsm_cpus_affinity
+            vdsm_cpus_affinity = v_vdsm_cpus_affinity,
+            qemu_image_info_bitmaps = v_qemu_image_info_bitmaps,
+            redefine_checkpoint_validate = v_redefine_checkpoint_validate
         WHERE vds_id = v_vds_id;
     END;
 

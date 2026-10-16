@@ -265,6 +265,8 @@ public class VDS implements Queryable, BusinessEntityWithStatus<Guid, VDSStatus>
         vds.setBootUuid(getBootUuid());
         vds.setCdChangePdiv(isCdChangePdiv());
         vds.setOvnConfigured(isOvnConfigured());
+        vds.setQemuImageInfoBitmaps(isQemuImageInfoBitmaps());
+        vds.setRedefineCheckpointValidate(isRedefineCheckpointValidate());
         return vds;
     }
 
@@ -1905,5 +1907,21 @@ public class VDS implements Queryable, BusinessEntityWithStatus<Guid, VDSStatus>
 
     public void setVdsmCpusAffinity(String value) {
         vdsDynamic.setVdsmCpusAffinity(value);
+    }
+
+    public boolean isQemuImageInfoBitmaps() {
+        return vdsDynamic.isQemuImageInfoBitmaps();
+    }
+
+    public void setQemuImageInfoBitmaps(boolean qemuImageInfoBitmaps) {
+        vdsDynamic.setQemuImageInfoBitmaps(qemuImageInfoBitmaps);
+    }
+
+    public boolean isRedefineCheckpointValidate() {
+        return vdsDynamic.isRedefineCheckpointValidate();
+    }
+
+    public void setRedefineCheckpointValidate(boolean redefineCheckpointValidate) {
+        vdsDynamic.setRedefineCheckpointValidate(redefineCheckpointValidate);
     }
 }
