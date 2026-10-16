@@ -14,6 +14,8 @@ public enum ArchitectureType implements Identifiable {
     ppc(3),
     /* Host & Guest architecture */
     s390x(7),
+    /* Host & Guest architecture */
+    aarch64(8),
 
     // Specific architectures
     /* Host & Guest architecture */
@@ -25,6 +27,7 @@ public enum ArchitectureType implements Identifiable {
     /* Guest architecture */
     ppcle(6, ppc);
 
+    public static final int HOTPLUG_MEMORY_FACTOR_ARM_MB = 128;
     public static final int HOTPLUG_MEMORY_FACTOR_PPC_MB = 256;
     public static final int HOTPLUG_MEMORY_FACTOR_X86_MB = 128;
     private int value;
@@ -64,6 +67,8 @@ public enum ArchitectureType implements Identifiable {
                 return HOTPLUG_MEMORY_FACTOR_X86_MB;
             case ppc:
                 return HOTPLUG_MEMORY_FACTOR_PPC_MB;
+            case aarch64:
+                return HOTPLUG_MEMORY_FACTOR_ARM_MB;
             default:
                 return getFamily().getHotplugMemorySizeFactorMb();
         }
