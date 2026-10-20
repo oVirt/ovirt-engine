@@ -50,6 +50,7 @@ import org.ovirt.engine.ui.uicommonweb.models.ListWithSimpleDetailsModel;
 import org.ovirt.engine.ui.uicommonweb.models.OvaVmModel;
 import org.ovirt.engine.ui.uicommonweb.models.SortedListModel;
 import org.ovirt.engine.ui.uicommonweb.validation.HostAddressValidation;
+import org.ovirt.engine.ui.uicommonweb.validation.HostWithPortAddressValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.LengthValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.NameAndOptionalDomainValidation;
@@ -692,7 +693,7 @@ public class ImportVmsModel extends ListWithSimpleDetailsModel {
         getvCenter().validateEntity(new IValidation[] {
             new NotEmptyValidation(),
             new LengthValidation(255),
-            new HostAddressValidation() });
+            new HostWithPortAddressValidation() });
         getEsx().validateEntity(new IValidation[]{
             new NotEmptyValidation(),
             new LengthValidation(255),
