@@ -23,6 +23,7 @@ public final class BusinessEntitiesDefinitions {
 
     // Templates (vm_templates)
     public static final int VM_TEMPLATE_NAME_SIZE = 255;
+    public static final int VM_TEMPLATE_VERSION_NAME_SIZE = 255;
 
     // HOST (vds_static)
     public static final int HOST_NAME_SIZE = 255;
