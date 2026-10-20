@@ -12,6 +12,8 @@ import gettext
 from otopi import plugin
 from otopi import util
 
+from ovirt_setup_lib import dialog
+
 from ovirt_engine_setup import constants as osetupcons
 from ovirt_engine_setup.engine import constants as oenginecons
 from ovirt_engine_setup.engine import vdcoption
@@ -24,6 +26,9 @@ def _(m):
 
 @util.export
 class Plugin(plugin.PluginBase):
+
+    # VDSStatus.Up
+    _VDS_STATUS_UP = 3
 
     def __init__(self, context):
         super(Plugin, self).__init__(context=context)
@@ -53,6 +58,7 @@ class Plugin(plugin.PluginBase):
     )
     def _validate(self):
         show_he_error = True
+        host_up = True
         statement = database.Statement(
             dbenvkeys=oenginecons.Const.ENGINE_DB_ENV_KEYS,
             environment=self.environment,
@@ -87,9 +93,10 @@ class Plugin(plugin.PluginBase):
             elif vds_id[0]['run_on_vds']:
                 ha_global_maintenance = statement.execute(
                     statement="""
-                        SELECT vds_id, ha_global_maintenance
-                        FROM vds_statistics
-                        WHERE vds_id = %(VdsId)s;
+                        SELECT s.vds_id, s.ha_global_maintenance, d.status
+                        FROM vds_statistics s
+                        JOIN vds_dynamic d ON d.vds_id = s.vds_id
+                        WHERE s.vds_id = %(VdsId)s;
                     """,
                     args=dict(
                         VdsId=vds_id[0]['run_on_vds'],
@@ -104,10 +111,45 @@ class Plugin(plugin.PluginBase):
                             'Hosted Engine HA is in Global Maintenance mode.'
                         ))
                         show_he_error = False
+                    elif (
+                        ha_global_maintenance[0]['status'] !=
+                        self._VDS_STATUS_UP
+                    ):
+                        host_up = False
                 except IndexError:
                     pass
         except IndexError:
             show_he_error = False
+
+        if show_he_error and not host_up:
+            self.logger.warning(_(
+                'The host running the hosted-engine VM is not Up, so the '
+                'Global Maintenance state stored in the engine database '
+                'may be stale (for example, if certificates have expired).\n'
+                'Continue only if you are sure that the system is in '
+                '"Global Maintenance" mode, e.g. after running '
+                '"hosted-engine --set-maintenance --mode=global" on a '
+                'hosted-engine host.'
+            ))
+            if self.environment[
+                osetupcons.ConfigEnv.CONTINUE_SETUP_ON_HE_VM
+            ] is None:
+                self.environment[
+                    osetupcons.ConfigEnv.CONTINUE_SETUP_ON_HE_VM
+                ] = dialog.queryBoolean(
+                    dialog=self.dialog,
+                    name='OVESETUP_CONFIG_CONTINUE_SETUP_ON_HE_VM',
+                    note=_(
+                        'Is the system in Global Maintenance mode? '
+                        '(@VALUES@) [@DEFAULT@]: '
+                    ),
+                    prompt=True,
+                    default=False,
+                )
+            if self.environment[
+                osetupcons.ConfigEnv.CONTINUE_SETUP_ON_HE_VM
+            ]:
+                show_he_error = False
 
         if show_he_error:
             self.logger.error(_(
@@ -118,6 +160,10 @@ class Plugin(plugin.PluginBase):
                 'Maintenance" mode before running engine-setup, or the '
                 'hosted-engine HA agent might kill the machine, which '
                 'might corrupt your data.\n'
+                'To skip this check, re-run with:\n'
+                '--otopi-environment={key}=bool:True'
+            ).format(
+                key=osetupcons.ConfigEnv.CONTINUE_SETUP_ON_HE_VM,
             ))
             raise RuntimeError(_(
                 'Hosted Engine setup detected, '
