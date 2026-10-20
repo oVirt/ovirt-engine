@@ -464,7 +464,9 @@ public class CloneVmCommand<T extends CloneVmParameters> extends AddVmAndCloneIm
     private Collection<DiskImage> getTargetDisks() {
         Collection<DiskImage> diskImages = getSourceDisks();
         if (!getParameters().isEdited()) {
-            return diskImages;
+            return getParameters().getDestStorageDomainId() != null
+                    ? retargetToDestStorageDomain(diskImages, getParameters().getDestStorageDomainId())
+                    : diskImages;
         }
 
         List<DiskImage> destDiskImages = new ArrayList<>();
@@ -489,6 +491,32 @@ public class CloneVmCommand<T extends CloneVmParameters> extends AddVmAndCloneIm
             destDiskImages.add(destDiskImage);
         }
         return destDiskImages;
+    }
+
+    /**
+     * The disks are copied to the destination storage domain, so they need a disk profile of that domain
+     * instead of the profile they have on the source domain. Returns copies of the disks that need to move,
+     * pointing at the destination domain with a permitted disk profile of it.
+     */
+    private Collection<DiskImage> retargetToDestStorageDomain(Collection<DiskImage> diskImages,
+            Guid destStorageDomainId) {
+        List<DiskImage> targetDisks = new ArrayList<>();
+        Map<DiskImage, Guid> retargetedDisks = new HashMap<>();
+        for (DiskImage diskImage : diskImages) {
+            if (diskImage.getDiskStorageType() != DiskStorageType.IMAGE
+                    || destStorageDomainId.equals(diskImage.getStorageIds().get(0))) {
+                targetDisks.add(diskImage);
+                continue;
+            }
+            DiskImage targetDisk = DiskImage.copyOf(diskImage);
+            targetDisk.setStorageIds(new ArrayList<>(Collections.singletonList(destStorageDomainId)));
+            targetDisk.setDiskProfileId(null);
+            retargetedDisks.put(targetDisk, destStorageDomainId);
+            targetDisks.add(targetDisk);
+        }
+        // pick a permitted profile of the destination domain; if there is none, validate() fails
+        diskProfileHelper.setAndValidateDiskProfiles(retargetedDisks, getCurrentUser());
+        return targetDisks;
     }
 
     @Override
