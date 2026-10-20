@@ -120,6 +120,7 @@ class Plugin(plugin.PluginBase):
                 oenginecons.FileLocations.OVIRT_ENGINE_PKI_CERT_TEMPLATE,
                 oenginecons.FileLocations.OVIRT_ENGINE_PKI_QEMU_CERT_TEMPLATE,
                 oenginecons.FileLocations.OVIRT_ENGINE_PKI_CERT_CONF,
+                oenginecons.FileLocations.OVIRT_ENGINE_PKI_QEMU_CERT_CONF,
             )
         )
 
@@ -386,13 +387,29 @@ class Plugin(plugin.PluginBase):
             fileList=self.uninstall_files,
         )
 
+        configs = (
+            (
+                oenginecons.FileLocations.OVIRT_ENGINE_PKI_CERT_TEMPLATE,
+                oenginecons.Const.ENGINE_PKI_CA_URI,
+            ),
+            (
+                oenginecons.FileLocations.OVIRT_ENGINE_PKI_QEMU_CERT_TEMPLATE,
+                oenginecons.Const.ENGINE_PKI_QEMU_CA_URI,
+            ),
+            (
+                oenginecons.FileLocations.OVIRT_ENGINE_PKI_CERT_CONF,
+                oenginecons.Const.ENGINE_PKI_CA_URI,
+            ),
+            (
+                oenginecons.FileLocations.OVIRT_ENGINE_PKI_QEMU_CERT_CONF,
+                oenginecons.Const.ENGINE_PKI_QEMU_CA_URI,
+            ),
+        )
         localtransaction = transaction.Transaction()
         with localtransaction:
-            for config in (
-                oenginecons.FileLocations.OVIRT_ENGINE_PKI_CERT_TEMPLATE,
-                oenginecons.FileLocations.OVIRT_ENGINE_PKI_QEMU_CERT_TEMPLATE,
-                oenginecons.FileLocations.OVIRT_ENGINE_PKI_CERT_CONF
-            ):
+            for config, ca_uri in configs:
+                if not os.path.exists(config):
+                    continue
                 with open(config, 'r', encoding='utf-8') as f:
                     content = []
                     for line in f:
@@ -408,7 +425,7 @@ class Plugin(plugin.PluginBase):
                                 self.environment[
                                     oengcommcons.ConfigEnv.PUBLIC_HTTP_PORT
                                 ],
-                                oenginecons.Const.ENGINE_PKI_CA_URI,
+                                ca_uri,
                             )
                         content.append(line)
                 localtransaction.append(
