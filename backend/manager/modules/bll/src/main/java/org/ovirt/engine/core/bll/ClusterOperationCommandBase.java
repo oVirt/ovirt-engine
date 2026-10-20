@@ -182,6 +182,9 @@ public abstract class ClusterOperationCommandBase<T extends ClusterOperationPara
         } else if (isVersionGreaterOrEquals(cluster, Version.v4_4)
                 && isX86Architecture(cluster)) {
             cluster.setBiosType(BiosType.Q35_SEA_BIOS);
+        } else if (isVersionGreaterOrEquals(cluster, Version.v4_7)
+                && isAarch64Architecture(cluster)) {
+            cluster.setBiosType(BiosType.AMPERE_OVMF);
         } else {
             cluster.setBiosType(BiosType.I440FX_SEA_BIOS);
         }
@@ -200,6 +203,11 @@ public abstract class ClusterOperationCommandBase<T extends ClusterOperationPara
     private boolean isX86Architecture(Cluster cluster) {
         return cluster.getArchitecture() != null
                 && cluster.getArchitecture().getFamily() == ArchitectureType.x86;
+    }
+
+    private boolean isAarch64Architecture(Cluster cluster) {
+        return cluster.getArchitecture() != null
+                && cluster.getArchitecture().getFamily() == ArchitectureType.aarch64;
     }
 
     private ClusterPolicy getClusterPolicy(final Cluster cluster) {
