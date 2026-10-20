@@ -53,6 +53,7 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
 import org.ovirt.engine.core.common.businessentities.storage.FullEntityOvfData;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStorageDomainMap;
+import org.ovirt.engine.core.common.utils.ClusterEmulatedMachines;
 import org.ovirt.engine.core.common.utils.SecretValue;
 import org.ovirt.engine.core.common.utils.VmDeviceCommonUtils;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
@@ -469,6 +470,12 @@ public class SnapshotsManager {
                 diskImagesToSyncFromSnapshot, vm.getName());
 
         if (vmUpdatedFromConfiguration) {
+            // A snapshot's configuration predates any pin written after the snapshot was
+            // taken (the snapshots table is not migrated by 04_05_0350, and this path
+            // bypasses UpdateVmCommand validation). Restore the pin so a >= 4.8 cluster
+            // is not left with an unpinned i440fx VM that can neither run (getEffective
+            // throws) nor be saved (validation rejects clearing the pin).
+            propagateI440fxPinOnRestore(vm);
             vmStaticDao.update(vm.getStaticData());
             boolean macsInSnapshotAreExpectedToBeAlreadyAllocated = SnapshotType.STATELESS.equals(snapshot.getType());
             synchronizeNics(vm,
@@ -528,6 +535,26 @@ public class SnapshotsManager {
         }
 
         return vmDevice.getSnapshotId() == null && diskDao.get(vmDevice.getDeviceId()).isAllowSnapshot();
+    }
+
+    /**
+     * Propagates the VM's current emulated-machine pin (from vm_static) onto the
+     * configuration being restored from a snapshot, when the cluster level requires
+     * one (>= 4.8). See {@link org.ovirt.engine.core.common.utils.ClusterEmulatedMachines
+     * #propagateI440fxPin} — a restored config with its own explicit machine type keeps it;
+     * Q35 (or non-i440fx) restored configs are untouched.
+     */
+    private void propagateI440fxPinOnRestore(VM vm) {
+        VmStatic dbStatic = vmStaticDao.get(vm.getId());
+        if (dbStatic == null) {
+            return;
+        }
+        Cluster cluster = clusterDao.get(dbStatic.getClusterId());
+        if (cluster == null
+                || !ClusterEmulatedMachines.isI440fxDeprecated(dbStatic, cluster)) {
+            return;
+        }
+        ClusterEmulatedMachines.propagateI440fxPin(dbStatic.getCustomEmulatedMachine(), vm.getStaticData());
     }
 
     /**
