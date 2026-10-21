@@ -3240,7 +3240,13 @@ public class UnitVmModel extends Model implements HasValidatedTabs, ModelWithMig
                     new SpecialAsciiI18NOrNoneValidation()
                 });
 
-        final boolean isValid = getName().getIsValid() && getDescription().getIsValid();
+        getTemplateVersionName().validateEntity(
+                new IValidation[] {
+                    new LengthValidation(BusinessEntitiesDefinitions.VM_TEMPLATE_VERSION_NAME_SIZE)
+                });
+
+        final boolean isValid = getName().getIsValid() && getDescription().getIsValid()
+                && getTemplateVersionName().getIsValid();
         setValidTab(TabName.GENERAL_TAB, isValidTab(TabName.GENERAL_TAB) && isValid);
         return isValid;
     }
