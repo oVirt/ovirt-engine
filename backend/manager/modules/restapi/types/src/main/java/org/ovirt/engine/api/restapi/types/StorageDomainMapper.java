@@ -410,6 +410,8 @@ public class StorageDomainMapper {
                 return StorageDomainType.IMAGE;
             case Volume:
                 return StorageDomainType.VOLUME;
+            case ManagedBlockStorage:
+                return StorageDomainType.MANAGED_BLOCK_STORAGE;
             case Unknown:
             default:
                 return null;

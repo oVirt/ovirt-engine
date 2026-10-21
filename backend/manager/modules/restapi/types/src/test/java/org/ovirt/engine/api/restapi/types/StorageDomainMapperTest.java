@@ -73,6 +73,23 @@ public class StorageDomainMapperTest extends
     }
 
     @Test
+    public void testManagedBlockStorageDomainType() {
+        assertEquals(org.ovirt.engine.core.common.businessentities.StorageDomainType.ManagedBlockStorage,
+                StorageDomainMapper.map(StorageDomainType.MANAGED_BLOCK_STORAGE, null));
+        assertEquals(StorageDomainType.MANAGED_BLOCK_STORAGE,
+                StorageDomainMapper.map(
+                        org.ovirt.engine.core.common.businessentities.StorageDomainType.ManagedBlockStorage, null));
+
+        org.ovirt.engine.core.common.businessentities.StorageDomain entity =
+                new org.ovirt.engine.core.common.businessentities.StorageDomain();
+        entity.setStorageDomainType(
+                org.ovirt.engine.core.common.businessentities.StorageDomainType.ManagedBlockStorage);
+        entity.setStorageType(org.ovirt.engine.core.common.businessentities.storage.StorageType.MANAGED_BLOCK_STORAGE);
+        StorageDomain model = StorageDomainMapper.map(entity, null);
+        assertEquals(StorageDomainType.MANAGED_BLOCK_STORAGE, model.getType());
+    }
+
+    @Test
     public void storageDomainMappings() {
         assertEquals(
             StorageDomainStatus.ACTIVE,
