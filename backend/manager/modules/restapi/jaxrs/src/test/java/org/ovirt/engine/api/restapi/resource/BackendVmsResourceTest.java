@@ -56,6 +56,9 @@ import org.ovirt.engine.core.common.businessentities.GraphicsInfo;
 import org.ovirt.engine.core.common.businessentities.GraphicsType;
 import org.ovirt.engine.core.common.businessentities.OriginType;
 import org.ovirt.engine.core.common.businessentities.VDS;
+import org.ovirt.engine.core.common.businessentities.VmDevice;
+import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
+import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.VmIcon;
 import org.ovirt.engine.core.common.businessentities.VmInit;
 import org.ovirt.engine.core.common.businessentities.VmPayload;
@@ -405,9 +408,32 @@ public class BackendVmsResourceTest
 
     @Test
     public void testCloneVmFromSnapshot() {
+        doTestCloneVmFromSnapshot(getEntity(0), false, false);
+    }
+
+    @Test
+    public void testCloneVmFromSnapshotTpmFromSnapshotConfiguration() {
+        org.ovirt.engine.core.common.businessentities.VM vmConfiguration = getEntity(0);
+        VmDevice tpm = new VmDevice();
+        tpm.setId(new VmDeviceId(Guid.newGuid(), vmConfiguration.getId()));
+        tpm.setType(VmDeviceGeneralType.TPM);
+        tpm.setDevice(VmDeviceType.TPM.getName());
+        Map<Guid, VmDevice> devices = new HashMap<>();
+        devices.put(tpm.getDeviceId(), tpm);
+        vmConfiguration.setManagedDeviceMap(devices);
+        doTestCloneVmFromSnapshot(vmConfiguration, null, true);
+    }
+
+    @Test
+    public void testCloneVmFromSnapshotNoTpmInSnapshotConfiguration() {
+        doTestCloneVmFromSnapshot(getEntity(0), null, false);
+    }
+
+    private void doTestCloneVmFromSnapshot(org.ovirt.engine.core.common.businessentities.VM vmConfiguration,
+            Boolean requestedTpmEnabled,
+            boolean expectedTpmEnabled) {
         setUriInfo(setUpBasicUriExpectations());
 
-        org.ovirt.engine.core.common.businessentities.VM vmConfiguration = getEntity(0);
         Map<Guid, org.ovirt.engine.core.common.businessentities.storage.Disk> diskImageMap = new HashMap<>();
         diskImageMap.put(Guid.newGuid(), new DiskImage());
         vmConfiguration.setDiskMap(diskImageMap);
@@ -434,8 +460,8 @@ public class BackendVmsResourceTest
                 vmConfiguration);
         setUpCreationExpectations(ActionType.AddVmFromSnapshot,
                 AddVmFromSnapshotParameters.class,
-                new String[]{"StorageDomainId"},
-                new Object[]{GUIDS[0]},
+                new String[]{"StorageDomainId", "TpmEnabled"},
+                new Object[]{GUIDS[0], expectedTpmEnabled},
                 true,
                 true,
                 GUIDS[2],
@@ -447,6 +473,7 @@ public class BackendVmsResourceTest
 
         Vm model = createModel(createDiskAttachmentsCollection(), createSnapshotsCollection(1));
         model.setTemplate(null);
+        model.setTpmEnabled(requestedTpmEnabled);
         Response response = collection.add(model);
         assertEquals(201, response.getStatus());
         assertTrue(response.getEntity() instanceof Vm);
