@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll.storage.disk.image;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doReturn;
@@ -115,6 +116,55 @@ public class GetUnregisteredDisksQueryTest
         // Assert the query's results
         QueryReturnValue ret = getQuery().getQueryReturnValue();
         assertFalse(ret.getSucceeded(), "No fetching of unregistered disks allowed for export ISO domain");
+    }
+
+    @Test
+    public void testGetUnregisteredDisksFailsWhenDiskQueryFails() {
+        StorageDomain storageDomain = new StorageDomain();
+        when(storageDomainDaoMock.get(storageDomainId)).thenReturn(storageDomain);
+
+        // The per-disk query fails without a return value (e.g. a VDSM error)
+        QueryReturnValue failedReturnValue = new QueryReturnValue();
+        failedReturnValue.setSucceeded(false);
+        failedReturnValue.setExceptionString("GetImageInfo failed");
+        when(backendMock.runInternalQuery(eq(QueryType.GetUnregisteredDisk), any(), any()))
+                .thenReturn(failedReturnValue);
+
+        getQuery().getQueryReturnValue().setSucceeded(true);
+        getQuery().executeQueryCommand();
+
+        QueryReturnValue ret = getQuery().getQueryReturnValue();
+        assertFalse(ret.getSucceeded(), "A disk that could not be fetched should fail the query");
+        List<Disk> newDisks = ret.getReturnValue();
+        assertTrue(newDisks.isEmpty());
+    }
+
+    @Test
+    public void testGetUnregisteredDisksSkipsDiskWithSnapshots() {
+        StorageDomain storageDomain = new StorageDomain();
+        when(storageDomainDaoMock.get(storageDomainId)).thenReturn(storageDomain);
+
+        // The per-disk query reports a disk with snapshots, which is skipped
+        when(backendMock.runInternalQuery(eq(QueryType.GetUnregisteredDisk), any(), any()))
+                .thenAnswer(invocation -> {
+                    GetUnregisteredDiskQueryParameters p = (GetUnregisteredDiskQueryParameters) invocation
+                            .getArguments()[1];
+                    DiskImage snapshotDisk = new DiskImage();
+                    snapshotDisk.setDiskSnapshot(true);
+                    snapshotDisk.setDescription(String.format("snapshot-%s", p.getDiskId()));
+                    QueryReturnValue unregDiskReturnValue = new QueryReturnValue();
+                    unregDiskReturnValue.setSucceeded(false);
+                    unregDiskReturnValue.setReturnValue(snapshotDisk);
+                    return unregDiskReturnValue;
+                });
+
+        getQuery().getQueryReturnValue().setSucceeded(true);
+        getQuery().executeQueryCommand();
+
+        QueryReturnValue ret = getQuery().getQueryReturnValue();
+        assertTrue(ret.getSucceeded());
+        List<Disk> newDisks = ret.getReturnValue();
+        assertTrue(newDisks.isEmpty());
     }
 
     /**
