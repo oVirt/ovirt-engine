@@ -18,6 +18,7 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.Frontend;
+import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
@@ -60,12 +61,29 @@ public class ImportTemplateFromOvaModel extends ImportTemplateFromExportDomainMo
 
     @Override
     public void executeImport(IFrontendMultipleActionAsyncCallback callback) {
+        List<ActionParametersBase> parameters = buildImportTemplateFromOvaParameters();
+        ActionType actionType = importsToManagedBlockStorage(parameters)
+                ? ActionType.MbsImportVmTemplateFromOva
+                : ActionType.ImportVmTemplateFromOva;
         Frontend.getInstance().runMultipleAction(
-                ActionType.ImportVmTemplateFromOva,
-                buildImportTemplateFromOvaParameters(),
+                actionType,
+                parameters,
                 true,
                 callback,
                 null);
+    }
+
+    private boolean importsToManagedBlockStorage(List<ActionParametersBase> parameters) {
+        for (ActionParametersBase item : parameters) {
+            ImportVmTemplateFromOvaParameters prm = (ImportVmTemplateFromOvaParameters) item;
+            for (DiskImage disk : prm.getVmTemplate().getDiskList()) {
+                if (Linq.isManagedBlockActiveStorageDomain(
+                        getDiskImportData(disk.getId()).getSelectedStorageDomain())) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     private List<ActionParametersBase> buildImportTemplateFromOvaParameters() {
