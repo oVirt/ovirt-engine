@@ -110,7 +110,7 @@ public class ImportVmFromOvaCommand<T extends ImportVmFromOvaParameters> extends
         parameters.setParentCommand(getActionType());
         parameters.setParentParameters(getParameters());
         parameters.setEndProcedure(EndProcedure.COMMAND_MANAGED);
-        parameters.setDiskIdToTarName(buildDiskIdToTarName());
+        parameters.setDiskIdToTarName(OvaImportUtils.buildDiskIdToTarName(getParameters().getImageMappings()));
         enrichConvertOvaParameters(parameters);
         return parameters;
     }
@@ -127,7 +127,7 @@ public class ImportVmFromOvaCommand<T extends ImportVmFromOvaParameters> extends
         parameters.setParentCommand(getActionType());
         parameters.setParentParameters(getParameters());
         parameters.setEndProcedure(EndProcedure.COMMAND_MANAGED);
-        parameters.setDiskIdToTarName(buildDiskIdToTarName());
+        parameters.setDiskIdToTarName(OvaImportUtils.buildDiskIdToTarName(getParameters().getImageMappings()));
         enrichExtractOvaParameters(parameters);
         return parameters;
     }
@@ -136,20 +136,6 @@ public class ImportVmFromOvaCommand<T extends ImportVmFromOvaParameters> extends
     }
 
     protected void enrichExtractOvaParameters(ConvertOvaParameters parameters) {
-    }
-
-    private Map<Guid, String> buildDiskIdToTarName() {
-        Map<Guid, Guid> tarNameByDiskId = getParameters().getImageMappings();
-        if (tarNameByDiskId == null || tarNameByDiskId.isEmpty()) {
-            return null;
-        }
-        Map<Guid, String> result = new LinkedHashMap<>();
-        for (Map.Entry<Guid, Guid> entry : tarNameByDiskId.entrySet()) {
-            if (entry.getValue() != null) {
-                result.put(entry.getKey(), entry.getValue().toString());
-            }
-        }
-        return result.isEmpty() ? null : result;
     }
 
     @Override

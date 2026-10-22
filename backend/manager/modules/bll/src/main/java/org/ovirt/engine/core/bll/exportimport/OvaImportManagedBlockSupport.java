@@ -144,6 +144,26 @@ public final class OvaImportManagedBlockSupport {
         return out;
     }
 
+    /**
+     * Sets on each managed-block disk the device metadata attached by the parent import command, so child commands
+     * reuse the volumes already connected on the proxy host.
+     */
+    public static void applyPreAttachedManagedBlockDevices(
+            Iterable<? extends Disk> disks,
+            Map<Guid, Map<String, Object>> devicesByDiskId) {
+        if (disks == null || devicesByDiskId == null || devicesByDiskId.isEmpty()) {
+            return;
+        }
+        for (Disk d : disks) {
+            if (d instanceof ManagedBlockStorageDisk) {
+                Map<String, Object> device = devicesByDiskId.get(d.getId());
+                if (device != null) {
+                    ((ManagedBlockStorageDisk) d).setDevice(new HashMap<>(device));
+                }
+            }
+        }
+    }
+
     @FunctionalInterface
     public interface InternalActionInvoker {
         void invoke(ActionType actionType, ActionParametersBase parameters, CommandContext commandContext);

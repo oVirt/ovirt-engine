@@ -1106,9 +1106,10 @@ public class AsyncDataProvider {
         if (backup == DiskBackup.Incremental) {
             return VolumeFormat.COW;
         }
-        if (storageType.isFileDomain()) {
+        if (storageType.isFileDomain() || storageType.isManagedBlockStorage()) {
+            // Managed block storage volumes are always RAW, regardless of the requested allocation policy
             return VolumeFormat.RAW;
-        } else if (storageType.isBlockDomain() || storageType.isManagedBlockStorage()) {
+        } else if (storageType.isBlockDomain()) {
             switch (volumeType) {
                 case Sparse:
                     return VolumeFormat.COW;

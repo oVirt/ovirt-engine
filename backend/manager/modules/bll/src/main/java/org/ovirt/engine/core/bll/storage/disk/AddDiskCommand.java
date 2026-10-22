@@ -197,7 +197,6 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
 
         switch (getParameters().getDiskInfo().getDiskStorageType()) {
             case IMAGE:
-            case KUBERNETES:
                 if (!checkIfImageDiskCanBeAdded(vm, diskVmElementValidator)) {
                     return false;
                 }
