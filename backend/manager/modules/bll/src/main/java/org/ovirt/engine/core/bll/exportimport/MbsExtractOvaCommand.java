@@ -1,6 +1,5 @@
 package org.ovirt.engine.core.bll.exportimport;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -33,16 +32,7 @@ public class MbsExtractOvaCommand<T extends ConvertOvaParameters> extends Extrac
     @Override
     protected void prepareDisksBeforeExtract() {
         Map<Guid, Map<String, Object>> fromParent = getParameters().getPreAttachedManagedBlockDevicesByDiskId();
-        if (fromParent != null) {
-            for (DiskImage disk : getDiskList()) {
-                if (disk instanceof ManagedBlockStorageDisk) {
-                    Map<String, Object> dev = fromParent.get(disk.getId());
-                    if (dev != null) {
-                        ((ManagedBlockStorageDisk) disk).setDevice(new HashMap<>(dev));
-                    }
-                }
-            }
-        }
+        OvaImportManagedBlockSupport.applyPreAttachedManagedBlockDevices(getDiskList(), fromParent);
         List<ManagedBlockStorageDisk> mbsDisks =
                 DisksFilter.filterManagedBlockStorageDisks(getDiskList());
         if (mbsDisks.isEmpty()) {
