@@ -27,9 +27,6 @@ def _(m):
 @util.export
 class Plugin(plugin.PluginBase):
 
-    # VDSStatus.Up
-    _VDS_STATUS_UP = 3
-
     def __init__(self, context):
         super(Plugin, self).__init__(context=context)
 
@@ -60,6 +57,7 @@ class Plugin(plugin.PluginBase):
         show_he_error = True
         host_up = True
         host_name = None
+        host_status = None
         statement = database.Statement(
             dbenvkeys=oenginecons.Const.ENGINE_DB_ENV_KEYS,
             environment=self.environment,
@@ -116,10 +114,17 @@ class Plugin(plugin.PluginBase):
                         show_he_error = False
                     elif (
                         ha_global_maintenance[0]['status'] !=
-                        self._VDS_STATUS_UP
+                        oenginecons.VdsStatus.Up
                     ):
                         host_up = False
                         host_name = ha_global_maintenance[0]['vds_name']
+                        host_status = ha_global_maintenance[0]['status']
+                        try:
+                            host_status = oenginecons.VdsStatus(
+                                host_status
+                            ).name
+                        except ValueError:
+                            pass
                 except IndexError:
                     pass
         except IndexError:
@@ -127,16 +132,17 @@ class Plugin(plugin.PluginBase):
 
         if show_he_error and not host_up:
             self.logger.warning(_(
-                'The host "{host}" running the hosted-engine VM is not Up, '
-                'so the Global Maintenance state stored in the engine '
-                'database may be stale (for example, if certificates have '
-                'expired).\n'
+                'The host "{host}" running the hosted-engine VM is {status}, '
+                'not Up, so the Global Maintenance state stored in the '
+                'engine database may be stale (for example, if certificates '
+                'have expired).\n'
                 'Continue only if you are sure that the system is in '
                 '"Global Maintenance" mode, e.g. after running '
                 '"hosted-engine --set-maintenance --mode=global" on a '
                 'hosted-engine host.'
             ).format(
                 host=host_name,
+                status=host_status,
             ))
             if self.environment[
                 osetupcons.ConfigEnv.CONTINUE_SETUP_ON_HE_VM
