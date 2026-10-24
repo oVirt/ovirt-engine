@@ -12,12 +12,12 @@ import gettext
 from otopi import plugin
 from otopi import util
 
-from ovirt_setup_lib import dialog
-
 from ovirt_engine_setup import constants as osetupcons
 from ovirt_engine_setup.engine import constants as oenginecons
 from ovirt_engine_setup.engine import vdcoption
 from ovirt_engine_setup.engine_common import database
+
+from ovirt_setup_lib import dialog
 
 
 def _(m):
@@ -59,6 +59,7 @@ class Plugin(plugin.PluginBase):
     def _validate(self):
         show_he_error = True
         host_up = True
+        host_name = None
         statement = database.Statement(
             dbenvkeys=oenginecons.Const.ENGINE_DB_ENV_KEYS,
             environment=self.environment,
@@ -93,9 +94,11 @@ class Plugin(plugin.PluginBase):
             elif vds_id[0]['run_on_vds']:
                 ha_global_maintenance = statement.execute(
                     statement="""
-                        SELECT s.vds_id, s.ha_global_maintenance, d.status
+                        SELECT s.vds_id, s.ha_global_maintenance, d.status,
+                            st.vds_name
                         FROM vds_statistics s
                         JOIN vds_dynamic d ON d.vds_id = s.vds_id
+                        JOIN vds_static st ON st.vds_id = s.vds_id
                         WHERE s.vds_id = %(VdsId)s;
                     """,
                     args=dict(
@@ -116,6 +119,7 @@ class Plugin(plugin.PluginBase):
                         self._VDS_STATUS_UP
                     ):
                         host_up = False
+                        host_name = ha_global_maintenance[0]['vds_name']
                 except IndexError:
                     pass
         except IndexError:
@@ -123,13 +127,16 @@ class Plugin(plugin.PluginBase):
 
         if show_he_error and not host_up:
             self.logger.warning(_(
-                'The host running the hosted-engine VM is not Up, so the '
-                'Global Maintenance state stored in the engine database '
-                'may be stale (for example, if certificates have expired).\n'
+                'The host "{host}" running the hosted-engine VM is not Up, '
+                'so the Global Maintenance state stored in the engine '
+                'database may be stale (for example, if certificates have '
+                'expired).\n'
                 'Continue only if you are sure that the system is in '
                 '"Global Maintenance" mode, e.g. after running '
                 '"hosted-engine --set-maintenance --mode=global" on a '
                 'hosted-engine host.'
+            ).format(
+                host=host_name,
             ))
             if self.environment[
                 osetupcons.ConfigEnv.CONTINUE_SETUP_ON_HE_VM
