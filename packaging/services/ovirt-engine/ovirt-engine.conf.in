@@ -413,6 +413,14 @@ ENGINE_SSO_SERVICE_CONNECTION_RETRY_COUNT=3
 # The number of milliseconds after which a connection in the pool has to be validated when communicating with SSO.
 ENGINE_SSO_SERVICE_CONNECTION_VALIDATE_AFTER_INACTIVITY=100
 
+# Timeouts in milliseconds for the requests the engine sends to the SSO service. 0 means no timeout.
+ENGINE_SSO_SERVICE_CONNECT_TIMEOUT=5000
+ENGINE_SSO_SERVICE_READ_TIMEOUT=30000
+
+# How long in milliseconds a request may wait for a free connection from the pool above before its SSO call fails.
+# A request waiting here holds a worker thread, so keep it short. 0 means wait forever.
+ENGINE_SSO_SERVICE_CONNECTION_REQUEST_TIMEOUT=250
+
 # level of protocol supported by the external OIDC server.
 EXTERNAL_OIDC_SSL_PROTOCOL=TLS
 
