@@ -2961,6 +2961,14 @@ public class AsyncDataProvider {
         Frontend.getInstance().runQuery(QueryType.GetHostsByClusterId, new IdQueryParameters(clusterId), aQuery);
     }
 
+    /** Returns i440fx machine types supported by every host in the cluster (intersection). */
+    public void getClusterI440fxCommonMachines(AsyncQuery<List<String>> aQuery, Guid clusterId) {
+        aQuery.converterCallback = new CastingConverter<>();
+        Frontend.getInstance().runQuery(QueryType.GetClusterI440fxCommonMachines,
+                new IdQueryParameters(clusterId),
+                aQuery);
+    }
+
     public void getSupportedCpuList(AsyncQuery<List<ServerCpu>> aQuery, String cpuName, Version version) {
         aQuery.converterCallback = new CastingConverter<>();
 

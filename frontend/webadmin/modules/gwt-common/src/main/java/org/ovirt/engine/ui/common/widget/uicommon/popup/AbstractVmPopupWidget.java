@@ -16,6 +16,7 @@ import org.gwtbootstrap3.client.ui.Alert;
 import org.gwtbootstrap3.client.ui.Row;
 import org.ovirt.engine.core.common.businessentities.BiosType;
 import org.ovirt.engine.core.common.businessentities.BootSequence;
+import org.ovirt.engine.core.common.businessentities.ChipsetType;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.ConsoleDisconnectAction;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
@@ -310,15 +311,19 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
 
     private BiosTypeRenderer biosTypeRenderer;
 
-    @UiField(provided = true)
     @Path(value = "biosType.selectedItem")
     @WithElementId("biosType")
-    public ListModelListBoxEditor<BiosType> biosTypeEditor;
+    public ListModelListBoxOnlyEditor<BiosType> biosTypeEditor;
 
     @UiField(provided = true)
+    public EntityModelWidgetWithInfo biosTypeWithInfo;
+
     @Path(value = "emulatedMachine.selectedItem")
     @WithElementId("emulatedMachine")
     public ListModelTypeAheadChangeableListBoxEditor emulatedMachine;
+
+    @UiField(provided = true)
+    public EntityModelWidgetWithInfo emulatedMachineWithInfo;
 
     @UiField(provided = true)
     @Path(value = "customCpu.selectedItem")
@@ -1507,12 +1512,20 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
                         if (data == null || data.trim().isEmpty()) {
                             data = ""; //$NON-NLS
                         }
+                        if (ChipsetType.fromMachineType(data) == ChipsetType.I440FX) {
+                            data = data + " " + constants.emulatedMachineDeprecatedSuffix(); //$NON-NLS-1$
+                        }
                         return typeAheadNameTemplateNullSafe(data);
                     }
                 },
                 false,
                 new ModeSwitchingVisibilityRenderer(),
                 ""); //$NON-NLS
+        emulatedMachine.hideLabel();
+
+        emulatedMachineWithInfo = new EntityModelWidgetWithInfo(
+                new EnableableFormLabel(constants.emulatedMachineLabel()), emulatedMachine);
+        emulatedMachineWithInfo.setExplanation(templates.italicText(constants.emulatedMachineDeprecatedInfo()));
 
         customCpu = new ListModelTypeAheadChangeableListBoxEditor(
                 new ListModelTypeAheadChangeableListBoxEditor.NullSafeSuggestBoxRenderer() {
@@ -1677,7 +1690,10 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         providersEditor.setLabel(constants.providerLabel());
 
         biosTypeRenderer = new BiosTypeRenderer();
-        biosTypeEditor = new ListModelListBoxEditor<>(biosTypeRenderer, new ModeSwitchingVisibilityRenderer());
+        biosTypeEditor = new ListModelListBoxOnlyEditor<>(biosTypeRenderer, new ModeSwitchingVisibilityRenderer());
+        biosTypeWithInfo = new EntityModelWidgetWithInfo(
+                new EnableableFormLabel(constants.customBiosTypeLabel()), biosTypeEditor);
+        biosTypeWithInfo.setExplanation(templates.italicText(constants.emulatedMachineDeprecatedInfo()));
     }
 
     private String typeAheadNameDescriptionTemplateNullSafe(String name, String description) {
@@ -2366,8 +2382,8 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
                 logicalNetworksEditorRow,
 
                 // system tab
-                biosTypeEditor,
-                emulatedMachine,
+                biosTypeWithInfo,
+                emulatedMachineWithInfo,
                 generalLabel,
                 customCpu,
                 customCompatibilityVersionEditor,
@@ -2400,7 +2416,8 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         templateWithVersionEditor.setEnabled(false);
         vmTypeEditor.setEnabled(false);
         detachableInstanceTypesEditor.setEnabled(false);
-        emulatedMachine.setEnabled(false);
+        emulatedMachineWithInfo.setEnabled(false);
+        biosTypeWithInfo.setEnabled(false);
         customCpu.setEnabled(false);
     }
 

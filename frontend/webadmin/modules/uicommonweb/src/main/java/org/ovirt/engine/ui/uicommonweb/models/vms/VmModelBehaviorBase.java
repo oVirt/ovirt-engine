@@ -10,13 +10,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
-import java.util.TreeSet;
 import java.util.function.Function;
 
 import org.ovirt.engine.core.common.TimeZoneType;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.BiosType;
+import org.ovirt.engine.core.common.businessentities.ChipsetType;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.CpuPinningPolicy;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
@@ -54,6 +54,7 @@ import org.ovirt.engine.core.common.migration.MigrationPolicy;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.core.common.queries.QueryType;
+import org.ovirt.engine.core.common.utils.ClusterEmulatedMachines;
 import org.ovirt.engine.core.common.utils.VmCommonUtils;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.IntegerCompat;
@@ -1268,16 +1269,109 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
             return;
         }
 
+        BiosType selectedBiosType = getSelectedBiosType();
+        boolean isI440fx = selectedBiosType != null
+                && selectedBiosType.getChipsetType() == ChipsetType.I440FX;
+
+        // Capture the cluster identity at query time: both async callbacks below write
+        // into the shared combobox, and a rapid cluster switch can deliver a stale
+        // callback after the newer one. Guard every callback with the captured id.
+        Guid queriedClusterId = cluster.getId();
+
         AsyncDataProvider.getInstance().getEmulatedMachinesByClusterID(new AsyncQuery<>(
                 returnValue -> {
-                    if (returnValue != null) {
-                        Set<String> emulatedSet = new TreeSet<>(returnValue);
-                        emulatedSet.add(""); //$NON-NLS-1$
+                    if (returnValue != null
+                            && isQueryStillCurrent(queriedClusterId)) {
+                        Set<String> emulatedSet;
+                        if (isI440fx) {
+                            // For i440fx VMs: show only i440fx-compatible machine types
+                            // and make selection mandatory (no empty entry).
+                            emulatedSet = returnValue.stream()
+                                    .filter(m -> ChipsetType.fromMachineType(m) == ChipsetType.I440FX
+                                            || ChipsetType.fromMachineType(m) == null) // s390x types return null from fromMachineType() and are treated as I440FX-compatible by chipsetMatches convention
+                                    .collect(java.util.stream.Collectors.toCollection(java.util.TreeSet::new));
+                        } else {
+                            // For Q35 VMs: exclude i440fx-only machine types and include the empty
+                            // option (empty = inherit from cluster default).
+                            emulatedSet = returnValue.stream()
+                                    .filter(m -> ChipsetType.fromMachineType(m) != ChipsetType.I440FX)
+                                    .collect(java.util.stream.Collectors.toCollection(java.util.TreeSet::new));
+                            emulatedSet.add(""); //$NON-NLS-1$
+                        }
                         String oldVal = getModel().getEmulatedMachine().getSelectedItem();
+                        if (oldVal != null && !oldVal.isEmpty() && !emulatedSet.contains(oldVal)) {
+                            // Stored value (e.g. a pin that the new chipset branch filtered out)
+                            // must never be silently dropped: keep it selectable so the user sees
+                            // what is saved instead of losing it or hitting a confusing backend
+                            // error on save.
+                            emulatedSet.add(oldVal);
+                        }
                         getModel().getEmulatedMachine().setItems(emulatedSet);
-                        getModel().getEmulatedMachine().setSelectedItem(oldVal);
+                        // Re-select previous value only if still valid; otherwise clear
+                        if (oldVal != null && emulatedSet.contains(oldVal)) {
+                            getModel().getEmulatedMachine().setSelectedItem(oldVal);
+                        } else if (isI440fx && !isEditExisting()) {
+                            // Auto-select only when creating a new VM, mirroring the backend,
+                            // where AddVmCommand auto-pins but UpdateVmCommand never re-derives:
+                            // editing an existing unpinned i440fx VM must not silently persist a
+                            // pin (a hardware change the user did not make) — it keeps inheriting
+                            // the cluster default. Uses the intersection of i440fx types across
+                            // all hosts; empty intersection leaves the field blank.
+                            // Intentionally applies at every cluster level, not only >= 4.8:
+                            // pinning is legal (and raise-proof) below 4.8 too, and an
+                            // explicitly pinned new VM survives a later level raise without
+                            // reconfiguration. Below 4.8 the pin may differ from the dual
+                            // default's i440fx part the VM would otherwise inherit - a
+                            // deliberate, visible choice made in the dialog.
+                            AsyncDataProvider.getInstance().getClusterI440fxCommonMachines(new AsyncQuery<>(
+                                    commonMachines -> {
+                                        if (isQueryStillCurrent(queriedClusterId)) {
+                                            applyI440fxDefault(new java.util.TreeSet<>(commonMachines));
+                                        }
+                                    }),
+                                    cluster.getId());
+                        } else {
+                            getModel().getEmulatedMachine().setSelectedItem("");
+                        }
                     }
                 }), cluster.getId());
+    }
+
+    /**
+     * Whether the dialog edits an existing entity (VM) rather than creating a new one.
+     * Only new entities may get an auto-derived emulated machine prefill; edits must
+     * never silently rewrite the stored value (see {@link #updateEmulatedMachines()}).
+     */
+    protected boolean isEditExisting() {
+        return false;
+    }
+
+    /**
+     * True when the dialog's currently selected cluster is still the one an in-flight
+     * async query was issued for; stale callbacks from a superseded cluster must not
+     * touch the shared combobox.
+     */
+    private boolean isQueryStillCurrent(Guid queriedClusterId) {
+        Cluster current = getModel().getSelectedCluster();
+        return current != null && queriedClusterId.equals(current.getId());
+    }
+
+    /**
+     * Selects the default i440fx emulated machine from {@code commonMachines} —
+     * the intersection of types supported by every host in the cluster.
+     * Picks the newest by version order, excluding the floating {@code pc} alias.
+     * Leaves the field unset if the intersection is empty.
+     */
+    void applyI440fxDefault(Set<String> commonMachines) {
+        if (commonMachines.isEmpty()) {
+            getModel().getEmulatedMachine().setSelectedItem(null);
+            return;
+        }
+        String def = commonMachines.stream()
+                .filter(m -> !"pc".equalsIgnoreCase(m)) //$NON-NLS-1$
+                .max(ClusterEmulatedMachines::compareEmulatedMachineVersions)
+                .orElse(commonMachines.iterator().next());
+        getModel().getEmulatedMachine().setSelectedItem(def);
     }
 
     protected void updateBiosType() {
