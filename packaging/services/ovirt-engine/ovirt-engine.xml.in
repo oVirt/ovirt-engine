@@ -286,8 +286,8 @@
             <share-prepared-statements/>
           </statement>
           <validation>
-            <background-validation>true</background-validation>
-            <background-validation-millis>300000</background-validation-millis>
+            <validate-on-match>true</validate-on-match>
+            <background-validation>false</background-validation>
             <valid-connection-checker class-name="org.jboss.jca.adapters.jdbc.extensions.postgres.PostgreSQLValidConnectionChecker"/>
           </validation>
         </datasource>
@@ -315,8 +315,8 @@
             <share-prepared-statements/>
           </statement>
           <validation>
-            <background-validation>true</background-validation>
-            <background-validation-millis>300000</background-validation-millis>
+            <validate-on-match>true</validate-on-match>
+            <background-validation>false</background-validation>
             <valid-connection-checker class-name="org.jboss.jca.adapters.jdbc.extensions.postgres.PostgreSQLValidConnectionChecker"/>
           </validation>
         </datasource>
@@ -339,8 +339,8 @@
             <share-prepared-statements/>
           </statement>
           <validation>
-            <background-validation>true</background-validation>
-            <background-validation-millis>300000</background-validation-millis>
+            <validate-on-match>true</validate-on-match>
+            <background-validation>false</background-validation>
             <valid-connection-checker class-name="org.jboss.jca.adapters.jdbc.extensions.postgres.PostgreSQLValidConnectionChecker"/>
           </validation>
         </datasource>
