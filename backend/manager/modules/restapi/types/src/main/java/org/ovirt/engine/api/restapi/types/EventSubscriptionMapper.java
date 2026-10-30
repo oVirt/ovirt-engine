@@ -190,6 +190,8 @@ public class EventSubscriptionMapper {
                 return AuditLogType.VM_NOT_RESPONDING;
             case VM_STATUS_RESTORED:
                 return AuditLogType.VM_STATUS_RESTORED;
+            case VM_SET_TO_UNKNOWN_STATUS:
+                return AuditLogType.VM_SET_TO_UNKNOWN_STATUS;
             case HA_VM_RESTART_FAILED:
                 return AuditLogType.HA_VM_RESTART_FAILED;
             case HA_VM_FAILED:
@@ -518,6 +520,8 @@ public class EventSubscriptionMapper {
                 return NotifiableEvent.VM_NOT_RESPONDING;
             case VM_STATUS_RESTORED:
                 return NotifiableEvent.VM_STATUS_RESTORED;
+            case VM_SET_TO_UNKNOWN_STATUS:
+                return NotifiableEvent.VM_SET_TO_UNKNOWN_STATUS;
             case HA_VM_RESTART_FAILED:
                 return NotifiableEvent.HA_VM_RESTART_FAILED;
             case HA_VM_FAILED:
