@@ -3,6 +3,7 @@ package org.ovirt.engine.api.restapi.resource;
 import javax.ws.rs.core.Response;
 
 import org.ovirt.engine.api.model.Network;
+import org.ovirt.engine.api.restapi.util.FieldCleaner;
 import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
 
@@ -29,6 +30,13 @@ public abstract class AbstractBackendNetworkResource
         return addLinks(map(entity));
     }
 
+    protected void removeRestrictedInfo(Network network) {
+        // Filtered users are not allowed to view restricted information
+        if (!isAdmin()) {
+            nullifyRestrictedFields(network);
+        }
+    }
+
     AbstractBackendNetworksResource getParent() {
         return parent;
     }
@@ -43,5 +51,10 @@ public abstract class AbstractBackendNetworkResource
             return null;
         }
         return performAction(removeAction, getRemoveParameters(entity));
+    }
+
+    public static void nullifyRestrictedFields(Network network) {
+        FieldCleaner.nullifyAllFieldsExcept(network, "id", "name", "dataCenter");
+        FieldCleaner.nullifyAllFieldsExcept(network.getDataCenter(), "id");
     }
 }

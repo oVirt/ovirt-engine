@@ -1,6 +1,7 @@
 package org.ovirt.engine.api.restapi.resource;
 
 import static org.ovirt.engine.api.restapi.resource.BackendStorageDomainResource.getLinksToExclude;
+import static org.ovirt.engine.api.restapi.resource.BackendStorageDomainResource.nullifyRestrictedFields;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -69,11 +70,23 @@ public class BackendStorageDomainsResource
 
     @Override
     public StorageDomains list() {
+        StorageDomains storageDomains;
         if (isFiltered()) {
-            return mapCollection(getBackendCollection(QueryType.GetAllStorageDomains,
+            storageDomains = mapCollection(getBackendCollection(QueryType.GetAllStorageDomains,
                     new QueryParametersBase(), SearchType.StorageDomain));
         } else {
-            return mapCollection(getBackendCollection(SearchType.StorageDomain));
+            storageDomains = mapCollection(getBackendCollection(SearchType.StorageDomain));
+        }
+        removeRestrictedInfo(storageDomains);
+        return storageDomains;
+    }
+
+    private void removeRestrictedInfo(StorageDomains storageDomains) {
+        // Filtered users are not allowed to view restricted information
+        if (!isAdmin()) {
+            for (StorageDomain storageDomain : storageDomains.getStorageDomains()) {
+                nullifyRestrictedFields(storageDomain);
+            }
         }
     }
 
