@@ -89,7 +89,6 @@ import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 import org.ovirt.engine.core.vdsbroker.ResourceManager;
 import org.ovirt.engine.core.vdsbroker.TransportFactory;
 import org.ovirt.engine.core.vdsbroker.storage.StoragePoolDomainHelper;
-import org.ovirt.engine.core.vdsbroker.vdsbroker.VDSNetworkException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -299,6 +298,7 @@ public class IrsProxyImpl implements IrsProxy {
                     new SpmStatusVDSCommandParameters(curVdsId, storagePoolId));
         }
 
+        // if spm status didn't work or not spm then cause failover with attempts
         if (result == null
                 || !result.getSucceeded()
                 || result.getSucceeded() && ((SpmStatusResult) result.getReturnValue()).getSpmStatus() != SpmStatus.SPM) {
@@ -316,10 +316,7 @@ public class IrsProxyImpl implements IrsProxy {
                 }
             }
 
-            // if spm status didn't work or not spm and NOT NETWORK
-            // PROBLEM
-            // then cause failover with attempts
-            if (result != null && !(result.getExceptionObject() instanceof VDSNetworkException)) {
+            if (curVdsId != null) { // If there was already SPM host, then we can start failover process
                 Map<Guid, AsyncTaskStatus> tasksList =
                         (Map<Guid, AsyncTaskStatus>) resourceManager
                                 .runVdsCommand(VDSCommandType.HSMGetAllTasksStatuses,
@@ -336,7 +333,7 @@ public class IrsProxyImpl implements IrsProxy {
                 if (tasksList == null || allTasksFinished) {
                     nullifyInternalProxies();
                 } else {
-                    if (_errorAttempts < Config.<Integer> getValue(ConfigValues.SPMFailOverAttempts)) {
+                    if (_errorAttempts < Config.<Integer>getValue(ConfigValues.SPMFailOverAttempts)) {
                         _errorAttempts++;
                         log.warn("failed getting spm status for pool '{}' ({}), attempt number: {}",
                                 storagePoolId, storagePool.getName(), _errorAttempts);
