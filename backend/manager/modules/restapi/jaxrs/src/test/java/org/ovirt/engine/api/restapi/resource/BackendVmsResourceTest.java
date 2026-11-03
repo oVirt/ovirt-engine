@@ -26,6 +26,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
+import org.ovirt.engine.api.model.Certificate;
 import org.ovirt.engine.api.model.Configuration;
 import org.ovirt.engine.api.model.CreationStatus;
 import org.ovirt.engine.api.model.Disk;
@@ -88,13 +89,14 @@ public class BackendVmsResourceTest
     private static final String DEFAULT_TEMPLATE_ID = Guid.Empty.toString();
     public static final String CERTIFICATE = "O=Redhat,CN=X.Y.Z.Q";
     private static final String CA_CERT = "dummy-cert";
+    private static final String ORG = "ORG";
 
     public BackendVmsResourceTest() {
         super(new BackendVmsResource(), SearchType.VM, "VMs : ");
     }
 
     public static Stream<MockConfigDescriptor<?>> mockConfiguration() {
-        return Stream.of(MockConfigDescriptor.of(ConfigValues.OrganizationName, "ORG"),
+        return Stream.of(MockConfigDescriptor.of(ConfigValues.OrganizationName, ORG),
                          MockConfigDescriptor.of(ConfigValues.PropagateDiskErrors, false)
         );
     }
@@ -1161,11 +1163,11 @@ public class BackendVmsResourceTest
         UriInfo uriInfo = setUpUriExpectations(null);
 
         setUpGetGraphicsMultipleExpectations(3);
-        setUpQueryExpectations("");
-        setUpGetCertificateExpectations(1, 0);
+        setUpGetDisplayCertificatesMultipleExpectations();
         setUpGetCaRootExpectations();
+        setUpQueryExpectations("");
         collection.setUriInfo(uriInfo);
-        verifyCollection(getCollection());
+        verifyCollection(getCollection(), false, true);
     }
 
     @Test
@@ -1198,7 +1200,7 @@ public class BackendVmsResourceTest
 
         setUpQueryExpectations("");
         collection.setUriInfo(uriInfo);
-        verifyCollection(getCollection());
+        verifyCollection(getCollection(), false, allContent);
     }
 
     @Test
@@ -1209,7 +1211,7 @@ public class BackendVmsResourceTest
         when(httpHeaders.getRequestHeader(BackendResource.ALL_CONTENT_HEADER)).thenReturn(populates);
         setUpAllContentExpectations();
         collection.setUriInfo(uriInfo);
-        verifyCollection(getCollection());
+        verifyCollection(getCollection(), false, true);
     }
 
     @Test
@@ -1221,7 +1223,7 @@ public class BackendVmsResourceTest
         when(uriInfo.getQueryParameters()).thenReturn(queries);
         setUpAllContentExpectations();
         collection.setUriInfo(uriInfo);
-        verifyCollection(getCollection(), true);
+        verifyCollection(getCollection(), true, true);
     }
 
     private void setUpAllContentExpectations() throws Exception {
@@ -1501,16 +1503,23 @@ public class BackendVmsResourceTest
 
     @Override
     protected void verifyCollection(List<Vm> collection) throws Exception {
-        verifyCollection(collection, false);
+        verifyCollection(collection, false, false);
     }
 
-    private void verifyCollection(List<Vm> collection, boolean isPopulated) throws Exception {
+    private void verifyCollection(List<Vm> collection, boolean isPopulated, boolean hasCertificates) throws Exception {
         super.verifyCollection(collection);
 
         boolean populated = isPopulated || checkPopulatedHeader();
 
         for (Vm vm : collection) {
             assertTrue(populated ? vm.isSetConsole() : !vm.isSetConsole());
+            assertEquals(hasCertificates, vm.getDisplay().isSetCertificate());
+            if (hasCertificates) {
+                Certificate cert = vm.getDisplay().getCertificate();
+                assertEquals(CERTIFICATE, cert.getSubject());
+                assertEquals(CA_CERT, cert.getContent());
+                assertEquals(ORG, cert.getOrganization());
+            }
         }
     }
 
@@ -1703,6 +1712,19 @@ public class BackendVmsResourceTest
                 new String[]{},
                 new Object[]{},
                 vmDevices);
+    }
+
+    protected void setUpGetDisplayCertificatesMultipleExpectations() {
+        Map<Guid, String> certificates = new HashMap<>();
+        for (Guid guid : GUIDS) {
+            certificates.put(guid, CERTIFICATE);
+        }
+
+        setUpGetEntityExpectations(QueryType.GetVdsCertificateSubjectsByVmIds,
+                QueryParametersBase.class,
+                new String[]{},
+                new Object[]{},
+                certificates);
     }
 
     protected void setUpGetGraphicsExpectations(int times) {
