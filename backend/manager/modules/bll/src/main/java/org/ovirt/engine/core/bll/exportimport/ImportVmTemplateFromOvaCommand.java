@@ -3,7 +3,6 @@ package org.ovirt.engine.core.bll.exportimport;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -195,13 +194,7 @@ public class ImportVmTemplateFromOvaCommand<T extends ImportVmTemplateFromOvaPar
         List<Guid> createdDiskIds = new ArrayList<>();
         getImages().stream().map(this::adjustDisk).forEach(img -> createdDiskIds.add(createDisk(img)));
         getParameters().setTemplateDiskIdsForOvaExtract(createdDiskIds);
-        if (createdDiskIds.size() == ovfTarImageIds.size()) {
-            Map<Guid, Guid> tarNameByDiskId = new LinkedHashMap<>();
-            for (int i = 0; i < createdDiskIds.size(); i++) {
-                tarNameByDiskId.put(createdDiskIds.get(i), ovfTarImageIds.get(i));
-            }
-            getParameters().setDiskMappings(tarNameByDiskId);
-        }
+        getParameters().setDiskMappings(OvaImportUtils.mapTarNamesByDiskId(createdDiskIds, ovfTarImageIds));
     }
 
     protected DiskImage adjustDisk(DiskImage image) {

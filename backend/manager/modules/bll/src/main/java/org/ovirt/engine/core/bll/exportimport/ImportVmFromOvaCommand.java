@@ -1,8 +1,6 @@
 package org.ovirt.engine.core.bll.exportimport;
 
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.ovirt.engine.core.bll.DisableInPrepareMode;
@@ -60,14 +58,8 @@ public class ImportVmFromOvaCommand<T extends ImportVmFromOvaParameters> extends
                 .map(DiskImage::getImageId)
                 .collect(Collectors.toList());
         super.processImages();
-        List<DiskImage> live = getDisks();
-        if (live.size() == ovfTarImageIds.size()) {
-            Map<Guid, Guid> tarNameByDiskId = new LinkedHashMap<>();
-            for (int i = 0; i < live.size(); i++) {
-                tarNameByDiskId.put(live.get(i).getId(), ovfTarImageIds.get(i));
-            }
-            getParameters().setImageMappings(tarNameByDiskId);
-        }
+        getParameters().setImageMappings(
+                OvaImportUtils.mapTarNamesByDiskId(getParameters().getDisks(), ovfTarImageIds));
     }
 
     @Override
