@@ -57,11 +57,21 @@ public abstract class VolumeBitmapCommandBase<T extends VolumeBitmapCommandParam
     @Override
     protected void executeCommand() {
         VdsmImageLocationInfo info = getParameters().getVolInfo();
-        DiskImage image = imagesHandler.getVolumeInfoFromVdsm(
-                getParameters().getStoragePoolId(),
-                info.getStorageDomainId(),
-                info.getImageGroupId(),
-                info.getImageId());
+        DiskImage image;
+        try {
+            image = imagesHandler.getVolumeInfoFromVdsm(
+                    getParameters().getStoragePoolId(),
+                    info.getStorageDomainId(),
+                    info.getImageGroupId(),
+                    info.getImageId());
+        } catch (EngineException e) {
+            log.error("Failed to get the volume info of image id '{}', can't perform bitmap operation: {}",
+                    info.getImageId(),
+                    e.getMessage());
+            setCommandStatus(CommandStatus.FAILED);
+            setSucceeded(false);
+            return;
+        }
         info.setGeneration(image.getImage().getGeneration());
         persistCommandIfNeeded();
 
@@ -93,6 +103,13 @@ public abstract class VolumeBitmapCommandBase<T extends VolumeBitmapCommandParam
     @Override
     public HostJobInfo.HostJobStatus poll() {
         VdsmImageLocationInfo info = getParameters().getVolInfo();
+        if (info.getGeneration() == null) {
+            // The volume generation is set before the job is submitted, without it the job was never started.
+            log.error("Command {} id: '{}': the volume generation is unknown, the job wasn't executed",
+                    getActionType(),
+                    getCommandId());
+            return HostJobInfo.HostJobStatus.failed;
+        }
         return poller.pollImage(getParameters().getStoragePoolId(),
                 info.getStorageDomainId(),
                 info.getImageGroupId(),

@@ -26,6 +26,12 @@ public class FenceVolumeJobCommand<T extends FenceVolumeJobCommandParameters> ex
 
     @Override
     protected void executeCommand() {
+        if (getParameters().getImageLocationInfo().getGeneration() == null) {
+            log.error("Can't fence the job on image id '{}' as the volume generation is unknown",
+                    getParameters().getImageLocationInfo().getImageId());
+            setSucceeded(false);
+            return;
+        }
         UpdateVolumeVDSCommandParameters p = new UpdateVolumeVDSCommandParameters(getParameters().getStorageJobId(),
                 getParameters().getImageLocationInfo());
         p.setGeneration(getParameters().getImageLocationInfo().getGeneration() + ENTITY_FENCING_GENERATION_DIFF);
