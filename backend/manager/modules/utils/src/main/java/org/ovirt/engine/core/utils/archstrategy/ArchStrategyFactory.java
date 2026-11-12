@@ -13,6 +13,7 @@ public class ArchStrategyFactory {
         architectureArchStrategyMap.put(ArchitectureType.x86_64, new X86_64Strategy());
         architectureArchStrategyMap.put(ArchitectureType.ppc64, new PPC64Strategy());
         architectureArchStrategyMap.put(ArchitectureType.s390x, new S390XStrategy());
+        architectureArchStrategyMap.put(ArchitectureType.aarch64, new AARCH64Strategy());
     }
 
     public static ArchStrategy getStrategy(ArchitectureType architecture) {

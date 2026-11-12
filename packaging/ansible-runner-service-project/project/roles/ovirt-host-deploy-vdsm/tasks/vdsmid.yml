@@ -27,11 +27,11 @@
         name: dmidecode
         state: present
 
-    - name: Detect vdsm id for x86_64 or i686
+    - name: Detect vdsm id for x86_64, i686 or aarch64
       ansible.builtin.command: dmidecode -s system-uuid
       register: vdsm_id_res
 
-    - name: Set vdsm id for x86_64 or i686
+    - name: Set vdsm id for x86_64, i686 or aarch64
       ansible.builtin.set_fact:
         vdsm_id: "{{ vdsm_id_res.stdout }}"
       when:
@@ -41,7 +41,7 @@
   when:
     - not vdsm_id_stat.stat.exists
     - not vdsm_id
-    - (ansible_facts.architecture == 'x86_64' or ansible_facts.architecture == 'i686')
+    - (ansible_facts.architecture == 'x86_64' or ansible_facts.architecture == 'i686' or ansible_facts.architecture == 'aarch64')
 
 - block:
     - name: Verify ppc system id path exists
