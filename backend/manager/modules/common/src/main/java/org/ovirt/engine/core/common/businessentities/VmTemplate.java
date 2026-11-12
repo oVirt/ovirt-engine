@@ -62,6 +62,8 @@ public class VmTemplate extends VmBase implements BusinessEntityWithStatus<Guid,
     private int templateVersionNumber;
 
     @EditableVmTemplateField
+    @Size(max = BusinessEntitiesDefinitions.VM_TEMPLATE_VERSION_NAME_SIZE,
+            message = "VALIDATION_VM_TEMPLATE_VERSION_NAME_MAX")
     private String templateVersionName;
 
     private double cachedActualSize = -1.0;

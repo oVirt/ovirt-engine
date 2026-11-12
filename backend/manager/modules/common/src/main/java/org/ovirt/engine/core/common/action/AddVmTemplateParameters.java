@@ -31,6 +31,8 @@ public class AddVmTemplateParameters extends VmTemplateManagementParameters impl
 
     private Guid vmTemplateId;
     private VmEntityType templateType;
+    @Size(max = BusinessEntitiesDefinitions.VM_TEMPLATE_VERSION_NAME_SIZE,
+            message = "VALIDATION_VM_TEMPLATE_VERSION_NAME_MAX")
     private String templateVersionName;
     private Guid baseTemplateId;
 
