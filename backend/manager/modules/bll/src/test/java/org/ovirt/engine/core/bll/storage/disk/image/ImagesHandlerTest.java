@@ -3,6 +3,8 @@ package org.ovirt.engine.core.bll.storage.disk.image;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
@@ -23,6 +25,8 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
+import org.ovirt.engine.core.bll.ValidationResult;
+import org.ovirt.engine.core.bll.profiles.DiskProfileHelper;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
@@ -34,6 +38,7 @@ import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
+import org.ovirt.engine.core.dao.DiskImageDao;
 import org.ovirt.engine.core.dao.StorageDomainDao;
 import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.dao.VmDao;
@@ -54,6 +59,12 @@ public class ImagesHandlerTest {
     @Mock
     private VdsDao vdsDao;
 
+    @Mock
+    private DiskImageDao diskImageDao;
+
+    @Mock
+    private DiskProfileHelper diskProfileHelper;
+
     @InjectMocks
     private ImagesHandler imagesHandler = new ImagesHandler();
 
@@ -64,6 +75,8 @@ public class ImagesHandlerTest {
     private DiskImage disk1;
     private DiskImage disk2;
     private DiskImage disk3;
+
+    private final Guid sourceStorageDomainId = Guid.newGuid();
 
     public static Stream<MockConfigDescriptor<?>> mockConfiguration() {
         return Stream.of(
@@ -238,5 +251,59 @@ public class ImagesHandlerTest {
         when(vdsDao.get(vds1.getId())).thenReturn(vds1);
 
         assertEquals(imagesHandler.getHostForMeasurement(storagePoolID, imageGroupID), vds1.getId());
+    }
+
+    @Test
+    @MockedConfig("mockConfiguration")
+    public void testMapChainToNewIdsOnOtherStorageDomainUsesItsDiskProfile() {
+        Guid sourceDiskProfileId = Guid.newGuid();
+        Guid targetStorageDomainId = Guid.newGuid();
+        Guid targetDiskProfileId = Guid.newGuid();
+        DiskImage newImage = mapChainToNewIdsOfSingleImage(sourceDiskProfileId, targetStorageDomainId,
+                targetDiskProfileId);
+
+        assertEquals(List.of(targetStorageDomainId), newImage.getStorageIds());
+        assertEquals(targetDiskProfileId, newImage.getDiskProfileId());
+    }
+
+    @Test
+    @MockedConfig("mockConfiguration")
+    public void testMapChainToNewIdsOnSameStorageDomainKeepsDiskProfile() {
+        Guid sourceDiskProfileId = Guid.newGuid();
+        DiskImage newImage = mapChainToNewIdsOfSingleImage(sourceDiskProfileId, sourceStorageDomainId,
+                Guid.newGuid());
+
+        assertEquals(sourceDiskProfileId, newImage.getDiskProfileId());
+    }
+
+    /**
+     * Maps a chain of a single image on its own storage domain to the given target domain. The mocked disk profile
+     * helper assigns {@code targetDiskProfileId} to images without a profile on the target domain, which is what the
+     * real helper does with a permitted profile of that domain.
+     */
+    private DiskImage mapChainToNewIdsOfSingleImage(Guid sourceDiskProfileId, Guid targetStorageDomainId,
+            Guid targetDiskProfileId) {
+        Guid imageGroupId = Guid.newGuid();
+        disk1.setId(imageGroupId);
+        disk1.setImageId(Guid.newGuid());
+        disk1.setStorageIds(new ArrayList<>(List.of(sourceStorageDomainId)));
+        disk1.setDiskProfileId(sourceDiskProfileId);
+        when(diskImageDao.getAllSnapshotsForImageGroup(imageGroupId)).thenReturn(new ArrayList<>(List.of(disk1)));
+        doAnswer(invocation -> {
+            Map<DiskImage, Guid> map = invocation.getArgument(0);
+            map.forEach((image, sdId) -> {
+                if (targetStorageDomainId.equals(sdId) && image.getDiskProfileId() == null) {
+                    image.setDiskProfileId(targetDiskProfileId);
+                }
+            });
+            return ValidationResult.VALID;
+        }).when(diskProfileHelper).setAndValidateDiskProfiles(any(), any());
+
+        Map<DiskImage, DiskImage> oldToNew =
+                imagesHandler.mapChainToNewIDs(imageGroupId, Guid.newGuid(), targetStorageDomainId, null);
+
+        assertEquals(List.of(sourceStorageDomainId), disk1.getStorageIds());
+        assertEquals(sourceDiskProfileId, disk1.getDiskProfileId());
+        return oldToNew.get(disk1);
     }
 }
