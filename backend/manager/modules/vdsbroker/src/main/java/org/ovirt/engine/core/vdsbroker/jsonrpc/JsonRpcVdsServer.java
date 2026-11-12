@@ -2695,4 +2695,16 @@ public class JsonRpcVdsServer implements IVdsServer {
         Map<String, Object> response = new FutureMap(this.client, request).withIgnoreResponseKey();
         return new ScreenshotInfoReturn(response);
     }
+
+    @Override
+    public StatusOnlyReturn deleteImageUnusedLinks(String sdUUID, String spUUID, String imgUUID) {
+        JsonRpcRequest request =
+                new RequestBuilder("Image.deleteUnusedLinks")
+                        .withParameter("storagedomainID", sdUUID)
+                        .withParameter("storagepoolID", spUUID)
+                        .withParameter("imageID", imgUUID)
+                        .build();
+        Map<String, Object> response = new FutureMap(this.client, request);
+        return new StatusOnlyReturn(response);
+    }
 }
