@@ -1959,6 +1959,8 @@ public interface CommonApplicationConstants extends Constants {
 
     String s390xChipset();
 
+    String aarch64Chipset();
+
     String tpmDeviceLabel();
 
     String typeToSearchPlaceHolder();

@@ -41,6 +41,8 @@ public class BiosTypeRenderer extends EnumRenderer<BiosType> {
                 return constants.ppcChipset();
             } else if (ArchitectureType.s390x.equals(architectureType.getFamily())) {
                 return constants.s390xChipset();
+            } else if (ArchitectureType.aarch64.equals(architectureType.getFamily())) {
+                return constants.aarch64Chipset();
             }
         }
         return super.render(biosType);

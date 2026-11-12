@@ -36,6 +36,15 @@ public class GetBootableDiskIndex implements ArchCommand {
         diskIndex = 0;
     }
 
+    /**
+     * Note - Changes for aarch64. Assuming it is same as x86
+     * CDROM is mapped to IDE, the index of first boot disk is 0
+     */
+    @Override
+    public void runForAARCH64() {
+        diskIndex = 0;
+    }
+
     public int returnValue() {
         return diskIndex;
     }
