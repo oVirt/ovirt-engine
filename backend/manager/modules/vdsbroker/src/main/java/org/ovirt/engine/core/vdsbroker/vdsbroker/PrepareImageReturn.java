@@ -12,7 +12,14 @@ public class PrepareImageReturn extends StatusReturn {
     @SuppressWarnings("unchecked")
     public PrepareImageReturn(Map<String, Object> innerMap) {
         super(innerMap);
-        imagePath = (String) ((Map<String, Object>) innerMap.get(INFO)).get(PATH);
+        Map<String, Object> infoMap = (Map<String, Object>) innerMap.get(INFO);
+        if (infoMap != null) {
+            imagePath = (String) infoMap.get(PATH);
+        }
+        if (imagePath == null) {
+            // Some backends (e.g. managed block) may return path at top level or omit it
+            imagePath = (String) innerMap.get(PATH);
+        }
     }
 
     public String getImagePath() {

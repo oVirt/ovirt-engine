@@ -514,7 +514,7 @@ public class DisksViewColumns {
         AbstractTextColumn<Disk> column = new AbstractTextColumn<Disk>() {
             @Override
             public String getValue(Disk disk) {
-                return diskImagePredicate.test(disk) ? ((DiskImage) disk).getImageId().toString() : null;
+                return diskImagePredicate.test(disk) ? disk.getId().toString() : null;
             }
         };
 
