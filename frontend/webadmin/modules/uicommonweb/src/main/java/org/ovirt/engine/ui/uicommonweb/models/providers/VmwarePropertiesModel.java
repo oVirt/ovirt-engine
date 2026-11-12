@@ -9,6 +9,7 @@ import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ImportVmsModel;
 import org.ovirt.engine.ui.uicommonweb.validation.HostAddressValidation;
+import org.ovirt.engine.ui.uicommonweb.validation.HostWithPortAddressValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.LengthValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
@@ -42,7 +43,7 @@ public class VmwarePropertiesModel extends ProxyHostPropertiesModel {
             getvCenter().validateEntity(new IValidation[] {
                 new NotEmptyValidation(),
                 new LengthValidation(255),
-                new HostAddressValidation() });
+                new HostWithPortAddressValidation() });
             getEsx().validateEntity(new IValidation[]{
                 new NotEmptyValidation(),
                 new LengthValidation(255),

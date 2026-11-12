@@ -911,6 +911,8 @@ public interface UIConstants extends Constants {
 
     String addressIsNotValidHostNameOrIpAddressInvalidReason();
 
+    String hostAddressWithOptionalPortInvalidReason();
+
     String portHostnameOrIpPort();
 
     String uriInvalidFormat();
