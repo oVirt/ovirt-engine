@@ -1286,6 +1286,44 @@ BEGIN
 END;$FUNCTION$
 LANGUAGE plpgsql;
 
+-- Returns i440fx machine types supported by every host in the cluster.
+-- Types present on only a subset of hosts are excluded (intersection, not union).
+--
+-- Input:  v_cluster_id - cluster GUID
+-- Output: rows of (machine text)
+CREATE OR REPLACE FUNCTION GetClusterI440fxCommonMachines (v_cluster_id UUID)
+RETURNS SETOF TEXT
+STABLE AS $FUNCTION$
+BEGIN
+    RETURN QUERY
+    WITH
+    total AS (
+        SELECT COUNT(*) AS n
+        FROM vds
+        WHERE cluster_id = v_cluster_id
+          AND supported_emulated_machines IS NOT NULL
+    ),
+    per_host AS (
+        SELECT vds_id,
+               TRIM(m.machine) AS machine
+        FROM vds,
+             UNNEST(string_to_array(supported_emulated_machines, ','))
+                   AS m(machine)
+        WHERE cluster_id = v_cluster_id
+          AND supported_emulated_machines IS NOT NULL
+          AND TRIM(m.machine) LIKE '%i440fx%'
+    )
+    SELECT x.machine
+    FROM (
+        SELECT ph.machine AS machine, COUNT(DISTINCT ph.vds_id) AS host_count
+        FROM per_host ph
+        GROUP BY ph.machine
+    ) x
+    WHERE x.host_count = (SELECT n FROM total)
+    ORDER BY x.machine;
+END;$FUNCTION$
+LANGUAGE plpgsql;
+
 CREATE OR REPLACE FUNCTION GetVdsByStoragePoolId (
     v_storage_pool_id UUID,
     v_user_id UUID,

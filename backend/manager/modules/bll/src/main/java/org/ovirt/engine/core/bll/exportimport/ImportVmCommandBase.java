@@ -15,6 +15,7 @@ import javax.inject.Inject;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
+import org.ovirt.engine.core.bll.EmulatedMachinePinningHandler;
 import org.ovirt.engine.core.bll.LockMessage;
 import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
 import org.ovirt.engine.core.bll.MultiLevelAdministrationHandler;
@@ -34,6 +35,7 @@ import org.ovirt.engine.core.bll.storage.utils.BlockStorageDiscardFunctionalityH
 import org.ovirt.engine.core.bll.utils.CompatibilityVersionUpdater;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.utils.VmUpdateType;
+import org.ovirt.engine.core.bll.validator.EmulatedMachineValidator;
 import org.ovirt.engine.core.bll.validator.ImportValidator;
 import org.ovirt.engine.core.bll.validator.VmValidator;
 import org.ovirt.engine.core.common.AuditLogType;
@@ -76,6 +78,7 @@ import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableImpl;
 import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.StorageDomainDao;
 import org.ovirt.engine.core.dao.StorageDomainStaticDao;
+import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.dao.VmDynamicDao;
 import org.ovirt.engine.core.dao.VmStaticDao;
 import org.ovirt.engine.core.dao.VmStatisticsDao;
@@ -97,6 +100,32 @@ public abstract class ImportVmCommandBase<T extends ImportVmParameters> extends 
 
     @Inject
     private AuditLogDirector auditLogDirector;
+
+    @Inject
+    private VdsDao vdsDao;
+
+    private EmulatedMachineValidator emulatedMachineValidator;
+
+    /** The import's target cluster, loaded lazily once and primed in {@link #init()}. */
+    private Cluster importTargetCluster;
+
+    protected Cluster getImportTargetCluster() {
+        if (importTargetCluster == null) {
+            Guid clusterId = getParameters().getClusterId();
+            importTargetCluster = clusterId != null && clusterDao != null
+                    ? clusterDao.get(clusterId)
+                    : null;
+        }
+        return importTargetCluster;
+    }
+
+    protected EmulatedMachineValidator getEmulatedMachineValidator() {
+        if (emulatedMachineValidator == null && getVm() != null) {
+            emulatedMachineValidator = new EmulatedMachineValidator(
+                    getVm().getStaticData(), getImportTargetCluster());
+        }
+        return emulatedMachineValidator;
+    }
 
     @Inject
     ExternalVmMacsFinder externalVmMacsFinder;
@@ -161,6 +190,13 @@ public abstract class ImportVmCommandBase<T extends ImportVmParameters> extends 
         updateVmVersion();
 
         if (!validate(VmValidator.isBiosTypeSupported(getVm().getStaticData(), getCluster(), osRepository))) {
+            return false;
+        }
+
+        // Chipset consistency only — an unpinned i440fx VM was already auto-pinned above;
+        // the required-pin check belongs to Add/Update, where the value is user-supplied.
+        if (getEmulatedMachineValidator() != null
+                && !validate(getEmulatedMachineValidator().validateChipsetConsistency())) {
             return false;
         }
 
@@ -358,6 +394,49 @@ public abstract class ImportVmCommandBase<T extends ImportVmParameters> extends 
             setVmId(parameters.getVm().getId());
             initBiosType();
         }
+        getEmulatedMachineValidator();
+        autoPinImportedI440fxMachine();
+    }
+
+    /**
+     * Automatically pins the emulated machine type of an imported i440fx VM that carries
+     * none, from the machine types common to the cluster hosts (see
+     * {@link EmulatedMachinePinningHandler#pinForImportedVm}). When no common type exists
+     * — e.g. a mixed RHEL 9/RHEL 10 cluster — the VM is imported as-is and the user must
+     * set an emulated machine type before running it.
+     */
+    void autoPinImportedI440fxMachine() {
+        VM vm = getParameters().getVm();
+        if (vm == null || !EmulatedMachinePinningHandler.isUnpinnedI440fxVm(vm.getStaticData())) {
+            return;
+        }
+        EmulatedMachinePinningHandler handler = new EmulatedMachinePinningHandler(
+                vdsDao, vm.getStaticData(), getImportTargetCluster());
+        if (handler.isImportPinRequired()) {
+            handler.pinForImportedVm().ifPresentOrElse(
+                    pin -> applyImportPin(vm, pin),
+                    () -> warnNoCommonI440fxMachine(vm));
+        }
+    }
+
+    private void applyImportPin(VM vm, String pin) {
+        log.info("Imported i440fx VM '{}' has no emulated machine type; pinning it to the oldest"
+                + " i440fx machine type common to all cluster hosts ('{}')",
+                vm.getName(), pin);
+        vm.getStaticData().setCustomEmulatedMachine(pin);
+        logOnExecuteEnd(() -> {
+            addCustomValue("CustomEmulatedMachine", pin);
+            auditLog(this, AuditLogType.IMPORTEXPORT_IMPORT_VM_EMULATED_MACHINE_AUTO_PINNED);
+        });
+    }
+
+    private void warnNoCommonI440fxMachine(VM vm) {
+        log.warn("Imported i440fx VM '{}' has no emulated machine type and the cluster hosts"
+                + " have no common i440fx machine type; the VM will not be runnable"
+                + " until an emulated machine type is set",
+                vm.getName());
+        logOnExecuteEnd(() ->
+                auditLog(this, AuditLogType.IMPORTEXPORT_IMPORT_VM_EMULATED_MACHINE_NOT_SET));
     }
 
     protected void initBiosType() {

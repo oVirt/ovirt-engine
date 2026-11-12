@@ -25,7 +25,6 @@ import org.ovirt.engine.core.common.businessentities.storage.ImageTransfer;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.utils.ClusterEmulatedMachines;
-import org.ovirt.engine.core.common.utils.EmulatedMachineCommonUtils;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.ImageTransferDao;
@@ -239,23 +238,72 @@ public class VirtMonitoringStrategy implements MonitoringStrategy {
             if (vds.getSupportedEmulatedMachines() == null) {
                 return false;
             }
-            if (!ClusterEmulatedMachines.isMultiple(cluster.getEmulatedMachine())) {
-                return supported.contains(cluster.getEmulatedMachine());
-            } else {
-                ClusterEmulatedMachines ems = ClusterEmulatedMachines.parse(cluster.getEmulatedMachine());
-                return supported.contains(ems.getI440fxType()) && supported.contains(ems.getQ35Type());
+            String clusterEmulatedMachine = cluster.getEmulatedMachine();
+            if (clusterEmulatedMachine == null) {
+                // Defensive: cluster.emulated_machine is a nullable column and the i440fx upgrade
+                // migration can set it to NULL (together with detect_emulated_machine=TRUE, which
+                // takes the branch above). A null default with the detection flag off is an
+                // inconsistent state — no host can comply with it.
+                log.warn("Cluster '{}' has no emulated machine set while its detection flag is off;"
+                                + " treating the host as non-compliant.", cluster.getName());
+                return false;
             }
+            if (clusterEmulatedMachine.contains(";")) {
+                // Legacy dual-format cluster default ("i440fx;q35"). At cluster level >= 4.8 this
+                // means the setup migration (04_05_0350) has not run yet — hosts are kept
+                // operational as a boot-time safety net, but warn. Below 4.8 the dual format is a
+                // permanently supported, legitimate state: no warn noise.
+                if (ClusterEmulatedMachines.isI440fxDeprecated(cluster.getCompatibilityVersion())) {
+                    log.warn("Cluster '{}' emulated machine is '{}' which is the legacy dual format."
+                                    + " The database schema upgrade has not run yet: hosts are kept operational"
+                                    + " but i440fx VMs may not be pinned to an explicit emulated machine."
+                                    + " Please complete the engine upgrade with 'engine-setup' so the schema"
+                                    + " upgrade normalises the cluster default to Q35-only.",
+                            cluster.getName(),
+                            clusterEmulatedMachine);
+                } else {
+                    log.debug("Cluster '{}' emulated machine is '{}' which is the legacy dual format;"
+                                    + " this is the expected format for clusters below version 4.8.",
+                            cluster.getName(),
+                            clusterEmulatedMachine);
+                }
+                return Arrays.stream(clusterEmulatedMachine.split(";"))
+                        .map(String::trim)
+                        .anyMatch(supported::contains);
+            }
+            return supported.contains(clusterEmulatedMachine);
         }
     }
 
     private boolean hostEmulationModeMatchesTheConfigValues(VDS vds, Set<String> supported, List<String> available) {
-        String matchedI440fx =
-                EmulatedMachineCommonUtils.getSupportedByChipset(ChipsetType.I440FX, supported, available);
-        String matchedQ35 = EmulatedMachineCommonUtils.getSupportedByChipset(ChipsetType.Q35, supported, available);
-        String matchedEmulatedMachine = ClusterEmulatedMachines.build(matchedI440fx, matchedQ35);
-
-        if (!StringUtils.isEmpty(matchedEmulatedMachine)) {
-            setClusterEmulatedMachine(vds, matchedEmulatedMachine);
+        if (!ClusterEmulatedMachines.isI440fxDeprecated(vds.getClusterCompatibilityVersion())) {
+            // Below 4.8 the dual cluster default ("i440fx;q35") is the supported format: write
+            // both parts when the host supports them. A host supporting only one chipset still
+            // complies (build() writes a single value then).
+            String i440fxMatch = ClusterEmulatedMachines.getSupportedByChipset(ChipsetType.I440FX, supported, available);
+            String q35Match = ClusterEmulatedMachines.getSupportedByChipset(ChipsetType.Q35, supported, available);
+            if (i440fxMatch != null || q35Match != null) {
+                setClusterEmulatedMachine(vds, ClusterEmulatedMachines.build(i440fxMatch, q35Match));
+                return true;
+            }
+            return false;
+        }
+        // At level >= 4.8 the cluster default is Q35 for x86.
+        String matchedQ35 = ClusterEmulatedMachines.getSupportedByChipset(ChipsetType.Q35, supported, available);
+        if (matchedQ35 != null) {
+            setClusterEmulatedMachine(vds, matchedQ35);
+            return true;
+        }
+        // No Q35 found — either a non-x86 cluster or an old cluster level (<= 4.3, whose
+        // machine list contains no Q35 type at all). s390x (IBM Z) KVM hosting is supported on
+        // EL10; pseries (ppc64le) KVM hosting was dropped in RHEL 9. Old-level x86 clusters keep
+        // getting their legacy i440fx default — correct for them, since their VMs predate
+        // chipset awareness. Both use machine type strings that ChipsetType.fromMachineType()
+        // returns null for, or genuine i440fx types, which chipsetMatches(I440FX) treats as a
+        // match (legacy convention).
+        String matchedNonX86 = ClusterEmulatedMachines.getSupportedByChipset(ChipsetType.I440FX, supported, available);
+        if (matchedNonX86 != null) {
+            setClusterEmulatedMachine(vds, matchedNonX86);
             return true;
         }
         return false;

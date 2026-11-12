@@ -461,6 +461,10 @@ public interface CommonApplicationConstants extends Constants {
 
     String emulatedMachineLabel();
 
+    String emulatedMachineDeprecatedSuffix();
+
+    String emulatedMachineDeprecatedInfo();
+
     String cpuModelLabel();
 
     String customCompatibilityVersionLabel();

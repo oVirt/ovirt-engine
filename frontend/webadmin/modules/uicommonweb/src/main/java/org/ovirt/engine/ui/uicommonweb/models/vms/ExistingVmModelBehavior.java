@@ -46,6 +46,11 @@ public class ExistingVmModelBehavior extends VmModelBehaviorBase<UnitVmModel> {
 
     protected VM vm;
 
+    @Override
+    protected boolean isEditExisting() {
+        return true;
+    }
+
     private int hostCpu;
     private VDS runningOnHost;
     private Guid bootableDiskStorageDomainId;

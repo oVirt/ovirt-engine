@@ -38,6 +38,7 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dao.DiskImageDao;
 import org.ovirt.engine.core.dao.StorageDomainDao;
+import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.utils.InjectedMock;
 
 public abstract class AddVmCommandTestBase<T extends AddVmCommand<?>> extends BaseCommandTest {
@@ -69,6 +70,9 @@ public abstract class AddVmCommandTestBase<T extends AddVmCommand<?>> extends Ba
 
     @Mock
     private DiskImageDao diskImageDao;
+
+    @Mock
+    protected VdsDao vdsDao;
 
     @Spy
     @InjectMocks

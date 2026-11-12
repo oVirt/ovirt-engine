@@ -62,6 +62,7 @@ public enum QueryType implements Serializable {
     GetVdsHooksById,
     GetAllHosts(QueryAuthType.User),
     GetHostsByClusterId(QueryAuthType.User),
+    GetClusterI440fxCommonMachines(QueryAuthType.User),
     IsDisplayAddressConsistentInCluster(QueryAuthType.User),
     GetAllVdsByStoragePool(QueryAuthType.User),
     GetHostListFromExternalProvider(),

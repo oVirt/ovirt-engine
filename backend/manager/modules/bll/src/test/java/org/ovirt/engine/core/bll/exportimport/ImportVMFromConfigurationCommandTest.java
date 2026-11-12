@@ -66,6 +66,7 @@ import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.LabelDao;
 import org.ovirt.engine.core.dao.UnregisteredDisksDao;
 import org.ovirt.engine.core.dao.UnregisteredOVFDataDao;
+import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.dao.VmDynamicDao;
 import org.ovirt.engine.core.dao.VmStaticDao;
 import org.ovirt.engine.core.dao.VmStatisticsDao;
@@ -111,6 +112,9 @@ public class ImportVMFromConfigurationCommandTest extends BaseCommandTest implem
 
     @Mock
     private UnregisteredOVFDataDao unregisteredOVFDataDao;
+
+    @Mock
+    private VdsDao vdsDao;
 
     @Mock
     private UnregisteredDisksDao unregisteredDisksDao;
@@ -349,6 +353,57 @@ public class ImportVMFromConfigurationCommandTest extends BaseCommandTest implem
     @Test
     public void testBiosTypeDefault() throws Exception {
         testBiosType(null, null, BiosType.I440FX_SEA_BIOS, BiosType.I440FX_SEA_BIOS);
+    }
+
+    /**
+     * The OST basic-suite failure chain, first half (test_ovf_import → ovf_vm):
+     * <p>
+     * An OVF with no BiosType and Origin=VMWARE (imported by ImportVmFromConfigurationCommand)
+     * resolves to I440FX_SEA_BIOS (OvfReader default), so
+     * ImportVmCommandBase.autoPinImportedI440fxMachine() pins it to the oldest common
+     * i440fx machine type of the Q35-only 4.8 cluster — although this VM is destined to
+     * become Q35: its origin is VMWARE, so executeVmCommand() ends with updateBiosType() →
+     * vmHandler.updateToQ35() (ImportVmFromConfigurationCommand.java:338,527-537), which
+     * converts the bios to Q35 and, since the fix, drops the provisional i440fx pin
+     * (see VmHandlerTest.updateToQ35DropsI440fxPinOfAutoPinnedImportedVm). The validation
+     * at validate() time passes because at that point bios is still I440FX (consistent
+     * with the pin); the conversion only happens after execute.
+     */
+    @Test
+    public void testVmwareOvfImportWithoutBiosTypeIsAutoPinnedThenQ35Converted() throws Exception {
+        // test-cluster at compat 4.8, Q35-only default (as in the OST run)
+        cluster.setCompatibilityVersion(Version.v4_8);
+        cluster.setBiosType(BiosType.Q35_OVMF);
+        when(clusterDao.get(clusterId)).thenReturn(cluster);
+        when(vdsDao.getClusterI440fxCommonMachines(clusterId))
+                .thenReturn(List.of("pc-i440fx-rhel7.6.0", "pc-i440fx-rhel10.0.0"));
+
+        // OVF with no BiosType (defaults to I440FX in OvfReader.readBiosType) and
+        // Origin=1 (VMWARE, as in the OST test-vm.ovf) — triggers updateToQ35 at the end
+        setXmlOvfData(null, null);
+        XmlDocument document = new XmlDocument(xmlOvfData);
+        document.selectSingleNode("//*/Origin").innerText = "1";
+        xmlOvfData = document.convertToString();
+
+        initCommand(getOvfEntityData());
+
+        // the OVF default: no BiosType in the OVF resolves to I440FX_SEA_BIOS
+        assertEquals(BiosType.I440FX_SEA_BIOS, cmd.getVm().getBiosType(),
+                "OVF without BiosType must resolve to I440FX_SEA_BIOS");
+        // the auto-pin fired at init() although the VM is about to be Q35-converted
+        assertEquals("pc-i440fx-rhel7.6.0", cmd.getVm().getStaticData().getCustomEmulatedMachine(),
+                "the i440fx auto-pin must fire at init for an OVF VMWARE import without BiosType");
+
+        // validate() passes at this point: bios is I440FX, consistent with the i440fx pin —
+        // the chipset-consistency check cannot see the Q35 conversion that follows execute
+        doReturn(Boolean.TRUE).when(cmd).validateAfterCloneVm(any());
+        doReturn(Boolean.TRUE).when(cmd).validateBeforeCloneVm(any());
+        when(validator.validateUnregisteredEntity(any())).thenReturn(ValidationResult.VALID);
+        when(validator.validateStorageExistForUnregisteredEntity(anyList(), anyBoolean(), any(), any()))
+                .thenReturn(ValidationResult.VALID);
+        doReturn(ValidationResult.VALID).when(validator)
+                .validateStorageExistsForMemoryDisks(anyList(), anyBoolean(), anyMap());
+        ValidateTestUtils.runAndAssertValidateSuccess(cmd);
     }
 
     @Test

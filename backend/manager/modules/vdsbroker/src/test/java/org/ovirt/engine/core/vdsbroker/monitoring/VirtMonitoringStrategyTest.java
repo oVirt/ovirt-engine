@@ -5,10 +5,13 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyBoolean;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.Arrays;
@@ -48,7 +51,12 @@ public class VirtMonitoringStrategyTest {
     private Cluster cluster;
 
     public static Stream<MockConfigDescriptor<?>> mockConfiguration() {
-        return Stream.of(MockConfigDescriptor.of(ConfigValues.MaintenanceVdsIgnoreExternalVms, true));
+        return Stream.of(
+                MockConfigDescriptor.of(ConfigValues.MaintenanceVdsIgnoreExternalVms, true),
+                MockConfigDescriptor.of(ConfigValues.ClusterEmulatedMachines, Version.v4_4,
+                        Arrays.asList("pc-i440fx-rhel7.6.0", "pc-q35-rhel9.6.0")),
+                MockConfigDescriptor.of(ConfigValues.ClusterEmulatedMachines, Version.v4_8,
+                        Arrays.asList("pc-i440fx-rhel10.0.0", "pc-q35-rhel10.0.0")));
     }
 
     @BeforeEach
@@ -57,11 +65,13 @@ public class VirtMonitoringStrategyTest {
         vdsFromDb.setId(vdsId);
         vdsFromDb.setClusterId(clusterId);
 
-        virtStrategy = spy(new VirtMonitoringStrategy(mockCluster(), mockVdsDao(), mockVmDao(), null, mockImageTransferDao()));
+        clusterDao = mockCluster();
+        virtStrategy = spy(new VirtMonitoringStrategy(clusterDao, mockVdsDao(), mockVmDao(), null, mockImageTransferDao()));
         doNothing().when(virtStrategy).vdsNonOperational(any(), any(), any());
     }
 
     private VirtMonitoringStrategy virtStrategy;
+    private ClusterDao clusterDao;
 
     @Test
     public void testVirtCanMoveToMaintenance() {
@@ -155,6 +165,110 @@ public class VirtMonitoringStrategyTest {
         assertNotEquals(VDSStatus.NonOperational, vds.getStatus());
     }
 
+    // --- Host compliance with cluster emulation mode ---
+
+    @Test
+    public void testHostCompliesWithClusterEmulationModeQ35OnlyClusterEl10Host() {
+        // EL10 host in cluster with Q35 as default should stay Operational
+        VDS vds = createBaseVds();
+        vds.setSupportedEmulatedMachines("pc-q35-rhel9.6.0,pc-q35-rhel10.0.0,pc-i440fx-rhel10.0.0");
+        cluster.setEmulatedMachine("pc-q35-rhel9.6.0");
+        cluster.setDetectEmulatedMachine(false);
+        virtStrategy.processSoftwareCapabilities(vds);
+        assertEquals(VDSStatus.Up, vds.getStatus(), "EL10 host should stay Operational in cluster with Q35 default");
+    }
+
+    @Test
+    public void testHostCompliesWithClusterEmulationModeMissingQ35() {
+        // Host missing Q35 support should go Non-Operational
+        VDS vds = createBaseVds();
+        vds.setSupportedEmulatedMachines("pc-i440fx-rhel7.6.0");
+        cluster.setEmulatedMachine("pc-q35-rhel9.6.0");
+        cluster.setDetectEmulatedMachine(false);
+        virtStrategy.processSoftwareCapabilities(vds);
+        assertEquals(VDSStatus.NonOperational, vds.getStatus(), "Host missing Q35 support should go Non-Operational");
+    }
+
+    @Test
+    public void testHostCompliesWithClusterEmulationModeEl9Host() {
+        // EL9 host in cluster with Q35 as default stays Operational
+        VDS vds = createBaseVds();
+        vds.setSupportedEmulatedMachines("pc-i440fx-rhel7.6.0,pc-q35-rhel9.6.0");
+        cluster.setEmulatedMachine("pc-q35-rhel9.6.0");
+        cluster.setDetectEmulatedMachine(false);
+        virtStrategy.processSoftwareCapabilities(vds);
+        assertEquals(VDSStatus.Up, vds.getStatus(), "EL9 host should stay Operational in cluster with Q35 default");
+    }
+
+    @Test
+    public void testHostCompliesWithClusterEmulationModeNullClusterEmulatedMachine() {
+        // cluster.emulated_machine is nullable (the upgrade migration can set it to NULL
+        // together with detect_emulated_machine=TRUE). With the detection flag off and a
+        // null default — an inconsistent state — the host must be treated as non-compliant
+        // instead of throwing an NPE.
+        VDS vds = createBaseVds();
+        vds.setSupportedEmulatedMachines("pc-q35-rhel9.6.0");
+        cluster.setEmulatedMachine(null);
+        cluster.setDetectEmulatedMachine(false);
+        virtStrategy.processSoftwareCapabilities(vds);
+        assertEquals(VDSStatus.NonOperational, vds.getStatus(),
+                "Host must be Non-Operational when the cluster default emulated machine is null");
+    }
+
+    @Test
+    public void testHostCompliesWithLegacyDualFormatClusterEmulatedMachine() {
+        // Legacy combined "i440fx;q35" cluster default (pre-migration): a host supporting the
+        // Q35 part should stay Operational
+        VDS vds = createBaseVds();
+        vds.setSupportedEmulatedMachines("pc-i440fx-rhel7.6.0,pc-q35-rhel9.6.0");
+        cluster.setEmulatedMachine("pc-i440fx-rhel7.6.0;pc-q35-rhel9.6.0");
+        cluster.setDetectEmulatedMachine(false);
+        virtStrategy.processSoftwareCapabilities(vds);
+        assertEquals(VDSStatus.Up, vds.getStatus(), "Host supporting Q35 part of legacy combined cluster machine should stay Operational");
+    }
+
+    @Test
+    public void testHostCompliesWithLegacyDualFormatClusterEmulatedMachineNoMatch() {
+        // Legacy combined cluster default where the host supports neither part
+        VDS vds = createBaseVds();
+        vds.setSupportedEmulatedMachines("pc-q35-rhel8.0.0");
+        cluster.setEmulatedMachine("pc-i440fx-rhel7.6.0;pc-q35-rhel9.6.0");
+        cluster.setDetectEmulatedMachine(false);
+        virtStrategy.processSoftwareCapabilities(vds);
+        assertEquals(VDSStatus.NonOperational, vds.getStatus(), "Host supporting neither part of legacy combined cluster machine should go Non-Operational");
+    }
+
+    @Test
+    public void testDetectModeBelow48WritesDualDefault() {
+        // Below 4.8 the dual format is the supported cluster default: the first compliant
+        // host must write both parts, not a single Q35 value.
+        VDS vds = createBaseVds();
+        vds.setSupportedEmulatedMachines("pc-i440fx-rhel7.6.0,pc-q35-rhel9.6.0");
+        cluster.setDetectEmulatedMachine(true);
+        virtStrategy.processSoftwareCapabilities(vds);
+
+        assertEquals(VDSStatus.Up, vds.getStatus(),
+                "A host supporting both parts must comply in detect mode");
+        verify(clusterDao).setEmulatedMachine(eq(clusterId),
+                eq("pc-i440fx-rhel7.6.0;pc-q35-rhel9.6.0"), anyBoolean());
+    }
+
+    @Test
+    public void testDetectModeAt48WritesSingleQ35() {
+        // At level >= 4.8 the cluster default is Q35-only: detect mode writes the single
+        // Q35 match even when the host also supports i440fx machine types.
+        VDS vds = createBaseVds();
+        vds.setClusterCompatibilityVersion(Version.v4_8);
+        vds.setSupportedEmulatedMachines("pc-i440fx-rhel10.0.0,pc-q35-rhel10.0.0");
+        cluster.setDetectEmulatedMachine(true);
+        virtStrategy.processSoftwareCapabilities(vds);
+
+        assertEquals(VDSStatus.Up, vds.getStatus(),
+                "A host supporting Q35 must comply in detect mode");
+        verify(clusterDao).setEmulatedMachine(eq(clusterId),
+                eq("pc-q35-rhel10.0.0"), anyBoolean());
+    }
+
     private VDS createBaseVds() {
         VDS vds = new VDS();
         vds.setClusterCompatibilityVersion(Version.v4_4);
@@ -186,6 +300,7 @@ public class VirtMonitoringStrategyTest {
         newVds.setCpuFlags("flag2");
         assertTrue(virtStrategy.processHardwareCapabilitiesNeeded(oldVds, newVds));
     }
+
     private ImageTransferDao mockImageTransferDao() {
         ImageTransferDao mock = mock(ImageTransferDao.class);
         ImageTransfer imageTransferFinished = new ImageTransfer();

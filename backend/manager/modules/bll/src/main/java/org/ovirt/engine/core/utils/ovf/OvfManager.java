@@ -10,6 +10,7 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.ovirt.engine.core.bll.memory.MemoryUtils;
+import org.ovirt.engine.core.common.businessentities.ChipsetType;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmBase;
@@ -62,8 +63,11 @@ public class OvfManager {
         if (vm.isHostedEngine()) {
             Cluster cluster = clusterDao.get(vm.getClusterId());
             String cpuVerb = cluster.getCpuVerb();
-            String emulatedMachine = ClusterEmulatedMachines.forChipset(
-                    cluster.getEmulatedMachine(), vm.getBiosType().getChipsetType());
+            String emulatedMachine = vm.getCustomEmulatedMachine() != null
+                    ? vm.getCustomEmulatedMachine()
+                    : ClusterEmulatedMachines.defaultForChipset(
+                            cluster.getEmulatedMachine(),
+                            vm.getBiosType() != null ? vm.getBiosType().getChipsetType() : ChipsetType.Q35);
             vmWriter = new HostedEngineOvfWriter(vm,
                     fullEntityOvfData,
                     version,

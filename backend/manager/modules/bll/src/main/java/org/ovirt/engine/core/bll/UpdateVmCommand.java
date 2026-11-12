@@ -36,6 +36,7 @@ import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
 import org.ovirt.engine.core.bll.utils.IconUtils;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.validator.AffinityValidator;
+import org.ovirt.engine.core.bll.validator.EmulatedMachineValidator;
 import org.ovirt.engine.core.bll.validator.IconValidator;
 import org.ovirt.engine.core.bll.validator.InClusterUpgradeValidator;
 import org.ovirt.engine.core.bll.validator.VmValidator;
@@ -1425,7 +1426,20 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
             return failValidation(EngineMessage.ACTION_TYPE_FAILED_ILLEGAL_CONSOLE_DISCONNECT_ACTION_DELAY);
         }
 
+        if (!validate(getEmulatedMachineValidator().validateI440fxPinRequired())
+                || !validate(getEmulatedMachineValidator().validateChipsetConsistency())) {
+            return false;
+        }
         return true;
+    }
+
+    /**
+     * Builds the stateful emulated machine validator for the current VM parameters and
+     * target cluster; constructed at use time (like ClusterCommandBase's cluster
+     * validators) so it never sees stale parameters.
+     */
+    protected EmulatedMachineValidator getEmulatedMachineValidator() {
+        return new EmulatedMachineValidator(getParameters().getVmStaticData(), getCluster());
     }
 
     private boolean validateCPUHotplug(VmStatic vmStaticData) {

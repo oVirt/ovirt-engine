@@ -2295,6 +2295,7 @@ public class UnitVmModel extends Model implements HasValidatedTabs, ModelWithMig
             } else if (sender == getLease()) {
                 updateResumeBehavior();
             } else if (sender == getBiosType()) {
+                behavior.updateEmulatedMachines();
                 updateDisplayAndGraphics();
                 behavior.assignDefaultDisplayType();
                 updateTpmEnabled();
