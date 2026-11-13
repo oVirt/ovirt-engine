@@ -118,6 +118,39 @@ public class BackendTemplateResourceTest
         assertTrue(populated ? response.isSetConsole() : !response.isSetConsole());
     }
 
+    @Test
+    public void testGetWithSoundcard() {
+        testGetSoundcardAware(true);
+    }
+
+    @Test
+    public void testGetWithoutSoundcard() {
+        testGetSoundcardAware(false);
+    }
+
+    private void testGetSoundcardAware(boolean hasSoundcard) {
+        setUriInfo(setUpBasicUriExpectations());
+        setUpGetEntityExpectations(1);
+
+        when(httpHeaders.getRequestHeader(BackendResource.ALL_CONTENT_HEADER))
+                .thenReturn(Collections.singletonList("true"));
+        List<String> soundDevices = hasSoundcard ? Collections.singletonList("ich6") : Collections.emptyList();
+        setUpGetConsoleExpectations(0);
+        setUpGetVirtioScsiExpectations(0);
+        setUpGetEntityExpectations(QueryType.GetSoundDevices,
+                IdQueryParameters.class,
+                new String[] { "Id" },
+                new Object[] { GUIDS[0] },
+                soundDevices);
+        setUpGetRngDeviceExpectations(0);
+        setUpGetTpmExpectations(0);
+        setUpGetGraphicsExpectations(1);
+
+        Template response = resource.get();
+        verifyModel(response, 0);
+        assertEquals(hasSoundcard, response.isSoundcardEnabled());
+    }
+
     protected void setUpGetVirtioScsiExpectations(int ... idxs) {
         for (int i = 0; i < idxs.length; i++) {
             setUpGetEntityExpectations(QueryType.GetVirtioScsiControllers,
