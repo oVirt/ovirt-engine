@@ -414,6 +414,14 @@ public class BaseBackendResource {
     }
 
     /**
+     * @return true if current user has admin permission, otherwise false.
+     */
+    protected boolean isAdmin() {
+        DbUser user = getCurrent().getUser();
+        return user.isAdmin();
+    }
+
+    /**
      * Follows links in the entity according to value of "follow" URL query parameter.
      * A valid value of'follow' is a comma separated list of strings, which represent
      * internal links to be followed. Links may have several 'levels' denoted by periods.
