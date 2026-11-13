@@ -20,7 +20,7 @@ public class EnvelopePBETest {
             byte[] r = new byte[i];
             random.nextBytes(r);
             String password = new Base64(0).encodeToString(r);
-            String encoded = EnvelopePBE.encode("PBKDF2WithHmacSHA1", 256, 4000, null, password);
+            String encoded = EnvelopePBE.encode("PBEWithHmacSHA512AndAES_256", 256, 4000, null, password);
             assertTrue(
                 EnvelopePBE.check(
                     encoded,
@@ -57,7 +57,7 @@ public class EnvelopePBETest {
     public void test3() throws Exception {
         String password = "password";
 
-        assertNotEquals(EnvelopePBE.encode("PBKDF2WithHmacSHA1", 256, 4000, null, password),
-                EnvelopePBE.encode("PBKDF2WithHmacSHA1", 256, 4000, null, password));
+        assertNotEquals(EnvelopePBE.encode("PBEWithHmacSHA512AndAES_256", 256, 4000, null, password),
+                EnvelopePBE.encode("PBEWithHmacSHA512AndAES_256", 256, 4000, null, password));
     }
 }
