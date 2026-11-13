@@ -90,6 +90,12 @@
             font-size: 12px;
             padding-left: 50px;
         }
+
+        .hideUsedLunsCheckBox {
+            font-size: 12px;
+            padding-left: 60px;
+            height: 10px;
+        }
     </ui:style>
 
     <b:Container fluid="true">
@@ -104,6 +110,9 @@
             <b:Column size="SM_12">
                 <pa:AlertPanel ui:field="warning" visible="false" />
             </b:Column>
+        </b:Row>
+        <b:Row>
+            <b:CheckBox ui:field="hideUsedLunsCheckBox" value="true" addStyleNames="{style.hideUsedLunsCheckBox}" />
         </b:Row>
         <b:Row>
             <t:DialogTabPanel ui:field="dialogTabPanel" contentStyle="{style.content}" navStyle="{style.maxHeight}" addStyleNames="{style.tabPanel}" height="100%" width="100%">

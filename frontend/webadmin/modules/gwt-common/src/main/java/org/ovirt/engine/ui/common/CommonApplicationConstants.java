@@ -1972,4 +1972,8 @@ public interface CommonApplicationConstants extends Constants {
     String preferredVncOption();
 
     String defaultClient();
+
+    String hideUsedLunsForISCSILabel();
+
+    String hideUsedLunsForFCPLabel();
 }
