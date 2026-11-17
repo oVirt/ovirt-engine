@@ -25,10 +25,12 @@ public class BackendIscsiBondNetworksResource extends BackendNetworksResource {
 
     @Override
     public Networks list() {
-        return mapCollection(
+        Networks networks = mapCollection(
                 getBackendCollection(QueryType.GetNetworksByIscsiBondId, new IdQueryParameters(iscsiBondId)),
                 LinkHelper.NO_PARENT
         );
+        removeRestrictedInfo(networks);
+        return networks;
     }
 
     @Override
