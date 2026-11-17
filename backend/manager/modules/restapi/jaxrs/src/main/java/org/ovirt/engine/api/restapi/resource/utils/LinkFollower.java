@@ -15,6 +15,7 @@ import org.ovirt.engine.api.model.BaseResources;
 import org.ovirt.engine.api.model.Link;
 import org.ovirt.engine.api.restapi.resource.BaseBackendResource;
 import org.ovirt.engine.api.restapi.resource.ResourceLocator;
+import org.ovirt.engine.api.restapi.resource.exception.IncorrectFollowLinkException;
 import org.ovirt.engine.api.utils.EntityHelper;
 import org.ovirt.engine.api.utils.ReflectionHelper;
 
@@ -139,6 +140,10 @@ public class LinkFollower {
      * follow all links in the provided links-tree, recursively.
      */
     private void followLink(ActionableResource entity, LinksTreeNode node) {
+        if (entity == null || node == null) {
+            return;
+        }
+
         List<ActionableResource> nextStepEntities = new LinkedList<>();
         if (EntityHelper.isCollection(entity)) {
             nextStepEntities.addAll(fetchData((BaseResources) entity, node));
@@ -181,7 +186,7 @@ public class LinkFollower {
                 results.add(fetchData(entity, node));
             }
         } catch (Exception e) {
-            throw new IllegalStateException("Problem following '" + node.getElement() + "' link in " + collectionEntity.getClass().getSimpleName() + " entity.", e);
+            throw new IncorrectFollowLinkException(node.getElement(), collectionEntity.getClass().getSimpleName(), e);
         }
         return results;
     }
@@ -204,17 +209,19 @@ public class LinkFollower {
             String element = underscoreToCamelCase(link.getElement());
             if (link.isFollowed()) {
                 Method getter = ReflectionHelper.getGetter(entity, element);
-                return (ActionableResource) getter.invoke(entity);
+                return getter != null ? (ActionableResource) getter.invoke(entity) : null;
             } else {
                 String href = getHref((BaseResource) entity, link.getElement());
                 ActionableResource result = fetch(href);
-                Method setter = ReflectionHelper.getSetter(entity, element);
-                setter.invoke(entity, result);
+
+                if (result != null) {
+                    Method setter = ReflectionHelper.getSetter(entity, element);
+                    setter.invoke(entity, result);
+                }
                 return result;
             }
         } catch (Exception e) {
-            throw new IllegalStateException("Problem fetching '" + link.getElement() +
-                    "' from " + entity.getClass().getSimpleName(), e);
+            throw new IncorrectFollowLinkException(link.getElement(), entity.getClass().getSimpleName(), e);
         }
     }
 
@@ -243,8 +250,11 @@ public class LinkFollower {
             return optional.get().getHref();
         } else { //assume this is not a sub-collection, since it wasn't found among links.
             Method getter = ReflectionHelper.getGetter(entity, underscoreToCamelCase(link));
+            if (getter == null) {
+                throw new IllegalStateException("Follow link '" + link + "' is incorrect.");
+            }
             BaseResource member = (BaseResource) getter.invoke(entity);
-            return member.getHref();
+            return member != null ? member.getHref() : null;
         }
     }
 
@@ -252,6 +262,10 @@ public class LinkFollower {
      * This scope of this method is 'protected' for testing purposes.
      */
     protected ActionableResource fetch(String href) {
+        if (href == null) {
+            return null;
+        }
+
         try {
             BaseBackendResource resource = resourceLocator.locateResource(href);
             //need to invoke the method in the resource annotated with @GET
