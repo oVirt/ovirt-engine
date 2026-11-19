@@ -182,7 +182,7 @@ public abstract class ImportVmFromExternalProviderModel extends ImportVmModel {
                                 // filter storage domains
                                 List<StorageDomain> filteredStorageDomains = new ArrayList<>();
                                 for (StorageDomain domain : storageDomains) {
-                                    if (Linq.isDataActiveStorageDomain(domain)) {
+                                    if (isDestinationStorageDomainSelectable(domain)) {
                                         filteredStorageDomains.add(domain);
                                     }
                                 }
@@ -197,6 +197,10 @@ public abstract class ImportVmFromExternalProviderModel extends ImportVmModel {
                 getStoragePool().getId());
         }),
             dataCenter.getId(), true, false);
+    }
+
+    protected boolean isDestinationStorageDomainSelectable(StorageDomain domain) {
+        return Linq.isDataActiveStorageDomain(domain);
     }
 
     protected void addDiskImportData(String alias,

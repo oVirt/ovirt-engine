@@ -58,6 +58,7 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
+import org.ovirt.engine.core.common.errors.EngineError;
 import org.ovirt.engine.core.common.errors.EngineException;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.job.Step;
@@ -470,10 +471,15 @@ public class ImportVmFromExternalProviderCommand<T extends ImportVmFromExternalP
     }
 
     private DiskImage getDisk(Guid diskId) {
-        return runInternalQuery(
+        DiskImage disk = runInternalQuery(
                 QueryType.GetDiskByDiskId,
                 new IdQueryParameters(diskId))
                 .getReturnValue();
+        if (disk == null) {
+            throw new EngineException(EngineError.GeneralException,
+                    String.format("Imported disk %s was not found", diskId));
+        }
+        return disk;
     }
 
     @Override
