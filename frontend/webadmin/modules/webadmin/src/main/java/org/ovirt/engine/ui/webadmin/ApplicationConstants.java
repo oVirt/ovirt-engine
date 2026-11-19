@@ -255,6 +255,8 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     String uploadImageNoFileChosen();
 
+    String uploadImageSupportedFormats();
+
     String downloadImage();
 
     String testImageIOProxyConnection();
