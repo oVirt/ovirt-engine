@@ -55,6 +55,11 @@
             margin: 3px 10px;
         }
 
+        .supportedFormatsLabel {
+            margin: 3px 10px;
+            color: #6a6e73;
+        }
+
         .leftPadding {
             padding-left: 20px;
         }
@@ -64,7 +69,7 @@
         }
     </ui:style>
 
-    <d:SimpleDialogPanel width="700px" height="775px">
+    <d:SimpleDialogPanel width="700px" height="795px">
         <d:content>
             <g:FlowPanel>
                 <!-- Should be re-enabled once uploading from URI is supported -->
@@ -73,12 +78,13 @@
                     <w:RadioButtonPanel ui:field="imageSourcePanel" name="imageSourcePanel" dataToggle="BUTTONS" addStyleNames="{style.imageSourcePanel}" />
                 </g:HorizontalPanel>
 
-                <g:FlowPanel addStyleNames="{style.optionsPanel}" height="120px">
+                <g:FlowPanel addStyleNames="{style.optionsPanel}" height="140px">
                     <g:HorizontalPanel ui:field="imageFileUploadPanel">
                         <g:FileUpload ui:field="imageFileUpload" visible="false" />
                         <d:SimpleDialogButton addStyleNames="{style.fileUploadButton}" ui:field="imageFileUploadButton" text="{constants.uploadImageChooseFile}" />
                         <g:Label addStyleNames="{style.fileUploadLabel}" ui:field="imageFileUploadLabel" text="{constants.uploadImageNoFileChosen}" />
                     </g:HorizontalPanel>
+                    <g:Label addStyleNames="{style.supportedFormatsLabel}" text="{constants.uploadImageSupportedFormats}" />
                     <s:ImageInfoForm ui:field="imageInfoForm"/>
                 </g:FlowPanel>
 

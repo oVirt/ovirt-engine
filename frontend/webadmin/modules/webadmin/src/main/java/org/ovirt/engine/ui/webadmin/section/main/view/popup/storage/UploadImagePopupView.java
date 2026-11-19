@@ -91,6 +91,8 @@ public class UploadImagePopupView extends AbstractModelBoundPopupView<UploadImag
 
     private static final ApplicationMessages messages = AssetProvider.getMessages();
 
+    private static final String SUPPORTED_IMAGE_EXTENSIONS = ".qcow2,.img,.raw,.iso"; //$NON-NLS-1$
+
     @Inject
     public UploadImagePopupView(EventBus eventBus) {
         super(eventBus);
@@ -111,6 +113,10 @@ public class UploadImagePopupView extends AbstractModelBoundPopupView<UploadImag
         driver.edit(model);
 
         model.setImageFileUploadElement(imageFileUpload.getElement());
+        // Suggest the supported image files in the file chooser. Browsers
+        // still offer "All files", so raw images with other names can be
+        // chosen.
+        imageFileUpload.getElement().setAttribute("accept", SUPPORTED_IMAGE_EXTENSIONS); //$NON-NLS-1$
 
         imageFileUpload.addChangeHandler(changeEvent -> model.getImagePath().setEntity(imageFileUpload.getFilename()));
 
