@@ -315,6 +315,8 @@ public interface LocalizedEnums extends ConstantsWithLookup {
 
     String AuditLogType___VM_STATUS_RESTORED();
 
+    String AuditLogType___VM_SET_TO_UNKNOWN_STATUS();
+
     String AuditLogType___VM_DOWN_ERROR();
 
     String AuditLogType___IRS_FAILURE();
