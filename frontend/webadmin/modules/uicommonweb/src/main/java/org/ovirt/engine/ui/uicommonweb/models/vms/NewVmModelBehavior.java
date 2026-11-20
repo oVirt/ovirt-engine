@@ -212,6 +212,10 @@ public class NewVmModelBehavior extends VmModelBehaviorBase<UnitVmModel> {
             setCustomCompatibilityVersionChangeInProgress(false);
 
             getInstanceTypeManager().updateInstanceTypeFieldsFromSource();
+            // update HostCpu for aarch64
+            if (clusterHasAarch64Architecture()) {
+                updateHostCpuAndMigrationForAarch64();
+            }
         });
     }
 
@@ -249,6 +253,10 @@ public class NewVmModelBehavior extends VmModelBehaviorBase<UnitVmModel> {
         updateTemplate();
 
         activateInstanceTypeManager();
+        // update HostCpu for aarch64
+        if (clusterHasAarch64Architecture()) {
+            updateHostCpuAndMigrationForAarch64();
+        }
     }
 
     private boolean profilesExist(List<VnicProfileView> profiles) {

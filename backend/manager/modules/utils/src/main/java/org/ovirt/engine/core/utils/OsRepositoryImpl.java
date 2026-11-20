@@ -52,12 +52,13 @@ public enum OsRepositoryImpl implements OsRepository {
      */
     private Map<Integer, String> idToUnameLookup;
     private Map<String, Integer> backwardCompatibleNamesToIds;
-    private static Map<ArchitectureType, Integer> defaultOsMap = new HashMap<>(3);
+    private static Map<ArchitectureType, Integer> defaultOsMap = new HashMap<>(4);
 
     static {
         defaultOsMap.put(ArchitectureType.x86_64, DEFAULT_X86_OS);
         defaultOsMap.put(ArchitectureType.ppc64, DEFAULT_PPC_OS);
         defaultOsMap.put(ArchitectureType.s390x, DEFAULT_S390_OS);
+        defaultOsMap.put(ArchitectureType.aarch64, DEFAULT_AARCH64_OS);
     }
 
     public void init(MapBackedPreferences preferences) {
