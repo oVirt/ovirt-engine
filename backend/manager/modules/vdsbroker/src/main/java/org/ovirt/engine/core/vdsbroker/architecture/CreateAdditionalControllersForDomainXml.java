@@ -61,4 +61,9 @@ public class CreateAdditionalControllersForDomainXml implements ArchCommand {
         // For now same as on x86
         runForX86_64();
     }
+
+    @Override
+    public void runForAARCH64() {
+        // There are not any additional controllers necessary for the aarch64 guests to work properly
+    }
 }
