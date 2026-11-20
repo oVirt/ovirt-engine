@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll;
 
+import static org.hamcrest.CoreMatchers.hasItem;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -17,6 +18,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -35,6 +37,7 @@ import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.AddVmTemplateParameters;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
+import org.ovirt.engine.core.common.businessentities.BusinessEntitiesDefinitions;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
@@ -187,6 +190,31 @@ public class AddVmTemplateCommandTest extends BaseCommandTest {
     public void testPatternBasedNameFails() {
         cmd.getParameters().setName("aa-??bb");
         assertFalse(cmd.validateInputs(), "Pattern-based name should not be supported for Template");
+    }
+
+    @Test
+    public void testTemplateVersionNameAtMaxLengthSucceeds() {
+        cmd.getParameters().setTemplateVersionName(
+                StringUtils.repeat("a", BusinessEntitiesDefinitions.VM_TEMPLATE_VERSION_NAME_SIZE));
+        assertTrue(cmd.validateInputs());
+    }
+
+    @Test
+    public void testTemplateVersionNameAsLongAsTemplateNameSucceeds() {
+        // A sub-version name may be as long as a template name, so a sub-version
+        // named after its template is accepted.
+        cmd.getParameters().setTemplateVersionName(
+                StringUtils.repeat("a", BusinessEntitiesDefinitions.VM_TEMPLATE_NAME_SIZE));
+        assertTrue(cmd.validateInputs());
+    }
+
+    @Test
+    public void testTemplateVersionNameTooLongFails() {
+        cmd.getParameters().setTemplateVersionName(
+                StringUtils.repeat("a", BusinessEntitiesDefinitions.VM_TEMPLATE_VERSION_NAME_SIZE + 1));
+        assertFalse(cmd.validateInputs());
+        assertThat(cmd.getReturnValue().getValidationMessages(),
+                hasItem(EngineMessage.VALIDATION_VM_TEMPLATE_VERSION_NAME_MAX.name()));
     }
 
 
