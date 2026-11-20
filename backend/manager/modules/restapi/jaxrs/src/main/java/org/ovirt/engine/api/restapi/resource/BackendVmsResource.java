@@ -468,6 +468,8 @@ public class BackendVmsResource extends
         }
         if (vm.isSetTpmEnabled()) {
             params.setTpmEnabled(vm.isTpmEnabled());
+        } else {
+            params.setTpmEnabled(isVMDeviceTypeExist(configVm.getManagedVmDeviceMap(), VmDeviceGeneralType.TPM));
         }
 
         DisplayHelper.setGraphicsToParams(vm.getDisplay(), params);
