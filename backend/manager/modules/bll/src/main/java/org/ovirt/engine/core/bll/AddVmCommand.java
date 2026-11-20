@@ -161,7 +161,7 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
     private AuditLogDirector auditLogDirector;
 
     @Inject
-    private DiskProfileHelper diskProfileHelper;
+    protected DiskProfileHelper diskProfileHelper;
 
     @Inject
     private BlockStorageDiscardFunctionalityHelper discardHelper;
