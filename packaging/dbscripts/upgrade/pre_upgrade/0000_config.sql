@@ -88,7 +88,8 @@ select fn_db_add_config_value('ClusterEmulatedMachines','pc-q35-rhel8.1.0,pc-q35
 select fn_db_add_config_value('ClusterEmulatedMachines','pc-q35-rhel8.3.0,pc-q35-4.1,pc-i440fx-rhel7.6.0,pc-i440fx-2.12,pseries-rhel8.3.0,s390-ccw-virtio-2.12','4.5');
 select fn_db_add_config_value('ClusterEmulatedMachines','pc-q35-rhel8.4.0,pc-q35-4.1,pc-i440fx-rhel7.6.0,pc-i440fx-2.12,pseries-rhel8.4.0,s390-ccw-virtio-2.12','4.6');
 select fn_db_add_config_value('ClusterEmulatedMachines','pc-q35-rhel8.6.0,pc-q35-4.1,pc-i440fx-rhel7.6.0,pc-i440fx-2.12,pseries-rhel8.4.0,s390-ccw-virtio-2.12','4.7');
-select fn_db_add_config_value('ClusterEmulatedMachines','pc-q35-rhel9.6.0,pc-i440fx-rhel7.6.0,pseries-rhel8.5.0,s390-ccw-virtio-rhel9.4.0','4.8');
+-- 4.8: Q35-only default, mixed EL9/EL10 hosts; i440fx VMs carry a per-VM custom_emulated_machine pin.
+select fn_db_add_config_value('ClusterEmulatedMachines','pc-q35-rhel9.6.0,pc-q35-rhel9.4.0,s390-ccw-virtio-rhel9.4.0','4.8');
 select fn_db_add_config_value('CpuOverCommitDurationMinutes','2','general');
 --Handling Data directory for ENGINE
 select fn_db_add_config_value('DataDir','/usr/share/engine','general');
@@ -1148,6 +1149,7 @@ select fn_db_update_config_value('ClusterEmulatedMachines','pc-i440fx-rhel7.6.0,
 -- both chipsets and ClusterEmulatedMachines list also should contain values for both of them.
 select fn_db_update_config_value('ClusterEmulatedMachines','pc-q35-rhel8.1.0,pc-q35-4.1,pc-i440fx-rhel7.6.0,pc-i440fx-2.12,pseries-rhel8.1.0,s390-ccw-virtio-2.12','4.4');
 select fn_db_update_config_value('ClusterEmulatedMachines','pc-q35-rhel8.3.0,pc-q35-4.1,pc-i440fx-rhel7.6.0,pc-i440fx-2.12,pseries-rhel8.3.0,s390-ccw-virtio-2.12','4.5');
+select fn_db_update_config_value('ClusterEmulatedMachines','pc-q35-rhel9.6.0,pc-q35-rhel9.4.0,s390-ccw-virtio-rhel9.4.0','4.8');
 select fn_db_update_config_value('SpiceDriverNameInGuest','{"windows": "RHEV-Spice", "linux" : "xorg-x11-drv-qxl" }','general');
 select fn_db_update_config_value('SupportedClusterLevels','4.2,4.3,4.4,4.5,4.6,4.7,4.8','general');
 select fn_db_update_config_value('SupportedVDSMVersions','4.20,4.30,4.40,4.50','general');

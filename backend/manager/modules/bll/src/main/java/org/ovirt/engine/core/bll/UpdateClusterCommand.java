@@ -65,7 +65,6 @@ import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.qualifiers.MomPolicyUpdate;
 import org.ovirt.engine.core.common.utils.ClusterEmulatedMachines;
 import org.ovirt.engine.core.common.utils.CompatibilityVersionUtils;
-import org.ovirt.engine.core.common.utils.EmulatedMachineCommonUtils;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.validation.group.UpdateEntity;
 import org.ovirt.engine.core.compat.Guid;
@@ -76,6 +75,7 @@ import org.ovirt.engine.core.dao.ClusterFeatureDao;
 import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.dao.VdsStaticDao;
 import org.ovirt.engine.core.dao.VmDao;
+import org.ovirt.engine.core.dao.VmDynamicDao;
 import org.ovirt.engine.core.dao.VmInitDao;
 import org.ovirt.engine.core.dao.VmStaticDao;
 import org.ovirt.engine.core.dao.VmTemplateDao;
@@ -116,6 +116,8 @@ public class UpdateClusterCommand<T extends ClusterOperationParameters> extends
     @Inject
     private VmDao vmDao;
     @Inject
+    private VmDynamicDao vmDynamicDao;
+    @Inject
     private VdsStaticDao vdsStaticDao;
     @Inject
     private VmHandler vmHandler;
@@ -134,7 +136,38 @@ public class UpdateClusterCommand<T extends ClusterOperationParameters> extends
     private List<VmStatic> vmsLockedForUpdate = Collections.emptyList();
     private List<VmTemplate> templatesLockedForUpdate = Collections.emptyList();
 
+
     private static final Pattern MESSAGE_PATTERN = Pattern.compile("^(?<message>\\$message) (?<error>.*)");
+    private I440fxRaiseHandler i440fxRaise;
+
+    /**
+     * Raise-time guard, delegating to the i440fx raise session wired in init.
+     * <p>
+     * Failure semantics of the whole flow: this is a validate-time check, so a failure
+     * means nothing has been changed yet. The pinning itself is persisted by the
+     * standard UpdateVm/UpdateVmTemplate flow (compensation-enabled): a raise that fails
+     * later, after execution started, reverts the pins along with everything else. The
+     * audit events fire only after the raise completed successfully.
+     */
+    boolean validateI440fxRaise() {
+        List<String> unfixable = i440fxRaise.validate();
+        if (unfixable.isEmpty()) {
+            return true;
+        }
+        return failValidation(
+                EngineMessage.CLUSTER_CANNOT_UPDATE_COMPATIBILITY_VERSION_NO_COMMON_I440FX_MACHINE,
+                "$VmList " + String.join(", ", unfixable));
+    }
+
+    /** Thin delegator for the step-by-step flow tests; the raise itself lives in I440fxRaiseHandler. */
+    void pinI440fxEntitiesOnRaise() {
+        i440fxRaise.pinEntities();
+    }
+
+    /** Thin delegator for the step-by-step flow tests; the raise itself lives in I440fxRaiseHandler. */
+    void auditI440fxRaiseMigration() {
+        i440fxRaise.fireAuditEvents();
+    }
 
     @Override
     protected void init() {
@@ -144,6 +177,8 @@ public class UpdateClusterCommand<T extends ClusterOperationParameters> extends
             vmsLockedForUpdate = filterVmsInClusterNeedUpdate();
             templatesLockedForUpdate = filterTemplatesInClusterNeedUpdate();
         }
+        i440fxRaise = new I440fxRaiseHandler(this, oldCluster, getCluster(),
+                vmsLockedForUpdate, templatesLockedForUpdate, vdsDao, vmDynamicDao);
 
         if (oldCluster == null || isCpuNameChanged() || isVersionChanged()) {
             log.info("Updating cluster CPU flags and verb according to the configuration of the " + getCluster().getCpuName() + " cpu");
@@ -193,6 +228,15 @@ public class UpdateClusterCommand<T extends ClusterOperationParameters> extends
         return !Objects.equals(oldCluster.getCompatibilityVersion(), getCluster().getCompatibilityVersion());
     }
 
+    /**
+     * Raise-time guard: the raise pins all unpinned i440fx VMs/templates of the cluster
+     * (see pinI440fxEntitiesOnRaise). An entity can always be pinned when either its
+     * current machine type is runnable on at least one host (preserve) or the hosts
+     * share a common i440fx machine type to retarget it to (revive). The raise fails
+     * only when neither is possible — a dead machine type and no common type, i.e. a
+     * mixed-host cluster — and converting the listed entities to Q35 (the Edit Cluster
+     * dialog's chipset-conversion option) or pinning them explicitly unblocks it.
+     */
     private boolean isCpuNameChanged() {
         return !Objects.equals(oldCluster.getCpuName(), getCluster().getCpuName());
     }
@@ -356,6 +400,10 @@ public class UpdateClusterCommand<T extends ClusterOperationParameters> extends
             return null;
         });
 
+        if (i440fxRaise.isAcrossDeprecatedLevel()) {
+            i440fxRaise.pinEntities();
+        }
+
         if (isAddedToStoragePool) {
             if (!addVdsSpmIdForAllHosts()) {
                 return;
@@ -408,6 +456,13 @@ public class UpdateClusterCommand<T extends ClusterOperationParameters> extends
 
             return null;
         });
+
+        // Fire only after the raise has fully completed (including the final transaction
+        // above): if anything in it fails and compensates the pins away, the audit log
+        // must not report pins that were never committed.
+        if (i440fxRaise.isAcrossDeprecatedLevel()) {
+            i440fxRaise.fireAuditEvents();
+        }
 
         setSucceeded(true);
     }
@@ -557,6 +612,17 @@ public class UpdateClusterCommand<T extends ClusterOperationParameters> extends
 
         if (getParameters().isChangeVmsChipsetToQ35() && updateParams.getVmStaticData().getBiosType() == BiosType.I440FX_SEA_BIOS) {
             updateParams.getVmStaticData().setBiosType(BiosType.Q35_SEA_BIOS);
+            updateParams.getVmStaticData().setCustomEmulatedMachine(null);
+        }
+        if (i440fxRaise.isAcrossDeprecatedLevel()) {
+            // Raise-time migration, pending-configuration case: a VM with a pending NEXT_RUN
+            // edit is updated through its snapshot, not through the vm_static row the hook
+            // pinned — so the pin must be propagated onto the pending configuration too,
+            // or the internal UpdateVm would fail the raise after the pinning already
+            // happened (see ClusterEmulatedMachines.propagateI440fxPin).
+            ClusterEmulatedMachines.propagateI440fxPin(
+                    originalVmStatic.getCustomEmulatedMachine(),
+                    updateParams.getVmStaticData());
         }
         return updateParams;
     }
@@ -612,6 +678,7 @@ public class UpdateClusterCommand<T extends ClusterOperationParameters> extends
 
             if (getParameters().isChangeVmsChipsetToQ35() && parameters.getVmTemplateData().getBiosType() == BiosType.I440FX_SEA_BIOS) {
                 parameters.getVmTemplateData().setBiosType(BiosType.Q35_SEA_BIOS);
+                parameters.getVmTemplateData().setCustomEmulatedMachine(null);
             }
 
             final ActionReturnValue result = runInternalAction(
@@ -649,13 +716,26 @@ public class UpdateClusterCommand<T extends ClusterOperationParameters> extends
         vmHandler.autoSelectResumeBehavior(vmBase);
     }
 
+
+
     private String getEmulatedMachineOfHostInCluster(VDS vds) {
         Set<String> supported = new HashSet<>(Arrays.asList(vds.getSupportedEmulatedMachines().split(",")));
         Version version = getParameters().getCluster().getCompatibilityVersion();
         List<String> available = Config.getValue(ConfigValues.ClusterEmulatedMachines, version.getValue());
-        return ClusterEmulatedMachines.build(
-                EmulatedMachineCommonUtils.getSupportedByChipset(ChipsetType.I440FX, supported, available),
-                EmulatedMachineCommonUtils.getSupportedByChipset(ChipsetType.Q35, supported, available));
+        String q35Match = ClusterEmulatedMachines.getSupportedByChipset(ChipsetType.Q35, supported, available);
+        if (ClusterEmulatedMachines.isI440fxDeprecated(version)) {
+            // For x86 clusters at level >= 4.8: Q35 is the cluster default.
+            if (q35Match != null) {
+                return q35Match;
+            }
+            // No Q35 found — a non-x86 cluster (pseries, s390x: chipsetMatches(I440FX) catches
+            // null from fromMachineType).
+            return ClusterEmulatedMachines.getSupportedByChipset(ChipsetType.I440FX, supported, available);
+        }
+        // Below 4.8 the dual format ("i440fx;q35") is the supported cluster default: write both
+        // parts when available, or the single part the hosts support.
+        String i440fxMatch = ClusterEmulatedMachines.getSupportedByChipset(ChipsetType.I440FX, supported, available);
+        return ClusterEmulatedMachines.build(i440fxMatch, q35Match);
     }
 
     private void addOrUpdateAddtionalClusterFeatures() {
@@ -716,6 +796,7 @@ public class UpdateClusterCommand<T extends ClusterOperationParameters> extends
                 && validate(clusterValidator.canChangeStoragePool())
                 && validateCpuUpdatable(clusterValidator)
                 && validate(clusterValidator.vmInPrev())
+                && validateI440fxRaise()
                 && validateManagementNetworkAndAdditionToStoragePool()
                 && validate(clusterValidator.vdsUp())
                 && validate(clusterValidator.hostsDown(getParameters().isForceResetEmulatedMachine()))

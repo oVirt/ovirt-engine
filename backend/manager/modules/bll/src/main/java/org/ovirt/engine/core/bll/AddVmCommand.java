@@ -43,6 +43,7 @@ import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
 import org.ovirt.engine.core.bll.utils.IconUtils;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.validator.AffinityValidator;
+import org.ovirt.engine.core.bll.validator.EmulatedMachineValidator;
 import org.ovirt.engine.core.bll.validator.IconValidator;
 import org.ovirt.engine.core.bll.validator.InClusterUpgradeValidator;
 import org.ovirt.engine.core.bll.validator.VmValidationUtils;
@@ -205,6 +206,7 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
     private DiskVmElementDao diskVmElementDao;
     @Inject
     private VdsDao vdsDao;
+    private EmulatedMachinePinningHandler emulatedMachinePinningHandler;
     @Inject
     private VmStaticDao vmStaticDao;
     @Inject
@@ -260,7 +262,10 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
 
         T parameters = getParameters();
         if (parameters.getVmStaticData() != null) {
-            Guid templateIdToUse = getParameters().getVmStaticData().getVmtGuid();
+            emulatedMachinePinningHandler = new EmulatedMachinePinningHandler(
+                    vdsDao, parameters.getVmStaticData(), getCluster());
+
+            Guid templateIdToUse = parameters.getVmStaticData().getVmtGuid();
 
             if (parameters.getVmStaticData().isUseLatestVersion()) {
                 VmTemplate latest = vmTemplateDao.getTemplateWithLatestVersionInChain(templateIdToUse);
@@ -833,6 +838,21 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
             return false;
         }
 
+        // Auto-select where possible; the validation below rejects when no common type exists.
+        // Only for clusters at level >= 4.8: below that an unpinned i440fx VM legitimately
+        // inherits the i440fx part of the dual cluster default.
+        // Built at validation time from the current parameters, mirroring
+        // ClusterCommandBase.getClusterValidator — not frozen in init().
+        EmulatedMachineValidator emulatedMachineValidator = getEmulatedMachineValidator();
+        if (emulatedMachineValidator.isI440fxPinRequired()) {
+            autoPinCustomEmulatedMachine();
+        }
+
+        if (!validate(emulatedMachineValidator.validateI440fxPinRequired())
+                || !validate(emulatedMachineValidator.validateChipsetConsistency())) {
+            return false;
+        }
+
         if (!validate(validateAffinityGroups())) {
             return false;
         }
@@ -846,6 +866,33 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
         }
 
         return true;
+    }
+
+    /**
+     * Builds the stateful emulated machine validator for the current VM parameters and
+     * target cluster; constructed at use time (like ClusterCommandBase's cluster
+     * validators) so it never sees stale parameters.
+     */
+    protected EmulatedMachineValidator getEmulatedMachineValidator() {
+        return new EmulatedMachineValidator(getParameters().getVmStaticData(), getCluster());
+    }
+
+    /**
+     * Auto-selects the custom emulated machine for a newly added i440fx VM that carries
+     * none — the newest common type of the cluster hosts, mirroring the New VM dialog
+     * (see {@link ClusterEmulatedMachines#pickNewVmI440fxMachine}). When no common type
+     * exists (mixed EL9/EL10 cluster) the VM stays unpinned and the validation rejects it.
+     * UpdateVmCommand intentionally does not do this: an existing VM's pin is state, and
+     * clearing it is rejected instead of being silently re-derived.
+     */
+    void autoPinCustomEmulatedMachine() {
+        VmStatic vmStatic = getParameters().getVmStaticData();
+        emulatedMachinePinningHandler.getPinForNewVm().ifPresent(pin -> {
+            log.info("New i440fx VM '{}' has no custom emulated machine; selecting the newest i440fx"
+                    + " machine type common to all cluster hosts ('{}')",
+                    vmStatic.getName(), pin);
+            vmStatic.setCustomEmulatedMachine(pin);
+        });
     }
 
     protected Map<Guid, List<DiskImage>> getStorageToDisksMap() {

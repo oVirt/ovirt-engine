@@ -31,7 +31,6 @@ import org.ovirt.engine.core.bll.storage.disk.image.DisksFilter;
 import org.ovirt.engine.core.bll.storage.disk.managedblock.ManagedBlockStorageCommandUtil;
 import org.ovirt.engine.core.bll.storage.domain.IsoDomainListSynchronizer;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
-import org.ovirt.engine.core.bll.utils.EmulatedMachineUtils;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.validator.RunVmValidator;
 import org.ovirt.engine.core.bll.validator.storage.MultipleStorageDomainsValidator;
@@ -84,6 +83,7 @@ import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.job.Job;
 import org.ovirt.engine.core.common.job.Step;
 import org.ovirt.engine.core.common.job.StepEnum;
+import org.ovirt.engine.core.common.utils.ClusterEmulatedMachines;
 import org.ovirt.engine.core.common.utils.VmCpuCountHelper;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.common.validation.group.StartEntity;
@@ -827,7 +827,16 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
         updateCpuName();
 
         if (getVm().getEmulatedMachine() == null) {
-            getVm().setEmulatedMachine(getEffectiveEmulatedMachine());
+            // getEffective throws (IllegalStateException) for the states in which the VM
+            // cannot run at all — e.g. an unpinned i440fx VM whose cluster default has no
+            // usable i440fx part. Translate that into a proper command failure with an
+            // actionable message instead of a generic error.
+            try {
+                getVm().setEmulatedMachine(getEffectiveEmulatedMachine());
+            } catch (IllegalStateException e) {
+                failValidation(EngineMessage.VM_CANNOT_RUN_ON_ANY_HOST_IN_CLUSTER_EMULATED_MACHINE);
+                throw e;
+            }
         }
     }
 
@@ -855,7 +864,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
     }
 
     protected String getEffectiveEmulatedMachine() {
-        return EmulatedMachineUtils.getEffective(getVm(), this::getCluster);
+        return ClusterEmulatedMachines.getEffective(getVm(), this::getCluster);
     }
 
     private void updateUsbController() {

@@ -212,7 +212,7 @@
                         <t:content>
                             <b:Container ui:field="systemContainer" fluid="true">
                                 <b:Row>
-                                    <e:ListModelTypeAheadChangeableListBoxEditor ui:field="emulatedMachine" label="{constants.emulatedMachineLabel}" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
+                                    <w:EntityModelWidgetWithInfo ui:field="emulatedMachineWithInfo" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
                                 </b:Row>
                                 <b:Row>
                                     <e:ListModelTypeAheadChangeableListBoxEditor ui:field="customCpu" label="{constants.cpuModelLabel}" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />

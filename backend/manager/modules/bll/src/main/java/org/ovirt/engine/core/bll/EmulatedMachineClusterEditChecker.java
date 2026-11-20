@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.bll;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -14,23 +15,27 @@ import org.ovirt.engine.core.common.errors.EngineMessage;
 @RequestScoped
 public class EmulatedMachineClusterEditChecker implements ClusterEditChecker<VDS> {
 
-    private Set<String> emulatedMachines;
+    private Set<String> newClusterEmulatedMachines;
 
     @Override
     public boolean isApplicable(Cluster oldCluster, Cluster newCluster) {
-        emulatedMachines = getClusterEmulatedMachines(newCluster);
-        emulatedMachines.removeAll(getClusterEmulatedMachines(oldCluster));
+        // Applicable whenever the set of machine types backing the cluster default changes
+        // (a dual default "i440fx;q35" is backed by both of its parts).
+        newClusterEmulatedMachines = getClusterEmulatedMachines(newCluster);
 
-        return !emulatedMachines.isEmpty();
+        return !newClusterEmulatedMachines.equals(getClusterEmulatedMachines(oldCluster));
     }
 
     @Override
     public boolean check(VDS vds) {
-        if (emulatedMachines == null) {
+        if (newClusterEmulatedMachines == null) {
             throw new IllegalStateException("check() called before isApplicable()");
         }
 
-        return getHostEmulatedMachines(vds).containsAll(emulatedMachines);
+        // Same semantics as VirtMonitoringStrategy.hostCompliesWithClusterEmulationMode for
+        // a dual default: a host supporting at least one part can run the VMs of that
+        // chipset (per-VM scheduling handles the rest), so it complies with the default.
+        return !Collections.disjoint(getHostEmulatedMachines(vds), newClusterEmulatedMachines);
     }
 
     @Override
@@ -40,7 +45,7 @@ public class EmulatedMachineClusterEditChecker implements ClusterEditChecker<VDS
 
     @Override
     public String getDetailMessage(VDS vds) {
-        Set<String> missing = new HashSet<>(emulatedMachines);
+        Set<String> missing = new HashSet<>(newClusterEmulatedMachines);
         missing.removeAll(getHostEmulatedMachines(vds));
         return StringUtils.join(missing, ",");
     }
@@ -48,9 +53,11 @@ public class EmulatedMachineClusterEditChecker implements ClusterEditChecker<VDS
     private static Set<String> getClusterEmulatedMachines(Cluster cluster) {
         if (cluster.getEmulatedMachine() == null) {
             return new HashSet<>();
-        } else {
-            return new HashSet<>(Arrays.asList(cluster.getEmulatedMachine().split(",")));
         }
+        // The cluster default may be the legacy dual format ("i440fx;q35") in clusters below
+        // compatibility level 4.8 — split it so a host is checked against the actual
+        // machine types, not the combined string.
+        return new HashSet<>(Arrays.asList(cluster.getEmulatedMachine().split(";")));
     }
 
     private static Set<String> getHostEmulatedMachines(VDS vds) {
