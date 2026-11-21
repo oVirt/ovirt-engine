@@ -458,7 +458,11 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
         switch (getParameters().getDiskInfo().getDiskStorageType()) {
             case IMAGE:
             case KUBERNETES:
-                createDiskBasedOnImage();
+                if (getStorageDomain() != null && StorageType.MANAGED_BLOCK_STORAGE.equals(getStorageDomain().getStorageType())) {
+                    createManagedBlockStorageDisk();
+                } else {
+                    createDiskBasedOnImage();
+                }
                 break;
             case LUN:
                 createDiskBasedOnLun();

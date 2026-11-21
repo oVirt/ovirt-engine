@@ -234,8 +234,8 @@ public class UploadImageHandler {
      *            end offset
      */
     public void start(TransferDiskImageParameters transferDiskImageParameters,
-                      long startByte, long endByte) {
-        Frontend.getInstance().runAction(ActionType.TransferDiskImage, transferDiskImageParameters,
+                      long startByte, long endByte, ActionType actionType) {
+        Frontend.getInstance().runAction(actionType, transferDiskImageParameters,
                 result -> {
                     if (result.getReturnValue().getSucceeded()) {
                         setCommandId(result.getReturnValue().getActionReturnValue());
@@ -291,6 +291,8 @@ public class UploadImageHandler {
 
                 case INITIALIZING:
                 case RESUMING:
+                case CONVERTING:
+                    // CONVERTING: MBS format conversion in progress; keep polling until FINISHED_SUCCESS/FAILURE
                     break;
 
                 case TRANSFERRING:
