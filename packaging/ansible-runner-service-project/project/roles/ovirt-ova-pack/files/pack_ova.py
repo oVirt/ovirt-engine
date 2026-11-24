@@ -71,7 +71,7 @@ def write_padding_file(ova_file, padding_size):
         ova_file.write(NUL * file_size)
 
 
-def pad_to_fs_block_size(ova_file):
+def pad_to_fs_block_size(ova_file, padding):
     if padding != "true":
         print("padding is switched off")
         return
@@ -106,7 +106,8 @@ def find_last_data_end(fd, offset, size):
     return last_data_end
 
 
-def convert_disk_and_trim(ova_file, disk_path, disk_size, disk_name):
+def convert_disk_and_trim(ova_file, disk_path, disk_size, disk_name,
+                          padding):
     """Convert a single disk into a loop device over a sparse region
     and trim the last empty portion."""
     header_offset = ova_file.tell()
@@ -211,44 +212,50 @@ def write_null_blocks(ova_file):
     ova_file.write(NUL * 2 * TAR_BLOCK_SIZE)
 
 
-if len(sys.argv) < 3:
-    print("Usage: pack_ova.py <vm/template> output_path ovf"
-          " [disks_info [tpm_data] [nvram_data] [padding]]")
-    sys.exit(2)
+def main(argv):
+    if len(argv) < 3:
+        print("Usage: pack_ova.py <vm/template> output_path ovf"
+              " [disks_info [tpm_data] [nvram_data] [padding]]")
+        sys.exit(2)
 
-entity = sys.argv[1]
-ova_path = sys.argv[2]
-ovf = sys.argv[3]
-disks_info = sys.argv[4]
-tpm_data = sys.argv[5]
-nvram_data = sys.argv[6]
-padding = sys.argv[7]
-disks = json.loads(disks_info)
-# Serialize the OVF the way update_ovf_sizes() will, failing early if it is
-# malformed, so that only the disk sizes change later. A packed disk exceeds
-# its measured size by less than FS_BLOCK_SIZE, so reserve that many more
-# digits for each of its sizes (File ovf:size, Disk ovf:populatedSize).
-ovf = minidom.parseString(ovf.encode()).toxml(encoding="UTF-8").decode()
-ovf += " " * 2 * len(str(FS_BLOCK_SIZE)) * len(disks)
-with io.open(ova_path, "wb") as ova_file:
-    write_ovf(entity, ova_file, ovf)
-    if len(tpm_data) > 0:
-        write_file("tpm.dat", ova_file, tpm_data)
-    if len(nvram_data) > 0:
-        write_file("nvram.dat", ova_file, nvram_data)
-    pad_to_fs_block_size(ova_file)
-    member_sizes = {}
-    for disk_path, disk_info in disks.items():
-        if isinstance(disk_info, dict):
-            disk_size = disk_info["size"]
-            disk_name = disk_info["name"]
-        else:
-            disk_size = disk_info
-            disk_name = os.path.basename(disk_path)
-        member_sizes[disk_name] = convert_disk_and_trim(
-            ova_file, disk_path, disk_size, disk_name)
-    # write two null blocks at the end of the file
-    write_null_blocks(ova_file)
-    # drop XFS speculative preallocation past EOF
-    ova_file.truncate()
-    update_ovf_sizes(ova_file, ovf, member_sizes)
+    entity = argv[1]
+    ova_path = argv[2]
+    ovf = argv[3]
+    disks_info = argv[4]
+    tpm_data = argv[5]
+    nvram_data = argv[6]
+    padding = argv[7]
+    disks = json.loads(disks_info)
+    # Serialize the OVF the way update_ovf_sizes() will, failing early if it is
+    # malformed, so that only the disk sizes change later. A packed disk
+    # exceeds its measured size by less than FS_BLOCK_SIZE, so reserve that
+    # many more digits for each of its sizes (File ovf:size, Disk
+    # ovf:populatedSize).
+    ovf = minidom.parseString(ovf.encode()).toxml(encoding="UTF-8").decode()
+    ovf += " " * 2 * len(str(FS_BLOCK_SIZE)) * len(disks)
+    with io.open(ova_path, "wb") as ova_file:
+        write_ovf(entity, ova_file, ovf)
+        if len(tpm_data) > 0:
+            write_file("tpm.dat", ova_file, tpm_data)
+        if len(nvram_data) > 0:
+            write_file("nvram.dat", ova_file, nvram_data)
+        pad_to_fs_block_size(ova_file, padding)
+        member_sizes = {}
+        for disk_path, disk_info in disks.items():
+            if isinstance(disk_info, dict):
+                disk_size = disk_info["size"]
+                disk_name = disk_info["name"]
+            else:
+                disk_size = disk_info
+                disk_name = os.path.basename(disk_path)
+            member_sizes[disk_name] = convert_disk_and_trim(
+                ova_file, disk_path, disk_size, disk_name, padding)
+        # write two null blocks at the end of the file
+        write_null_blocks(ova_file)
+        # drop XFS speculative preallocation past EOF
+        ova_file.truncate()
+        update_ovf_sizes(ova_file, ovf, member_sizes)
+
+
+if __name__ == "__main__":
+    main(sys.argv)
