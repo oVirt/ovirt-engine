@@ -29,7 +29,9 @@ import org.ovirt.engine.core.common.businessentities.Nameable;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
+import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
+import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
@@ -113,11 +115,15 @@ public class ExportVmTemplateToOvaCommand<T extends ExportOvaParameters> extends
     protected List<DiskImage> getDisks() {
         if (cachedDisks == null) {
             List<Disk> allDisks = diskDao.getAllForVm(getParameters().getEntityId());
-            cachedDisks = DisksFilter.filterImageDisks(allDisks, ONLY_NOT_SHAREABLE, ONLY_ACTIVE);
+            cachedDisks = new ArrayList<>(DisksFilter.filterImageDisks(allDisks, ONLY_NOT_SHAREABLE, ONLY_ACTIVE));
+            cachedDisks.addAll(DisksFilter.filterManagedBlockStorageDisks(allDisks, ONLY_NOT_SHAREABLE, ONLY_ACTIVE));
             cachedDisks.forEach(disk -> disk.setDiskVmElements(Collections.singleton(
                     diskVmElementDao.get(new VmDeviceId(disk.getId(), getParameters().getEntityId())))));
             for (DiskImage disk : cachedDisks) {
                 disk.getImage().setVolumeFormat(VolumeFormat.COW);
+                if (DiskStorageType.MANAGED_BLOCK_STORAGE.equals(disk.getDiskStorageType())) {
+                    disk.getImage().setVolumeType(VolumeType.Sparse);
+                }
             }
         }
         return cachedDisks;

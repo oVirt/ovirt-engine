@@ -18,7 +18,9 @@ import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.ActionReturnValue;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.CreateSnapshotForVmParameters;
+import org.ovirt.engine.core.common.action.VmOperationParameterBase;
 import org.ovirt.engine.core.common.businessentities.HostJobInfo;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
@@ -30,7 +32,6 @@ import org.ovirt.engine.core.common.errors.EngineException;
 import org.ovirt.engine.core.common.vdscommands.SnapshotVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
-import org.ovirt.engine.core.common.vdscommands.VdsAndVmIDVDSParametersBase;
 import org.ovirt.engine.core.compat.CommandStatus;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
@@ -139,18 +140,10 @@ public class CreateLiveSnapshotForVmCommand<T extends CreateSnapshotForVmParamet
             return;
         }
 
-        VDSReturnValue returnValue = null;
-        boolean allowInconsistent = Config.<Boolean>getValue(ConfigValues.LiveSnapshotAllowInconsistent);
-        try {
-            returnValue = runVdsCommand(VDSCommandType.Thaw, new VdsAndVmIDVDSParametersBase(
-                    getVds().getId(), getVmId()));
-        } catch (EngineException e) {
-            if (!allowInconsistent) {
-                handleThawVmFailure(e);
-                return;
-            }
-        }
-        if (returnValue != null && !returnValue.getSucceeded() && !allowInconsistent) {
+        ActionReturnValue returnValue = runInternalAction(ActionType.ThawVm,
+                new VmOperationParameterBase(getVmId()),
+                cloneContextAndDetachFromParent());
+        if (!returnValue.getSucceeded() && !Config.<Boolean>getValue(ConfigValues.LiveSnapshotAllowInconsistent)) {
             handleThawVmFailure(new EngineException(EngineError.thawErr));
         }
     }
