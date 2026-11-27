@@ -93,13 +93,106 @@ public class LibvirtVmXmlBuilderTest {
         hotPlugCpuMap.put("s390x", "false");
         hotPlugCpuMap.put("x86", "false");
         hotPlugCpuMap.put("ppc", "false");
+        hotPlugCpuMap.put("aarch64", "false");
         return Stream.of(MockConfigDescriptor.of(ConfigValues.HotPlugCpuSupported, Version.v4_5, hotPlugCpuMap),
                 MockConfigDescriptor.of(ConfigValues.HotPlugCpuSupported, Version.v4_3, hotPlugCpuMap),
                 MockConfigDescriptor.of(ConfigValues.HotPlugCpuSupported, Version.v4_2, hotPlugCpuMap));
     }
 
+    public static Stream<MockConfigDescriptor<?>> aarch64SystemInfoConfig() {
+        return Stream.of(
+                MockConfigDescriptor.of(ConfigValues.OriginType, "OVIRT"),
+                MockConfigDescriptor.of(ConfigValues.SkuToAVLevel, Version.v4_8, ""));
+    }
+
     public static Stream<MockConfigDescriptor<?>> tscConfig() {
         return Stream.of(MockConfigDescriptor.of(ConfigValues.SendSMPOnRunVm, false));
+    }
+
+    @Test
+    void testAarch64Os() throws Exception {
+        LibvirtVmXmlBuilder underTest = mock(LibvirtVmXmlBuilder.class);
+        XmlTextWriter writer = mock(XmlTextWriter.class);
+        VM vm = mock(VM.class);
+        Guid vmId = Guid.newGuid();
+
+        when(vm.getClusterArch()).thenReturn(ArchitectureType.aarch64);
+        when(vm.getBiosType()).thenReturn(BiosType.I440FX_SEA_BIOS);
+        when(vm.getId()).thenReturn(vmId);
+        setVm(underTest, vm);
+        setWriter(underTest, writer);
+        setEmulatedMachine(underTest, "virt-rhel9.6.0");
+        setSerialConsolePath(underTest, "/dev/pts/1");
+
+        invokePrivateMethod(underTest, "writeOs");
+
+        verify(writer, times(1)).writeAttributeString("arch", "aarch64");
+        verify(writer, times(1)).writeAttributeString("machine", "virt-rhel9.6.0");
+        verify(writer, times(1)).writeStartElement("smbios");
+        verify(writer, times(1)).writeAttributeString("mode", "sysinfo");
+        verify(writer, times(1)).writeRaw("/usr/share/AAVMF/AAVMF_CODE.fd");
+        verify(writer, times(1)).writeAttributeString("template", "/usr/share/AAVMF/AAVMF_VARS.fd");
+        verify(writer, times(2)).writeAttributeString("format", "raw");
+        verify(writer, times(1)).writeAttributeString("templateFormat", "raw");
+        verify(writer, times(1)).writeRaw(String.format("/var/lib/libvirt/qemu/nvram/%s.fd", vmId));
+        verify(writer, times(0)).writeStartElement("bios");
+    }
+
+    @Test
+    @MockedConfig("aarch64SystemInfoConfig")
+    void testAarch64SystemInfo() throws Exception {
+        LibvirtVmXmlBuilder underTest = mock(LibvirtVmXmlBuilder.class);
+        XmlTextWriter writer = mock(XmlTextWriter.class);
+        VmInfoBuildUtils buildUtils = mock(VmInfoBuildUtils.class);
+        VM vm = mock(VM.class);
+        Guid vmId = Guid.newGuid();
+
+        when(vm.getClusterArch()).thenReturn(ArchitectureType.aarch64);
+        when(vm.getCompatibilityVersion()).thenReturn(Version.v4_8);
+        when(vm.getClusterCompatibilityVersion()).thenReturn(Version.v4_8);
+        when(vm.getId()).thenReturn(vmId);
+        when(buildUtils.getVmSerialNumber(vm, "HOST-SERIAL:")).thenReturn("vm-serial");
+        setVm(underTest, vm);
+        setVmInfoBuildUtils(underTest, buildUtils);
+        setWriter(underTest, writer);
+
+        invokePrivateMethod(underTest, "writeSystemInfo");
+
+        verify(writer, times(1)).writeStartElement("sysinfo");
+        verify(writer, times(1)).writeAttributeString("type", "smbios");
+        verify(writer, times(1)).writeRaw("vm-serial");
+        verify(writer, times(1)).writeRaw(vmId.toString());
+        verify(writer, times(0)).writeStartElement("baseBoard");
+    }
+
+    @Test
+    void testAarch64InputDevices() throws Exception {
+        LibvirtVmXmlBuilder underTest = mock(LibvirtVmXmlBuilder.class);
+        XmlTextWriter writer = mock(XmlTextWriter.class);
+        VmInfoBuildUtils buildUtils = mock(VmInfoBuildUtils.class);
+        VM vm = mock(VM.class);
+
+        when(vm.getClusterArch()).thenReturn(ArchitectureType.aarch64);
+        setVm(underTest, vm);
+        setVmInfoBuildUtils(underTest, buildUtils);
+        setWriter(underTest, writer);
+
+        invokePrivateMethod(underTest, "writeInput");
+
+        verify(writer, times(2)).writeStartElement("input");
+        verify(writer, times(1)).writeAttributeString("type", "mouse");
+        verify(writer, times(1)).writeAttributeString("type", "keyboard");
+        verify(writer, times(2)).writeAttributeString("bus", "usb");
+
+        reset(writer);
+        when(buildUtils.isTabletEnabled(vm)).thenReturn(true);
+
+        invokePrivateMethod(underTest, "writeInput");
+
+        verify(writer, times(2)).writeStartElement("input");
+        verify(writer, times(1)).writeAttributeString("type", "tablet");
+        verify(writer, times(1)).writeAttributeString("type", "keyboard");
+        verify(writer, times(2)).writeAttributeString("bus", "usb");
     }
 
     @Test
@@ -555,5 +648,21 @@ public class LibvirtVmXmlBuilderTest {
     private void setInterface(LibvirtVmXmlBuilder underTest, String cdInterface) throws NoSuchFieldException, IllegalAccessException {
         Field cdInterfaceField = LibvirtVmXmlBuilder.class.getDeclaredField("cdInterface");
         accessor.set(cdInterfaceField, underTest, cdInterface);
+    }
+
+    private void setEmulatedMachine(LibvirtVmXmlBuilder underTest, String emulatedMachine)
+            throws NoSuchFieldException, IllegalAccessException {
+        Field emulatedMachineField = LibvirtVmXmlBuilder.class.getDeclaredField("emulatedMachine");
+        accessor.set(emulatedMachineField, underTest, emulatedMachine);
+    }
+
+    private void setSerialConsolePath(LibvirtVmXmlBuilder underTest, String serialConsolePath)
+            throws NoSuchFieldException, IllegalAccessException {
+        Field serialConsolePathField = LibvirtVmXmlBuilder.class.getDeclaredField("serialConsolePath");
+        accessor.set(serialConsolePathField, underTest, serialConsolePath);
+    }
+
+    private void invokePrivateMethod(LibvirtVmXmlBuilder underTest, String methodName) throws Exception {
+        accessor.invoke(LibvirtVmXmlBuilder.class.getDeclaredMethod(methodName), underTest);
     }
 }

@@ -43,4 +43,9 @@ public class CreateAdditionalControllers implements ArchCommand {
         // For now same as on x86
         runForX86_64();
     }
+
+    @Override
+    public void runForAARCH64() {
+        // TODO, check for required settings
+    }
 }
