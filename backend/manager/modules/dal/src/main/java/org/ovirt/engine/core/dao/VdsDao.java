@@ -158,6 +158,12 @@ public interface VdsDao extends Dao, SearchDao<VDS>, AutoRecoverDao<VDS> {
     List<VDS> getAllForCluster(Guid cluster, Guid userID, boolean isFiltered);
 
     /**
+     * Returns i440fx machine types supported by every host in the cluster.
+     * Types present on only a subset of hosts are excluded (intersection, not union).
+     */
+    List<String> getClusterI440fxCommonMachines(Guid clusterId);
+
+    /**
      * Retrieves all VDS instances by storage pool ID.
      *
      * @param storagePool The storage pool's ID

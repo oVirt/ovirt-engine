@@ -1698,6 +1698,9 @@ public class VmHandler implements BackendService {
                 && cluster.getBiosType().getChipsetType() == ChipsetType.Q35
                 && osRepository.isQ35Supported(newVm.getOsId())) {
             newVm.setBiosType(BiosType.Q35_SEA_BIOS);
+            // The chipset flip invalidates the machine pin (e.g. the import auto-pin);
+            // from here on the Q35 cluster default resolves the emulated machine.
+            newVm.setCustomEmulatedMachine(null);
         }
 
         if (forceVmStaticUpdate || oldVm.getBiosType() != newVm.getBiosType()) {

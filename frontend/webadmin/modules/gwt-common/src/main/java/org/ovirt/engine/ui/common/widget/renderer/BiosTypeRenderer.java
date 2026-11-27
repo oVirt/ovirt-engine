@@ -43,7 +43,11 @@ public class BiosTypeRenderer extends EnumRenderer<BiosType> {
                 return constants.s390xChipset();
             }
         }
-        return super.render(biosType);
+        String rendered = super.render(biosType);
+        if (BiosType.I440FX_SEA_BIOS.equals(biosType)) {
+            rendered = rendered + " " + constants.emulatedMachineDeprecatedSuffix(); //$NON-NLS-1$
+        }
+        return rendered;
     }
 
     public void setArchitectureType(ArchitectureType architectureType) {
