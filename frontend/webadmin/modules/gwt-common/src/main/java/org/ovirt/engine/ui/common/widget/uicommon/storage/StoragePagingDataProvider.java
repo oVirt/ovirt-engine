@@ -45,6 +45,12 @@ public class StoragePagingDataProvider implements PagingDataProvider {
     }
 
     @Override
+    public void reload() {
+        pageFilter.reload(sanStorageLunToTargetList.model.getItems());
+        sanStorageLunToTargetList.updateItems();
+    }
+
+    @Override
     public int getFirstItemOnPage() {
         return pageFilter.getFirstItemOnPage();
     }
