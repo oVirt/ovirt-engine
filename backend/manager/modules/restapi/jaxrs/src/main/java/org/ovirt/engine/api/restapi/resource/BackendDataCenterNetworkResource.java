@@ -27,7 +27,12 @@ public class BackendDataCenterNetworkResource
         if (entity == null) {
             return notFound();
         }
-        return addLinks(map(entity), LinkHelper.NO_PARENT);
+
+        Network network = map(entity);
+        network = addLinks(network, LinkHelper.NO_PARENT);
+        removeRestrictedInfo(network);
+
+        return network;
     }
 
     private org.ovirt.engine.core.common.businessentities.network.Network getNetwork() {

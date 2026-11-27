@@ -60,6 +60,8 @@ public class BackendNetworksResource
         for (Network network : networks.getNetworks()) {
             network.setDisplay(null);
         }
+        removeRestrictedInfo(networks);
+
         return networks;
     }
 
