@@ -5,6 +5,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.logging.Logger;
 
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.TransferDiskImageParameters;
 import org.ovirt.engine.core.common.action.TransferImageStatusParameters;
 import org.ovirt.engine.core.compat.Guid;
@@ -45,32 +46,34 @@ public class UploadImageManager {
      *            transfer parameters
      */
     public void startUpload(Element fileUploadElement, TransferDiskImageParameters transferDiskImageParameters,
+            String proxyLocation, ActionType actionType) {
+        startUpload(fileUploadElement, transferDiskImageParameters, proxyLocation, actionType,
+                0, transferDiskImageParameters.getTransferSize());
+    }
+
+    public void startUpload(Element fileUploadElement, TransferDiskImageParameters transferDiskImageParameters,
             String proxyLocation) {
-        startUpload(fileUploadElement,
-                transferDiskImageParameters,
-                proxyLocation,
-                0,
-                transferDiskImageParameters.getTransferSize());
+        startUpload(fileUploadElement, transferDiskImageParameters, proxyLocation, ActionType.TransferDiskImage);
     }
 
     /**
      * Start a new upload by a specified range.
-     *
-     * @param fileUploadElement
-     *            the file upload html element
-     * @param transferDiskImageParameters
-     *            transfer parameters
-     * @param startByte
-     *            start offset
-     * @param endByte
-     *            end offset
      */
     public void startUpload(Element fileUploadElement, TransferDiskImageParameters transferDiskImageParameters,
-            String proxyLocation, long startByte, long endByte) {
+            String proxyLocation, ActionType actionType, long startByte, long endByte) {
         UploadImageHandler uploadImageHandler =
                 createUploadImageHandler(fileUploadElement, proxyLocation, transferDiskImageParameters.getStorageDomainId());
         uploadImageHandlers.add(uploadImageHandler);
-        uploadImageHandler.start(transferDiskImageParameters, startByte, endByte);
+        uploadImageHandler.start(transferDiskImageParameters, startByte, endByte, actionType);
+    }
+
+    /**
+     * @deprecated use {@link #startUpload(Element, TransferDiskImageParameters, String, ActionType, long, long)}
+     */
+    public void startUpload(Element fileUploadElement, TransferDiskImageParameters transferDiskImageParameters,
+            String proxyLocation, long startByte, long endByte) {
+        startUpload(fileUploadElement, transferDiskImageParameters, proxyLocation,
+                ActionType.TransferDiskImage, startByte, endByte);
     }
 
     /**

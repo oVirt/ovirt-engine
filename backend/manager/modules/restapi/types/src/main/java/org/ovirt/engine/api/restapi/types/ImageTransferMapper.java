@@ -98,6 +98,8 @@ public class ImageTransferMapper {
                 return ImageTransferPhase.INITIALIZING;
             case TRANSFERRING:
                 return ImageTransferPhase.TRANSFERRING;
+            case CONVERTING:
+                return ImageTransferPhase.TRANSFERRING;
             case RESUMING:
                 return ImageTransferPhase.RESUMING;
             case PAUSED_SYSTEM:
