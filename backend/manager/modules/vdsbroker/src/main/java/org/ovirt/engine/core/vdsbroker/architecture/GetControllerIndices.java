@@ -35,6 +35,12 @@ public class GetControllerIndices implements ArchCommand {
         runForX86_64();
     }
 
+    @Override
+    public void runForAARCH64() {
+        // For now the same as x86
+        runForX86_64();
+    }
+
     public Map<DiskInterface, Integer> returnValue() {
         return controllerIndexMap;
     }
