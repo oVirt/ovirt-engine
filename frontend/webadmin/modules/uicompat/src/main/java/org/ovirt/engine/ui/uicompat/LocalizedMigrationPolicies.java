@@ -4,6 +4,10 @@ import com.google.gwt.i18n.client.ConstantsWithLookup;
 
 public interface LocalizedMigrationPolicies extends ConstantsWithLookup {
 
+    String name_00000000_0000_0000_0000_000000000000();
+
+    String description_00000000_0000_0000_0000_000000000000();
+
     String name_80554327_0569_496b_bdeb_fcbbf52b827b();
 
     String description_80554327_0569_496b_bdeb_fcbbf52b827b();

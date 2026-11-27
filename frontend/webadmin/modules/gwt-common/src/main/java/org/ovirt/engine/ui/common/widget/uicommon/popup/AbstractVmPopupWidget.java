@@ -95,6 +95,7 @@ import org.ovirt.engine.ui.common.widget.renderer.BiosTypeRenderer;
 import org.ovirt.engine.ui.common.widget.renderer.BooleanRenderer;
 import org.ovirt.engine.ui.common.widget.renderer.ClusterDefaultRenderer;
 import org.ovirt.engine.ui.common.widget.renderer.EnumRenderer;
+import org.ovirt.engine.ui.common.widget.renderer.MigrationPolicyNameRenderer;
 import org.ovirt.engine.ui.common.widget.renderer.NameRenderer;
 import org.ovirt.engine.ui.common.widget.renderer.NullSafeRenderer;
 import org.ovirt.engine.ui.common.widget.tooltip.TooltipWidth;
@@ -1600,7 +1601,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
                 new IntegerListModelTypeAheadListBox(getNullMigrationDowntimeString()), new ModeSwitchingVisibilityRenderer());
         migrationDowntimeEditor.hideLabel();
 
-        migrationPolicyRenderer = new ClusterDefaultRenderer<>(new NameRenderer<MigrationPolicy>());
+        migrationPolicyRenderer = new ClusterDefaultRenderer<>(new MigrationPolicyNameRenderer());
         migrationPolicyEditor = new ListModelListBoxOnlyEditor<>(migrationPolicyRenderer, new ModeSwitchingVisibilityRenderer());
 
         autoConvergeRenderer = new ClusterDefaultRenderer<>(new BooleanRenderer(constants.autoConverge(), constants.dontAutoConverge()));

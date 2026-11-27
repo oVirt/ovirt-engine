@@ -7,8 +7,8 @@ public class NoMigrationPolicy extends MigrationPolicy {
     public static final Guid ID = Guid.Empty;
 
     public NoMigrationPolicy() {
-        // no need to externalize it - all the others are inside the vdc_options untranslatable
-        // so it would look strange to have only one translated
+        // not externalized here - like the policies from vdc_options, the frontend translates
+        // the name and description by policy id (see LocalizedMigrationPolicies)
         setName("Legacy"); //$NON-NLS-1$
         setDescription("Legacy behavior of 3.6 version, vdsm.conf overrides are still applied. The guest agent hook mechanism is disabled."); //$NON-NLS-1$
         setConfig(new NoConvergenceConfig());
