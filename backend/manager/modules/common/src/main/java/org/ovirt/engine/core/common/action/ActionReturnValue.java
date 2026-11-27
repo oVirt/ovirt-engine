@@ -67,6 +67,10 @@ public final class ActionReturnValue implements Serializable {
         fault = value;
     }
 
+    public EngineFault getFaultOrNull() {
+        return fault;
+    }
+
     public boolean isValid() {
         return valid;
     }

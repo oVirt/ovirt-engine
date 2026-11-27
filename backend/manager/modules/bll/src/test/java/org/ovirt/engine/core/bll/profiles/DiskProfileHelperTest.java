@@ -2,8 +2,12 @@ package org.ovirt.engine.core.bll.profiles;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.ovirt.engine.core.bll.validator.ValidationResultMatchers.failsWith;
 
 import java.util.ArrayList;
@@ -117,6 +121,53 @@ public class DiskProfileHelperTest {
         map.put(diskImage, STORAGE_DOMAIN_1);
         assertThat(diskProfileHelper.setAndValidateDiskProfiles(map, dbUser), failsWith(EngineMessage
                 .ACTION_TYPE_DISK_PROFILE_NOT_FOUND_FOR_STORAGE_DOMAIN));
+    }
+
+    @Test
+    public void skippedDiskIsNotValidatedTest() {
+        // profile A does not belong to storage domain 2, so this would fail without the skip
+        diskImage.setDiskProfileId(diskProfile_a.getId());
+        map.put(diskImage, STORAGE_DOMAIN_2);
+        assertThat(diskProfileHelper.setAndValidateDiskProfiles(map, dbUser), failsWith(EngineMessage
+                .ACTION_TYPE_DISK_PROFILE_NOT_FOUND_FOR_STORAGE_DOMAIN));
+
+        assertEquals(ValidationResult.VALID,
+                diskProfileHelper.setAndValidateDiskProfiles(map, dbUser, disk -> disk == diskImage));
+    }
+
+    @Test
+    public void skippedDiskIsLeftUnchangedTest() {
+        map.put(diskImage, STORAGE_DOMAIN_1);
+
+        assertEquals(ValidationResult.VALID,
+                diskProfileHelper.setAndValidateDiskProfiles(map, dbUser, disk -> true));
+        assertNull(diskImage.getDiskProfileId());
+        verifyNoInteractions(diskProfileDao);
+    }
+
+    @Test
+    public void notSkippedDiskIsStillValidatedTest() {
+        DiskImage skippedDisk = createDisk();
+        skippedDisk.setDiskProfileId(diskProfile_a.getId());
+        map.put(skippedDisk, STORAGE_DOMAIN_2);
+        diskImage.setDiskProfileId(diskProfile_a.getId());
+        map.put(diskImage, STORAGE_DOMAIN_2);
+
+        assertThat(diskProfileHelper.setAndValidateDiskProfiles(map, dbUser, disk -> disk == skippedDisk),
+                failsWith(EngineMessage.ACTION_TYPE_DISK_PROFILE_NOT_FOUND_FOR_STORAGE_DOMAIN));
+    }
+
+    @Test
+    public void mixedSkippedAndValidatedDisksTest() {
+        DiskImage skippedDisk = createDisk();
+        skippedDisk.setDiskProfileId(diskProfile_a.getId());
+        map.put(skippedDisk, STORAGE_DOMAIN_2);
+        map.put(diskImage, STORAGE_DOMAIN_1);
+
+        assertEquals(ValidationResult.VALID,
+                diskProfileHelper.setAndValidateDiskProfiles(map, dbUser, disk -> disk == skippedDisk));
+        assertEquals(diskProfile_a.getId(), diskImage.getDiskProfileId());
+        verify(diskProfileDao, never()).getAllForStorageDomain(STORAGE_DOMAIN_2);
     }
 
 }

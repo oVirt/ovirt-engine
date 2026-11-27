@@ -9,6 +9,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.Predicate;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -49,6 +50,12 @@ public class DiskProfileHelper {
     }
 
     public ValidationResult setAndValidateDiskProfiles(Map<DiskImage, Guid> map, DbUser user) {
+        return setAndValidateDiskProfiles(map, user, disk -> false);
+    }
+
+    public ValidationResult setAndValidateDiskProfiles(Map<DiskImage, Guid> map,
+            DbUser user,
+            Predicate<DiskImage> skipDiskProfileValidation) {
         if (map == null) {
             return ValidationResult.VALID;
         }
@@ -58,6 +65,10 @@ public class DiskProfileHelper {
         Set<Guid> permittedDiskProfilesIds = new HashSet<>();
         for (Entry<DiskImage, Guid> entry : map.entrySet()) {
             DiskImage diskImage = entry.getKey();
+            if (skipDiskProfileValidation.test(diskImage)) {
+                log.info("Skipping disk profile validation for disk '{}'", diskImage.getDiskAlias());
+                continue;
+            }
             Guid storageDomainId = entry.getValue();
             if (diskImage.getDiskStorageType() != DiskStorageType.IMAGE) {
                 log.info("Disk profiles is not supported for storage type '{}' (Disk '{}')",

@@ -10,6 +10,7 @@ import java.util.StringJoiner;
 import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.ImportVmTemplateParameters;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.profiles.CpuProfile;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
@@ -21,6 +22,7 @@ import org.ovirt.engine.core.common.queries.SearchParameters;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.Frontend;
+import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.HasEntity;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
@@ -114,6 +116,12 @@ public class ImportTemplateFromExportDomainModel extends ImportVmFromExportDomai
                     }
                 }));
 
+    }
+
+    @Override
+    protected boolean isDestinationStorageDomainSelectable(StorageDomain domain) {
+        return super.isDestinationStorageDomainSelectable(domain)
+                || Linq.isManagedBlockActiveStorageDomain(domain);
     }
 
     @Override

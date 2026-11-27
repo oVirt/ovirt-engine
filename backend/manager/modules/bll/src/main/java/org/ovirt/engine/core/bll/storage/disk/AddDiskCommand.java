@@ -302,9 +302,14 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
                 checkExceedingMaxBlockDiskSize() &&
                 canAddShareableDisk() &&
                 validate(diskVmElementValidator.isVirtIoScsiValid(vm)) &&
-                validate(diskVmElementValidator.isDiskInterfaceSupported(getVm())) &&
-                validateDiskImageNotExisting(((DiskImage) getParameters().getDiskInfo()).getImageId()) &&
-                validateDiskNotExisting(getParameters().getDiskInfo().getId());
+                validate(diskVmElementValidator.isDiskInterfaceSupported(getVm()));
+
+        if (returnValue && getParameters().isUsePassedImageId()) {
+            returnValue = validateDiskImageNotExisting(((DiskImage) getParameters().getDiskInfo()).getImageId());
+        }
+        if (returnValue && getParameters().isUsePassedDiskId()) {
+            returnValue = validateDiskNotExisting(getParameters().getDiskInfo().getId());
+        }
 
         if (returnValue && vm != null) {
             StoragePool sp = getStoragePool(); // Note this is done according to the VM's spId.
@@ -488,11 +493,21 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
         }
     }
 
+    private boolean shouldPlugManagedBlockDiskToVm() {
+        if (Guid.isNullOrEmpty(getVmId())) {
+            return false;
+        }
+        if (getVm() != null) {
+            return shouldDiskBePlugged();
+        }
+        return !Boolean.FALSE.equals(getParameters().getPlugDiskToVm());
+    }
+
     private ActionParametersBase buildManagedBlockParams() {
         AddManagedBlockStorageDiskParameters parameters =
                 new AddManagedBlockStorageDiskParameters(
                         getParameters().getDiskInfo(),
-                        getVm() != null && shouldDiskBePlugged());
+                        shouldPlugManagedBlockDiskToVm());
         parameters.setPlugDiskToVm(getParameters().getPlugDiskToVm());
         parameters.setStorageDomainId(getParameters().getStorageDomainId());
         parameters.setParentParameters(getParameters());
@@ -502,6 +517,10 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
         if (getVm() != null) {
             parameters.setVmSnapshotId(snapshotDao.getId(getVmId(), SnapshotType.ACTIVE));
             parameters.setVmId(getVmId());
+            parameters.setDiskVmElement(getDiskVmElement());
+        } else if (!Guid.isNullOrEmpty(getVmId())) {
+            parameters.setVmId(getVmId());
+            parameters.setVmSnapshotId(getParameters().getVmSnapshotId());
             parameters.setDiskVmElement(getDiskVmElement());
         }
 
@@ -564,8 +583,8 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
 
     protected boolean useCallback() {
         return getParameters().getDiskInfo().getDiskStorageType() == DiskStorageType.IMAGE
-                && (parentHasCallback() || !isExecutedAsChildCommand()) ||
-                getParameters().getDiskInfo().getDiskStorageType() == DiskStorageType.MANAGED_BLOCK_STORAGE;
+                && (parentHasCallback() || !isExecutedAsChildCommand())
+                || getParameters().getDiskInfo().getDiskStorageType() == DiskStorageType.MANAGED_BLOCK_STORAGE;
     }
 
     private void createDiskBasedOnImage() {
