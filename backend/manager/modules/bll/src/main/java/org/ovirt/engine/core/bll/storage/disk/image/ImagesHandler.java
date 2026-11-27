@@ -1107,6 +1107,10 @@ public class ImagesHandler {
             newImage.setParentId(nextParentId);
             newImage.setId(newImageGroupID);
             newImage.setStorageIds(Collections.singletonList(targetStorageDomainID));
+            if (!diskImage.getStorageIds().contains(targetStorageDomainID)) {
+                // the profile of the source domain is not valid on the target domain, let a new one be picked
+                newImage.setDiskProfileId(null);
+            }
             nextParentId = Guid.newGuid();
             newImage.setImageId(nextParentId);
             newImage.setVmSnapshotId(null);
